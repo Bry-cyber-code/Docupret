@@ -1975,7 +1975,7 @@
   const RANG = {essentiel: 1, pro: 2, complet: 3};
   const NOM_KIT = {essentiel: 'Essentiel', pro: 'Pro', complet: 'Complet'};
   const CONTENU = {essentiel: 'Logo en HD, SVG et PDF vectoriel, toutes les versions', pro: 'Logo, carte de visite imprimeur, signature e-mail', complet: 'Logo, carte, signature, tampon, réseaux, site, charte'};
-  const CLE = 'docufacile_kit', CLE_ACHATS = 'docufacile_kits_achetes', CLE_TEST = 'docufacile_kit_test', CLE_FACTURE = 'docufacile_v1';
+  const CLE = 'docufacile_kit', CLE_ACHATS = 'docufacile_kits_achetes', CLE_TEST = 'docupret_kit_test', CLE_FACTURE = 'docufacile_v1';
 
   const lire = (k, def) => { try{ const v = JSON.parse(localStorage.getItem(k)); return v === null || v === undefined ? def : v; }catch(e){ return def; } };
   const ecrire = (k, v) => { try{ localStorage.setItem(k, JSON.stringify(v)); return true; }catch(e){ return false; } };
@@ -2033,9 +2033,21 @@
   }
   const params = new URLSearchParams(location.search);
   if (RANG[params.get('k')]) E.kit = params.get('k');
-  if (params.get('test') === '1') ecrire(CLE_TEST, true);
-  if (params.get('test') === '0') ecrire(CLE_TEST, false);
-  if (params.get('paye') === '1' && RANG[params.get('k')]){
+  // Mode test réservé au propriétaire du site : kit.html?test=CODE (le code n'apparaît pas en clair ici)
+  const EMPREINTE_TEST = '4258cad7bd31184c754108bec05d95899cec8ca95b841fb8d622ee4fe9dc52f8';
+  if (params.has('test')){
+    const code = params.get('test');
+    params.delete('test'); history.replaceState(null, '', location.pathname + (params.toString() ? '?' + params : ''));
+    if (code === '0') ecrire(CLE_TEST, false);
+    else if (code && window.crypto && crypto.subtle){
+      crypto.subtle.digest('SHA-256', new TextEncoder().encode(code)).then(b => {
+        const hex = [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join('');
+        if (hex === EMPREINTE_TEST){ ecrire(CLE_TEST, true); majEtapes(); alerte('Mode test activé sur cet appareil.'); }
+      }).catch(() => {});
+    }
+  }
+  // Déblocage après paiement : seulement si un lien de paiement existe pour ce kit
+  if (params.get('paye') === '1' && RANG[params.get('k')] && LIENS_PAIEMENT[params.get('k')]){
     const a = lire(CLE_ACHATS, []); if (!a.includes(params.get('k'))) a.push(params.get('k')); ecrire(CLE_ACHATS, a);
     history.replaceState(null, '', location.pathname + '?k=' + params.get('k'));
     setTimeout(() => { alerte('Merci pour votre achat ! Votre kit est débloqué.'); ouvrirTelechargement(); }, 600);
@@ -2681,7 +2693,7 @@
   function lisezMoi(kit, repli){
     const r = RANG[kit];
     let t = `VOTRE KIT ${NOM_KIT[kit].toUpperCase()} – ${E.id.nom}\nCréé avec DocuPrêt\n\n`;
-    t += `1-LOGO\n  logo-couleur / noir / blanc .png : images haute définition, fond transparent.\n  .svg et .pdf : format vectoriel, agrandissable à l'infini (enseigne, véhicule,\n  vêtements, bâche). C'est le fichier à envoyer à un imprimeur ou un marquage.\n  logo-blanc : pour poser le logo sur un fond foncé ou une photo.\n  logo-fond-... : le logo déjà posé sur un fond, prêt pour un document ou un post.\n  logo-web-petit.png : version légère pour un site ou un e-mail.\n  icone-... : l'icône seule (photo de profil, application, tampon).\n\n`;
+    t += `1-LOGO\n  logo-couleur / noir / blanc .png : images haute définition, fond transparent.\n  .svg et .pdf : format vectoriel, agrandissable à l'infini (enseigne, véhicule,\n  vêtements, bâche). C'est le fichier à envoyer à un imprimeur ou un marquage.\n  logo-blanc : pour poser le logo sur un fond foncé ou une photo.\n  Les fichiers .svg ne s'ouvrent pas toujours sur téléphone : c'est normal, ils sont\n  destinés à votre imprimeur. Pour regarder votre logo, ouvrez les .png ou les .pdf.\n  logo-fond-... : le logo déjà posé sur un fond, prêt pour un document ou un post.\n  logo-web-petit.png : version légère pour un site ou un e-mail.\n  icone-... : l'icône seule (photo de profil, application, tampon).\n\n`;
     if (r >= 2) t += `2-CARTE-DE-VISITE (85 × 55 mm)\n  carte-imprimeur-fond-perdu.pdf : à envoyer à un imprimeur en ligne\n  (fond perdu de 3 mm déjà inclus, recto puis verso).\n  carte-avec-traits-de-coupe.pdf : pour un imprimeur qui demande les traits de coupe.\n  planche-A4-10-cartes.pdf : pour imprimer chez vous sur papier 250 g,\n  en recto verso (bord long), puis couper le long des traits.\n  .png : pour partager la carte par message ou sur les réseaux.\n\n3-SIGNATURE-EMAIL : voir MODE-EMPLOI.txt dans le dossier.\n\n`;
     if (r >= 3) t += `4-TAMPON : le PDF est à la taille réelle, à envoyer au fabricant de tampons.\n  Le PNG sert à tamponner vos documents numériques.\n\n5-RESEAUX-SOCIAUX : chaque image a la taille demandée par le réseau (indiquée dans le nom).\n\n6-SITE-WEB : icône d'onglet et d'écran d'accueil + le code à copier (voir le fichier texte).\n\n7-CHARTE-GRAPHIQUE.pdf : le résumé de votre identité (couleurs, polices, règles).\n\nVos factures et devis DocuPrêt peuvent prendre votre logo et votre couleur :\nonglet « Site, factures » du studio > « Appliquer à mes factures ».\n\n`;
     t += `Couleurs : principale ${S.col(E, 'p')}, foncée ${S.col(E, 's')}, accent ${S.col(E, 'a')}.\nPolices : ${police(E.id.pTitre).fam} (titres) et ${police(E.id.pTexte).fam} (textes),\ngratuites sur fonts.google.com.\n`;
