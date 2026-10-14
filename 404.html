@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Page introuvable – DocuPrêt</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%2036%2036%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22f%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%236A9BF0%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%233563BF%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%2236%22%20height%3D%2236%22%20rx%3D%2210%22%20fill%3D%22url%28%23f%29%22/%3E%3Crect%20x%3D%227.5%22%20y%3D%2211%22%20width%3D%2213%22%20height%3D%2217%22%20rx%3D%222%22%20fill%3D%22%23fff%22%20opacity%3D%22.35%22/%3E%3Cpath%20d%3D%22M14%207.5h7.5l5.5%205.5v13.5a2%202%200%200%201-2%202H14a2%202%200%200%201-2-2v-17a2%202%200%200%201%202-2z%22%20fill%3D%22%23fff%22/%3E%3Cpath%20d%3D%22M21.5%207.5v3.5a2%202%200%200%200%202%202H27z%22%20fill%3D%22%23C9DAF8%22/%3E%3Cpath%20d%3D%22M15.3%2019.6l2.7%202.7%205-5.6%22%20fill%3D%22none%22%20stroke%3D%22%233563BF%22%20stroke-width%3D%222.3%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22/%3E%3C/svg%3E">
+<style>
+  :root{color-scheme:light;--bleu:#4A7BD0;--bleu-fonce:#2F5DAE;--bleu-clair:#EAF1FB;--fond:#F6F9FD;--texte:#1E2A42;--gris:#6B778C;--bord:#E2E8F2}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--fond);color:var(--texte);min-height:100vh;display:grid;place-items:center;padding:24px 16px;text-align:center}
+  a{color:inherit;text-decoration:none}
+  .logo{display:inline-flex;align-items:center;gap:9px;margin-bottom:28px}
+  .logo-icone{display:block;width:40px;height:40px} .logo-icone svg{width:100%;height:100%;display:block}
+  .logo-mot{font-weight:800;font-size:1.4rem;letter-spacing:-.02em} .logo-mot span{color:var(--bleu)}
+  h1{font-size:clamp(1.4rem,5vw,2rem);font-weight:800;margin-bottom:8px}
+  p{color:var(--gris);margin-bottom:22px}
+  .liens{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+  .liens a{border:1.5px solid var(--bord);background:#fff;border-radius:50px;padding:10px 16px;font-weight:650}
+  .liens a.principal{background:var(--bleu);border-color:var(--bleu);color:#fff}
+</style>
+</head>
+<body>
+<main>
+  <a href="./" class="logo" data-lien=""><span class="logo-icone"><svg viewBox="0 0 36 36" aria-hidden="true"><defs><linearGradient id="lg-tete" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6A9BF0"/><stop offset="1" stop-color="#3563BF"/></linearGradient></defs><rect width="36" height="36" rx="10" fill="url(#lg-tete)"/><rect x="7.5" y="11" width="13" height="17" rx="2" fill="#fff" opacity=".35"/><path d="M14 7.5h7.5l5.5 5.5v13.5a2 2 0 0 1-2 2H14a2 2 0 0 1-2-2v-17a2 2 0 0 1 2-2z" fill="#fff"/><path d="M21.5 7.5v3.5a2 2 0 0 0 2 2H27z" fill="#C9DAF8"/><path d="M15.3 19.6l2.7 2.7 5-5.6" fill="none" stroke="#3563BF" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="logo-mot">Docu<span>Prêt</span></span></a>
+  <h1>Oups, cette page n'existe pas</h1>
+  <p>Le lien est peut-être incomplet. Vos documents sont toujours là :</p>
+  <div class="liens">
+    <a class="principal" href="./" data-lien="">Accueil</a>
+    <a href="facture.html" data-lien="facture.html">Facture et devis</a>
+    <a href="lettre.html?type=demission" data-lien="lettre.html?type=demission">Lettres</a>
+    <a href="logo.html" data-lien="logo.html">Logo</a>
+  </div>
+</main>
+<script>
+  // Liens valables quelle que soit l'adresse demandée
+  (function(){ var base = /^\/docupret\//i.test(location.pathname) ? location.pathname.match(/^\/docupret\//i)[0] : '/';
+    document.querySelectorAll('[data-lien]').forEach(function(a){ a.href = base + a.getAttribute('data-lien'); }); })();
+</script>
+</body>
+</html>
