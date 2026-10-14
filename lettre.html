@@ -1284,18 +1284,31 @@
 
   $('imprimer').addEventListener('click', () => avantSortie(() => window.print()));
 
+
+  // PDF : on photographie une copie de la page posée en haut à gauche, à taille réelle,
+  // pour éviter les pages coupées ou décalées sur téléphone (zoom de l'aperçu, défilement).
+  async function pdfDepuisPage(opts, avant){
+    const copie = $('page').cloneNode(true);
+    copie.removeAttribute('id'); copie.style.transform = 'none'; copie.style.boxShadow = 'none'; copie.style.margin = '0';
+    if (avant) avant(copie);
+    const hote = document.createElement('div');
+    hote.style.cssText = 'position:absolute;left:0;top:0;width:794px;z-index:-1;background:#fff;pointer-events:none';
+    hote.appendChild(copie); document.body.appendChild(hote);
+    const sx = window.scrollX, sy = window.scrollY; window.scrollTo(0, 0);
+    try{
+      await html2pdf().set(Object.assign({}, opts, {html2canvas: Object.assign({scale: 2, backgroundColor: '#ffffff', scrollX: 0, scrollY: 0, x: 0, y: 0, windowWidth: 794, width: 794}, opts.html2canvas || {})})).from(copie).save();
+    } finally { hote.remove(); window.scrollTo(sx, sy); }
+  }
+
   $('telecharger').addEventListener('click', () => avantSortie(async () => {
     const bouton = $('telecharger'); bouton.disabled = true;
     const texte = bouton.lastChild.textContent; bouton.lastChild.textContent = ' Création…';
     const nom = ({demission: 'lettre-demission-', motivation: 'lettre-motivation-', conges: 'demande-conges-', rupture: 'rupture-conventionnelle-', preavis: 'preavis-logement-', hebergement: 'attestation-hebergement-', quittance: 'quittance-loyer-', honneur: 'attestation-honneur-', resiliation: 'lettre-resiliation-', reclamation: 'lettre-reclamation-', procuration: 'procuration-'})[etat.type] + (String(etat.moi.nom).trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'docufacile') + '.pdf';
     try{
       if (!window.html2pdf) throw new Error('html2pdf');
-      const page = $('page');
-      document.querySelectorAll('#page .ph').forEach(x => x.style.background = 'none');
-      await html2pdf().set({margin: 0, filename: nom, image: {type: 'jpeg', quality: 0.97},
-        html2canvas: {scale: 2, backgroundColor: '#ffffff', windowWidth: 900},
-        jsPDF: {unit: 'mm', format: 'a4', orientation: 'portrait'}, pagebreak: {mode: ['css', 'legacy'], avoid: ['p', '.l-sign']}}).from(page).save();
-      rendreApercu();
+      await pdfDepuisPage({margin: 0, filename: nom, image: {type: 'jpeg', quality: 0.97},
+        jsPDF: {unit: 'mm', format: 'a4', orientation: 'portrait'}, pagebreak: {mode: ['css', 'legacy'], avoid: ['p', '.l-sign']}},
+        copie => copie.querySelectorAll('.ph').forEach(x => { x.style.background = 'none'; x.style.color = '#1d222b'; }));
     }catch(err){ alerte("Le PDF n'a pas pu être créé. Essayez « Imprimer », puis « Enregistrer en PDF »."); }
     finally{ bouton.disabled = false; bouton.lastChild.textContent = texte; }
   }));
