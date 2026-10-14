@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Créer une carte de visite gratuite à imprimer – DocuPrêt</title>
+<meta name="description" content="Créez gratuitement votre carte de visite recto verso : modèles, logo, couleurs, QR code. Téléchargez le PDF pour l'imprimer chez vous ou chez un imprimeur.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%2036%2036%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22f%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%236A9BF0%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%233563BF%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%2236%22%20height%3D%2236%22%20rx%3D%2210%22%20fill%3D%22url%28%23f%29%22/%3E%3Crect%20x%3D%227.5%22%20y%3D%2211%22%20width%3D%2213%22%20height%3D%2217%22%20rx%3D%222%22%20fill%3D%22%23fff%22%20opacity%3D%22.35%22/%3E%3Cpath%20d%3D%22M14%207.5h7.5l5.5%205.5v13.5a2%202%200%200%201-2%202H14a2%202%200%200%201-2-2v-17a2%202%200%200%201%202-2z%22%20fill%3D%22%23fff%22/%3E%3Cpath%20d%3D%22M21.5%207.5v3.5a2%202%200%200%200%202%202H27z%22%20fill%3D%22%23C9DAF8%22/%3E%3Cpath%20d%3D%22M15.3%2019.6l2.7%202.7%205-5.6%22%20fill%3D%22none%22%20stroke%3D%22%233563BF%22%20stroke-width%3D%222.3%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@600;700&family=Nunito:wght@800&family=Pacifico&family=Playfair+Display:wght@700&family=Roboto+Slab:wght@700&display=swap">
+<style>
+  :root{
+    --bleu:#4A7BD0; --bleu-fonce:#2F5DAE; --bleu-clair:#EAF1FB;
+    --fond:#F6F9FD; --blanc:#FFFFFF; --texte:#1E2A42; --gris:#6B778C; --bord:#E2E8F2; --rayon:14px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{color-scheme:light}
+  input,select,textarea{color:var(--texte);-webkit-text-fill-color:var(--texte);caret-color:var(--texte)}
+  input::placeholder,textarea::placeholder{color:#98A2B3;-webkit-text-fill-color:#98A2B3;opacity:1}
+  [hidden]{display:none!important}
+  html,body{overflow-x:clip}
+  body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--fond);color:var(--texte);line-height:1.5;padding-bottom:96px}
+  a{color:inherit;text-decoration:none}
+  button{font-family:inherit;cursor:pointer}
+  .wrap{max-width:1100px;margin:0 auto;padding:0 16px}
+
+  header{background:var(--blanc);border-bottom:1px solid var(--bord);position:sticky;top:0;z-index:15}
+  .nav{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;height:60px}
+  .nav > :last-child{justify-self:end}
+  .logo{display:flex;align-items:center;gap:9px;justify-self:center}
+  .logo-icone{display:block;width:34px;height:34px;flex-shrink:0}
+  .logo-icone svg{display:block;width:100%;height:100%}
+  .logo-mot{font-weight:800;font-size:1.22rem;letter-spacing:-.02em;color:var(--texte)}
+  .logo-mot span{color:var(--bleu)}
+  .retour{font-size:.9rem;color:var(--gris)}
+  .retour:hover{color:var(--bleu)}
+  @media (max-width:560px){.retour{font-size:1.3rem;padding:4px 6px}.retour span{display:none}}
+
+  .pub{margin:14px auto;max-width:728px;min-height:90px;border:1px dashed #C9D4E6;border-radius:10px;background:#FBFCFE;display:grid;place-items:center;color:#A3AEC2;font-size:.75rem;letter-spacing:.05em;text-transform:uppercase}
+  @media (max-width:640px){.pub{min-height:60px;max-width:340px}}
+
+  h1{font-size:clamp(1.25rem,4vw,1.8rem);font-weight:800;margin:4px 0 6px}
+
+  /* Aperçu collé en haut pendant la création */
+  .zone{display:grid;gap:12px;grid-template-columns:minmax(0,1fr)}
+  .zone > *{min-width:0}
+  .colle{position:sticky;top:60px;z-index:8;background:var(--fond);margin:0 -16px;padding:6px 16px 8px}
+  .apercu{background:var(--blanc);border:1px solid var(--bord);border-radius:var(--rayon);padding:8px;display:grid;gap:6px;max-width:100%;overflow:hidden}
+  .scene{height:168px;width:100%;display:grid;place-items:center;border-radius:10px;background:#E8EDF5;overflow:hidden}
+  #toile{display:block;border-radius:6px;box-shadow:0 4px 14px rgba(30,42,66,.22)}
+  .outils{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;align-items:center}
+  .faces{display:flex;background:var(--fond);border:1px solid var(--bord);border-radius:50px;padding:2px}
+  .faces button{border:0;background:none;border-radius:50px;padding:4px 12px;font-size:.8rem;font-weight:600;color:var(--gris)}
+  .faces button.on{background:var(--bleu);color:#fff}
+  .outil{display:flex;align-items:center;gap:5px;border:1.5px solid var(--bord);background:#fff;border-radius:50px;padding:4px 10px;font-size:.8rem;color:var(--texte)}
+  .outil svg{width:15px;height:15px}
+  .outil:hover{border-color:var(--bleu);color:var(--bleu)}
+  .outil:disabled{opacity:.4;cursor:default}
+  @media (min-width:900px){
+    .zone{grid-template-columns:minmax(0,1fr) 430px;align-items:start;gap:20px}
+    .colle{top:76px;margin:0;padding:0}
+    .scene{height:300px}
+  }
+
+  /* Onglets */
+  .onglets{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+  .onglets::-webkit-scrollbar{display:none}
+  .onglets button{flex-shrink:0;border:1.5px solid var(--bord);background:#fff;border-radius:50px;padding:7px 14px;font-size:.88rem;font-weight:600;color:var(--gris)}
+  .onglets button.on{background:var(--bleu);border-color:var(--bleu);color:#fff}
+  .panneau{background:var(--blanc);border:1px solid var(--bord);border-radius:var(--rayon);padding:14px;display:grid;gap:14px;margin-top:10px}
+  .groupe{display:grid;gap:6px}
+  .titre{font-size:.8rem;color:var(--gris);font-weight:600;display:flex;justify-content:space-between}
+  .titre output{color:var(--texte);font-variant-numeric:tabular-nums}
+  input[type=text],input[type=tel],input[type=email]{font:inherit;font-size:16px;padding:10px 12px;border:1.5px solid var(--bord);border-radius:10px;background:#fff;color:var(--texte);width:100%;outline:none}
+  input[type=text]:focus,input[type=tel]:focus,input[type=email]:focus{border-color:var(--bleu);box-shadow:0 0 0 3px var(--bleu-clair)}
+  input[type=range]{width:100%;accent-color:var(--bleu);height:28px}
+  .deux{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  @media (max-width:420px){.deux.empile{grid-template-columns:1fr}}
+
+  .modeles{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
+  .modele{border:1.5px solid var(--bord);border-radius:12px;background:#fff;padding:8px 8px 6px;display:grid;gap:4px;justify-items:center;font-size:.75rem;color:var(--gris)}
+  .modele canvas{display:block;width:100%;height:auto;border-radius:4px;box-shadow:0 1px 5px rgba(30,42,66,.18)}
+  .modele.on{border-color:var(--bleu);color:var(--bleu);font-weight:600;box-shadow:0 0 0 3px var(--bleu-clair)}
+
+  .polices{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+  .polices button{border:1.5px solid var(--bord);background:#fff;border-radius:11px;padding:6px 4px;display:flex;flex-direction:column;align-items:center;color:var(--texte)}
+  .polices button b{font-size:1.35rem;line-height:1.25;font-weight:normal}
+  .polices button small{font-size:.7rem;color:var(--gris)}
+  .polices button.on{border-color:var(--bleu);background:var(--bleu-clair)}
+  .couleurs{display:flex;flex-wrap:wrap;gap:7px;align-items:center}
+  .pastille{width:30px;height:30px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 1.5px var(--bord);padding:0}
+  .pastille.on{box-shadow:0 0 0 2.5px var(--texte)}
+  .perso{position:relative;width:30px;height:30px;border-radius:50%;background:conic-gradient(#f55,#fd5,#5d5,#5df,#55f,#f5f,#f55);box-shadow:0 0 0 1.5px var(--bord);overflow:hidden;cursor:pointer}
+  .perso input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;border:0;padding:0}
+  .seg{display:flex;background:var(--fond);border:1px solid var(--bord);border-radius:10px;padding:3px}
+  .seg button{flex:1;border:0;background:none;padding:7px 4px;border-radius:8px;font-size:.86rem;color:var(--gris)}
+  .seg button.on{background:#fff;color:var(--bleu);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+  .coche{display:flex;align-items:center;gap:10px;font-size:.92rem;cursor:pointer}
+  .coche input{width:20px;height:20px;accent-color:var(--bleu);flex-shrink:0}
+  .logo-zone{display:flex;align-items:center;gap:12px}
+  .logo-boite{width:84px;height:56px;border:1.5px dashed var(--bord);border-radius:10px;display:grid;place-items:center;overflow:hidden;background:var(--fond);flex-shrink:0}
+  .logo-boite img{max-width:92%;max-height:92%}
+  .logo-boite svg{width:22px;height:22px;stroke:#A3AEC2}
+  .boutons{display:flex;flex-wrap:wrap;gap:6px}
+  .btn-petit{border:1.5px solid var(--bord);background:#fff;border-radius:50px;padding:7px 12px;font-size:.85rem;color:var(--texte)}
+  .btn-petit:hover{border-color:var(--bleu);color:var(--bleu)}
+  .note{font-size:.8rem;color:var(--gris)}
+  .note a{color:var(--bleu);text-decoration:underline}
+
+  .barre{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--blanc);border-top:1px solid var(--bord);padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px))}
+  .barre-in{max-width:1100px;margin:0 auto;display:flex;gap:10px;justify-content:flex-end}
+  .btn{background:var(--bleu);color:#fff;border:0;border-radius:50px;padding:13px 20px;font-weight:650;font-size:.98rem;white-space:nowrap}
+  .btn:hover{background:var(--bleu-fonce)}
+  .btn:disabled{opacity:.6}
+  .btn-sec{border:1.5px solid var(--bord);background:#fff;border-radius:50px;padding:12px 18px;font-size:.95rem;color:var(--texte);font-weight:600;white-space:nowrap}
+  .btn-sec:hover{border-color:var(--bleu);color:var(--bleu)}
+  @media (max-width:480px){.barre-in .btn,.barre-in .btn-sec{flex:1;padding:12px 8px;font-size:.88rem}}
+  .alerte{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:var(--texte);color:#fff;padding:10px 16px;border-radius:12px;font-size:.9rem;z-index:30;max-width:90vw;text-align:center}
+
+  .faq{margin-top:28px}
+  .faq h2{font-size:1.2rem;margin-bottom:12px}
+  .faq details{background:var(--blanc);border:1px solid var(--bord);border-radius:12px;margin-bottom:8px}
+  .faq summary{padding:12px 16px;font-weight:600;cursor:pointer;font-size:.95rem}
+  .faq p{padding:0 16px 14px;color:var(--gris);font-size:.9rem}
+
+  footer{background:var(--blanc);border-top:1px solid var(--bord);margin-top:28px;padding:22px 0;font-size:.85rem;color:var(--gris)}
+  .pied{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
+  .pied nav{display:flex;flex-wrap:wrap;gap:16px}
+    /* Encart qualité Pro */
+  .pro-encart{position:relative;display:flex;gap:12px;align-items:center;margin-top:12px;padding:14px;border-radius:var(--rayon);background:linear-gradient(#fff,#fff) padding-box,linear-gradient(120deg,#4A7BD0,#7B5CC4,#C9A227) border-box;border:2px solid transparent;box-shadow:0 8px 24px rgba(74,123,208,.14)}
+  .pro-encart:hover{box-shadow:0 10px 28px rgba(74,123,208,.24)}
+  .pro-ico{width:46px;height:46px;border-radius:13px;background:linear-gradient(135deg,#4A7BD0,#7B5CC4);display:grid;place-items:center;flex-shrink:0}
+  .pro-ico svg{width:24px;height:24px;stroke:#fff}
+  .pro-txt{flex:1;min-width:0;display:grid;gap:3px}
+  .pro-txt b{font-size:1rem}
+  .pro-txt > span{font-size:.84rem;color:var(--gris);line-height:1.35}
+  .pro-points{display:flex;flex-wrap:wrap;gap:4px 10px;margin-top:2px}
+  .pro-points i{font-style:normal;font-size:.76rem;font-weight:700;color:#2F5DAE}
+  .pro-prix{display:grid;justify-items:end;font-size:.72rem;color:var(--gris);flex-shrink:0}
+  .pro-prix b{font-size:1.15rem;color:var(--texte);white-space:nowrap}
+  .pro-prix em{font-style:normal;margin-top:4px;background:var(--bleu);color:#fff;font-weight:700;font-size:.78rem;padding:5px 10px;border-radius:50px;white-space:nowrap}
+  @media (max-width:420px){.pro-encart{flex-wrap:wrap}.pro-prix{grid-auto-flow:column;align-items:center;gap:8px;width:100%;justify-content:space-between}}
+  /* Menu latéral */
+  .gauche{display:flex;align-items:center}
+  .menu-btn{width:40px;height:40px;border:0;background:none;border-radius:10px;display:grid;place-items:center;margin-left:-8px;cursor:pointer;color:var(--texte)}
+  .menu-btn:hover,.menu-btn:focus-visible{background:var(--bleu-clair)}
+  .menu-btn svg{width:24px;height:24px;stroke:currentColor}
+  .tiroir-fond{position:fixed;inset:0;background:rgba(20,28,45,.45);z-index:50}
+  .tiroir{position:fixed;top:0;left:0;bottom:0;width:min(300px,84vw);background:var(--blanc);z-index:51;transform:translateX(-102%);transition:transform .25s ease;overflow-y:auto;padding-bottom:calc(20px + env(safe-area-inset-bottom,0px));box-shadow:4px 0 24px rgba(0,0,0,.12)}
+  .tiroir.ouvert{transform:none}
+  .tiroir-tete{display:flex;align-items:center;justify-content:space-between;height:60px;padding:env(safe-area-inset-top,0px) 10px 0 16px;border-bottom:1px solid var(--bord)}
+  .tiroir-titre{display:flex;align-items:center;gap:9px}
+  .tiroir-fermer{width:36px;height:36px;border:0;background:none;border-radius:50%;font-size:1.6rem;line-height:1;color:var(--gris);cursor:pointer}
+  .tiroir-fermer:hover{background:var(--fond)}
+  .tiroir-lien{display:block;padding:14px 16px;font-weight:700;font-size:1rem;color:var(--texte);border-bottom:1px solid var(--bord)}
+  .tiroir-lien:hover{color:var(--bleu)}
+  .tiroir-lien.bientot{display:flex;justify-content:space-between;align-items:center;gap:8px;color:var(--gris)}
+  .tiroir-lien.sep{border-top:1px solid var(--bord);margin-top:8px}
+  .tiroir-lien.apropos{border-bottom:0}
+  .tiroir-lien small{font-size:.7rem;font-weight:400;background:var(--fond);border:1px solid var(--bord);border-radius:50px;padding:2px 8px;flex-shrink:0}
+  .tiroir-lien.kits{display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .tiroir-lien.kits small{background:var(--bleu);border-color:var(--bleu);color:#fff;font-weight:700}
+  .cat{border-bottom:1px solid var(--bord)}
+  .cat-btn{width:100%;display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border:0;background:none;font:inherit;font-weight:700;font-size:1rem;color:var(--texte);cursor:pointer;text-align:left}
+  .plus{width:26px;height:26px;border-radius:50%;background:var(--bleu-clair);color:var(--bleu);display:grid;place-items:center;font-size:1.15rem;line-height:1;flex-shrink:0}
+  .sous{padding-bottom:8px}
+  .sous a{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 16px 10px 28px;font-size:.95rem;color:var(--texte)}
+  .sous a:hover{background:var(--fond);color:var(--bleu)}
+  .sous a.bientot{color:var(--gris)}
+  .sous small{font-size:.7rem;background:var(--fond);border:1px solid var(--bord);border-radius:50px;padding:2px 8px;flex-shrink:0}
+  @media (prefers-reduced-motion:reduce){.tiroir{transition:none}}
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <div class="gauche"><button type="button" class="menu-btn" id="menu-btn" aria-label="Ouvrir le menu" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button></div>
+    <a href="./" class="logo"><span class="logo-icone"><svg viewBox="0 0 36 36" aria-hidden="true"><defs><linearGradient id="lg-tete" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6A9BF0"/><stop offset="1" stop-color="#3563BF"/></linearGradient></defs><rect width="36" height="36" rx="10" fill="url(#lg-tete)"/><rect x="7.5" y="11" width="13" height="17" rx="2" fill="#fff" opacity=".35"/><path d="M14 7.5h7.5l5.5 5.5v13.5a2 2 0 0 1-2 2H14a2 2 0 0 1-2-2v-17a2 2 0 0 1 2-2z" fill="#fff"/><path d="M21.5 7.5v3.5a2 2 0 0 0 2 2H27z" fill="#C9DAF8"/><path d="M15.3 19.6l2.7 2.7 5-5.6" fill="none" stroke="#3563BF" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="logo-mot">Docu<span>Prêt</span></span></a>
+    <a href="./" class="retour" aria-label="Revenir à la page précédente">←<span> Retour</span></a>
+  </div>
+</header>
+
+<div class="tiroir-fond" id="tiroir-fond" hidden></div>
+<nav class="tiroir" id="tiroir" aria-label="Menu des documents" aria-hidden="true">
+  <div class="tiroir-tete">
+    <span class="tiroir-titre"><span class="logo-icone"><svg viewBox="0 0 36 36" aria-hidden="true"><defs><linearGradient id="lg-menu" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6A9BF0"/><stop offset="1" stop-color="#3563BF"/></linearGradient></defs><rect width="36" height="36" rx="10" fill="url(#lg-menu)"/><rect x="7.5" y="11" width="13" height="17" rx="2" fill="#fff" opacity=".35"/><path d="M14 7.5h7.5l5.5 5.5v13.5a2 2 0 0 1-2 2H14a2 2 0 0 1-2-2v-17a2 2 0 0 1 2-2z" fill="#fff"/><path d="M21.5 7.5v3.5a2 2 0 0 0 2 2H27z" fill="#C9DAF8"/><path d="M15.3 19.6l2.7 2.7 5-5.6" fill="none" stroke="#3563BF" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="logo-mot">Docu<span>Prêt</span></span></span>
+    <button type="button" class="tiroir-fermer" aria-label="Fermer le menu">×</button>
+  </div>
+  <a href="./" class="tiroir-lien">Accueil</a>
+  <a href="facture.html?type=facture" class="tiroir-lien">Facture</a>
+  <a href="facture.html?type=devis" class="tiroir-lien">Devis</a>
+    <div class="cat">
+      <button type="button" class="cat-btn" aria-expanded="false"><span>Outils</span><span class="plus">+</span></button>
+      <div class="sous" hidden>
+        <a href="tva.html">Calculatrice TVA</a>
+        <a href="simulateur.html">Simulateur auto-entrepreneur</a>
+        <a href="tampon.html">Tampon d'entreprise</a>
+      </div>
+    </div>
+    <a href="kits.html" class="tiroir-lien kits">Kits de l'artisan<small>Pro</small></a>
+    <div class="cat">
+      <button type="button" class="cat-btn" aria-expanded="false"><span>Pro</span><span class="plus">+</span></button>
+      <div class="sous" hidden>
+        <a href="facture.html?type=facture">Facture</a>
+        <a href="facture.html?type=devis">Devis</a>
+        <a href="facture.html?type=recu">Reçu de paiement</a>
+        <a href="facture.html?type=avoir">Avoir</a>
+      </div>
+    </div>
+    <div class="cat">
+      <button type="button" class="cat-btn" aria-expanded="false"><span>Travail</span><span class="plus">+</span></button>
+      <div class="sous" hidden>
+        <a href="lettre.html?type=demission">Lettre de démission</a>
+        <a href="lettre.html?type=motivation">Lettre de motivation</a>
+        <a href="lettre.html?type=conges">Demande de congés</a>
+        <a href="lettre.html?type=rupture">Rupture conventionnelle</a>
+      </div>
+    </div>
+    <div class="cat">
+      <button type="button" class="cat-btn" aria-expanded="false"><span>Logement</span><span class="plus">+</span></button>
+      <div class="sous" hidden>
+        <a href="lettre.html?type=hebergement">Attestation d'hébergement</a>
+        <a href="lettre.html?type=preavis">Préavis locataire</a>
+        <a href="lettre.html?type=quittance">Quittance de loyer</a>
+      </div>
+    </div>
+    <div class="cat">
+      <button type="button" class="cat-btn" aria-expanded="false"><span>Vie courante</span><span class="plus">+</span></button>
+      <div class="sous" hidden>
+        <a href="lettre.html?type=honneur">Attestation sur l'honneur</a>
+        <a href="lettre.html?type=resiliation">Lettre de résiliation</a>
+        <a href="lettre.html?type=reclamation">Réclamation / mise en demeure</a>
+        <a href="lettre.html?type=procuration">Procuration</a>
+      </div>
+    </div>
+  <a href="logo.html" class="tiroir-lien">Créer votre logo</a>
+  <a href="carte.html" class="tiroir-lien">Créer votre carte de visite</a>
+  <a href="#" class="tiroir-lien bientot sep">Aide aux démarches<small>Bientôt</small></a>
+  <a href="#" class="tiroir-lien bientot apropos">À propos<small>Bientôt</small></a>
+</nav>
+
+
+<main class="wrap">
+
+  <!-- PUB : remplacer ce bloc par le code Google AdSense -->
+  <div class="pub">Publicité</div>
+
+  <h1>Créer votre carte de visite</h1>
+
+  <div class="zone">
+
+    <!-- Aperçu toujours visible -->
+    <div class="colle">
+      <div class="apercu">
+        <div class="scene" id="scene"><canvas id="toile" aria-label="Aperçu de la carte de visite"></canvas></div>
+        <div class="outils">
+          <div class="faces" id="faces" role="tablist" aria-label="Face de la carte">
+            <button type="button" data-f="recto">Recto</button>
+            <button type="button" data-f="verso">Verso</button>
+          </div>
+          <button type="button" class="outil" id="annuler" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14L4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-3"/></svg>Annuler</button>
+          <button type="button" class="outil" id="hasard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M8 8h.01M16 8h.01M12 12h.01M8 16h.01M16 16h.01"/></svg>Au hasard</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="reglages">
+      <div class="onglets" id="onglets" role="tablist">
+        <button type="button" data-o="modeles">Modèles</button>
+        <button type="button" data-o="infos">Infos</button>
+        <button type="button" data-o="logo">Logo</button>
+        <button type="button" data-o="style">Style</button>
+        <button type="button" data-o="verso">Verso</button>
+      </div>
+
+      <section class="panneau" data-p="modeles">
+        <div class="modeles" id="modeles"></div>
+      </section>
+
+      <section class="panneau" data-p="infos" hidden>
+        <div class="groupe"><span class="titre">Prénom et nom</span><input type="text" id="nom" maxlength="40" autocomplete="name" aria-label="Prénom et nom"></div>
+        <div class="groupe"><span class="titre">Métier ou fonction</span><input type="text" id="fonction" maxlength="50" aria-label="Métier ou fonction"></div>
+        <div class="groupe"><span class="titre">Entreprise</span><input type="text" id="entreprise" maxlength="40" autocomplete="organization" aria-label="Entreprise"></div>
+        <div class="deux empile">
+          <div class="groupe"><span class="titre">Téléphone</span><input type="tel" id="tel" maxlength="25" autocomplete="tel" aria-label="Téléphone"></div>
+          <div class="groupe"><span class="titre">E-mail</span><input type="email" id="email" maxlength="60" autocomplete="email" aria-label="E-mail"></div>
+        </div>
+        <div class="groupe"><span class="titre">Site web</span><input type="text" id="site" maxlength="60" aria-label="Site web"></div>
+        <div class="groupe"><span class="titre">Adresse</span><input type="text" id="adresse" maxlength="80" autocomplete="street-address" aria-label="Adresse"></div>
+        <p class="note">Une case vide n'apparaît pas sur la carte.</p>
+      </section>
+
+      <section class="panneau" data-p="logo" hidden>
+        <div class="logo-zone">
+          <div class="logo-boite" id="logo-boite"></div>
+          <div class="boutons">
+            <button type="button" class="btn-petit" id="logo-ajouter">Ajouter un logo</button>
+            <button type="button" class="btn-petit" id="logo-factures" hidden>Logo de mes factures</button>
+            <button type="button" class="btn-petit" id="logo-retirer" hidden>Retirer</button>
+          </div>
+          <input type="file" id="logo-fichier" accept="image/*" hidden>
+        </div>
+        <div class="groupe"><span class="titre">Taille du logo <output id="v-logoTaille"></output></span><input type="range" id="logoTaille" min="0.6" max="1.4" step="0.05" aria-label="Taille du logo"></div>
+        <p class="note">Pas de logo ? <a href="logo.html">Créez-le gratuitement</a>, il sera repris ici.</p>
+      </section>
+
+      <section class="panneau" data-p="style" hidden>
+        <div class="groupe"><span class="titre">Couleur</span><div class="couleurs" id="pal-couleur"></div></div>
+        <div class="groupe"><span class="titre">Police du nom</span><div class="polices" id="polices"></div></div>
+        <div class="groupe"><span class="titre">Taille du nom <output id="v-tailleNom"></output></span><input type="range" id="tailleNom" min="0.7" max="1.3" step="0.05" aria-label="Taille du nom"></div>
+        <label class="coche"><input type="checkbox" id="icones"> Petites icônes devant les coordonnées</label>
+        <label class="coche"><input type="checkbox" id="majuscules"> Nom en majuscules</label>
+      </section>
+
+      <section class="panneau" data-p="verso" hidden>
+        <div class="groupe"><span class="titre">Style du verso</span>
+          <div class="seg" id="versoStyle"><button type="button" data-v="couleur">Couleur</button><button type="button" data-v="qr">QR code</button><button type="button" data-v="blanc">Blanc</button></div>
+        </div>
+        <div class="groupe"><span class="titre">Phrase au verso (facultatif)</span><input type="text" id="slogan" maxlength="50" aria-label="Phrase au verso"></div>
+        <div class="groupe" id="g-qr"><span class="titre">Lien du QR code</span><input type="text" id="qr" maxlength="200" placeholder="Votre site web par défaut" aria-label="Lien du QR code">
+          <p class="note">Par exemple votre site, votre page d'avis Google ou vos réseaux sociaux.</p>
+        </div>
+      </section>
+
+      <a href="kits.html" class="pro-encart" aria-label="Voir les kits Pro">
+        <span class="pro-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 4.2L18 9l-4.2 1.8L12 15l-1.8-4.2L6 9l4.2-1.8z"/><path d="M19 15l.8 1.7 1.7.8-1.7.8L19 20l-.8-1.7-1.7-.8 1.7-.8z"/></svg></span>
+        <span class="pro-txt"><b>Vos cartes en qualité imprimeur</b><span>PDF vectoriel avec fond perdu et traits de coupe, comme l'attendent les imprimeurs.</span><span class="pro-points"><i>✓ PDF vectoriel</i><i>✓ Fond perdu</i><i>✓ Logo en vectoriel</i></span></span>
+        <span class="pro-prix">dès<b>4,99 €</b><em>Voir les kits</em></span>
+      </a>
+      <!-- PUB : remplacer ce bloc par le code Google AdSense -->
+      <div class="pub" style="margin-top:16px">Publicité</div>
+    </div>
+  </div>
+
+  <section class="faq">
+    <h2>Questions fréquentes</h2>
+    <details><summary>Comment imprimer mes cartes chez moi ?</summary>
+      <p>Choisissez « Imprimer chez moi » : vous obtenez un PDF avec 10 cartes par page A4, la page 1 pour le recto et la page 2 pour le verso. Imprimez en recto verso, à 100 % (sans ajuster à la page), sur du papier épais de 250 à 350 g, puis découpez le long des reperes.</p></details>
+    <details><summary>Et pour un imprimeur en ligne ?</summary>
+      <p>Choisissez « Pour un imprimeur » : vous obtenez un PDF au format 85 × 55 mm, recto et verso, en haute qualité.</p></details>
+    <details><summary>Quelle est la taille d'une carte de visite ?</summary>
+      <p>Le format standard en France est 85 × 55 mm, celui de la plupart des cartes bancaires.</p></details>
+    <details><summary>Mes informations sont-elles enregistrées ?</summary>
+      <p>Uniquement sur votre appareil, pour les retrouver à votre prochaine visite. Rien n'est envoyé sur nos serveurs.</p></details>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap pied">
+    <span>© 2026 DocuPrêt</span>
+    <nav><a href="mentions-legales.html">Mentions légales</a><a href="mentions-legales.html#confidentialite">Confidentialité</a><a href="mentions-legales.html#cookies">Cookies</a><a href="mentions-legales.html#contact">Contact</a></nav>
+  </div>
+</footer>
+
+<div class="barre">
+  <div class="barre-in">
+    <button type="button" class="btn-sec" id="pdf-imprimeur">Pour un imprimeur</button>
+    <button type="button" class="btn" id="pdf-planche">Imprimer chez moi</button>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+(function(){
+  const $ = id => document.getElementById(id);
+  const CLE = 'docufacile_carte', CLE_FACTURE = 'docufacile_v1';
+  const W = 1020, H = 660;   // 85 × 55 mm, environ 300 points par pouce
+
+  const COULEURS = ['#4A7BD0','#1E2A42','#1F6FB2','#2FA36B','#1BA1A1','#7B5CC4','#D9537F','#D9534F','#E07A2E','#C9A227','#8B5E3C','#3F5469'];
+  const POLICES = {
+    'Montserrat':       {nom:'Moderne',   poids:700, maj:false, k:1},
+    'Playfair Display': {nom:'Élégant',   poids:700, maj:false, k:1},
+    'Bebas Neue':       {nom:'Impact',    poids:400, maj:true,  k:1.28},
+    'Roboto Slab':      {nom:'Solide',    poids:700, maj:false, k:.95},
+    'Nunito':           {nom:'Arrondi',   poids:800, maj:false, k:1},
+    'Pacifico':         {nom:'Manuscrit', poids:400, maj:false, k:.9}
+  };
+  const MODELES = [
+    {k:'classique', nom:'Classique'}, {k:'bande', nom:'Bande'}, {k:'centre', nom:'Centré'},
+    {k:'moderne', nom:'Moderne'}, {k:'minimal', nom:'Minimal'}, {k:'sombre', nom:'Sombre'}
+  ];
+  const SANS = 'system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif';
+
+  // Petites icônes (grille 24 × 24)
+  const ICO = {
+    tel:  ['M5 4h3l2 5-2.5 1.5a11 11 0 0 0 6 6L15 14l5 2v3a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2'],
+    email:['M3 6h18v12H3z', 'M3 7l9 6 9-6'],
+    site: ['M3 12a9 9 0 1 0 18 0a9 9 0 1 0-18 0', 'M3 12h18', 'M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18'],
+    adresse: ['M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z', 'M12 7.5a2 2 0 1 1 0 4a2 2 0 1 1 0-4z']
+  };
+
+  // ---------- Couleurs ----------
+  const rgb = hex => { const h = String(hex).replace('#',''); return [0,2,4].map(i => parseInt(h.substr(i,2),16) || 0); };
+  const melange = (hex, cible, f) => { const a = rgb(hex), b = rgb(cible); return '#' + a.map((v, i) => Math.round(v + (b[i] - v) * f).toString(16).padStart(2, '0')).join(''); };
+  const lum = hex => { const [r,g,b] = rgb(hex).map(c => { c /= 255; return c <= .03928 ? c/12.92 : Math.pow((c+.055)/1.055, 2.4); }); return 0.2126*r + 0.7152*g + 0.0722*b; };
+  const surCouleur = hex => lum(hex) > 0.45 ? '#1E2A42' : '#FFFFFF';
+  // Couleur assez foncée pour du texte sur fond blanc
+  const lisible = hex => { let c = hex, i = 0; while (lum(c) > 0.3 && i < 8){ c = melange(c, '#000000', .15); i++; } return c; };
+
+  // ---------- État ----------
+  const defaut = () => ({
+    nom:'Jean Dupont', fonction:'Plombier chauffagiste', entreprise:'Dupont Plomberie',
+    tel:'06 12 34 56 78', email:'contact@dupont-plomberie.fr', site:'dupont-plomberie.fr', adresse:'12 rue des Lilas, 69003 Lyon',
+    slogan:'Dépannage 7 jours sur 7', qr:'', modele:'classique', couleur:'#1F6FB2', police:'Montserrat',
+    tailleNom:1, logoTaille:1, icones:true, majuscules:false, versoStyle:'couleur', logo:'', face:'recto', onglet:'modeles', exemple:true
+  });
+  let etat = defaut();
+  let facture = null;
+  try{ facture = JSON.parse(localStorage.getItem(CLE_FACTURE)); }catch(e){}
+  try{
+    const s = JSON.parse(localStorage.getItem(CLE));
+    if (s && typeof s === 'object') etat = Object.assign(defaut(), s);
+    else if (facture && facture.em && (facture.em.nom || facture.em.tel || facture.em.email)){
+      // Première visite : on reprend les infos déjà saisies sur les factures
+      const em = facture.em;
+      Object.assign(etat, {
+        nom:'', fonction:'', entreprise: em.nom || '', tel: em.tel || '', email: em.email || '', site:'',
+        adresse: [em.adresse, em.cpville].filter(Boolean).join(', '), slogan:'', logo: em.logo || '', exemple:false
+      });
+    }
+  }catch(e){}
+  if (!POLICES[etat.police]) etat.police = 'Montserrat';
+  const sauver = () => { try{ localStorage.setItem(CLE, JSON.stringify(etat)); }catch(e){} };
+
+  // Logo chargé en image
+  let imageLogo = null;
+  function chargerLogo(rappel){
+    if (!etat.logo){ imageLogo = null; rappel && rappel(); return; }
+    const img = new Image();
+    img.onload = () => { imageLogo = img; rappel && rappel(); };
+    img.onerror = () => { imageLogo = null; rappel && rappel(); };
+    img.src = etat.logo;
+  }
+
+  // ---------- Outils de dessin ----------
+  function police(s, taille){ const p = POLICES[s.police]; return `${p.poids} ${Math.round(taille * p.k)}px "${s.police}", ${SANS}`; }
+  function nomAffiche(s){ const p = POLICES[s.police]; return (p.maj || s.majuscules) ? s.nom.toUpperCase() : s.nom; }
+
+  // Écrit un texte en réduisant sa taille s'il est trop long
+  function ecrire(ctx, txt, x, y, opt){
+    if (!txt) return 0;
+    let taille = opt.taille;
+    const font = t => opt.famille ? opt.famille(t) : `${opt.poids || 600} ${t}px ${SANS}`;
+    ctx.font = font(taille);
+    if (opt.max) while (ctx.measureText(txt).width > opt.max && taille > 10){ taille -= 1; ctx.font = font(taille); }
+    ctx.fillStyle = opt.couleur; ctx.textAlign = opt.align || 'left'; ctx.textBaseline = 'alphabetic';
+    ctx.fillText(txt, x, y);
+    return ctx.measureText(txt).width;
+  }
+
+  function icone(ctx, cle, x, y, taille, couleur){
+    ctx.save(); ctx.translate(x, y); ctx.scale(taille / 24, taille / 24);
+    ctx.lineWidth = 2; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.strokeStyle = couleur;
+    ICO[cle].forEach(d => ctx.stroke(new Path2D(d)));
+    ctx.restore();
+  }
+
+  function coordonnees(s){ return ['tel', 'email', 'site', 'adresse'].filter(k => String(s[k] || '').trim()).map(k => ({k, txt: String(s[k]).trim()})); }
+
+  // Liste de coordonnées, alignées à gauche, au centre ou à droite
+  function contacts(ctx, s, x, y, pas, opt){
+    const liste = coordonnees(s), t = opt.taille || 27, ic = s.icones ? t + 12 : 0;
+    liste.forEach((c, i) => {
+      const yy = y + i * pas;
+      ctx.font = `500 ${t}px ${SANS}`;
+      let largeur = Math.min(ctx.measureText(c.txt).width, opt.max - ic);
+      let x0 = opt.align === 'center' ? x - (largeur + ic) / 2 : opt.align === 'right' ? x - largeur - ic : x;
+      if (s.icones) icone(ctx, c.k, x0, yy - t * 0.85, t, opt.icone);
+      ecrire(ctx, c.txt, x0 + ic, yy, {taille: t, poids: 500, couleur: opt.couleur, max: opt.max - ic});
+    });
+    return liste.length;
+  }
+
+  function placerImage(ctx, img, x, y, w, h, align){
+    const r = Math.min(w / img.width, h / img.height);
+    const dw = img.width * r, dh = img.height * r;
+    const dx = align === 'center' ? x + (w - dw) / 2 : align === 'right' ? x + w - dw : x;
+    ctx.drawImage(img, dx, y + (h - dh) / 2, dw, dh);
+    return {dw, dh, dx};
+  }
+
+  function rectArrondi(ctx, x, y, w, h, r){
+    ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
+  }
+
+  // Texte sur deux lignes au besoin (nom d'entreprise dans une bande)
+  function ecrireBloc(ctx, txt, cx, cy, maxL, taille, famille, couleur){
+    ctx.font = famille(taille);
+    if (ctx.measureText(txt).width <= maxL) return ecrire(ctx, txt, cx, cy + taille * 0.35, {taille, famille, couleur, align: 'center', max: maxL});
+    const mots = txt.split(' '); let l1 = '', l2 = '';
+    for (const m of mots){ if (!l2 && ctx.measureText((l1 + ' ' + m).trim()).width <= maxL) l1 = (l1 + ' ' + m).trim(); else l2 = (l2 + ' ' + m).trim(); }
+    const t2 = taille * 0.82;
+    ecrire(ctx, l1, cx, cy - t2 * 0.25, {taille: t2, famille, couleur, align: 'center', max: maxL});
+    ecrire(ctx, l2, cx, cy + t2 * 0.95, {taille: t2, famille, couleur, align: 'center', max: maxL});
+  }
+
+  // ---------- Recto ----------
+  function recto(ctx, s, img){
+    const c = s.couleur, fonce = melange(c, '#000000', .3), cTexte = lisible(c);
+    const nomTxt = nomAffiche(s), tN = 62 * s.tailleNom, lg = s.logoTaille;
+    const fam = t => police(s, t);
+    ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, W, H);
+
+    if (s.modele === 'classique'){
+      ctx.fillStyle = c; ctx.fillRect(0, H - 24, W, 24);
+      if (img) placerImage(ctx, img, 70, 56, 300 * lg, 120 * lg, 'left');
+      else if (s.entreprise) ecrire(ctx, s.entreprise.toUpperCase(), 70, 112, {taille: 32, poids: 800, couleur: cTexte, max: W - 140});
+      ecrire(ctx, nomTxt, 70, 318, {taille: tN, famille: fam, couleur: '#1E2A42', max: W - 140});
+      ecrire(ctx, s.fonction, 70, 366, {taille: 29, poids: 600, couleur: cTexte, max: W - 140});
+      contacts(ctx, s, 70, 452, 44, {taille: 27, couleur: '#3B4558', icone: c, max: W - 140});
+    }
+    else if (s.modele === 'bande'){
+      const B = 360;
+      const g = ctx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, c); g.addColorStop(1, fonce);
+      ctx.fillStyle = g; ctx.fillRect(0, 0, B, H);
+      if (img){ ctx.fillStyle = '#FFFFFF'; rectArrondi(ctx, 50, H / 2 - 110 * lg, B - 100, 220 * lg, 22); ctx.fill(); placerImage(ctx, img, 70, H / 2 - 95 * lg, B - 140, 190 * lg, 'center'); }
+      else if (s.entreprise) ecrireBloc(ctx, s.entreprise, B / 2, H / 2, B - 70, 48, fam, surCouleur(c));
+      const x = B + 56, max = W - x - 50;
+      ecrire(ctx, nomTxt, x, 196, {taille: tN * 0.88, famille: fam, couleur: '#1E2A42', max});
+      ecrire(ctx, s.fonction, x, 242, {taille: 27, poids: 600, couleur: cTexte, max});
+      ctx.fillStyle = c; ctx.fillRect(x, 278, 60, 5);
+      contacts(ctx, s, x, 352, 48, {taille: 26, couleur: '#3B4558', icone: c, max});
+    }
+    else if (s.modele === 'centre'){
+      ctx.fillStyle = c; ctx.fillRect(0, 0, W, 14); ctx.fillRect(0, H - 14, W, 14);
+      if (img){ placerImage(ctx, img, W / 2 - 170 * lg, 46, 340 * lg, 110 * lg, 'center'); }
+      else if (s.entreprise) ecrire(ctx, s.entreprise.toUpperCase(), W / 2, 110, {taille: 30, poids: 800, couleur: cTexte, align: 'center', max: W - 140});
+      ecrire(ctx, nomTxt, W / 2, 262, {taille: tN, famille: fam, couleur: '#1E2A42', align: 'center', max: W - 140});
+      ecrire(ctx, s.fonction, W / 2, 308, {taille: 28, poids: 600, couleur: cTexte, align: 'center', max: W - 140});
+      ctx.fillStyle = c; ctx.fillRect(W / 2 - 40, 338, 80, 4);
+      contacts(ctx, s, W / 2, 410, 44, {taille: 26, couleur: '#3B4558', icone: c, max: W - 160, align: 'center'});
+    }
+    else if (s.modele === 'moderne'){
+      const B = 250;
+      const g = ctx.createLinearGradient(0, 0, W, B); g.addColorStop(0, c); g.addColorStop(1, fonce);
+      ctx.fillStyle = g; ctx.fillRect(0, 0, W, B);
+      const blanc = surCouleur(c);
+      if (img){ ctx.fillStyle = '#FFFFFF'; rectArrondi(ctx, 60, 50, 290 * lg, 150, 18); ctx.fill(); placerImage(ctx, img, 76, 62, 290 * lg - 32, 126, 'center'); }
+      else if (s.entreprise) ecrire(ctx, s.entreprise.toUpperCase(), 66, 140, {taille: 38, poids: 800, couleur: blanc, max: W - 132});
+      ecrire(ctx, nomTxt, 66, 340, {taille: tN, famille: fam, couleur: '#1E2A42', max: W - 132});
+      ecrire(ctx, s.fonction, 66, 386, {taille: 28, poids: 600, couleur: cTexte, max: W - 132});
+      // Deux colonnes de coordonnées
+      const liste = coordonnees(s), col = (W - 132) / 2;
+      liste.forEach((it, i) => {
+        const x = 66 + (i % 2) * col, y = 478 + Math.floor(i / 2) * 56;
+        const unSeul = {...s, tel: '', email: '', site: '', adresse: ''}; unSeul[it.k] = it.txt;
+        contacts(ctx, unSeul, x, y, 0, {taille: 25, couleur: '#3B4558', icone: c, max: col - 20});
+      });
+    }
+    else if (s.modele === 'minimal'){
+      ctx.fillStyle = c; ctx.fillRect(70, 70, 44, 44);
+      if (img) placerImage(ctx, img, W - 70 - 240 * lg, 56, 240 * lg, 90 * lg, 'right');
+      ecrire(ctx, nomTxt, 70, 236, {taille: tN * 1.08, famille: fam, couleur: '#1E2A42', max: W - 140});
+      ecrire(ctx, s.fonction, 70, 282, {taille: 28, poids: 600, couleur: cTexte, max: W - 140});
+      if (s.entreprise) ecrire(ctx, s.entreprise, 70, 324, {taille: 26, poids: 500, couleur: '#6B778C', max: W - 140});
+      const n = coordonnees(s).length;
+      contacts(ctx, s, W - 70, H - 64 - (n - 1) * 42, 42, {taille: 25, couleur: '#3B4558', icone: c, max: 600, align: 'right'});
+    }
+    else if (s.modele === 'sombre'){
+      ctx.fillStyle = '#1B2333'; ctx.fillRect(0, 0, W, H);
+      const accent = lum(c) < 0.12 ? melange(c, '#FFFFFF', .45) : c;
+      ctx.fillStyle = accent; ctx.fillRect(70, 84, 6, H - 168);
+      if (img){ ctx.fillStyle = '#FFFFFF'; rectArrondi(ctx, W - 70 - 250 * lg, 64, 250 * lg, 110 * lg, 14); ctx.fill(); placerImage(ctx, img, W - 70 - 250 * lg + 14, 74, 250 * lg - 28, 110 * lg - 20, 'center'); }
+      else if (s.entreprise) ecrire(ctx, s.entreprise.toUpperCase(), W - 70, 120, {taille: 26, poids: 800, couleur: accent, align: 'right', max: 460});
+      ecrire(ctx, nomTxt, 106, 262, {taille: tN, famille: fam, couleur: '#FFFFFF', max: W - 180});
+      ecrire(ctx, s.fonction, 106, 308, {taille: 28, poids: 600, couleur: accent, max: W - 180});
+      contacts(ctx, s, 106, 400, 44, {taille: 26, couleur: '#D6DCE6', icone: accent, max: W - 180});
+    }
+  }
+
+  // ---------- Verso ----------
+  function texteQR(s){
+    const q = String(s.qr || '').trim();
+    if (q) return q;
+    if (s.site) return /^https?:\/\//i.test(s.site) ? s.site : 'https://' + s.site.trim();
+    if (s.tel) return 'tel:' + s.tel.replace(/\s/g, '');
+    return '';
+  }
+
+  function dessinerQR(ctx, txt, x, y, taille){
+    ctx.fillStyle = '#FFFFFF'; ctx.fillRect(x, y, taille, taille);
+    if (!txt || !window.qrcode){
+      ctx.strokeStyle = '#C9D2E0'; ctx.lineWidth = 3; ctx.setLineDash([10, 8]); ctx.strokeRect(x + 4, y + 4, taille - 8, taille - 8); ctx.setLineDash([]);
+      ecrire(ctx, txt ? 'QR code' : 'Ajoutez un lien', x + taille / 2, y + taille / 2 + 8, {taille: 24, couleur: '#98A2B3', align: 'center'});
+      return;
+    }
+    try{
+      if (qrcode.stringToBytesFuncs && qrcode.stringToBytesFuncs['UTF-8']) qrcode.stringToBytes = qrcode.stringToBytesFuncs['UTF-8'];
+      const q = qrcode(0, 'M'); q.addData(txt, 'Byte'); q.make();
+      const n = q.getModuleCount(), m = taille / (n + 2);
+      ctx.fillStyle = '#111827';
+      for (let r = 0; r < n; r++) for (let col = 0; col < n; col++) if (q.isDark(r, col)) ctx.fillRect(x + (col + 1) * m, y + (r + 1) * m, Math.ceil(m), Math.ceil(m));
+    }catch(e){ ecrire(ctx, 'Lien trop long', x + taille / 2, y + taille / 2, {taille: 22, couleur: '#C2412F', align: 'center'}); }
+  }
+
+  function verso(ctx, s, img){
+    const c = s.couleur, fonce = melange(c, '#000000', .3), cTexte = lisible(c), lg = s.logoTaille;
+    const fam = t => police(s, t);
+    if (s.versoStyle === 'couleur'){
+      const g = ctx.createLinearGradient(0, 0, W, H); g.addColorStop(0, c); g.addColorStop(1, fonce);
+      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+      const blanc = surCouleur(c);
+      if (img){ const bw = 460 * lg, bh = 230 * lg; ctx.fillStyle = '#FFFFFF'; rectArrondi(ctx, (W - bw) / 2, H / 2 - bh / 2 - 30, bw, bh, 26); ctx.fill(); placerImage(ctx, img, (W - bw) / 2 + 24, H / 2 - bh / 2 - 12, bw - 48, bh - 36, 'center'); }
+      else ecrireBloc(ctx, s.entreprise || s.nom || '', W / 2, H / 2 - 30, W - 160, 64, fam, blanc);
+      if (s.slogan) ecrire(ctx, s.slogan, W / 2, H - 92, {taille: 30, poids: 600, couleur: blanc, align: 'center', max: W - 140});
+    }
+    else if (s.versoStyle === 'qr'){
+      ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, W, H);
+      ctx.fillStyle = c; ctx.fillRect(0, 0, 26, H);
+      const T = 380; dessinerQR(ctx, texteQR(s), 86, (H - T) / 2, T);
+      const x = 520, max = W - x - 50;
+      ecrire(ctx, 'SCANNEZ-MOI', x, 220, {taille: 22, poids: 700, couleur: '#6B778C', max});
+      if (img) placerImage(ctx, img, x, 250, max, 110 * lg, 'left');
+      else ecrire(ctx, s.entreprise || s.nom, x, 320, {taille: 50, famille: fam, couleur: '#1E2A42', max});
+      if (s.site) ecrire(ctx, s.site, x, 412, {taille: 27, poids: 600, couleur: cTexte, max});
+      if (s.slogan) ecrire(ctx, s.slogan, x, 456, {taille: 25, poids: 500, couleur: '#6B778C', max});
+    }
+    else {
+      ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, W, H);
+      ctx.fillStyle = c; ctx.fillRect(W / 2 - 50, H - 70, 100, 6);
+      if (img) placerImage(ctx, img, W / 2 - 230 * lg, H / 2 - 120 * lg - 20, 460 * lg, 240 * lg, 'center');
+      else ecrireBloc(ctx, s.entreprise || s.nom || '', W / 2, H / 2 - 20, W - 160, 64, fam, cTexte);
+      if (s.slogan) ecrire(ctx, s.slogan, W / 2, H - 112, {taille: 28, poids: 600, couleur: '#6B778C', align: 'center', max: W - 140});
+    }
+  }
+
+  // Dessine une face sur une toile, à l'échelle voulue
+  function dessinerFace(toile, s, face, echelle){
+    toile.width = Math.round(W * echelle); toile.height = Math.round(H * echelle);
+    const ctx = toile.getContext('2d');
+    ctx.setTransform(echelle, 0, 0, echelle, 0, 0);
+    (face === 'verso' ? verso : recto)(ctx, s, imageLogo);
+  }
+
+  // ---------- Interface ----------
+  function palette(id, cle){
+    $(id).innerHTML = COULEURS.map(c => `<button type="button" class="pastille" data-v="${c}" style="background:${c}" aria-label="Couleur ${c}"></button>`).join('')
+      + `<label class="perso" title="Couleur personnalisée"><input type="color" id="${id}-perso" aria-label="Couleur personnalisée"></label>`;
+  }
+  palette('pal-couleur', 'couleur');
+  $('polices').innerHTML = Object.entries(POLICES).map(([f, p]) => `<button type="button" data-v="${f}"><b style="font-family:'${f}',sans-serif">Aa</b><small>${p.nom}</small></button>`).join('');
+  $('modeles').innerHTML = MODELES.map(m => `<button type="button" class="modele" data-v="${m.k}"><canvas></canvas>${m.nom}</button>`).join('');
+
+  const CHAMPS = ['nom', 'fonction', 'entreprise', 'tel', 'email', 'site', 'adresse', 'slogan', 'qr'];
+  const CURSEURS = {tailleNom: v => Math.round(v * 100) + ' %', logoTaille: v => Math.round(v * 100) + ' %'};
+
+  // Annuler
+  const historique = []; let dernierMemo = 0;
+  function avant(regrouper){
+    const j = JSON.stringify(etat), t = Date.now();
+    if (regrouper && t - dernierMemo < 800){ dernierMemo = t; return; }
+    dernierMemo = t;
+    if (historique[historique.length - 1] !== j){ historique.push(j); if (historique.length > 60) historique.shift(); }
+    $('annuler').disabled = false;
+  }
+
+  function synchroniser(){
+    CHAMPS.forEach(k => { $(k).value = etat[k] || ''; });
+    Object.keys(CURSEURS).forEach(k => { $(k).value = etat[k]; });
+    $('icones').checked = etat.icones; $('majuscules').checked = etat.majuscules;
+  }
+
+  function majInterface(){
+    const on = (sel, v) => document.querySelectorAll(sel).forEach(b => b.classList.toggle('on', b.dataset.v === v));
+    on('#modeles .modele', etat.modele); on('#polices [data-v]', etat.police); on('#versoStyle [data-v]', etat.versoStyle);
+    document.querySelectorAll('#pal-couleur .pastille').forEach(b => b.classList.toggle('on', b.dataset.v.toLowerCase() === String(etat.couleur).toLowerCase()));
+    document.querySelectorAll('#faces button').forEach(b => b.classList.toggle('on', b.dataset.f === etat.face));
+    document.querySelectorAll('#onglets button').forEach(b => b.classList.toggle('on', b.dataset.o === etat.onglet));
+    document.querySelectorAll('.panneau').forEach(p => { p.hidden = p.dataset.p !== etat.onglet; });
+    Object.entries(CURSEURS).forEach(([k, f]) => { $('v-' + k).textContent = f(etat[k]); });
+    $('g-qr').hidden = etat.versoStyle !== 'qr';
+    $('logo-boite').innerHTML = etat.logo ? `<img src="${etat.logo}" alt="Votre logo">` : '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></svg>';
+    $('logo-retirer').hidden = !etat.logo;
+    $('logo-ajouter').textContent = etat.logo ? 'Changer' : 'Ajouter un logo';
+    const logoFactures = facture && facture.em && facture.em.logo;
+    $('logo-factures').hidden = !logoFactures || logoFactures === etat.logo;
+  }
+
+  // Aperçu net sur tous les écrans, sans jamais déborder
+  function rendreApercu(){
+    const scene = $('scene');
+    const maxL = Math.max(120, Math.min(scene.clientWidth, document.documentElement.clientWidth - 32) - 16);
+    const maxH = Math.max(80, scene.clientHeight - 16);
+    const largeur = Math.floor(Math.min(maxL, maxH * W / H));
+    const dpr = Math.min(window.devicePixelRatio || 1, 3);
+    const toile = $('toile');
+    dessinerFace(toile, etat, etat.face, largeur * dpr / W);
+    toile.style.width = largeur + 'px'; toile.style.height = Math.round(largeur * H / W) + 'px';
+  }
+
+  let minuterieModeles;
+  function rendreModeles(){
+    clearTimeout(minuterieModeles);
+    minuterieModeles = setTimeout(() => {
+      if (etat.onglet !== 'modeles') return;
+      document.querySelectorAll('#modeles .modele').forEach(b => dessinerFace(b.querySelector('canvas'), {...etat, modele: b.dataset.v}, 'recto', 0.26));
+    }, 120);
+  }
+
+  function rendre(){ rendreApercu(); majInterface(); rendreModeles(); sauver(); }
+  window.addEventListener('resize', rendreApercu);
+
+  // Saisie
+  CHAMPS.forEach(k => $(k).addEventListener('input', e => { avant(true); etat[k] = e.target.value; etat.exemple = false; rendre(); }));
+  Object.keys(CURSEURS).forEach(k => $(k).addEventListener('input', e => { avant(true); etat[k] = parseFloat(e.target.value); rendre(); }));
+  ['icones', 'majuscules'].forEach(k => $(k).addEventListener('change', e => { avant(); etat[k] = e.target.checked; rendre(); }));
+  $('modeles').addEventListener('click', e => { const b = e.target.closest('[data-v]'); if (!b) return; avant(); etat.modele = b.dataset.v; etat.face = 'recto'; rendre(); });
+  $('polices').addEventListener('click', e => { const b = e.target.closest('[data-v]'); if (!b) return; avant(); etat.police = b.dataset.v; rendre(); });
+  $('versoStyle').addEventListener('click', e => { const b = e.target.closest('[data-v]'); if (!b) return; avant(); etat.versoStyle = b.dataset.v; etat.face = 'verso'; rendre(); });
+  $('pal-couleur').addEventListener('click', e => { const b = e.target.closest('.pastille'); if (!b) return; avant(); etat.couleur = b.dataset.v; rendre(); });
+  $('pal-couleur-perso').addEventListener('input', e => { avant(true); etat.couleur = e.target.value; rendre(); });
+  $('faces').addEventListener('click', e => { const b = e.target.closest('[data-f]'); if (!b) return; etat.face = b.dataset.f; rendre(); });
+  $('onglets').addEventListener('click', e => {
+    const b = e.target.closest('[data-o]'); if (!b) return;
+    etat.onglet = b.dataset.o;
+    if (etat.onglet === 'verso') etat.face = 'verso';
+    else if (etat.onglet === 'infos' || etat.onglet === 'modeles') etat.face = 'recto';
+    rendre();
+  });
+  // Vider l'exemple au premier clic dans les infos
+  $('onglets').addEventListener('click', e => {
+    const b = e.target.closest('[data-o="infos"]');
+    if (b && etat.exemple){
+      const vide = document.createElement('div');
+      vide.className = 'alerte'; vide.textContent = "Ce sont des infos d'exemple : remplacez-les par les vôtres.";
+      document.body.appendChild(vide); setTimeout(() => vide.remove(), 3000);
+    }
+  });
+
+  // Logo
+  $('logo-ajouter').addEventListener('click', () => $('logo-fichier').click());
+  $('logo-retirer').addEventListener('click', () => { avant(); etat.logo = ''; chargerLogo(rendre); });
+  $('logo-factures').addEventListener('click', () => { avant(); etat.logo = facture.em.logo; chargerLogo(rendre); });
+  $('logo-fichier').addEventListener('change', e => {
+    const f = e.target.files[0]; if (!f) return;
+    const lecteur = new FileReader();
+    lecteur.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        const r = Math.min(1, 900 / img.width, 450 / img.height);
+        const cv = document.createElement('canvas');
+        cv.width = Math.round(img.width * r); cv.height = Math.round(img.height * r);
+        cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);
+        avant(); etat.logo = cv.toDataURL('image/png'); chargerLogo(rendre);
+      };
+      img.src = lecteur.result;
+    };
+    lecteur.readAsDataURL(f);
+    e.target.value = '';
+  });
+
+  // Outils
+  $('annuler').addEventListener('click', () => {
+    if (!historique.length) return;
+    const garder = {onglet: etat.onglet, face: etat.face};
+    etat = Object.assign(JSON.parse(historique.pop()), garder);
+    $('annuler').disabled = !historique.length;
+    synchroniser(); chargerLogo(rendre);
+  });
+  const auHasard = l => l[Math.floor(Math.random() * l.length)];
+  $('hasard').addEventListener('click', () => {
+    avant();
+    Object.assign(etat, {modele: auHasard(MODELES).k, couleur: auHasard(COULEURS), police: auHasard(Object.keys(POLICES)),
+      versoStyle: auHasard(['couleur', 'couleur', 'qr', 'blanc']), icones: Math.random() < 0.7, majuscules: Math.random() < 0.2, tailleNom: 1});
+    synchroniser(); rendre();
+  });
+
+  function alerte(txt){
+    const a = document.createElement('div'); a.className = 'alerte'; a.textContent = txt;
+    document.body.appendChild(a); setTimeout(() => a.remove(), 3500);
+  }
+
+  // ---------- PDF ----------
+  function imageFace(face){
+    const cv = document.createElement('canvas');
+    dessinerFace(cv, etat, face, 1);
+    return cv.toDataURL('image/jpeg', 0.95);
+  }
+  const nomFichier = () => 'carte-visite-' + (String(etat.entreprise || etat.nom || 'docufacile').trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'docufacile');
+
+  function verifier(){
+    if (!window.jspdf){ alerte("Le PDF n'a pas pu être préparé. Vérifiez votre connexion et réessayez."); return false; }
+    if (!String(etat.nom).trim() && !String(etat.entreprise).trim()){ alerte('Ajoutez au moins votre nom ou votre entreprise.'); etat.onglet = 'infos'; rendre(); return false; }
+    return true;
+  }
+
+  // 10 cartes par page A4 : recto en page 1, verso en page 2
+  $('pdf-planche').addEventListener('click', () => {
+    if (!verifier()) return;
+    const {jsPDF} = window.jspdf;
+    const doc = new jsPDF({unit: 'mm', format: 'a4', orientation: 'portrait'});
+    const L = 85, Hh = 55, mx = (210 - 2 * L) / 2, my = (297 - 5 * Hh) / 2;
+    const reperes = () => {
+      doc.setDrawColor(170); doc.setLineWidth(0.15);
+      [mx, mx + L, mx + 2 * L].forEach(x => { doc.line(x, 0, x, my - 2); doc.line(x, 297 - my + 2, x, 297); });
+      for (let r = 0; r <= 5; r++){ const y = my + r * Hh; doc.line(0, y, mx - 2, y); doc.line(210 - mx + 2, y, 210, y); }
+    };
+    ['recto', 'verso'].forEach((face, p) => {
+      if (p) doc.addPage();
+      const img = imageFace(face);
+      for (let r = 0; r < 5; r++) for (let c = 0; c < 2; c++) doc.addImage(img, 'JPEG', mx + c * L, my + r * Hh, L, Hh, face, 'FAST');
+      reperes();
+    });
+    doc.save(nomFichier() + '-a4.pdf');
+  });
+
+  // Une carte au format 85 × 55 mm, recto puis verso
+  $('pdf-imprimeur').addEventListener('click', () => {
+    if (!verifier()) return;
+    const {jsPDF} = window.jspdf;
+    const doc = new jsPDF({unit: 'mm', format: [85, 55], orientation: 'landscape'});
+    doc.addImage(imageFace('recto'), 'JPEG', 0, 0, 85, 55);
+    doc.addPage([85, 55], 'landscape');
+    doc.addImage(imageFace('verso'), 'JPEG', 0, 0, 85, 55);
+    doc.save(nomFichier() + '-imprimeur.pdf');
+  });
+
+  synchroniser(); chargerLogo(rendre);
+  if (document.fonts){
+    Promise.all(Object.entries(POLICES).map(([f, p]) => document.fonts.load(`${p.poids} 40px "${f}"`).catch(() => {})))
+      .then(() => rendre());
+  }
+})();
+</script>
+<script>
+(function(){
+  // Toujours arriver en haut de la page (sauf avec le bouton retour du navigateur)
+  try{
+    const nav = performance.getEntriesByType('navigation')[0];
+    if (!nav || nav.type !== 'back_forward'){
+      if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+      const enHaut = () => { if (!location.hash){ window.scrollTo(0, 0); try{ document.body.scrollIntoView({block: 'start'}); }catch(e){} } };
+      enHaut();
+      window.addEventListener('load', enHaut);
+    }
+  }catch(e){}
+})();
+(function(){
+  const t = document.getElementById('tiroir'), f = document.getElementById('tiroir-fond'), b = document.getElementById('menu-btn');
+  function ouvrir(){ t.classList.add('ouvert'); f.hidden = false; t.setAttribute('aria-hidden','false'); b.setAttribute('aria-expanded','true'); }
+  function fermer(){ t.classList.remove('ouvert'); f.hidden = true; t.setAttribute('aria-hidden','true'); b.setAttribute('aria-expanded','false'); }
+  b.addEventListener('click', ouvrir);
+  f.addEventListener('click', fermer);
+  t.querySelector('.tiroir-fermer').addEventListener('click', fermer);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') fermer(); });
+  // Flèche de retour : revient à la page précédente du site, sinon à l'accueil
+  document.querySelectorAll('.retour').forEach(a => a.addEventListener('click', e => {
+    let interne = false;
+    try{ interne = !!document.referrer && new URL(document.referrer).origin === location.origin; }catch(err){}
+    if (interne && history.length > 1){ e.preventDefault(); history.back(); }
+  }));
+  t.addEventListener('click', e => {
+    const c = e.target.closest('.cat-btn');
+    if (c){
+      const s = c.nextElementSibling, ouvrirSous = s.hidden;
+      s.hidden = !ouvrirSous;
+      c.setAttribute('aria-expanded', String(ouvrirSous));
+      c.querySelector('.plus').textContent = ouvrirSous ? '−' : '+';
+      return;
+    }
+    const a = e.target.closest('a');
+    if (a && a.classList.contains('bientot')) e.preventDefault();
+    else if (a) fermer();
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kits de l'artisan : logo, carte de visite et documents pro – DocuPrêt</title>
+<meta name="description" content="Logo en haute définition et en format vectoriel, carte de visite qualité imprimeur, signature d'e-mail, tampon et kit réseaux sociaux : choisissez votre kit dès 4,99 €.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%2036%2036%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22f%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%236A9BF0%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%233563BF%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%2236%22%20height%3D%2236%22%20rx%3D%2210%22%20fill%3D%22url%28%23f%29%22/%3E%3Crect%20x%3D%227.5%22%20y%3D%2211%22%20width%3D%2213%22%20height%3D%2217%22%20rx%3D%222%22%20fill%3D%22%23fff%22%20opacity%3D%22.35%22/%3E%3Cpath%20d%3D%22M14%207.5h7.5l5.5%205.5v13.5a2%202%200%200%201-2%202H14a2%202%200%200%201-2-2v-17a2%202%200%200%201%202-2z%22%20fill%3D%22%23fff%22/%3E%3Cpath%20d%3D%22M21.5%207.5v3.5a2%202%200%200%200%202%202H27z%22%20fill%3D%22%23C9DAF8%22/%3E%3Cpath%20d%3D%22M15.3%2019.6l2.7%202.7%205-5.6%22%20fill%3D%22none%22%20stroke%3D%22%233563BF%22%20stroke-width%3D%222.3%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22/%3E%3C/svg%3E">
+<style>
+  :root{
+    --bleu:#4A7BD0; --bleu-fonce:#2F5DAE; --bleu-clair:#EAF1FB;
+    --fond:#F6F9FD; --blanc:#FFFFFF; --texte:#1E2A42; --gris:#6B778C; --bord:#E2E8F2;
+    --vert:#2FA36B; --or:#C9A227; --or-clair:#FBF4DD; --nuit:#1B2333; --rayon:16px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{color-scheme:light}
+  input,select,textarea{color:var(--texte);-webkit-text-fill-color:var(--texte);caret-color:var(--texte)}
+  input::placeholder,textarea::placeholder{color:#98A2B3;-webkit-text-fill-color:#98A2B3;opacity:1}
+  [hidden]{display:none!important}
+  html,body{overflow-x:clip}
+  body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--fond);color:var(--texte);line-height:1.5}
+  a{color:inherit;text-decoration:none}
+  button{font-family:inherit;cursor:pointer}
+  .wrap{max-width:1100px;margin:0 auto;padding:0 16px}
+
+  header{background:var(--blanc);border-bottom:1px solid var(--bord);position:sticky;top:0;z-index:15}
+  .nav{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;height:60px}
+  .nav > :last-child{justify-self:end}
+  .logo{display:flex;align-items:center;gap:9px;justify-self:center}
+  .logo-icone{display:block;width:34px;height:34px;flex-shrink:0}
+  .logo-icone svg{display:block;width:100%;height:100%}
+  .logo-mot{font-weight:800;font-size:1.22rem;letter-spacing:-.02em;color:var(--texte)}
+  .logo-mot span{color:var(--bleu)}
+  .retour{font-size:.9rem;color:var(--gris)}
+  .retour:hover{color:var(--bleu)}
+  @media (max-width:560px){.retour{font-size:1.3rem;padding:4px 6px}.retour span{display:none}}
+
+  .pub{margin:14px auto;max-width:728px;min-height:90px;border:1px dashed #C9D4E6;border-radius:10px;background:#FBFCFE;display:grid;place-items:center;color:#A3AEC2;font-size:.75rem;letter-spacing:.05em;text-transform:uppercase}
+  @media (max-width:640px){.pub{min-height:60px;max-width:340px}}
+
+  /* En-tête de page */
+  .hero{display:grid;gap:18px;align-items:center;padding:10px 0 4px}
+  @media (min-width:860px){.hero{grid-template-columns:1.1fr .9fr}}
+  .hero h1{font-size:clamp(1.55rem,5vw,2.4rem);line-height:1.15;font-weight:800;text-wrap:balance}
+  .hero h1 span{color:var(--bleu)}
+  .hero p{color:var(--gris);font-size:1.05rem;margin-top:8px;max-width:52ch}
+  .atouts{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+  .atout{display:flex;align-items:center;gap:5px;background:var(--blanc);border:1px solid var(--bord);border-radius:50px;padding:5px 11px;font-size:.84rem;color:var(--gris);white-space:nowrap}
+  .atout svg{width:14px;height:14px;stroke:var(--vert)}
+
+  /* Illustration : les éléments d'un kit */
+  .vitrine{position:relative;height:210px;max-width:430px;width:100%;margin:0 auto}
+  .v-carte,.v-logo,.v-tel,.v-tampon{position:absolute;background:#fff;box-shadow:0 8px 26px rgba(30,42,66,.16);border-radius:10px}
+  .v-carte{left:4%;top:26px;width:58%;aspect-ratio:85/55;padding:14px;transform:rotate(-6deg);border-left:10px solid #1F6FB2}
+  .v-carte i,.v-tel i{display:block;height:6px;border-radius:3px;background:#E3E8F0;margin-bottom:7px}
+  .v-carte b{display:block;width:62%;height:11px;border-radius:3px;background:#1E2A42;margin:14px 0 6px}
+  .v-carte em{display:block;width:40%;height:7px;border-radius:3px;background:#1F6FB2;margin-bottom:14px}
+  .v-logo{right:6%;top:0;width:34%;aspect-ratio:1;display:grid;place-items:center;transform:rotate(5deg)}
+  .v-logo svg{width:62%;height:62%}
+  .v-tel{right:2%;bottom:0;width:27%;aspect-ratio:9/16;border-radius:14px;padding:10px 8px;transform:rotate(4deg);border:3px solid var(--nuit)}
+  .v-tel span{display:block;width:34px;height:34px;border-radius:50%;background:#1F6FB2;margin:4px auto 8px}
+  .v-tampon{left:26%;bottom:4px;width:28%;aspect-ratio:1;border-radius:50%;display:grid;place-items:center;transform:rotate(-12deg);background:rgba(255,255,255,.92)}
+  .v-tampon div{width:84%;height:84%;border-radius:50%;border:3px solid #C2412F;display:grid;place-items:center;color:#C2412F;font-weight:800;font-size:.62rem;letter-spacing:.08em;text-align:center;line-height:1.2}
+
+  /* Offres */
+  .offres{display:grid;gap:14px;margin-top:22px;grid-template-columns:repeat(auto-fit,minmax(235px,1fr));align-items:stretch}
+  .offre{position:relative;background:var(--blanc);border:1.5px solid var(--bord);border-radius:var(--rayon);padding:20px 18px 18px;display:flex;flex-direction:column;gap:12px;min-width:0}
+  .offre.reco{border-color:var(--bleu);box-shadow:0 10px 30px rgba(74,123,208,.16)}
+  .ruban{position:absolute;top:-12px;left:18px;background:var(--bleu);color:#fff;font-size:.72rem;font-weight:700;letter-spacing:.04em;padding:3px 10px;border-radius:50px}
+  .offre h2{font-size:1.15rem}
+  .offre .pour{font-size:.86rem;color:var(--gris);margin-top:-6px}
+  .prix{display:flex;align-items:baseline;gap:6px}
+  .prix b{font-size:2.1rem;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1}
+  .prix small{color:var(--gris);font-size:.82rem}
+  .inclus{list-style:none;display:grid;gap:7px;flex:1}
+  .inclus li{display:flex;gap:8px;align-items:flex-start;font-size:.92rem;line-height:1.35}
+  .inclus li svg{width:17px;height:17px;flex-shrink:0;margin-top:1px;stroke:var(--vert)}
+  .inclus li.ajout{font-weight:650;color:var(--bleu-fonce)}
+  .inclus li.ajout svg{stroke:var(--bleu)}
+  .acheter{display:block;text-align:center;width:100%;border:0;border-radius:50px;padding:12px 16px;font-weight:700;font-size:.95rem;background:var(--fond);color:var(--texte);border:1.5px solid var(--bord)}
+  .acheter:hover{border-color:var(--bleu);color:var(--bleu)}
+  .offre.reco .acheter{background:var(--bleu);color:#fff;border-color:var(--bleu)}
+  .offre.reco .acheter:hover{background:var(--bleu-fonce)}
+  .bientot-note{font-size:.75rem;color:var(--gris);text-align:center;margin-top:-4px}
+
+  /* Premium */
+  .offre.premium{background:linear-gradient(160deg,#232D42,#141A27);border-color:#2E3A55;color:#EEF2F8}
+  .offre.premium .pour,.offre.premium .prix small,.offre.premium .bientot-note{color:#A9B4C8}
+  .offre.premium .inclus li svg{stroke:var(--or)}
+  .offre.premium .inclus li.ajout{color:#F3DD8E}
+  .offre.premium .inclus li.ajout svg{stroke:#F3DD8E}
+  .offre.premium .ruban{background:var(--or);color:#2A2205}
+  .offre.premium .acheter{background:transparent;color:#F3DD8E;border-color:#5C5233}
+  .offre.premium .prix b{color:#F3DD8E}
+
+  /* Comparatif */
+  section{margin-top:34px}
+  section > h2{font-size:1.3rem;margin-bottom:12px;text-wrap:balance}
+  .table-boite{overflow-x:auto;background:var(--blanc);border:1px solid var(--bord);border-radius:var(--rayon)}
+  table{width:100%;border-collapse:collapse;font-size:.92rem;min-width:520px}
+  th,td{padding:11px 14px;border-bottom:1px solid var(--bord);text-align:center}
+  th:first-child,td:first-child{text-align:left}
+  thead th{font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;color:var(--gris);font-weight:700;background:var(--fond)}
+  thead th.pro{color:var(--bleu-fonce)}
+  tr:last-child td{border-bottom:0}
+  td.non{color:#B6BFCD}
+  td.oui svg{width:18px;height:18px;stroke:var(--vert)}
+  td small{color:var(--gris)}
+
+  /* Vectoriel expliqué */
+  .vecto{display:grid;gap:16px;align-items:center;background:var(--blanc);border:1px solid var(--bord);border-radius:var(--rayon);padding:18px}
+  @media (min-width:760px){.vecto{grid-template-columns:1fr 1fr}}
+  .vecto p{color:var(--gris);font-size:.95rem;margin-top:6px}
+  .loupes{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .loupe{display:grid;gap:6px;justify-items:center;font-size:.82rem;color:var(--gris);font-weight:600}
+  .loupe svg{width:100%;max-width:170px;aspect-ratio:1;border-radius:14px;background:var(--fond);border:1px solid var(--bord)}
+  .loupe.bien{color:var(--vert)}
+
+  .faq details{background:var(--blanc);border:1px solid var(--bord);border-radius:12px;margin-bottom:8px}
+  .faq summary{padding:12px 16px;font-weight:600;cursor:pointer;font-size:.95rem}
+  .faq p{padding:0 16px 14px;color:var(--gris);font-size:.92rem}
+
+  .gratuit{margin-top:28px;background:var(--bleu-clair);border-radius:var(--rayon);padding:18px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
+  .gratuit p{font-weight:600;max-width:52ch}
+  .gratuit p span{display:block;font-weight:400;color:var(--gris);font-size:.9rem}
+  .liens{display:flex;flex-wrap:wrap;gap:8px}
+  .lien{background:var(--blanc);border:1.5px solid #C5D6F2;border-radius:50px;padding:8px 14px;font-size:.9rem;font-weight:600;color:var(--bleu-fonce)}
+  .lien:hover{border-color:var(--bleu)}
+
+  .alerte{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--texte);color:#fff;padding:11px 16px;border-radius:12px;font-size:.9rem;z-index:30;max-width:90vw;text-align:center}
+
+  footer{background:var(--blanc);border-top:1px solid var(--bord);margin-top:28px;padding:22px 0;font-size:.85rem;color:var(--gris)}
+  .pied{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
+  .pied nav{display:flex;flex-wrap:wrap;gap:16px}
+  /* Menu latéral */
+  .gauche{display:flex;align-items:center}
+  .menu-btn{width:40px;height:40px;border:0;background:none;border-radius:10px;display:grid;place-items:center;margin-left:-8px;cursor:pointer;color:var(--texte)}
+  .menu-btn:hover,.menu-btn:focus-visible{background:var(--bleu-clair)}
+  .menu-btn svg{width:24px;height:24px;stroke:currentColor}
+  .tiroir-fond{position:fixed;inset:0;background:rgba(20,28,45,.45);z-index:50}
+  .tiroir{position:fixed;top:0;left:0;bottom:0;width:min(300px,84vw);background:var(--blanc);z-index:51;transform:translateX(-102%);transition:transform .25s ease;overflow-y:auto;padding-bottom:calc(20px + env(safe-area-inset-bottom,0px));box-shadow:4px 0 24px rgba(0,0,0,.12)}
+  .tiroir.ouvert{transform:none}
+  .tiroir-tete{display:flex;align-items:center;justify-content:space-between;height:60px;padding:env(safe-area-inset-top,0px) 10px 0 16px;border-bottom:1px solid var(--bord)}
+  .tiroir-titre{display:flex;align-items:center;gap:9px}
+  .tiroir-fermer{width:36px;height:36px;border:0;background:none;border-radius:50%;font-size:1.6rem;line-height:1;color:var(--gris);cursor:pointer}
+  .tiroir-fermer:hover{background:var(--fond)}
+  .tiroir-lien{display:block;padding:14px 16px;font-weight:700;font-size:1rem;color:var(--texte);border-bottom:1px solid var(--bord)}
+  .tiroir-lien:hover{color:var(--bleu)}
+  .tiroir-lien.bientot{display:flex;justify-content:space-between;align-items:center;gap:8px;color:var(--gris)}
+  .tiroir-lien.sep{border-top:1px solid var(--bord);margin-top:8px}
+  .tiroir-lien.apropos{border-bottom:0}
+  .tiroir-lien small{font-size:.7rem;font-weight:400;background:var(--fond);border:1px solid var(--bord);border-radius:50px;padding:2px 8px;flex-shrink:0}
+  .tiroir-lien.kits{display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .tiroir-lien.kits small{background:var(--bleu);border-color:var(--bleu);color:#fff;font-weight:700}
+  .cat{border-bottom:1px solid var(--bord)}
+  .cat-btn{width:100%;display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border:0;background:none;font:inherit;font-weight:700;font-size:1rem;color:var(--texte);cursor:pointer;text-align:left}
+  .plus{width:26px;height:26px;border-radius:50%;background:var(--bleu-clair);color:var(--bleu);display:grid;place-items:center;font-size:1.15rem;line-height:1;flex-shrink:0}
+  .sous{padding-bottom:8px}
+  .sous a{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 16px 10px 28px;font-size:.95rem;color:var(--texte)}
+  .sous a:hover{background:var(--fond);color:var(--bleu)}
+  .sous a.bientot{color:var(--gris)}
+  .sous small{font-size:.7rem;background:var(--fond);border:1px solid var(--bord);border-radius:50px;padding:2px 8px;flex-shrink:0}
+  @media (prefers-reduced-motion:reduce){.tiroir{transition:none}}
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <div class="gauche"><button type="button" class="menu-btn" id="menu-btn" aria-label="Ouvrir le menu" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button></div>
+    <a href="./" class="logo"><span class="logo-icone"><svg viewBox="0 0 36 36" aria-hidden="true"><defs><linearGradient id="lg-tete" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6A9BF0"/><stop offset="1" stop-color="#3563BF"/></linearGradient></defs><rect width="36" height="36" rx="10" fill="url(#lg-tete)"/><rect x="7.5" y="11" width="13" height="17" rx="2" fill="#fff" opacity=".35"/><path d="M14 7.5h7.5l5.5 5.5v13.5a2 2 0 0 1-2 2H14a2 2 0 0 1-2-2v-17a2 2 0 0 1 2-2z" fill="#fff"/><path d="M21.5 7.5v3.5a2 2 0 0 0 2 2H27z" fill="#C9DAF8"/><path d="M15.3 19.6l2.7 2.7 5-5.6" fill="none" stroke="#3563BF" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="logo-mot">Docu<span>Prêt</span></span></a>
+    <a href="./" class="retour" aria-label="Revenir à la page précédente">←<span> Retour</span></a>
+  </div>
+</header>
+
+<div class="tiroir-fond" id="tiroir-fond" hidden></div>
+<nav class="tiroir" id="tiroir" aria-label="Menu des documents" aria-hidden="true">
+  <div class="tiroir-tete">
+    <span class="tiroir-titre"><span class="logo-icone"><svg viewBox="0 0 36 36" aria-hidden="true"><defs><linearGradient id="lg-menu" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6A9BF0"/><stop offset="1" stop-color="#3563BF"/></linearGradient></defs><rect width="36" height="36" rx="10" fill="url(#lg-menu)"/><rect x="7.5" y="11" width="13" height="17" rx="2" fill="#fff" opacity=".35"/><path d="M14 7.5h7.5l5.5 5.5v13.5a2 2 0 0 1-2 2H14a2 2 0 0 1-2-2v-17a2 2 0 0 1 2-2z" fill="#fff"/><path d="M21.5 7.5v3.5a2 2 0 0 0 2 2H27z" fill="#C9DAF8"/><path d="M15.3 19.6l2.7 2.7 5-5.6" fill="none" stroke="#3563BF" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="logo-mot">Docu<span>Prêt</span></span></span>
+    <button type="button" class="tiroir-fermer" aria-label="Fermer le menu">×</button>
+  </div>
+  <a href="./" class="tiroir-lien">Accueil</a>
+  <a href="facture.html?type=facture" class="tiroir-lien">Facture</a>
+  <a href="facture.html?type=devis" class="tiroir-lien">Devis</a>
+    <div class="cat">
+      <button type="button" class="cat-btn" aria-expanded="false"><span>Outils</span><span class="plus">+</span></button>
+      <div class="sous" hidden>
+        <a href="tva.html">Calculatrice TVA</a>
+        <a href="simulateur.html">Simulateur auto-entrepreneur</a>
+        <a href="tampon.html">Tampon d'entreprise</a>
+      </div>
+    </div>
+    <a href="kits.html" class="tiroir-lien kits">Kits de l'artisan<small>Pro</small></a>
+    <div class="cat">
+      <button type="button" class="cat-btn" aria-expanded="false"><span>Pro</span><span class="plus">+</span></button>
+      <div class="sous" hidden>
+        <a href="facture.html?type=facture">Facture</a>
+        <a href="facture.html?type=devis">Devis</a>
+        <a href="facture.html?type=recu">Reçu de paiement</a>
+        <a href="facture.html?type=avoir">Avoir</a>
+      </div>
+    </div>
+    <div class="cat">
+      <button type="button" class="cat-btn" aria-expanded="false"><span>Travail</span><span class="plus">+</span></button>
+      <div class="sous" hidden>
+        <a href="lettre.html?type=demission">Lettre de démission</a>
+        <a href="lettre.html?type=motivation">Lettre de motivation</a>
+        <a href="lettre.html?type=conges">Demande de congés</a>
+        <a href="lettre.html?type=rupture">Rupture conventionnelle</a>
+      </div>
+    </div>
+    <div class="cat">
+      <button type="button" class="cat-btn" aria-expanded="false"><span>Logement</span><span class="plus">+</span></button>
+      <div class="sous" hidden>
+        <a href="lettre.html?type=hebergement">Attestation d'hébergement</a>
+        <a href="lettre.html?type=preavis">Préavis locataire</a>
+        <a href="lettre.html?type=quittance">Quittance de loyer</a>
+      </div>
+    </div>
+    <div class="cat">
+      <button type="button" class="cat-btn" aria-expanded="false"><span>Vie courante</span><span class="plus">+</span></button>
+      <div class="sous" hidden>
+        <a href="lettre.html?type=honneur">Attestation sur l'honneur</a>
+        <a href="lettre.html?type=resiliation">Lettre de résiliation</a>
+        <a href="lettre.html?type=reclamation">Réclamation / mise en demeure</a>
+        <a href="lettre.html?type=procuration">Procuration</a>
+      </div>
+    </div>
+  <a href="logo.html" class="tiroir-lien">Créer votre logo</a>
+  <a href="carte.html" class="tiroir-lien">Créer votre carte de visite</a>
+  <a href="#" class="tiroir-lien bientot sep">Aide aux démarches<small>Bientôt</small></a>
+  <a href="#" class="tiroir-lien bientot apropos">À propos<small>Bientôt</small></a>
+</nav>
+
+
+<main class="wrap">
+
+  <!-- PUB : remplacer ce bloc par le code Google AdSense -->
+  <div class="pub">Publicité</div>
+
+  <section class="hero" style="margin-top:0">
+    <div>
+      <h1>Kits de l'artisan : <span>une image pro</span> prête à imprimer</h1>
+      <p>Votre logo et vos cartes de visite en qualité imprimeur, avec tout ce qu'il faut pour vos documents et vos réseaux.</p>
+      <div class="atouts">
+        <span class="atout"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>Format vectoriel</span>
+        <span class="atout"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>Paiement unique</span>
+        <span class="atout"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>Fichiers tout de suite</span>
+      </div>
+    </div>
+    <div class="vitrine" aria-hidden="true">
+      <div class="v-carte"><b></b><em></em><i style="width:70%"></i><i style="width:55%"></i><i style="width:62%"></i></div>
+      <div class="v-logo"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#1F6FB2"/><path d="M12 6s4 4.3 4 7.3a4 4 0 0 1-8 0C8 10.3 12 6 12 6z" fill="none" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg></div>
+      <div class="v-tampon"><div>DUPONT<br>PLOMBERIE</div></div>
+      <div class="v-tel"><span></span><i></i><i style="width:70%"></i><i style="width:85%"></i></div>
+    </div>
+  </section>
+
+  <div class="offres" id="offres">
+
+    <article class="offre">
+      <h2>Essentiel</h2>
+      <p class="pour">Votre logo, prêt pour tous les supports</p>
+      <div class="prix"><b>4,99 €</b><small>une fois</small></div>
+      <ul class="inclus">
+        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>Logo en haute définition</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>Format vectoriel SVG et PDF, agrandissable sans perte</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>Versions fond clair et fond sombre</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>Fond transparent</li>
+      </ul>
+      <a href="kit.html?k=essentiel" class="acheter">Créer mon kit</a>
+    </article>
+
+    <article class="offre">
+      <h2>Pro</h2>
+      <p class="pour">Le logo et la carte de visite</p>
+      <div class="prix"><b>9,99 €</b><small>une fois</small></div>
+      <ul class="inclus">
+        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>Tout le kit Essentiel</li>
+        <li class="ajout"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Carte de visite qualité imprimeur, en PDF vectoriel</li>
+        <li class="ajout"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Fond perdu et traits de coupe pour l'imprimeur</li>
+        <li class="ajout"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Signature d'e-mail avec votre logo</li>
+      </ul>
+      <a href="kit.html?k=pro" class="acheter">Créer mon kit</a>
+    </article>
+
+    <article class="offre reco">
+      <span class="ruban">Recommandé</span>
+      <h2>Complet</h2>
+      <p class="pour">Toute votre image d'entreprise</p>
+      <div class="prix"><b>14,99 €</b><small>une fois</small></div>
+      <ul class="inclus">
+        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>Tout le kit Pro</li>
+        <li class="ajout"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Tampon d'entreprise à vos couleurs</li>
+        <li class="ajout"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Kit réseaux sociaux : photo de profil et bannières</li>
+        <li class="ajout"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Factures et devis assortis à votre logo</li>
+        <li class="ajout"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Icône pour votre site web</li>
+      </ul>
+      <a href="kit.html?k=complet" class="acheter">Créer mon kit</a>
+    </article>
+
+    <article class="offre premium">
+      <span class="ruban">Bientôt</span>
+      <h2>Premium</h2>
+      <p class="pour">Tous les kits et les avantages du site</p>
+      <div class="prix"><b>29,99 €</b><small>une fois</small></div>
+      <ul class="inclus">
+        <li><svg viewBox="0 0 24 24" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>Tout le kit Complet</li>
+        <li class="ajout"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Site sans publicité</li>
+        <li class="ajout"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Vos factures et clients sauvegardés sur tous vos appareils</li>
+        <li class="ajout"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Modifications de votre logo et de vos cartes pendant 1 an</li>
+        <li class="ajout"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Modèles exclusifs</li>
+      </ul>
+      <button type="button" class="acheter" data-kit="Premium" data-plus-tard>Bientôt disponible</button>
+      <p class="bientot-note">Arrive avec les comptes DocuPrêt.</p>
+    </article>
+  </div>
+
+  <section>
+    <h2>Gratuit ou kit : ce qui change</h2>
+    <div class="table-boite">
+      <table>
+        <thead><tr><th>Ce que vous obtenez</th><th>Gratuit</th><th class="pro">Avec un kit</th></tr></thead>
+        <tbody>
+          <tr><td>Logo en image</td><td class="oui"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></td><td class="oui"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></td></tr>
+          <tr><td>Logo en haute définition</td><td class="non">—</td><td class="oui"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></td></tr>
+          <tr><td>Format vectoriel SVG et PDF</td><td class="non">—</td><td class="oui"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></td></tr>
+          <tr><td>Impression grand format (véhicule, enseigne, vêtements)</td><td class="non">—</td><td class="oui"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></td></tr>
+          <tr><td>Carte de visite à imprimer</td><td><small>PDF standard</small></td><td><small>PDF vectoriel, fond perdu</small></td></tr>
+          <tr><td>Signature d'e-mail, tampon, réseaux sociaux</td><td class="non">—</td><td class="oui"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>Le format vectoriel, c'est quoi ?</h2>
+    <div class="vecto">
+      <div>
+        <b>Une image normale est faite de petits carrés.</b>
+        <p>Quand on l'agrandit pour une enseigne, un camion ou un t-shirt, les carrés se voient et le logo devient flou. Un fichier vectoriel est fait de formes calculées : il reste net à n'importe quelle taille. C'est le format que demandent les imprimeurs et les poseurs d'enseignes.</p>
+      </div>
+      <div class="loupes" aria-hidden="true">
+        <div class="loupe">
+          <svg viewBox="0 0 20 20" shape-rendering="crispEdges">
+            <g fill="#1F6FB2">
+              <rect x="7" y="2" width="6" height="2"/><rect x="5" y="4" width="10" height="2"/><rect x="3" y="6" width="14" height="2"/>
+              <rect x="3" y="8" width="14" height="4"/><rect x="3" y="12" width="14" height="2"/><rect x="5" y="14" width="10" height="2"/><rect x="7" y="16" width="6" height="2"/>
+            </g>
+            <g fill="#fff"><rect x="9" y="6" width="2" height="2"/><rect x="7" y="8" width="2" height="2"/><rect x="11" y="8" width="2" height="2"/><rect x="7" y="10" width="6" height="2"/></g>
+          </svg>
+          Image normale agrandie
+        </div>
+        <div class="loupe bien">
+          <svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="8" fill="#1F6FB2"/><path d="M10 5.6s3 3.2 3 5.4a3 3 0 0 1-6 0c0-2.2 3-5.4 3-5.4z" fill="none" stroke="#fff" stroke-width="1.1" stroke-linejoin="round"/></svg>
+          Vectoriel agrandi
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PUB : remplacer ce bloc par le code Google AdSense -->
+  <div class="pub" style="margin-top:28px">Publicité</div>
+
+  <section class="faq">
+    <h2>Questions fréquentes</h2>
+    <details><summary>Comment je reçois mes fichiers ?</summary>
+      <p>Vous créez d'abord votre logo et votre carte de visite gratuitement. Après le paiement, les fichiers du kit se téléchargent tout de suite, à partir de votre création.</p></details>
+    <details><summary>Est-ce un abonnement ?</summary>
+      <p>Non. Chaque kit se paie une seule fois, sans engagement.</p></details>
+    <details><summary>Mon logo est-il unique ?</summary>
+      <p>Votre logo est créé par vous, avec votre nom, vos couleurs et votre police. Les icônes de base viennent de notre bibliothèque et peuvent être utilisées par d'autres personnes : le logo n'est donc pas exclusif et nous ne pouvons pas garantir qu'il pourra être déposé comme marque.</p></details>
+    <details><summary>Puis-je être remboursé ?</summary>
+      <p>Les fichiers sont livrés immédiatement après le paiement. En commandant, vous acceptez cette livraison immédiate et renoncez au délai de rétractation de 14 jours prévu pour les contenus numériques. En cas de problème avec vos fichiers, contactez-nous.</p></details>
+    <details><summary>Le paiement est-il sécurisé ?</summary>
+      <p>Oui, il sera réalisé par un prestataire de paiement spécialisé. Nous ne voyons jamais vos coordonnées bancaires.</p></details>
+  </section>
+
+  <div class="gratuit">
+    <p>Commencez gratuitement<span>Créez votre logo et votre carte de visite, puis choisissez votre kit.</span></p>
+    <div class="liens">
+      <a class="lien" href="logo.html">Créer mon logo</a>
+      <a class="lien" href="carte.html">Créer ma carte de visite</a>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <div class="wrap pied">
+    <span>© 2026 DocuPrêt</span>
+    <nav><a href="mentions-legales.html">Mentions légales</a><a href="mentions-legales.html#confidentialite">Confidentialité</a><a href="mentions-legales.html#cookies">Cookies</a><a href="mentions-legales.html#contact">Contact</a></nav>
+  </div>
+</footer>
+
+<script>
+(function(){
+  // En attendant le paiement : un message clair au lieu d'un faux achat
+  document.getElementById('offres').addEventListener('click', e => {
+    const b = e.target.closest('button.acheter'); if (!b) return;
+    const deja = document.querySelector('.alerte'); if (deja) deja.remove();
+    const a = document.createElement('div'); a.className = 'alerte';
+    a.textContent = b.hasAttribute('data-plus-tard')
+      ? 'Le kit Premium arrivera avec les comptes DocuPrêt.'
+      : `Le kit ${b.dataset.kit} sera bientôt disponible. En attendant, créez votre logo gratuitement.`;
+    document.body.appendChild(a); setTimeout(() => a.remove(), 3500);
+  });
+})();
+</script>
+<script>
+(function(){
+  // Toujours arriver en haut de la page (sauf avec le bouton retour du navigateur)
+  try{
+    const nav = performance.getEntriesByType('navigation')[0];
+    if (!nav || nav.type !== 'back_forward'){
+      if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+      const enHaut = () => { if (!location.hash){ window.scrollTo(0, 0); try{ document.body.scrollIntoView({block: 'start'}); }catch(e){} } };
+      enHaut();
+      window.addEventListener('load', enHaut);
+    }
+  }catch(e){}
+})();
+(function(){
+  const t = document.getElementById('tiroir'), f = document.getElementById('tiroir-fond'), b = document.getElementById('menu-btn');
+  function ouvrir(){ t.classList.add('ouvert'); f.hidden = false; t.setAttribute('aria-hidden','false'); b.setAttribute('aria-expanded','true'); }
+  function fermer(){ t.classList.remove('ouvert'); f.hidden = true; t.setAttribute('aria-hidden','true'); b.setAttribute('aria-expanded','false'); }
+  b.addEventListener('click', ouvrir);
+  f.addEventListener('click', fermer);
+  t.querySelector('.tiroir-fermer').addEventListener('click', fermer);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') fermer(); });
+  // Flèche de retour : revient à la page précédente du site, sinon à l'accueil
+  document.querySelectorAll('.retour').forEach(a => a.addEventListener('click', e => {
+    let interne = false;
+    try{ interne = !!document.referrer && new URL(document.referrer).origin === location.origin; }catch(err){}
+    if (interne && history.length > 1){ e.preventDefault(); history.back(); }
+  }));
+  t.addEventListener('click', e => {
+    const c = e.target.closest('.cat-btn');
+    if (c){
+      const s = c.nextElementSibling, ouvrirSous = s.hidden;
+      s.hidden = !ouvrirSous;
+      c.setAttribute('aria-expanded', String(ouvrirSous));
+      c.querySelector('.plus').textContent = ouvrirSous ? '−' : '+';
+      return;
+    }
+    const a = e.target.closest('a');
+    if (a && a.classList.contains('bientot')) e.preventDefault();
+    else if (a) fermer();
+  });
+})();
+</script>
+</body>
+</html>
