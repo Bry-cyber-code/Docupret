@@ -288,6 +288,64 @@
   @media (prefers-reduced-motion:reduce){.tiroir{transition:none}}
   /* PUB_MASQUEE : emplacements publicitaires cachés tant que Google AdSense n'est pas en place (supprimer cette ligne pour les réafficher) */
   .pub{display:none!important}
+
+  /* ===== Système « fiches » (téléphone) ===== */
+  .fiches,.feuille{display:none}
+  @media (max-width:959px){
+    body.mode-fiches .onglets,body.mode-fiches .zone,body.mode-fiches .galerie{display:none}
+    body.mode-fiches .fiches{display:grid;gap:10px;margin-bottom:8px}
+    .resume{display:flex;gap:14px;align-items:center;background:var(--blanc);border:1px solid var(--bord);border-radius:var(--rayon);padding:12px;text-align:left;width:100%;font:inherit;color:var(--texte)}
+    .mini-doc{width:96px;height:136px;flex-shrink:0;border-radius:6px;overflow:hidden;position:relative;background:#fff;box-shadow:0 2px 10px rgba(30,42,66,.16)}
+    .mini-doc .page{position:absolute;top:0;left:0;transform:scale(.1209);transform-origin:top left;box-shadow:none;pointer-events:none}
+    .resume-txt{display:grid;gap:3px;min-width:0}
+    .resume-txt small{font-size:.78rem;color:var(--gris);font-weight:600}
+    .resume-txt b{font-size:1.5rem;font-weight:800;font-variant-numeric:tabular-nums}
+    .resume-txt span{font-size:.82rem;color:var(--bleu);font-weight:650}
+    .progres{font-size:.8rem;color:var(--gris);font-weight:600;margin:6px 2px 0}
+    .fiche{display:flex;align-items:center;gap:12px;background:var(--blanc);border:1px solid var(--bord);border-radius:14px;padding:13px 14px;width:100%;text-align:left;font:inherit;color:var(--texte)}
+    .fiche:active{background:var(--bleu-clair)}
+    .fiche .ico{width:40px;height:40px;border-radius:12px;background:var(--bleu-clair);display:grid;place-items:center;flex-shrink:0;font-size:1.2rem}
+    .fiche .txt{flex:1;min-width:0;display:grid;gap:2px}
+    .fiche .txt b{font-size:.98rem}
+    .fiche .txt span{font-size:.82rem;color:var(--gris);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .fiche .etat{width:26px;height:26px;border-radius:50%;flex-shrink:0;display:grid;place-items:center;font-size:.85rem;font-weight:800}
+    .fiche.ok .etat{background:#E7F6EC;color:#2B8148}
+    .fiche.vide .txt span{color:#B4501B}
+    .fiche:not(.ok) .etat{color:var(--gris);font-size:1.3rem;font-weight:400}
+    body.mode-fiches .nouveau{margin-top:2px}
+
+    .feuille{position:fixed;inset:0;z-index:45;background:var(--fond);flex-direction:column;transform:translateY(100%);transition:transform .25s ease}
+    .feuille.ouverte{display:flex}
+    .feuille.visible{transform:none}
+    .feuille-tete{display:flex;align-items:center;gap:6px;height:58px;padding:env(safe-area-inset-top,0px) 10px 0 6px;background:var(--blanc);border-bottom:1px solid var(--bord);flex-shrink:0}
+    .feuille-tete button{border:0;background:none;width:42px;height:42px;border-radius:50%;font-size:1.4rem;color:var(--texte)}
+    .feuille-tete b{flex:1;font-size:1.08rem}
+    .feuille-corps{flex:1;overflow-y:auto;padding:14px 16px 20px;-webkit-overflow-scrolling:touch}
+    .feuille-pied{flex-shrink:0;padding:10px 16px calc(10px + env(safe-area-inset-bottom));background:var(--blanc);border-top:1px solid var(--bord);display:flex;gap:8px}
+    .feuille-pied .btn{flex:1;justify-content:center}
+    .feuille-pied .btn-sec{padding:12px 16px}
+    .feuille details.bloc{margin-bottom:10px}
+    .feuille details.bloc summary{cursor:default;padding:12px 16px 8px;font-size:.95rem}
+    .feuille details.bloc summary::after{content:none}
+    .feuille details.bloc.seul summary{display:none}
+    .feuille details.bloc.seul .champs{padding-top:16px}
+    .feuille .galerie{display:flex!important;margin:0 0 10px}
+    .feuille .titre-galerie{font-size:.8rem;color:var(--gris);font-weight:650;margin:0 0 6px}
+    body.feuille-ouverte{overflow:hidden}
+  }
+
+  /* Clients enregistrés */
+  .btn-client{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;border:1.5px solid var(--bleu);background:var(--bleu-clair);color:var(--bleu-fonce);border-radius:12px;padding:11px;font-weight:650;font-size:.95rem}
+  .btn-client svg{width:19px;height:19px;flex-shrink:0}
+  .btn-client.sec{background:#fff}
+  .btn-client.fait{border-color:#3BA45C;color:#2B8148;background:#E7F6EC}
+
+  /* Mon compte (en-tête) */
+  .droite{display:flex;align-items:center;gap:4px;justify-self:end}
+  .compte-lien{display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--texte);font-size:.6rem;font-weight:700;line-height:1;padding:4px 2px;border-radius:10px;white-space:nowrap}
+  .compte-lien svg{width:24px;height:24px;color:var(--bleu)}
+  .compte-lien:hover{color:var(--bleu)}
+  @media (min-width:561px){.compte-lien{flex-direction:row;gap:7px;font-size:.88rem;border:1.5px solid var(--bord);padding:7px 13px 7px 10px;border-radius:50px;background:#fff}.compte-lien svg{width:20px;height:20px}.droite{gap:14px}}
 </style>
 </head>
 <body>
@@ -296,7 +354,7 @@
   <div class="wrap nav">
     <div class="gauche"><button type="button" class="menu-btn" id="menu-btn" aria-label="Ouvrir le menu" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button></div>
     <a href="./" class="logo"><span class="logo-icone"><svg viewBox="0 0 36 36" aria-hidden="true"><defs><linearGradient id="lg-tete" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6A9BF0"/><stop offset="1" stop-color="#3563BF"/></linearGradient></defs><rect width="36" height="36" rx="10" fill="url(#lg-tete)"/><rect x="7.5" y="11" width="13" height="17" rx="2" fill="#fff" opacity=".35"/><path d="M14 7.5h7.5l5.5 5.5v13.5a2 2 0 0 1-2 2H14a2 2 0 0 1-2-2v-17a2 2 0 0 1 2-2z" fill="#fff"/><path d="M21.5 7.5v3.5a2 2 0 0 0 2 2H27z" fill="#C9DAF8"/><path d="M15.3 19.6l2.7 2.7 5-5.6" fill="none" stroke="#3563BF" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="logo-mot">Docu<span>Prêt</span></span></a>
-    <a href="./" class="retour" aria-label="Revenir à la page précédente">←<span> Retour</span></a>
+    <div class="droite"><a href="./" class="retour" aria-label="Revenir à la page précédente">←<span> Retour</span></a><a href="compte.html" class="compte-lien" aria-label="Mon compte"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="10" r="3.2"/><path d="M6.2 18.4c1.3-2.1 3.3-3.2 5.8-3.2s4.5 1.1 5.8 3.2"/></svg><span>Mon compte</span></a></div>
   </div>
 </header>
 
@@ -387,6 +445,15 @@
 
   <div class="galerie" id="galerie"></div>
 
+  <div class="fiches" id="fiches">
+    <button type="button" class="resume" id="resume">
+      <span class="mini-doc" id="mini-doc"></span>
+      <span class="resume-txt"><small id="resume-type">Facture</small><b id="resume-total">0,00 €</b><span>👁 Voir en grand</span></span>
+    </button>
+    <p class="progres" id="progres"></p>
+    <div id="liste-fiches" style="display:grid;gap:8px"></div>
+  </div>
+
   <div class="onglets" id="onglets">
     <button data-o="p-form" class="on">✏️ Remplir</button>
     <button data-o="p-apercu">👁 Aperçu</button>
@@ -397,7 +464,7 @@
     <!-- ===== FORMULAIRE ===== -->
     <div class="panneau actif" id="p-form">
 
-      <details class="bloc" open>
+      <details class="bloc" open data-f="paiement">
         <summary>Document</summary>
         <div class="champs">
           <div class="deux">
@@ -431,7 +498,7 @@
         </div>
       </details>
 
-      <details class="bloc" open>
+      <details class="bloc seul" open data-f="entreprise">
         <summary>Vous</summary>
         <div class="champs">
           <div class="logo-zone">
@@ -459,9 +526,10 @@
         </div>
       </details>
 
-      <details class="bloc" open>
+      <details class="bloc seul" open data-f="client">
         <summary>Client</summary>
         <div class="champs">
+          <button type="button" class="btn-client" id="mes-clients"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>Choisir parmi mes clients</button>
           <label class="ch">Nom ou entreprise<input data-b="cl.nom"></label>
           <label class="ch">Adresse<input data-b="cl.adresse"></label>
           <label class="ch">Code postal et ville<input data-b="cl.cpville"></label>
@@ -469,10 +537,12 @@
           <label class="coche"><input type="checkbox" data-b="cl.pro"> Client professionnel</label>
           <label class="ch" data-pro>SIRET du client<input data-b="cl.siret" inputmode="numeric"></label>
           <p class="info" data-si="facture" data-pro>ℹ️ Entre professionnels, la facture électronique devient obligatoire pour les petites entreprises à partir de septembre 2027.</p>
+          <button type="button" class="btn-client sec" id="enreg-client"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg><span>Enregistrer ce client</span></button>
+          <p class="note" id="note-client">Enregistré dans « Mon compte », il suffira de le choisir la prochaine fois.</p>
         </div>
       </details>
 
-      <details class="bloc" open>
+      <details class="bloc" open data-f="prestations">
         <summary>Prestations</summary>
         <div class="champs">
           <div>
@@ -491,7 +561,7 @@
         </div>
       </details>
 
-      <details class="bloc" open>
+      <details class="bloc" open data-f="prestations">
         <summary>TVA</summary>
         <div class="champs">
           <label class="coche"><input type="checkbox" data-b="franchise"> TVA non applicable (auto-entrepreneur)</label>
@@ -508,7 +578,7 @@
         </div>
       </details>
 
-      <details class="bloc">
+      <details class="bloc" data-f="paiement">
         <summary>Paiement et notes</summary>
         <div class="champs">
           <label class="ch" data-si="devis">Conditions de paiement
@@ -588,6 +658,12 @@
     <nav><a href="mentions-legales.html">Mentions légales</a><a href="mentions-legales.html#confidentialite">Confidentialité</a><a href="mentions-legales.html#cookies">Cookies</a><a href="mentions-legales.html#contact">Contact</a></nav>
   </div>
 </footer>
+
+<div class="feuille" id="feuille" role="dialog" aria-modal="true">
+  <div class="feuille-tete"><button type="button" id="feuille-retour" aria-label="Retour">←</button><b id="feuille-titre"></b></div>
+  <div class="feuille-corps" id="feuille-corps"></div>
+  <div class="feuille-pied"><button type="button" class="btn" id="feuille-ok">Valider</button></div>
+</div>
 
 <div class="barre">
   <div class="barre-in">
@@ -1384,6 +1460,143 @@
   function retirer(){ const z = document.getElementById('impression'); if (z) z.remove(); }
   window.addEventListener('beforeprint', preparer);
   window.addEventListener('afterprint', retirer);
+})();
+</script>
+<script>
+// ===== Système « fiches » (téléphone uniquement) =====
+(function(){
+  const $ = id => document.getElementById(id);
+  const mq = matchMedia('(max-width:959px)');
+  const val = k => { const el = document.querySelector(`[data-b="${k}"]`); return el && !el.closest('[hidden]') ? String(el.value || '').trim() : ''; };
+  const FICHES = [
+    {k: 'entreprise', ico: '🏢', nom: 'Mon entreprise', vide: 'Nom, adresse, SIRET…',
+      ok: () => !!val('em.nom'), resume: () => [val('em.nom'), val('em.cpville')].filter(Boolean).join(' · ')},
+    {k: 'client', ico: '👤', nom: 'Client', vide: 'À qui envoyez-vous ce document ?',
+      ok: () => !!val('cl.nom'), resume: () => [val('cl.nom'), val('cl.cpville')].filter(Boolean).join(' · ')},
+    {k: 'prestations', ico: '🧾', nom: 'Prestations', vide: 'Ce que vous facturez',
+      ok: () => !/^0,00/.test($('total-val').textContent), resume: () => {
+        const d = [...document.querySelectorAll('#lignes textarea')].map(t => t.value.trim()).filter(Boolean);
+        return d.length ? d[0] + (d.length > 1 ? ` + ${d.length - 1} autre${d.length > 2 ? 's' : ''}` : '') : '';
+      }},
+    {k: 'paiement', ico: '💳', nom: 'Numéro et paiement', vide: 'Numéro, date, mode de paiement',
+      ok: () => !!val('doc.numero'), resume: () => {
+        const sel = [...document.querySelectorAll('[data-b="paiement.moyen"],[data-b="paiement.conditions"]')].filter(e => !e.closest('[hidden]')).map(e => e.value);
+        return [val('doc.numero') && 'N° ' + val('doc.numero'), ...sel].filter(Boolean).join(' · ');
+      }},
+    {k: 'style', ico: '🎨', nom: 'Style et couleurs', vide: '', ok: () => true,
+      resume: () => 'Modèle ' + ((document.querySelector('#modeles .modele.on') || {}).textContent || 'Classique').trim()}
+  ];
+  let ouverte = null; const places = [];
+
+  function liste(){
+    let faits = 0;
+    $('liste-fiches').innerHTML = FICHES.map(f => {
+      const ok = f.ok(), r = f.resume(); if (ok && f.k !== 'style') faits++;
+      return `<button type="button" class="fiche ${ok ? 'ok' : 'vide'}" data-k="${f.k}"><span class="ico">${f.ico}</span><span class="txt"><b>${f.nom}</b><span>${(r || f.vide).replace(/[&<>]/g, '')}</span></span><span class="etat">${ok ? '✓' : '›'}</span></button>`;
+    }).join('');
+    $('progres').textContent = faits === 4 ? '✅ Tout est rempli : vous pouvez télécharger.' : `${faits} sur 4 rempli${faits > 1 ? 's' : ''} · touchez une fiche pour la compléter`;
+    const type = (document.querySelector('#types button.on') || {}).textContent || 'Document';
+    $('resume-type').textContent = type + (val('doc.numero') ? ' n° ' + val('doc.numero') : '');
+    $('resume-total').textContent = $('total-val').textContent;
+    const p = $('page'); if (p){ const c = p.cloneNode(true); c.removeAttribute('id'); $('mini-doc').replaceChildren(c); }
+  }
+  let t; const plusTard = () => { clearTimeout(t); t = setTimeout(() => { if (document.body.classList.contains('mode-fiches') && !ouverte) liste(); }, 120); };
+
+  function deplacer(el){ const m = document.createComment('place'); el.parentNode.insertBefore(m, el); places.push([m, el]); $('feuille-corps').appendChild(el); }
+  function ouvrir(k, histo){
+    if (ouverte) return;
+    ouverte = k;
+    const f = FICHES.find(x => x.k === k);
+    $('feuille-titre').textContent = k === 'apercu' ? 'Aperçu' : f.nom;
+    if (k === 'style' || k === 'apercu'){
+      if (k === 'style'){ const tg = document.createElement('p'); tg.className = 'titre-galerie'; tg.textContent = 'Partir d’un modèle de votre métier'; $('feuille-corps').appendChild(tg); deplacer($('galerie')); }
+      deplacer(document.querySelector('.style-bar')); deplacer($('cadre'));
+    } else {
+      document.querySelectorAll(`#p-form [data-f="${k}"]`).forEach(el => { el.open = true; deplacer(el); });
+      if (k === 'entreprise') deplacer($('nouveau'));
+    }
+    $('feuille-ok').textContent = k === 'apercu' ? 'Fermer' : 'Valider';
+    $('feuille').classList.add('ouverte'); document.body.classList.add('feuille-ouverte');
+    $('feuille-corps').scrollTop = 0;
+    requestAnimationFrame(() => requestAnimationFrame(() => $('feuille').classList.add('visible')));
+    window.dispatchEvent(new Event('resize'));
+    $('lignes').querySelectorAll('textarea').forEach(x => x.dispatchEvent(new Event('input', {bubbles: false})));
+    if (histo !== false) history.pushState({feuille: 1}, '');
+  }
+  function fermer(){
+    if (!ouverte) return;
+    ouverte = null;
+    while (places.length){ const [m, el] = places.pop(); m.parentNode.insertBefore(el, m); m.remove(); }
+    $('feuille-corps').innerHTML = '';
+    $('feuille').classList.remove('visible', 'ouverte'); document.body.classList.remove('feuille-ouverte');
+    window.dispatchEvent(new Event('resize'));
+    liste();
+  }
+  const fermerBouton = () => { if (history.state && history.state.feuille) history.back(); else fermer(); };
+  window.addEventListener('popstate', () => { if (ouverte) fermer(); });
+  $('feuille-ok').addEventListener('click', fermerBouton);
+  $('feuille-retour').addEventListener('click', fermerBouton);
+  $('liste-fiches').addEventListener('click', e => { const b = e.target.closest('[data-k]'); if (b) ouvrir(b.dataset.k); });
+  $('resume').addEventListener('click', () => ouvrir('apercu'));
+  document.addEventListener('input', plusTard);
+  document.addEventListener('change', plusTard);
+  document.addEventListener('click', e => { if (!e.target.closest('#liste-fiches,#resume')) plusTard(); });
+  document.querySelectorAll('details.bloc summary').forEach(x => x.addEventListener('click', e => { if (ouverte) e.preventDefault(); }));
+
+  function appliquer(){
+    const m = mq.matches;
+    if (!m && ouverte) fermer();
+    document.body.classList.toggle('mode-fiches', m);
+    if (m){
+      // le contenu reste dans le formulaire ; on n'affiche que le résumé
+      if (!$('p-form').classList.contains('actif')) document.querySelector('#onglets [data-o="p-form"]').click();
+      liste();
+    }
+  }
+  mq.addEventListener('change', appliquer);
+  appliquer();
+  window.addEventListener('load', () => setTimeout(liste, 300));
+})();
+</script>
+<script src="compte.js"></script>
+<script>
+// ===== Clients enregistrés =====
+(function(){
+  if (!window.Compte) return;
+  const $ = id => document.getElementById(id);
+  const LIENS = {nom: 'cl.nom', adresse: 'cl.adresse', cpville: 'cl.cpville', email: 'cl.email', pro: 'cl.pro', siret: 'cl.siret'};
+  const champ = b => document.querySelector(`[data-b="${b}"]`);
+  const lire = () => { const o = {}; for (const [k, b] of Object.entries(LIENS)){ const e = champ(b); if (e) o[k] = e.type === 'checkbox' ? e.checked : e.value.trim(); } return o; };
+  function remplir(c){
+    for (const [k, b] of Object.entries(LIENS)){
+      const e = champ(b); if (!e) continue;
+      if (e.type === 'checkbox') e.checked = !!c[k]; else e.value = c[k] || '';
+      e.dispatchEvent(new Event('input', {bubbles: true}));
+    }
+    etat();
+  }
+  function etat(){
+    const v = lire(), b = $('enreg-client'), t = b.querySelector('span');
+    const deja = v.nom && Compte.clients().find(c => Compte.norm(c.nom) === Compte.norm(v.nom));
+    const pareil = deja && Object.keys(LIENS).every(k => k === 'pro' ? !!deja.pro === !!v.pro : (deja[k] || '') === (v[k] || ''));
+    b.classList.toggle('fait', !!pareil);
+    t.textContent = pareil ? 'Client enregistré ✓' : deja ? 'Mettre à jour ce client' : 'Enregistrer ce client';
+    $('note-client').textContent = pareil ? 'Retrouvez-le dans « Mon compte » ou avec « Choisir parmi mes clients ».' : 'Enregistré dans « Mon compte », il suffira de le choisir la prochaine fois.';
+  }
+  $('mes-clients').addEventListener('click', () => Compte.choisirClient(c => { remplir(c); Compte.toast(c.nom + ' : coordonnées ajoutées'); }));
+  $('enreg-client').addEventListener('click', () => {
+    if ($('enreg-client').classList.contains('fait')) return;
+    const r = Compte.enregistrerClient(lire());
+    if (r.erreur){ Compte.toast(r.erreur); champ('cl.nom').focus(); return; }
+    Compte.toast(r.nouveau ? 'Client enregistré dans Mon compte ✓' : 'Client mis à jour ✓');
+    etat();
+  });
+  document.addEventListener('input', e => { if (e.target.dataset && /^cl\./.test(e.target.dataset.b || '')) etat(); });
+  Compte.surChangement(etat);
+  // facture.html?client=… : client choisi depuis « Mon compte »
+  const id = new URLSearchParams(location.search).get('client');
+  if (id){ const c = Compte.client(id); if (c) remplir(c); }
+  etat();
 })();
 </script>
 </body>
