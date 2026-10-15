@@ -4,12 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Calcul des frais kilométriques 2026 : barème officiel – DocuPrêt</title>
-<meta name="description" content="Calculez vos frais kilométriques avec le barème officiel 2026 : voiture, moto, électrique, trajets domicile-travail, relevé de trajets à imprimer.">
+<meta name="description" content="Calculez vos frais kilométriques (barème officiel 2026) et le coût réel de votre carburant par semaine, mois ou année : voiture, moto, électrique, domicile-travail.">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="fr_FR">
 <meta property="og:site_name" content="DocuPrêt">
 <meta property="og:title" content="Calcul des frais kilométriques 2026 : barème officiel – DocuPrêt">
-<meta property="og:description" content="Calculez vos frais kilométriques avec le barème officiel 2026 : voiture, moto, électrique, trajets domicile-travail, relevé de trajets à imprimer.">
+<meta property="og:description" content="Calculez vos frais kilométriques (barème officiel 2026) et le coût réel de votre carburant par semaine, mois ou année : voiture, moto, électrique, domicile-travail.">
 <meta name="theme-color" content="#4A7BD0">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%2036%2036%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22f%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%236A9BF0%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%233563BF%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%2236%22%20height%3D%2236%22%20rx%3D%2210%22%20fill%3D%22url%28%23f%29%22/%3E%3Crect%20x%3D%227.5%22%20y%3D%2211%22%20width%3D%2213%22%20height%3D%2217%22%20rx%3D%222%22%20fill%3D%22%23fff%22%20opacity%3D%22.35%22/%3E%3Cpath%20d%3D%22M14%207.5h7.5l5.5%205.5v13.5a2%202%200%200%201-2%202H14a2%202%200%200%201-2-2v-17a2%202%200%200%201%202-2z%22%20fill%3D%22%23fff%22/%3E%3Cpath%20d%3D%22M21.5%207.5v3.5a2%202%200%200%200%202%202H27z%22%20fill%3D%22%23C9DAF8%22/%3E%3Cpath%20d%3D%22M15.3%2019.6l2.7%202.7%205-5.6%22%20fill%3D%22none%22%20stroke%3D%22%233563BF%22%20stroke-width%3D%222.3%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22/%3E%3C/svg%3E">
 <style>
@@ -58,7 +58,6 @@
 
   .carte{background:var(--blanc);border:1px solid var(--bord);border-radius:var(--rayon);padding:16px;display:grid;gap:12px}
   .titre{font-size:.8rem;color:var(--gris);font-weight:650}
-  .resultat{margin-top:12px}
   .intro{color:var(--gris);font-size:.92rem;margin:-6px 0 14px}
   .carte + .carte{margin-top:12px}
   .choix{display:flex;flex-wrap:wrap;gap:6px}
@@ -75,13 +74,27 @@
   label.case input{width:19px;height:19px;flex-shrink:0;margin-top:1px;accent-color:var(--bleu)}
   .note{font-size:.8rem;color:var(--gris);line-height:1.45}
   .avert{background:#FFF7E0;border:1px solid #F3D27A;color:#6B4E00;border-radius:10px;padding:8px 11px;font-size:.83rem}
-  .resultat{background:var(--bleu-clair);border:1px solid #C5D6F2;border-radius:var(--rayon);padding:16px;display:grid;gap:6px;text-align:center}
+  .resultat{background:var(--bleu-clair);border:1px solid #C5D6F2;border-radius:var(--rayon);padding:16px;display:grid;gap:10px;text-align:center}
   .resultat small{color:var(--gris);font-size:.82rem}
-  .resultat b{font-size:2.3rem;line-height:1.1;font-variant-numeric:tabular-nums;color:var(--bleu-fonce)}
-  .resultat .calcul{font-size:.84rem;color:var(--texte);font-variant-numeric:tabular-nums}
-  .mini{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:6px}
-  .mini div{background:#fff;border-radius:10px;padding:8px 4px;font-size:.74rem;color:var(--gris)}
-  .mini div b{display:block;font-size:1rem;color:var(--texte);font-variant-numeric:tabular-nums}
+  .resultat .calcul{font-size:.8rem;color:var(--texte);font-variant-numeric:tabular-nums;line-height:1.45}
+  .periode{display:flex;justify-content:center;gap:6px;flex-wrap:wrap}
+  .choix.petit button{padding:5px 11px;font-size:.84rem}
+  .gros-deux{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}
+  .gros-deux > div{background:#fff;border-radius:12px;padding:12px 6px;display:grid;gap:2px}
+  .gros-deux span{font-size:.76rem;color:var(--gris);font-weight:600}
+  .gros-deux b{font-size:1.75rem;line-height:1.15;font-variant-numeric:tabular-nums;color:var(--bleu-fonce)}
+  .gros-deux b.carbu{color:#B4501B}
+  .gros-deux em{font-style:normal;font-size:.74rem;color:var(--gris)}
+  .recap{background:#fff;border-radius:12px;padding:4px 10px}
+  .recap table{font-size:.82rem}
+  .recap td,.recap th{padding:7px 4px}
+  .recap tr:last-child td{border-bottom:0}
+  .recap td{white-space:nowrap}
+  .recap td:first-child{white-space:normal}
+  .astuce-res{font-size:.82rem;color:var(--texte);background:#fff;border-radius:10px;padding:9px 11px;text-align:left;line-height:1.45}
+  .unite{position:relative}
+  .unite input{padding-right:84px!important}
+  .unite i{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-style:normal;font-size:.76rem;color:var(--gris);pointer-events:none}
   table{width:100%;border-collapse:collapse;font-size:.86rem;font-variant-numeric:tabular-nums}
   th,td{padding:8px 6px;border-bottom:1px solid var(--bord);text-align:right}
   th:first-child,td:first-child{text-align:left}
@@ -231,36 +244,53 @@
   <div class="pub">Publicité</div>
 
   <h1>Calcul des frais kilométriques</h1>
-  <p class="intro">Barème officiel 2026 (revenus 2025), pour vos frais réels, vos notes de frais ou les indemnités versées par l'employeur.</p>
+  <p class="intro">Le coût de votre carburant et vos frais kilométriques (barème officiel 2026), par semaine, par mois ou par an.</p>
 
   <section class="carte">
     <div class="titre">Votre véhicule</div>
     <div class="choix" id="type"><button type="button" data-v="voiture">Voiture</button><button type="button" data-v="moto">Moto, scooter</button><button type="button" data-v="cyclo">Cyclomoteur (50 cm³)</button></div>
     <div id="bloc-cv"><div class="titre" style="margin-bottom:6px">Puissance fiscale <span style="font-weight:400">(case P.6 de la carte grise)</span></div><div class="choix" id="cv"></div></div>
-    <label class="case"><input type="checkbox" id="electrique">Véhicule 100 % électrique <span class="note">&nbsp;(+20 %)</span></label>
   </section>
 
   <section class="carte">
-    <div class="titre">Distance parcourue pour le travail sur l'année</div>
-    <div class="choix" id="mode"><button type="button" data-v="total">Je connais le total</button><button type="button" data-v="domicile">Trajets domicile-travail</button></div>
-    <div id="m-total"><div class="champ-km"><input id="km" inputmode="numeric" placeholder="0" aria-label="Kilomètres parcourus dans l'année"><span>km</span></div></div>
+    <div class="titre">Carburant utilisé</div>
+    <div class="choix" id="carbu"></div>
+    <div class="deux">
+      <label class="petit-champ"><span id="lib-prix">Prix du litre</span><span class="unite"><input id="prix" inputmode="decimal" placeholder="ex. 1,75"><i id="u-prix">€ / litre</i></span></label>
+      <label class="petit-champ"><span>Consommation</span><span class="unite"><input id="conso" inputmode="decimal"><i id="u-conso">L / 100 km</i></span></label>
+    </div>
+    <p class="note" id="note-carbu"></p>
+  </section>
+
+  <section class="carte">
+    <div class="titre">Distance parcourue pour le travail</div>
+    <div class="choix" id="mode"><button type="button" data-v="total">Je connais ma distance</button><button type="button" data-v="domicile">Trajets domicile-travail</button></div>
+    <div id="m-total">
+      <div class="champ-km"><input id="km" inputmode="numeric" placeholder="0" aria-label="Kilomètres parcourus"><span>km</span></div>
+      <div class="choix petit" id="periode" style="margin-top:8px"><button type="button" data-v="semaine">par semaine</button><button type="button" data-v="mois">par mois</button><button type="button" data-v="an">par an</button></div>
+    </div>
     <div id="m-domicile" hidden>
       <div class="deux">
         <label class="petit-champ">Distance aller (km)<input id="aller" inputmode="decimal" placeholder="25"></label>
-        <label class="petit-champ">Jours travaillés dans l'année<input id="jours" inputmode="numeric" placeholder="218"></label>
+        <label class="petit-champ">Jours travaillés par semaine<input id="jsem" inputmode="decimal" placeholder="5"></label>
       </div>
-      <label class="petit-champ" style="margin-top:8px">Autres km professionnels (facultatif)<input id="autres" inputmode="numeric" placeholder="0"></label>
+      <label class="petit-champ" style="margin-top:8px">Autres km professionnels dans l'année (facultatif)<input id="autres" inputmode="numeric" placeholder="0"></label>
       <label class="case" style="margin-top:8px"><input type="checkbox" id="justif">Mon trajet dépasse 40 km et je peux le justifier</label>
-      <div class="avert" id="avert40" hidden>Au-delà de 40 km aller, les impôts ne retiennent que 40 km par trajet, sauf circonstances particulières (contraintes familiales, emploi précaire, etc.).</div>
-      <p class="note" id="detail-dom"></p>
+      <div class="avert" id="avert40" hidden></div>
     </div>
+    <label class="petit-champ" id="bloc-sem">Semaines travaillées dans l'année<input id="semaines" inputmode="numeric" placeholder="45"></label>
+    <p class="note" id="detail-dom"></p>
   </section>
 
   <section class="resultat" aria-live="polite">
-    <small>Vos frais kilométriques pour l'année</small>
-    <b id="montant">0 €</b>
-    <div class="calcul" id="calcul">Indiquez votre distance</div>
-    <div class="mini"><div>Par mois<b id="mois">0 €</b></div><div>Par km<b id="parkm">0 €</b></div><div>Distance<b id="dist">0 km</b></div></div>
+    <div class="choix petit periode" id="vue"><button type="button" data-v="semaine">Par semaine</button><button type="button" data-v="mois">Par mois</button><button type="button" data-v="an">Par an</button></div>
+    <div class="gros-deux">
+      <div><span>Ce que vous coûte le carburant</span><b class="carbu" id="r-carbu">—</b><em id="r-litres"></em></div>
+      <div><span>Frais kilométriques (barème)</span><b id="r-bareme">0 €</b><em id="r-dist"></em></div>
+    </div>
+    <div class="recap"><table id="recap"></table></div>
+    <div class="astuce-res" id="astuce-res" hidden></div>
+    <div class="calcul" id="calcul"></div>
   </section>
 
   <h2>Selon la puissance du véhicule</h2>
@@ -289,8 +319,12 @@
       <p>Non : en micro-entreprise, vos frais ne sont pas déductibles. L'abattement forfaitaire appliqué à votre chiffre d'affaires en tient déjà compte. Le calcul reste utile pour connaître le coût réel de vos déplacements.</p></details>
     <details><summary>Que couvre le barème ?</summary>
       <p>La dépréciation du véhicule, l'entretien, les réparations, les pneus, le carburant et l'assurance. Les frais de péage, de parking et les intérêts d'un crédit auto peuvent s'ajouter, sur justificatifs.</p></details>
+    <details><summary>Comment est calculé le coût du carburant ?</summary>
+      <p>Distance × consommation ÷ 100 × prix que vous avez indiqué. Si vous ne connaissez pas votre consommation, une moyenne est utilisée : remplacez-la par la vôtre (elle figure sur l'ordinateur de bord ou se calcule au plein : litres mis ÷ km parcourus × 100). Pour les trajets domicile-travail, le coût du carburant tient compte de la distance réelle, même au-delà de 40 km.</p></details>
+    <details><summary>Pourquoi le barème est-il plus élevé que le carburant ?</summary>
+      <p>Le barème rembourse tout ce que coûte la voiture quand elle roule : carburant, mais aussi usure, entretien, pneus et assurance. Le carburant n'en représente généralement qu'une partie.</p></details>
     <details><summary>Et pour une voiture électrique ?</summary>
-      <p>Le montant calculé est augmenté de 20 %. Cochez simplement « Véhicule 100 % électrique ».</p></details>
+      <p>Choisissez « Électrique » dans le carburant : le barème est augmenté de 20 % et le coût est calculé avec le prix du kWh (à la maison ou sur une borne).</p></details>
     <details><summary>Le barème a-t-il changé en 2026 ?</summary>
       <p>Non, le barème publié en 2026 pour les revenus 2025 est identique à celui des années précédentes. Il sera mis à jour ici dès qu'un nouveau barème sera publié.</p></details>
   </section>
@@ -310,7 +344,7 @@
   'use strict';
   const $ = id => document.getElementById(id);
   const CLE = 'docupret_km';
-  // Barème officiel (revenus 2025, publié en 2026) : [jusqu'à, a, b] → montant = d × a + b
+  // Barème officiel (revenus 2025, publié en 2026) : [a, b] par tranche → montant = d × a + b
   const BAREME = {
     voiture: {tranches: [5000, 20000], lignes: {
       '3': ['3 CV et moins', [[0.529, 0], [0.316, 1065], [0.370, 0]]],
@@ -325,47 +359,138 @@
     cyclo: {tranches: [3000, 6000], lignes: {
       '0': ['50 cm³ ou moins', [[0.315, 0], [0.079, 711], [0.198, 0]]]}}
   };
-  const defaut = () => ({type: 'voiture', cv: '5', elec: false, mode: 'total', km: '', aller: '', jours: '', autres: '', justif: false, trajets: []});
+  // Carburants : consommation moyenne par défaut (pour 100 km) selon le véhicule
+  const CARBU = {
+    gazole: {n: 'Gazole (diesel)', u: 'L', conso: {voiture: 5.5}},
+    e10:    {n: 'SP95-E10', u: 'L', conso: {voiture: 6.5, moto: 5, cyclo: 2.5}},
+    sp95:   {n: 'SP95', u: 'L', conso: {voiture: 6.5, moto: 5, cyclo: 2.5}},
+    sp98:   {n: 'SP98', u: 'L', conso: {voiture: 6.8, moto: 5.2, cyclo: 2.6}},
+    e85:    {n: 'E85 (bioéthanol)', u: 'L', conso: {voiture: 8.2, moto: 6.2}},
+    gpl:    {n: 'GPL', u: 'L', conso: {voiture: 8.5}},
+    elec:   {n: 'Électrique', u: 'kWh', conso: {voiture: 17, moto: 8, cyclo: 4}}
+  };
+  const SEM_DEFAUT = 45, JSEM_DEFAUT = 5;
+  const defaut = () => ({type: 'voiture', cv: '5', carbu: 'gazole', prix: {}, conso: {}, mode: 'total', periode: 'an', vue: 'mois', km: '', aller: '', jsem: '', semaines: '', autres: '', justif: false, trajets: []});
   let E = defaut();
-  try{ const s = JSON.parse(localStorage.getItem(CLE)); if (s && typeof s === 'object') E = Object.assign(defaut(), s); }catch(e){}
+  try{
+    const s = JSON.parse(localStorage.getItem(CLE));
+    if (s && typeof s === 'object'){
+      E = Object.assign(defaut(), s);
+      // Anciennes données : case « électrique » et jours par an
+      if (s.elec === true && !s.carbu) E.carbu = 'elec';
+      if (s.jours && !s.semaines) E.semaines = String(Math.round(parseFloat(s.jours) / 5) || '');
+      if (!s.periode) E.periode = 'an';
+      if (typeof E.prix !== 'object' || !E.prix) E.prix = {};
+      if (typeof E.conso !== 'object' || !E.conso) E.conso = {};
+    }
+  }catch(e){}
   const sauver = () => { try{ localStorage.setItem(CLE, JSON.stringify(E)); }catch(e){} };
-  const nb = x => { const n = parseFloat(String(x || '').replace(/\s/g, '').replace(',', '.')); return isNaN(n) || n < 0 ? 0 : n; };
+  const nb = x => { const n = parseFloat(String(x ?? '').replace(/\s/g, '').replace(',', '.')); return isNaN(n) || n < 0 ? 0 : n; };
   const eur = (x, dec) => x.toLocaleString('fr-FR', {minimumFractionDigits: dec ?? 0, maximumFractionDigits: dec ?? 0}) + ' €';
+  const eurA = x => eur(x, x < 100 ? 2 : 0);
+  const num = (x, dec) => x.toLocaleString('fr-FR', {maximumFractionDigits: dec ?? 0});
   const kmf = x => Math.round(x).toLocaleString('fr-FR') + ' km';
   const coef = x => x.toLocaleString('fr-FR', {minimumFractionDigits: 3});
   const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
+  const PER = {semaine: 'par semaine', mois: 'par mois', an: 'par an'};
 
-  function calcul(type, cv, d, elec){
-    const B = BAREME[type], L = B.lignes[cv] || Object.values(B.lignes)[0];
-    const i = d <= B.tranches[0] ? 0 : d <= B.tranches[1] ? 1 : 2, [a, b] = L[1][i];
-    let m = d * a + b; if (elec) m *= 1.2;
-    return {montant: m, a, b, i};
+  const carbusDispo = () => Object.keys(CARBU).filter(k => CARBU[k].conso[E.type]);
+  const elec = () => E.carbu === 'elec';
+  const consoDefaut = () => CARBU[E.carbu].conso[E.type];
+  const conso = () => nb(E.conso[E.carbu + '_' + E.type]) || consoDefaut();
+  const prix = () => nb(E.prix[E.carbu]);
+  const semaines = () => Math.min(52, nb(E.semaines) || SEM_DEFAUT);
+
+  function calcul(type, cv, d, el){
+    const B = BAREME[type], Li = B.lignes[cv] || Object.values(B.lignes)[0];
+    const i = d <= B.tranches[0] ? 0 : d <= B.tranches[1] ? 1 : 2, [a, b] = Li[1][i];
+    let m = d * a + b; if (el) m *= 1.2;
+    return {montant: d ? m : 0, a, b, i};
   }
+  // Distance annuelle réelle (carburant) et retenue par les impôts (barème), + nombre de semaines roulées
   function distance(){
-    if (E.mode === 'total') return {d: nb(E.km)};
-    let aller = nb(E.aller); const plafond = !E.justif && aller > 40;
-    if (plafond) aller = 40;
-    const d = aller * 2 * nb(E.jours) + nb(E.autres);
-    return {d, plafond, aller};
+    const S = semaines();
+    if (E.mode === 'total'){
+      const k = nb(E.km), d = E.periode === 'semaine' ? k * S : E.periode === 'mois' ? k * 12 : k;
+      return {reel: d, fisc: d, sem: E.periode === 'semaine' ? S : 52};
+    }
+    const aller = nb(E.aller), j = Math.min(7, nb(E.jsem) || JSEM_DEFAUT), autres = nb(E.autres);
+    const plafond = !E.justif && aller > 40, allerF = plafond ? 40 : aller;
+    return {reel: aller * 2 * j * S + autres, fisc: allerF * 2 * j * S + autres, sem: S, plafond, aller, j, S, autres};
   }
+  const parPeriode = (an, sem) => ({semaine: an / sem, mois: an / 12, an});
 
   function rendre(){
     document.querySelectorAll('#type button').forEach(b => b.classList.toggle('on', b.dataset.v === E.type));
     document.querySelectorAll('#mode button').forEach(b => b.classList.toggle('on', b.dataset.v === E.mode));
+    document.querySelectorAll('#periode button').forEach(b => b.classList.toggle('on', b.dataset.v === E.periode));
+    document.querySelectorAll('#vue button').forEach(b => b.classList.toggle('on', b.dataset.v === E.vue));
     const L = BAREME[E.type].lignes;
     if (!L[E.cv]) E.cv = Object.keys(L)[Math.floor(Object.keys(L).length / 2)];
     $('bloc-cv').hidden = E.type === 'cyclo';
     $('cv').innerHTML = Object.entries(L).map(([k, [n]]) => `<button type="button" data-v="${k}" class="${k === E.cv ? 'on' : ''}">${n}</button>`).join('');
-    $('electrique').checked = E.elec; $('justif').checked = E.justif;
+
+    // Carburant
+    const dispo = carbusDispo();
+    if (!dispo.includes(E.carbu)) E.carbu = dispo[0];
+    $('carbu').innerHTML = dispo.map(k => `<button type="button" data-v="${k}" class="${k === E.carbu ? 'on' : ''}">${CARBU[k].n}</button>`).join('');
+    const C = CARBU[E.carbu], kwh = C.u === 'kWh';
+    $('lib-prix').textContent = kwh ? 'Prix du kWh' : 'Prix du litre';
+    $('u-prix').textContent = kwh ? '€ / kWh' : '€ / litre';
+    $('u-conso').textContent = kwh ? 'kWh / 100 km' : 'L / 100 km';
+    $('prix').placeholder = kwh ? 'ex. 0,25' : 'ex. 1,75';
+    $('conso').placeholder = num(consoDefaut(), 1);
+    if (document.activeElement !== $('prix')) $('prix').value = E.prix[E.carbu] || '';
+    if (document.activeElement !== $('conso')) $('conso').value = E.conso[E.carbu + '_' + E.type] || '';
+    $('note-carbu').textContent = (nb(E.conso[E.carbu + '_' + E.type]) ? '' : `Consommation moyenne utilisée : ${num(consoDefaut(), 1)} ${kwh ? 'kWh' : 'L'} / 100 km. Remplacez-la par la vôtre pour un calcul juste. `) +
+      (kwh ? 'Barème kilométrique augmenté de 20 % pour un véhicule 100 % électrique.' : '');
+
+    // Distance
     $('m-total').hidden = E.mode !== 'total'; $('m-domicile').hidden = E.mode !== 'domicile';
-    for (const k of ['km', 'aller', 'jours', 'autres']) if (document.activeElement !== $(k)) $(k).value = E[k];
-    const D = distance(), d = D.d, r = calcul(E.type, E.cv, d, E.elec);
+    $('bloc-sem').hidden = !(E.mode === 'domicile' || E.periode === 'semaine');
+    $('justif').checked = E.justif;
+    for (const k of ['km', 'aller', 'jsem', 'semaines', 'autres']) if (document.activeElement !== $(k)) $(k).value = E[k];
+    const D = distance();
     $('avert40').hidden = !D.plafond;
-    $('detail-dom').textContent = E.mode === 'domicile' && d ? `${D.aller} km × 2 × ${nb(E.jours)} jours${nb(E.autres) ? ' + ' + nb(E.autres) + ' km' : ''} = ${kmf(d)}` : '';
-    $('montant').textContent = eur(r.montant);
-    $('calcul').textContent = d ? `${kmf(d)} × ${coef(r.a)}${r.b ? ' + ' + r.b.toLocaleString('fr-FR') + ' €' : ''}${E.elec ? ', puis +20 %' : ''} = ${eur(r.montant, 2)}` : 'Indiquez votre distance';
-    $('mois').textContent = eur(r.montant / 12); $('parkm').textContent = d ? eur(r.montant / d, 3) : '0 €'; $('dist').textContent = kmf(d);
-    $('comparatif').innerHTML = `<thead><tr><th>Puissance</th><th>Montant pour ${kmf(d)}</th></tr></thead><tbody>` + Object.entries(L).map(([k, [n]]) => `<tr class="${k === E.cv ? 'on' : ''}"><td>${n}${E.elec ? ' (électrique)' : ''}</td><td>${eur(calcul(E.type, k, d, E.elec).montant)}</td></tr>`).join('') + '</tbody>';
+    if (D.plafond) $('avert40').textContent = `Pour les impôts, seuls 40 km par trajet sont retenus au-delà de 40 km aller, sauf circonstances particulières (contraintes familiales, emploi précaire…). Le coût du carburant, lui, est calculé sur vos ${num(D.aller, 1)} km réels.`;
+    let det = '';
+    if (E.mode === 'domicile' && D.reel) det = `${num(D.aller, 1)} km × 2 × ${num(D.j, 1)} jours × ${num(D.S)} semaines${D.autres ? ' + ' + kmf(D.autres) : ''} = ${kmf(D.reel)} par an`;
+    else if (E.mode === 'total' && D.reel && E.periode !== 'an') det = E.periode === 'semaine' ? `${kmf(nb(E.km))} × ${num(D.sem)} semaines = ${kmf(D.reel)} par an` : `${kmf(nb(E.km))} × 12 mois = ${kmf(D.reel)} par an`;
+    $('detail-dom').textContent = det;
+
+    // Calculs annuels
+    const r = calcul(E.type, E.cv, D.fisc, elec());
+    const p = prix(), c = conso(), vol = D.reel * c / 100, cout = vol * p;
+    const dist = parPeriode(D.reel, D.sem), bar = parPeriode(r.montant, D.sem), vols = parPeriode(vol, D.sem), couts = parPeriode(cout, D.sem);
+    const v = E.vue, semLib = D.sem === 52 ? 'Semaine' : 'Semaine travaillée';
+
+    $('r-carbu').textContent = p ? eurA(couts[v]) : '—';
+    $('r-litres').textContent = p ? `${num(vols[v], vols[v] < 10 ? 1 : 0)} ${kwh ? 'kWh' : 'litres'} ${PER[v]}` : `Indiquez le prix ${kwh ? 'du kWh' : 'du litre'}`;
+    $('r-bareme').textContent = eurA(bar[v]);
+    $('r-dist').textContent = `pour ${kmf(dist[v])} ${PER[v]}`;
+
+    const col = k => `<td${k === v ? ' style="font-weight:700;color:var(--bleu-fonce)"' : ''}>`;
+    const ligne = (lib, o, f) => `<tr><td>${lib}</td>${['semaine', 'mois', 'an'].map(k => col(k) + f(o[k]) + '</td>').join('')}</tr>`;
+    $('recap').innerHTML = `<thead><tr><th></th><th>${semLib}</th><th>Mois</th><th>Année</th></tr></thead><tbody>` +
+      ligne('Distance', dist, kmf) +
+      (p ? ligne(kwh ? 'Électricité' : 'Carburant', vols, x => num(x, x < 10 ? 1 : 0) + (kwh ? ' kWh' : ' L')) + ligne('Coût carburant', couts, eurA) : '') +
+      (D.fisc !== D.reel ? ligne('Km retenus (impôts)', parPeriode(D.fisc, D.sem), kmf) : '') +
+      ligne('Barème', bar, eurA) + '</tbody>';
+
+    if (p && r.montant && cout){
+      const part = Math.round(cout / r.montant * 100);
+      $('astuce-res').hidden = false;
+      $('astuce-res').innerHTML = cout < r.montant
+        ? `💡 Le carburant représente <b>${part} %</b> du barème. Le reste (${eurA(r.montant - cout)} par an) couvre l'usure, l'entretien, les pneus et l'assurance de votre véhicule.`
+        : `💡 Votre carburant coûte plus cher que le barème : vérifiez votre consommation et le prix indiqué.`;
+    } else $('astuce-res').hidden = true;
+
+    const lignes = [];
+    if (p && D.reel) lignes.push(`Carburant : ${kmf(D.reel)} × ${num(c, 1)} ${kwh ? 'kWh' : 'L'}/100 km × ${p.toLocaleString('fr-FR', {minimumFractionDigits: 2, maximumFractionDigits: 3})} € = ${eur(cout, 2)} par an`);
+    if (D.fisc) lignes.push(`Barème : ${kmf(D.fisc)} × ${coef(r.a)}${r.b ? ' + ' + r.b.toLocaleString('fr-FR') + ' €' : ''}${elec() ? ', puis +20 %' : ''} = ${eur(r.montant, 2)} par an`);
+    $('calcul').innerHTML = lignes.length ? lignes.map(esc).join('<br>') : 'Indiquez votre distance';
+
+    $('comparatif').innerHTML = `<thead><tr><th>Puissance</th><th>Par mois</th><th>Par an</th></tr></thead><tbody>` + Object.entries(L).map(([k, [n]]) => { const m = calcul(E.type, k, D.fisc, elec()).montant; return `<tr class="${k === E.cv ? 'on' : ''}"><td>${n}${elec() ? ' (électrique)' : ''}</td><td>${eur(m / 12)}</td><td>${eur(m)}</td></tr>`; }).join('') + '</tbody>';
     const B = BAREME[E.type], t = B.tranches, f = ([a, b]) => b ? `d × ${coef(a)} + ${b.toLocaleString('fr-FR')}` : `d × ${coef(a)}`;
     $('bareme').innerHTML = `<thead><tr><th>${E.type === 'cyclo' ? 'Cylindrée' : 'Puissance'}</th><th>Jusqu'à ${t[0].toLocaleString('fr-FR')} km</th><th>${(t[0] + 1).toLocaleString('fr-FR')} à ${t[1].toLocaleString('fr-FR')} km</th><th>Au-delà de ${t[1].toLocaleString('fr-FR')} km</th></tr></thead><tbody>` +
       Object.entries(L).map(([k, [n, l]]) => `<tr class="${k === E.cv ? 'on' : ''}"><td>${n}</td>${l.map(x => `<td>${f(x)}</td>`).join('')}</tr>`).join('') + '</tbody>';
@@ -377,28 +502,29 @@
     if (c.children.length !== E.trajets.length){
       c.innerHTML = E.trajets.map((t, i) => `<div class="trajet" data-i="${i}"><input type="date" data-f="date" value="${esc(t.date)}" aria-label="Date"><input data-f="objet" value="${esc(t.objet)}" placeholder="Trajet et motif" aria-label="Trajet et motif"><input data-f="km" inputmode="decimal" value="${esc(t.km)}" placeholder="km" aria-label="Kilomètres"><button type="button" data-suppr="${i}" aria-label="Supprimer">×</button></div>`).join('');
     }
-    const tot = E.trajets.reduce((s, t) => s + nb(t.km), 0);
-    $('total-trajets').textContent = E.trajets.length ? `Total : ${kmf(tot)} sur ${E.trajets.length} trajet${E.trajets.length > 1 ? 's' : ''}` : '';
+    const tot = E.trajets.reduce((s, t) => s + nb(t.km), 0), p = prix();
+    $('total-trajets').textContent = E.trajets.length ? `Total : ${kmf(tot)} sur ${E.trajets.length} trajet${E.trajets.length > 1 ? 's' : ''}${p && tot ? ` · environ ${eur(tot * conso() / 100 * p, 2)} de carburant` : ''}` : '';
   }
 
-  $('type').addEventListener('click', e => { const b = e.target.closest('[data-v]'); if (!b) return; E.type = b.dataset.v; rendre(); sauver(); });
-  $('cv').addEventListener('click', e => { const b = e.target.closest('[data-v]'); if (!b) return; E.cv = b.dataset.v; rendre(); sauver(); });
-  $('mode').addEventListener('click', e => { const b = e.target.closest('[data-v]'); if (!b) return; E.mode = b.dataset.v; rendre(); sauver(); });
-  $('electrique').addEventListener('change', e => { E.elec = e.target.checked; rendre(); sauver(); });
+  const chips = (id, cle) => $(id).addEventListener('click', e => { const b = e.target.closest('[data-v]'); if (!b) return; E[cle] = b.dataset.v; rendre(); sauver(); });
+  chips('type', 'type'); chips('cv', 'cv'); chips('mode', 'mode'); chips('periode', 'periode'); chips('vue', 'vue'); chips('carbu', 'carbu');
   $('justif').addEventListener('change', e => { E.justif = e.target.checked; rendre(); sauver(); });
-  for (const k of ['km', 'aller', 'jours', 'autres']) $(k).addEventListener('input', e => { E[k] = e.target.value; rendre(); sauver(); });
+  for (const k of ['km', 'aller', 'jsem', 'semaines', 'autres']) $(k).addEventListener('input', e => { E[k] = e.target.value; rendre(); sauver(); });
+  $('prix').addEventListener('input', e => { E.prix[E.carbu] = e.target.value; rendre(); sauver(); });
+  $('conso').addEventListener('input', e => { E.conso[E.carbu + '_' + E.type] = e.target.value; rendre(); sauver(); });
   $('trajets').addEventListener('input', e => { const l = e.target.closest('.trajet'); if (!l) return; E.trajets[+l.dataset.i][e.target.dataset.f] = e.target.value; rendreTrajets(); sauver(); });
   $('trajets').addEventListener('click', e => { const b = e.target.closest('[data-suppr]'); if (!b) return; E.trajets.splice(+b.dataset.suppr, 1); $('trajets').innerHTML = ''; rendreTrajets(); sauver(); });
   $('ajout').addEventListener('click', () => { const d = new Date(); E.trajets.push({date: d.toISOString().slice(0, 10), objet: '', km: ''}); rendreTrajets(); sauver(); const ins = $('trajets').querySelectorAll('.trajet:last-child input'); if (ins[1]) ins[1].focus(); });
-  $('utiliser').addEventListener('click', () => { const tot = E.trajets.reduce((s, t) => s + nb(t.km), 0); if (!tot){ alerte('Ajoutez au moins un trajet avec ses kilomètres.'); return; } E.mode = 'total'; E.km = String(Math.round(tot)); rendre(); sauver(); window.scrollTo({top: $('montant').getBoundingClientRect().top + scrollY - 200, behavior: 'smooth'}); });
+  $('utiliser').addEventListener('click', () => { const tot = E.trajets.reduce((s, t) => s + nb(t.km), 0); if (!tot){ alerte('Ajoutez au moins un trajet avec ses kilomètres.'); return; } E.mode = 'total'; E.periode = 'an'; E.vue = 'an'; E.km = String(Math.round(tot)); rendre(); sauver(); window.scrollTo({top: $('r-bareme').getBoundingClientRect().top + scrollY - 220, behavior: 'smooth'}); });
   $('vider').addEventListener('click', e => { e.preventDefault(); if (!confirm('Effacer tous vos trajets ?')) return; E.trajets = []; $('trajets').innerHTML = ''; rendreTrajets(); sauver(); });
   $('imprimer').addEventListener('click', () => {
     const tot = E.trajets.reduce((s, t) => s + nb(t.km), 0);
-    const d = tot || distance().d, r = calcul(E.type, E.cv, d, E.elec), L = BAREME[E.type].lignes[E.cv];
+    const d = tot || distance().fisc, r = calcul(E.type, E.cv, d, elec()), L = BAREME[E.type].lignes[E.cv], p = prix();
     const date = iso => iso ? new Date(iso + 'T12:00').toLocaleDateString('fr-FR') : '';
-    $('releve').innerHTML = `<h1>Relevé de frais kilométriques</h1><p>Véhicule : ${E.type === 'voiture' ? 'voiture' : E.type === 'moto' ? 'moto' : 'cyclomoteur'}${E.type !== 'cyclo' ? ', ' + L[0] : ''}${E.elec ? ', électrique' : ''} — barème officiel 2026 (revenus 2025)</p>
+    $('releve').innerHTML = `<h1>Relevé de frais kilométriques</h1><p>Véhicule : ${E.type === 'voiture' ? 'voiture' : E.type === 'moto' ? 'moto' : 'cyclomoteur'}${E.type !== 'cyclo' ? ', ' + L[0] : ''}, ${CARBU[E.carbu].n.toLowerCase()} — barème officiel 2026 (revenus 2025)</p>
       ${E.trajets.length ? `<table><thead><tr><th>Date</th><th>Trajet et motif</th><th>Km</th></tr></thead><tbody>${E.trajets.map(t => `<tr><td>${esc(date(t.date))}</td><td>${esc(t.objet)}</td><td>${esc(t.km)}</td></tr>`).join('')}<tr class="tot"><td></td><td>Total</td><td>${Math.round(tot).toLocaleString('fr-FR')}</td></tr></tbody></table>` : `<p>Distance totale : ${kmf(d)}</p>`}
-      <p style="margin-top:14px"><b>Montant selon le barème : ${eur(r.montant, 2)}</b> (${kmf(d)} × ${coef(r.a)}${r.b ? ' + ' + r.b + ' €' : ''}${E.elec ? ', +20 %' : ''})</p>
+      <p style="margin-top:14px"><b>Montant selon le barème : ${eur(r.montant, 2)}</b> (${kmf(d)} × ${coef(r.a)}${r.b ? ' + ' + r.b + ' €' : ''}${elec() ? ', +20 %' : ''})</p>
+      ${p ? `<p>Coût du carburant estimé : ${eur(d * conso() / 100 * p, 2)} (${num(conso(), 1)} ${CARBU[E.carbu].u}/100 km à ${p.toLocaleString('fr-FR', {minimumFractionDigits: 2, maximumFractionDigits: 3})} €)</p>` : ''}
       <div class="sign"><span>Nom :</span><span>Date et signature :</span></div>`;
     window.print();
   });
