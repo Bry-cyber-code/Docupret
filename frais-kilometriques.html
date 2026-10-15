@@ -90,6 +90,8 @@
   .recap td,.recap th{padding:7px 4px}
   .recap tr:last-child td{border-bottom:0}
   .recap td{white-space:nowrap}
+  .recap th{font-size:.66rem;letter-spacing:.02em}
+  @media (max-width:420px){.recap table{font-size:.74rem}.recap td,.recap th{padding:7px 2px}}
   .recap td:first-child{white-space:normal}
   .astuce-res{font-size:.82rem;color:var(--texte);background:#fff;border-radius:10px;padding:9px 11px;text-align:left;line-height:1.45}
   .lien-per{border:0;background:none;padding:0;font:inherit;font-weight:700;color:var(--bleu-fonce);text-decoration:underline;cursor:pointer}
@@ -288,7 +290,7 @@
   </section>
 
   <section class="resultat" aria-live="polite">
-    <div class="choix petit periode" id="vue"><button type="button" data-v="semaine">Par semaine</button><button type="button" data-v="mois">Par mois</button><button type="button" data-v="an">Par an</button></div>
+    <div class="choix petit periode" id="vue"><button type="button" data-v="jour">Par jour</button><button type="button" data-v="semaine">Par semaine</button><button type="button" data-v="mois">Par mois</button><button type="button" data-v="an">Par an</button></div>
     <div class="gros-deux">
       <div><span>Ce que vous coûte le carburant</span><b class="carbu" id="r-carbu">—</b><em id="r-litres"></em></div>
       <div><span>Frais kilométriques (barème)</span><b id="r-bareme">0 €</b><em id="r-dist"></em></div>
@@ -393,7 +395,7 @@
   const eur = (x, dec) => x.toLocaleString('fr-FR', {minimumFractionDigits: dec ?? 0, maximumFractionDigits: dec ?? 0}) + ' €';
   const eurA = x => eur(x, x < 100 ? 2 : 0);
   const num = (x, dec) => x.toLocaleString('fr-FR', {maximumFractionDigits: dec ?? 0});
-  const kmf = x => Math.round(x).toLocaleString('fr-FR') + ' km';
+  const kmf = x => (x < 10 && x > 0 ? x.toLocaleString('fr-FR', {maximumFractionDigits: 1}) : Math.round(x).toLocaleString('fr-FR')) + ' km';
   const coef = x => x.toLocaleString('fr-FR', {minimumFractionDigits: 3});
   const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
   const PER = {jour: 'par jour', semaine: 'par semaine', mois: 'par mois', an: 'par an'};
@@ -423,7 +425,7 @@
     const plafond = !E.justif && aller > 40, allerF = plafond ? 40 : aller;
     return {reel: aller * 2 * j * S + autres, fisc: allerF * 2 * j * S + autres, sem: S, plafond, aller, j, S, autres};
   }
-  const parPeriode = (an, sem) => ({semaine: an / sem, mois: an / 12, an});
+  const parPeriode = (an, sem, j) => ({jour: an / (sem * (j || JSEM_DEFAUT)), semaine: an / sem, mois: an / 12, an});
 
   function rendre(){
     document.querySelectorAll('#type button').forEach(b => b.classList.toggle('on', b.dataset.v === E.type));
@@ -478,8 +480,8 @@
     // Calculs annuels
     const r = calcul(E.type, E.cv, D.fisc, elec());
     const p = prix(), c = conso(), vol = D.reel * c / 100, cout = vol * p;
-    const dist = parPeriode(D.reel, D.sem), bar = parPeriode(r.montant, D.sem), vols = parPeriode(vol, D.sem), couts = parPeriode(cout, D.sem);
-    const v = E.vue, semLib = D.sem === 52 ? 'Semaine' : 'Semaine travaillée';
+    const dist = parPeriode(D.reel, D.sem, D.j), bar = parPeriode(r.montant, D.sem, D.j), vols = parPeriode(vol, D.sem, D.j), couts = parPeriode(cout, D.sem, D.j);
+    const v = E.vue;
 
     $('r-carbu').textContent = p ? eurA(couts[v]) : '—';
     $('r-litres').textContent = p ? `${num(vols[v], vols[v] < 10 ? 1 : 0)} ${kwh ? 'kWh' : 'litres'} ${PER[v]}` : `Indiquez le prix ${kwh ? 'du kWh' : 'du litre'}`;
@@ -487,11 +489,11 @@
     $('r-dist').textContent = `pour ${kmf(dist[v])} ${PER[v]}`;
 
     const col = k => `<td${k === v ? ' style="font-weight:700;color:var(--bleu-fonce)"' : ''}>`;
-    const ligne = (lib, o, f) => `<tr><td>${lib}</td>${['semaine', 'mois', 'an'].map(k => col(k) + f(o[k]) + '</td>').join('')}</tr>`;
-    $('recap').innerHTML = `<thead><tr><th></th><th>${semLib}</th><th>Mois</th><th>Année</th></tr></thead><tbody>` +
+    const ligne = (lib, o, f) => `<tr><td>${lib}</td>${['jour', 'semaine', 'mois', 'an'].map(k => col(k) + f(o[k]) + '</td>').join('')}</tr>`;
+    $('recap').innerHTML = `<thead><tr><th></th><th>Jour</th><th>Semaine</th><th>Mois</th><th>Année</th></tr></thead><tbody>` +
       ligne('Distance', dist, kmf) +
       (p ? ligne(kwh ? 'Électricité' : 'Carburant', vols, x => num(x, x < 10 ? 1 : 0) + (kwh ? ' kWh' : ' L')) + ligne('Coût carburant', couts, eurA) : '') +
-      (D.fisc !== D.reel ? ligne('Km retenus (impôts)', parPeriode(D.fisc, D.sem), kmf) : '') +
+      (D.fisc !== D.reel ? ligne('Km retenus (impôts)', parPeriode(D.fisc, D.sem, D.j), kmf) : '') +
       ligne('Barème', bar, eurA) + '</tbody>';
 
     if (p && r.montant && cout){
