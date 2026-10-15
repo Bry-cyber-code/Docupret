@@ -1,0 +1,88 @@
+/* DocuPrêt — menu « Mon compte » qui s'ouvre sur la droite (toutes les pages) */
+(function(){
+  'use strict';
+  const lien = document.querySelector('.compte-lien');
+  if (!lien) return;
+
+  const CSS = `
+  .cm-fond{position:fixed;inset:0;background:rgba(20,28,45,.45);z-index:52}
+  .cm{position:fixed;top:0;right:0;bottom:0;width:min(300px,84vw);background:var(--blanc,#fff);z-index:53;transform:translateX(102%);transition:transform .25s ease;overflow-y:auto;box-shadow:-4px 0 24px rgba(0,0,0,.12);padding-bottom:calc(20px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column}
+  .cm.ouvert{transform:none}
+  .cm-tete{display:flex;align-items:center;justify-content:space-between;height:60px;padding:env(safe-area-inset-top,0px) 10px 0 16px;border-bottom:1px solid var(--bord,#e2e8f0);flex-shrink:0}
+  .cm-tete b{font-size:1.05rem}
+  .cm-fermer{width:36px;height:36px;border:0;background:none;border-radius:50%;font-size:1.6rem;line-height:1;color:var(--gris,#667);cursor:pointer}
+  .cm-fermer:hover{background:var(--fond,#f4f6fa)}
+  .cm-qui{display:flex;align-items:center;gap:12px;padding:16px;border-bottom:1px solid var(--bord,#e2e8f0)}
+  .cm-avatar{width:44px;height:44px;border-radius:50%;background:var(--bleu,#4A7BD0);color:#fff;display:grid;place-items:center;font-weight:800;font-size:1.15rem;flex-shrink:0}
+  .cm-avatar.vide{background:var(--bleu-clair,#EAF1FD);color:var(--bleu,#4A7BD0)}
+  .cm-avatar svg{width:26px;height:26px}
+  .cm-qui small{display:block;font-size:.76rem;color:var(--gris,#667)}
+  .cm-qui b{display:block;font-size:.92rem;word-break:break-all;line-height:1.3}
+  .cm-connexion{display:block;margin:12px 16px 4px;background:var(--bleu,#4A7BD0);color:#fff;text-align:center;border-radius:12px;padding:12px;font-weight:700;font-size:.95rem}
+  .cm-lien{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--bord,#e2e8f0);color:var(--texte,#1E2A42)}
+  .cm-lien:hover{background:var(--fond,#f4f6fa);color:var(--bleu,#4A7BD0)}
+  .cm-ico{width:38px;height:38px;border-radius:11px;background:var(--bleu-clair,#EAF1FD);color:var(--bleu,#4A7BD0);display:grid;place-items:center;flex-shrink:0}
+  .cm-ico svg{width:20px;height:20px}
+  .cm-txt{flex:1;min-width:0;display:grid;gap:1px}
+  .cm-txt b{font-size:1rem;font-weight:700}
+  .cm-txt span{font-size:.78rem;color:var(--gris,#667)}
+  .cm-nb{font-size:.74rem;font-weight:700;background:var(--bleu,#4A7BD0);color:#fff;border-radius:50px;padding:2px 8px;flex-shrink:0}
+  .cm-note{font-size:.76rem;color:var(--gris,#667);padding:14px 16px;line-height:1.45;margin-top:auto}
+  @media (prefers-reduced-motion:reduce){.cm{transition:none}}`;
+
+  const ICO = {
+    clients: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+    param: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1.08-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>',
+    compte: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="10" r="3.2"/><path d="M6.2 18.4c1.3-2.1 3.3-3.2 5.8-3.2s4.5 1.1 5.8 3.2"/></svg>'
+  };
+  const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
+  const lire = (k, d) => { try{ const v = JSON.parse(localStorage.getItem(k)); return v ?? d; }catch(e){ return d; } };
+
+  let fond, menu, dernierFocus;
+  function construire(){
+    const st = document.createElement('style'); st.textContent = CSS; document.head.appendChild(st);
+    fond = document.createElement('div'); fond.className = 'cm-fond'; fond.hidden = true;
+    menu = document.createElement('nav'); menu.className = 'cm'; menu.setAttribute('aria-label', 'Mon compte'); menu.setAttribute('aria-hidden', 'true');
+    document.body.append(fond, menu);
+    fond.addEventListener('click', fermer);
+    menu.addEventListener('click', e => {
+      if (e.target.closest('.cm-fermer')) return fermer();
+      const a = e.target.closest('a');
+      if (a && /compte\.html#/.test(a.getAttribute('href')) && /compte\.html$/.test(location.pathname)){
+        // déjà sur la page Mon compte : changer de rubrique sans recharger
+        e.preventDefault(); fermer(); location.hash = a.getAttribute('href').split('#')[1];
+      }
+    });
+  }
+  function remplir(){
+    const qui = lire('docupret_compte', null), email = qui && qui.email;
+    const nb = (lire('docupret_clients', []) || []).filter(c => c && !c.supprime).length;
+    menu.innerHTML = `<div class="cm-tete"><b>Mon compte</b><button type="button" class="cm-fermer" aria-label="Fermer">×</button></div>
+      <div class="cm-qui">${email
+        ? `<span class="cm-avatar">${esc(email[0].toUpperCase())}</span><div><small>Connecté avec</small><b>${esc(email)}</b></div>`
+        : `<span class="cm-avatar vide">${ICO.compte}</span><div><b>Vous n'êtes pas connecté</b><small>Gratuit, avec une simple adresse e-mail</small></div>`}</div>
+      ${email ? '' : '<a class="cm-connexion" href="compte.html#compte">Se connecter ou créer un compte</a>'}
+      <a class="cm-lien" href="compte.html#clients"><span class="cm-ico">${ICO.clients}</span><span class="cm-txt"><b>Mes clients</b><span>Coordonnées enregistrées</span></span>${nb ? `<span class="cm-nb">${nb}</span>` : ''}</a>
+      <a class="cm-lien" href="compte.html#parametres"><span class="cm-ico">${ICO.param}</span><span class="cm-txt"><b>Paramètres</b><span>Mon entreprise, préférences</span></span></a>
+      <a class="cm-lien" href="compte.html#compte"><span class="cm-ico">${ICO.compte}</span><span class="cm-txt"><b>Compte</b><span>${email ? 'Mot de passe, déconnexion' : 'Connexion, inscription'}</span></span></a>
+      <p class="cm-note">${email ? '☁️ Vos clients sont synchronisés sur tous vos appareils.' : '🔒 Sans compte, vos clients restent uniquement sur cet appareil.'}</p>`;
+  }
+  function ouvrir(){
+    if (!menu) construire();
+    remplir();
+    dernierFocus = document.activeElement;
+    fond.hidden = false; menu.setAttribute('aria-hidden', 'false');
+    requestAnimationFrame(() => menu.classList.add('ouvert'));
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => { const b = menu.querySelector('.cm-fermer'); if (b) b.focus(); }, 50);
+  }
+  function fermer(){
+    if (!menu) return;
+    menu.classList.remove('ouvert'); menu.setAttribute('aria-hidden', 'true');
+    fond.hidden = true; document.body.style.overflow = '';
+    if (dernierFocus && dernierFocus.focus) dernierFocus.focus();
+  }
+  lien.setAttribute('aria-haspopup', 'true');
+  lien.addEventListener('click', e => { e.preventDefault(); ouvrir(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && menu && menu.classList.contains('ouvert')) fermer(); });
+})();

@@ -55,6 +55,7 @@
       auth.onAuthStateChanged(async u => {
         const avant = utilisateur && utilisateur.uid;
         utilisateur = u || null;
+        try{ if (utilisateur) localStorage.setItem('docupret_compte', JSON.stringify({email: utilisateur.email})); else localStorage.removeItem('docupret_compte'); }catch(e){}
         if (utilisateur && utilisateur.uid !== avant) await synchroniser();
         prevenir();
         if (premier){ premier = false; ok(); }
