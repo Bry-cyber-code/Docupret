@@ -200,6 +200,7 @@
         <a href="tva.html">Calculatrice TVA</a>
         <a href="simulateur.html">Simulateur auto-entrepreneur</a>
         <a href="tampon.html">Tampon d'entreprise</a>
+        <a href="frais-kilometriques.html">Frais kilométriques</a>
       </div>
     </div>
     <a href="kits.html" class="tiroir-lien kits">Kits de l'artisan<small>Pro</small></a>
@@ -226,6 +227,9 @@
       <div class="sous" hidden>
         <a href="cession.html">Certificat de cession</a>
         <a href="constat.html">Constat amiable</a>
+        <a href="lettre.html?type=vente">Contrat de vente</a>
+        <a href="lettre.html?type=pret">Prêt de véhicule</a>
+        <a href="lettre.html?type=sinistre">Déclaration de sinistre</a>
       </div>
     </div>
     <div class="cat">
@@ -279,6 +283,7 @@
       <button class="filtre" data-cat="vehicule">Véhicule</button>
       <button class="filtre" data-cat="logement">Logement</button>
       <button class="filtre" data-cat="vie">Vie courante</button>
+      <button class="filtre" data-cat="outils">Outils</button>
       <button class="filtre actif" data-cat="tous">Tous</button>
     </div>
 
@@ -395,6 +400,13 @@
     resiliation:'<circle cx="12" cy="12" r="9"/><path d="M9 9l6 6M15 9l-6 6"/>',
     reclamation:'<path d="M12 3l10 18H2z"/><path d="M12 10v4M12 17v.01"/>',
     cession:'<path d="M5 13l1.6-4.8A2 2 0 0 1 8.5 7h7a2 2 0 0 1 1.9 1.2L19 13"/><rect x="3" y="13" width="18" height="5" rx="1.5"/><path d="M6.5 18v2M17.5 18v2M7 15.5h.01M17 15.5h.01"/><path d="M14 3l2 2-2 2"/><path d="M8 5h8"/>',
+    vente:'<path d="M3 12l7-7h6l5 5v6l-7 7-11-11z" transform="scale(.9) translate(1.5 1.5)"/><circle cx="15.5" cy="8.5" r="1.5"/>',
+    cle:'<circle cx="8" cy="15" r="4"/><path d="M10.8 12.2L20 3M17 6l3 3M15 8l2 2"/>',
+    sinistre:'<path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/>',
+    pourcent:'<path d="M19 5L5 19"/><circle cx="7" cy="7" r="2.5"/><circle cx="17" cy="17" r="2.5"/>',
+    graphe:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+    route:'<path d="M8 3L4 21M16 3l4 18M12 5v2M12 11v2M12 17v2"/>',
+    tampon:'<path d="M9 3h6v6l3 3H6l3-3z"/><path d="M5 15h14v3H5zM7 21h10"/>',
     constat:'<path d="M4 4h11l5 5v11H4z"/><path d="M14 4v6h6"/><path d="M8 13h3M8 17h6"/><path d="M15.5 13.5l2 2"/>',
     procuration:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6 6 0 0 1 3.5 6"/>'
   };
@@ -409,14 +421,21 @@
     {nom:'Demande de congés', cat:'travail', label:'Travail', icone:'conges', badge:'7 modèles', page:'lettre.html?type=conges', mots:'congé vacances absence employeur jours'},
     {nom:'Rupture conventionnelle', cat:'travail', label:'Travail', icone:'rupture', badge:'4 modèles', page:'lettre.html?type=rupture', mots:'licenciement quitter emploi employeur départ'},
     {nom:'Certificat de cession', cat:'vehicule', label:'Véhicule', icone:'cession', page:'cession.html', badge:'Cerfa officiel', mots:'vente voiture moto vendre acheter cerfa 15776 carte grise occasion'},
-    {nom:'Constat amiable', cat:'vehicule', label:'Véhicule', icone:'constat', page:'constat.html', badge:'À imprimer', mots:'accident voiture auto assurance accrochage sinistre'},
+    {nom:'Constat amiable', cat:'vehicule', label:'Véhicule', icone:'constat', page:'constat.html', badge:'À imprimer', mots:'accident voiture auto assurance accrochage'},
+    {nom:'Contrat de vente de véhicule', cat:'vehicule', label:'Véhicule', icone:'vente', page:'lettre.html?type=vente', badge:'3 modèles', mots:'vendre voiture moto occasion particulier acompte paiement'},
+    {nom:'Prêt de véhicule', cat:'vehicule', label:'Véhicule', icone:'cle', page:'lettre.html?type=pret', badge:'3 modèles', mots:'preter voiture autorisation conduire conducteur'},
+    {nom:'Déclaration de sinistre', cat:'vehicule', label:'Véhicule', icone:'sinistre', page:'lettre.html?type=sinistre', badge:'6 modèles', mots:'assurance accident vol bris de glace vandalisme grele'},
     {nom:"Attestation d'hébergement", cat:'logement', label:'Logement', icone:'hebergement', page:'lettre.html?type=hebergement', badge:'6 modèles', mots:'héberger logé domicile caf adresse'},
     {nom:'Préavis locataire', cat:'logement', label:'Logement', icone:'preavis', page:'lettre.html?type=preavis', badge:'10 modèles', mots:'lettre congé bail location appartement propriétaire déménagement quitter logement'},
     {nom:'Quittance de loyer', cat:'logement', label:'Logement', icone:'quittance', page:'lettre.html?type=quittance', badge:'3 modèles', mots:'loyer location propriétaire bailleur locataire reçu'},
     {nom:"Attestation sur l'honneur", cat:'vie', label:'Vie courante', icone:'honneur', page:'lettre.html?type=honneur', badge:'6 modèles', mots:'déclaration certifier'},
     {nom:'Lettre de résiliation', cat:'vie', label:'Vie courante', icone:'resiliation', page:'lettre.html?type=resiliation', badge:'8 modèles', mots:'résilier abonnement box internet mobile mutuelle assurance salle sport contrat'},
     {nom:'Réclamation / mise en demeure', cat:'vie', label:'Vie courante', icone:'reclamation', page:'lettre.html?type=reclamation', badge:'6 modèles', mots:'lettre plainte litige remboursement contestation'},
-    {nom:'Procuration', cat:'vie', label:'Vie courante', icone:'procuration', page:'lettre.html?type=procuration', badge:'4 modèles', mots:'pouvoir mandat autorisation représenter'}
+    {nom:'Procuration', cat:'vie', label:'Vie courante', icone:'procuration', page:'lettre.html?type=procuration', badge:'4 modèles', mots:'pouvoir mandat autorisation représenter'},
+    {nom:'Calculatrice TVA', cat:'outils', label:'Outils', icone:'pourcent', page:'tva.html', badge:'Outil', mots:'tva ht ttc taux calcul prix'},
+    {nom:'Simulateur auto-entrepreneur', cat:'outils', label:'Outils', icone:'graphe', page:'simulateur.html', badge:'Outil', mots:'micro entreprise cotisations urssaf revenu net chiffre affaires'},
+    {nom:'Frais kilométriques', cat:'outils', label:'Outils', icone:'route', page:'frais-kilometriques.html', badge:'Barème 2026', mots:'kilometrique km bareme indemnites frais reels voiture deplacement'},
+    {nom:"Tampon d'entreprise", cat:'outils', label:'Outils', icone:'tampon', page:'tampon.html', badge:'Outil', mots:'tampon cachet societe signature'}
   ];
 
   const grille = document.getElementById('grille');

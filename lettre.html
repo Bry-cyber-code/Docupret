@@ -234,6 +234,7 @@
         <a href="tva.html">Calculatrice TVA</a>
         <a href="simulateur.html">Simulateur auto-entrepreneur</a>
         <a href="tampon.html">Tampon d'entreprise</a>
+        <a href="frais-kilometriques.html">Frais kilométriques</a>
       </div>
     </div>
     <a href="kits.html" class="tiroir-lien kits">Kits de l'artisan<small>Pro</small></a>
@@ -260,6 +261,9 @@
       <div class="sous" hidden>
         <a href="cession.html">Certificat de cession</a>
         <a href="constat.html">Constat amiable</a>
+        <a href="lettre.html?type=vente">Contrat de vente</a>
+        <a href="lettre.html?type=pret">Prêt de véhicule</a>
+        <a href="lettre.html?type=sinistre">Déclaration de sinistre</a>
       </div>
     </div>
     <div class="cat">
@@ -320,7 +324,7 @@
             <label class="ch">Téléphone<input type="tel" data-b="moi.tel" autocomplete="tel"></label>
             <label class="ch">E-mail<input type="email" data-b="moi.email" autocomplete="email"></label>
           </div>
-          <label class="ch" data-si="hebergement,honneur,procuration">Votre date de naissance<input type="date" data-b="moi.naissance"></label>
+          <label class="ch" data-si="hebergement,honneur,procuration,vente,pret">Votre date de naissance<input type="date" data-b="moi.naissance"></label>
           <label class="ch">Accords dans le texte
             <select data-b="moi.genre">
               <option value="f">Au féminin (prête, motivée…)</option>
@@ -331,11 +335,11 @@
         </div>
       </details>
 
-      <details class="bloc" open data-si="demission,motivation,conges,rupture,preavis,quittance,resiliation,reclamation">
+      <details class="bloc" open data-si="demission,motivation,conges,rupture,preavis,quittance,resiliation,reclamation,sinistre">
         <summary id="titre-dest">Votre employeur</summary>
         <div class="champs">
           <label class="ch"><span id="lbl-dest">Entreprise</span><input data-b="dest.entreprise"></label>
-          <div class="deux" data-si="demission,motivation,conges,rupture,preavis,resiliation,reclamation">
+          <div class="deux" data-si="demission,motivation,conges,rupture,preavis,resiliation,reclamation,sinistre">
             <label class="ch">À l'attention de<input data-b="dest.nom" placeholder="M. Martin, Service RH…"></label>
             <label class="ch">Formule
               <select data-b="dest.civ"><option>Madame, Monsieur</option><option>Madame</option><option>Monsieur</option></select>
@@ -368,7 +372,7 @@
             <label class="ch">Fait à<input data-b="lieu" placeholder="Votre ville"></label>
             <label class="ch">Le<input type="date" data-b="date"></label>
           </div>
-          <label class="ch" data-si="demission,conges,rupture,preavis,resiliation,reclamation">Envoi
+          <label class="ch" data-si="demission,conges,rupture,preavis,resiliation,reclamation,sinistre">Envoi
             <select data-b="envoi">
               <option value="recommande">Lettre recommandée avec accusé de réception</option>
               <option value="main">Remise en main propre contre décharge</option>
@@ -525,7 +529,42 @@
     adresseMandataire: ['Son adresse', 'text', '3 rue Pasteur, 69007 Lyon'],
     quoi:       ["Ce qu'elle doit faire ou retirer", 'text', 'le colis n° 6A12345678901'],
     residence:  ['Nom ou adresse de la copropriété', 'text', 'la résidence Les Tilleuls'],
-    dateAG:     ["Date de l'assemblée générale", 'date']
+    dateAG:     ["Date de l'assemblée générale", 'date'],
+    acheteur:   ["Nom de l'acheteur", 'text', 'Sophie Martin'],
+    genreAcheteur: ["L'acheteur est", 'select', [['n', 'Ne pas préciser'], ['f', 'Une femme'], ['m', 'Un homme']]],
+    naissanceAcheteur: ['Sa date de naissance', 'date'],
+    adresseAcheteur: ['Son adresse', 'text', '5 avenue Jean Jaurès, 69100 Villeurbanne'],
+    veMarque:   ['Marque et modèle', 'text', 'Renault Clio IV'],
+    veImmat:    ['Immatriculation', 'text', 'AB-123-CD'],
+    veVin:      ["N° d'identification (case E, facultatif)", 'text', 'VF1RFB00X12345678'],
+    veDate1:    ['Date de 1re immatriculation', 'date'],
+    veKm:       ['Kilométrage au compteur', 'text', '84 520 km'],
+    ctDate:     ['Date du dernier contrôle technique', 'date'],
+    prix:       ['Prix de vente (€)', 'num', '6500'],
+    paiementMode: ['Mode de paiement', 'text', 'par virement bancaire'],
+    acompte:    ['Acompte versé ce jour (€)', 'num', '1000'],
+    echeances:  ['Paiement du prix', 'area', '3 versements de 2 000 € les 15 novembre, 15 décembre et 15 janvier'],
+    dateVente:  ['Date de remise du véhicule', 'date'],
+    heureVente: ['Heure de remise', 'text', '14 h 30'],
+    defauts:    ['Défauts connus (facultatif)', 'area', 'une rayure sur la portière arrière gauche'],
+    emprunteur: ['Nom de la personne qui emprunte', 'text', 'Lucas Martin'],
+    genreEmprunteur: ['Cette personne est', 'select', [['n', 'Ne pas préciser'], ['f', 'Une femme'], ['m', 'Un homme']]],
+    naissanceEmprunteur: ['Sa date de naissance', 'date'],
+    adresseEmprunteur: ['Son adresse', 'text', '3 rue Pasteur, 69007 Lyon'],
+    permisEmprunteur: ['Son n° de permis de conduire', 'text', '12AB34567'],
+    pretDu:     ['Prêt à partir du', 'date'],
+    pretAu:     ["Jusqu'au (inclus)", 'date'],
+    usage:      ['Pour quoi faire ? (facultatif)', 'text', 'un déménagement'],
+    assureur:   ['Votre assurance', 'text', 'MAAF Assurances'],
+    numeroContrat: ['Votre n° de contrat', 'text', '123456789'],
+    dateSinistre: ['Date du sinistre', 'date'],
+    heureSinistre: ['Heure (facultatif)', 'text', 'vers 18 h'],
+    lieuSinistre: ['Lieu', 'text', 'avenue Berthelot, à Lyon 7e'],
+    tiers:      ['Autre véhicule (facultatif)', 'text', 'une Peugeot 208 immatriculée CD-456-EF'],
+    circonstances: ["Ce qui s'est passé", 'area', "j'étais arrêté au feu rouge lorsque le véhicule qui me suivait m'a percuté à l'arrière"],
+    degats:     ['Dégâts constatés', 'area', 'pare-chocs arrière enfoncé, feu arrière droit cassé'],
+    plainte:    ['Dépôt de plainte', 'text', 'le 14 octobre 2026 au commissariat de Lyon 7e'],
+    garage:     ['Garage où se trouve le véhicule (facultatif)', 'text', 'Garage Central, 10 rue Garibaldi, Lyon']
   };
 
   // ---------- Accords et petits outils ----------
@@ -984,6 +1023,69 @@
       texte: s => ({objet:'Pouvoir pour l\'assemblée générale', corps:[`${mandant(s)} pour me représenter à l'assemblée générale des copropriétaires ${de(v(s.residence, 'la copropriété'))} du ${d(s.dateAG, "date de l'assemblée")}, prendre part en mon nom à toutes les délibérations et à tous les votes, et signer tous les documents relatifs à cette assemblée.`]})}
   ];
 
+  // ---------- Véhicule ----------
+  const gx = (genre, m, f) => genre === 'f' ? f : genre === 'm' ? m : (m === f ? m : (() => { let i = 0; while (i < m.length && m[i] === f[i]) i++; return m + '(' + f.slice(i) + ')'; })());
+  const euros = x => { const n = parseFloat(String(x || '').replace(/\s/g, '').replace(',', '.')); return isNaN(n) ? '' : n.toLocaleString('fr-FR', {minimumFractionDigits: n % 1 ? 2 : 0, maximumFractionDigits: 2}) + ' €'; };
+  const vehicule = s => `${v(s.veMarque, 'marque et modèle')}, immatriculé ${v(s.veImmat, 'immatriculation')}${s.veVin ? ', numéro d\'identification ' + s.veVin.trim().toUpperCase() : ''}${s.veDate1 ? ', mis en circulation le ' + dateLongue(s.veDate1) : ''}`;
+  const parties = s => [
+    `Le vendeur : ${v(s.moiNom, 'votre prénom et nom')}, ${a('né', 'née')} le ${d(s.moiNaissance, 'votre date de naissance')}, ${a('domicilié', 'domiciliée')} ${v(s.moiAdresse, 'votre adresse')}.`,
+    `L'acheteur : ${v(s.acheteur, "nom de l'acheteur")}, ${gx(s.genreAcheteur, 'né', 'née')} le ${d(s.naissanceAcheteur, 'sa date de naissance')}, ${gx(s.genreAcheteur, 'domicilié', 'domiciliée')} ${v(s.adresseAcheteur, 'son adresse')}.`];
+  const articleVehicule = s => `1. Le véhicule. Le vendeur cède à l'acheteur le véhicule ${vehicule(s)}, présentant ${v(s.veKm, 'kilométrage')} au compteur.`;
+  const articleEtat = s => `3. État du véhicule. L'acheteur reconnaît avoir examiné et essayé le véhicule, et l'accepter dans l'état où il se trouve.${s.ctDate ? ' Le dernier contrôle technique a été réalisé le ' + dateLongue(s.ctDate) + ' ; son procès-verbal est remis à l\'acheteur.' : ''}${String(s.defauts || '').trim() ? ' Le vendeur signale les défauts suivants : ' + s.defauts.trim().replace(/\.$/, '') + '.' : ''} Le vendeur déclare que le véhicule n'est pas gagé, qu'il n'a pas subi de transformation notable et qu'il n'a connaissance d'aucun autre défaut.`;
+  const articleRemise = (s, apresPaiement) => `4. Remise du véhicule. Le véhicule, ses clés et ses documents sont remis à l'acheteur le ${d(s.dateVente, 'date de remise')}${s.heureVente ? ' à ' + s.heureVente.trim() : ''}${apresPaiement ? ', une fois le prix entièrement payé' : ''}. À partir de ce moment, l'acheteur en a la garde et la responsabilité (assurance, amendes, péages). Un certificat de cession est signé le même jour par les deux parties.`;
+  const conseilVente = "Bon à savoir : ce contrat complète le certificat de cession officiel, qui reste obligatoire. Signez-le en deux exemplaires et gardez chacun le vôtre. Le vendeur déclare la vente en ligne dans les 15 jours.";
+  const VENTE = [
+    {k:'classique', nom:'Vente comptant', sous:'Entre particuliers', champs:['acheteur','genreAcheteur','naissanceAcheteur','adresseAcheteur','veMarque','veImmat','veVin','veDate1','veKm','ctDate','prix','paiementMode','dateVente','heureVente','defauts'], conseil: conseilVente,
+      texte: s => ({objet:"Contrat de vente d'un véhicule d'occasion", corps:['Entre les soussignés :', ...parties(s), 'Il a été convenu ce qui suit :', articleVehicule(s),
+        `2. Prix. La vente est conclue au prix de ${euros(s.prix) || '[prix de vente]'}, payé ${v(s.paiementMode, 'mode de paiement')} le jour de la remise du véhicule. Le vendeur reconnaît avoir reçu cette somme.`,
+        articleEtat(s), articleRemise(s, false), 'Fait en deux exemplaires originaux, un pour chaque partie.']})},
+    {k:'acompte', nom:'Avec acompte', sous:'Réservation, solde plus tard', champs:['acheteur','genreAcheteur','naissanceAcheteur','adresseAcheteur','veMarque','veImmat','veVin','veDate1','veKm','ctDate','prix','acompte','paiementMode','dateVente','heureVente','defauts'], conseil: conseilVente,
+      texte: s => { const p = parseFloat(String(s.prix || '').replace(',', '.')), ac = parseFloat(String(s.acompte || '').replace(',', '.')), solde = !isNaN(p) && !isNaN(ac) ? euros(p - ac) : '';
+        return {objet:"Contrat de vente d'un véhicule d'occasion avec acompte", corps:['Entre les soussignés :', ...parties(s), 'Il a été convenu ce qui suit :', articleVehicule(s),
+        `2. Prix. La vente est conclue au prix de ${euros(s.prix) || '[prix de vente]'}. Un acompte de ${euros(s.acompte) || '[acompte]'} est versé ce jour par l'acheteur, qui s'engage à payer le solde de ${solde || '[solde]'} ${v(s.paiementMode, 'mode de paiement')} au plus tard lors de la remise du véhicule. Si l'acheteur renonce à l'achat, l'acompte reste acquis au vendeur.`,
+        articleEtat(s), articleRemise(s, true), 'Fait en deux exemplaires originaux, un pour chaque partie.']}; }},
+    {k:'echelonne', nom:'Paiement en plusieurs fois', sous:'Échéancier', champs:['acheteur','genreAcheteur','naissanceAcheteur','adresseAcheteur','veMarque','veImmat','veVin','veDate1','veKm','ctDate','prix','echeances','dateVente','heureVente','defauts'],
+      conseil:"Bon à savoir : tant que le prix n'est pas payé, le vendeur garde la carte grise barrée et le certificat de cession. Gardez une trace de chaque versement (virement plutôt qu'espèces).",
+      texte: s => ({objet:"Contrat de vente d'un véhicule d'occasion avec paiement échelonné", corps:['Entre les soussignés :', ...parties(s), 'Il a été convenu ce qui suit :', articleVehicule(s),
+        `2. Prix. La vente est conclue au prix de ${euros(s.prix) || '[prix de vente]'}, payable de la façon suivante : ${v(s.echeances, 'échéancier de paiement').replace(/\.$/, '')}. Le vendeur reste propriétaire du véhicule jusqu'au paiement complet du prix ; la carte grise barrée et le certificat de cession sont remis à l'acheteur après le dernier versement.`,
+        articleEtat(s), `4. Remise du véhicule. Le véhicule et ses clés sont remis à l'acheteur le ${d(s.dateVente, 'date de remise')}${s.heureVente ? ' à ' + s.heureVente.trim() : ''}. À partir de ce moment, l'acheteur en a la garde et la responsabilité (assurance, amendes, péages) et s'engage à l'assurer à son nom.`,
+        'Fait en deux exemplaires originaux, un pour chaque partie.']})}
+  ];
+  const pretPhrase = s => `Je ${a('soussigné', 'soussignée')} ${v(s.moiNom, 'votre prénom et nom')}, ${a('né', 'née')} le ${d(s.moiNaissance, 'votre date de naissance')}, ${a('domicilié', 'domiciliée')} ${v(s.moiAdresse, 'votre adresse')}, ${a('propriétaire', 'propriétaire')} du véhicule ${v(s.veMarque, 'marque et modèle')} immatriculé ${v(s.veImmat, 'immatriculation')}, autorise ${v(s.emprunteur, 'nom de la personne')}, ${gx(s.genreEmprunteur, 'né', 'née')} le ${d(s.naissanceEmprunteur, 'sa date de naissance')}, ${gx(s.genreEmprunteur, 'domicilié', 'domiciliée')} ${v(s.adresseEmprunteur, 'son adresse')}, ${gx(s.genreEmprunteur, 'titulaire', 'titulaire')} du permis de conduire n° ${v(s.permisEmprunteur, 'numéro de permis')}`;
+  const pretFin = s => [`Le véhicule est assuré auprès de ${v(s.assureur, 'votre assurance')}${s.numeroContrat ? ' (contrat n° ' + s.numeroContrat.trim() + ')' : ''}.`,
+    `Pendant toute la durée du prêt, ${v(s.emprunteur, 'la personne')} s'engage à utiliser le véhicule avec soin et à respecter le code de la route. ${gx(s.genreEmprunteur, 'Il', 'Elle').replace('Il(le)', 'Il ou elle')} reste personnellement ${gx(s.genreEmprunteur, 'responsable', 'responsable')} des infractions commises pendant cette période.`, 'Cette autorisation est établie pour servir et valoir ce que de droit.'];
+  const conseilPret = "Bon à savoir : votre assurance couvre en général un conducteur occasionnel, mais une franchise plus élevée peut s'appliquer (jeune conducteur, conducteur non déclaré). Vérifiez votre contrat avant de prêter. Gardez une copie de ce document dans la voiture.";
+  const PRET = [
+    {k:'ponctuel', nom:'Prêt ponctuel', sous:'Quelques jours', champs:['emprunteur','genreEmprunteur','naissanceEmprunteur','adresseEmprunteur','permisEmprunteur','veMarque','veImmat','pretDu','pretAu','usage','assureur','numeroContrat'], conseil: conseilPret,
+      texte: s => ({objet:'Autorisation de prêt de véhicule', corps:[`${pretPhrase(s)}, à conduire ce véhicule du ${d(s.pretDu, 'date de début')} au ${d(s.pretAu, 'date de fin')}${String(s.usage || '').trim() ? ', pour ' + s.usage.trim() : ''}.`, ...pretFin(s)]})},
+    {k:'regulier', nom:'Utilisation régulière', sous:'Conducteur habituel', champs:['emprunteur','genreEmprunteur','naissanceEmprunteur','adresseEmprunteur','permisEmprunteur','veMarque','veImmat','pretDu','usage','assureur','numeroContrat'],
+      conseil:"Bon à savoir : si cette personne conduit souvent votre véhicule, déclarez-la à votre assureur comme conducteur secondaire : sinon, en cas d'accident, l'indemnisation peut être réduite.",
+      texte: s => ({objet:'Autorisation de conduire mon véhicule', corps:[`${pretPhrase(s)}, à conduire ce véhicule de manière régulière à compter du ${d(s.pretDu, 'date de début')}${String(s.usage || '').trim() ? ', notamment pour ' + s.usage.trim() : ''}, jusqu'à révocation de ma part.`, ...pretFin(s)]})},
+    {k:'jeune', nom:'Jeune conducteur', sous:'Permis récent', champs:['emprunteur','genreEmprunteur','naissanceEmprunteur','adresseEmprunteur','permisEmprunteur','veMarque','veImmat','pretDu','pretAu','assureur','numeroContrat'],
+      conseil:"Bon à savoir : beaucoup de contrats prévoient une franchise spéciale si un jeune conducteur non déclaré a un accident. Appelez votre assureur avant le prêt : l'ajout ponctuel d'un conducteur coûte souvent peu.",
+      texte: s => ({objet:'Autorisation de prêt de véhicule', corps:[`${pretPhrase(s)}, à conduire ce véhicule du ${d(s.pretDu, 'date de début')} au ${d(s.pretAu, 'date de fin')}.`, `${gx(s.genreEmprunteur, 'Il', 'Elle').replace('Il(le)', 'Cette personne')} est ${gx(s.genreEmprunteur, 'titulaire', 'titulaire')} d'un permis probatoire et s'engage à respecter les limitations de vitesse qui s'y appliquent.`, ...pretFin(s)]})}
+  ];
+  const debutSinistre = s => `Je vous déclare un sinistre concernant mon véhicule ${v(s.veMarque, 'marque et modèle')} immatriculé ${v(s.veImmat, 'immatriculation')}, assuré auprès de vous sous le contrat n° ${v(s.numeroClient, 'numéro de contrat')}.`;
+  const quand = s => `le ${d(s.dateSinistre, 'date')}${String(s.heureSinistre || '').trim() ? ', ' + s.heureSinistre.trim() : ''}, ${v(s.lieuSinistre, 'lieu')}`;
+  const finSinistre = s => [`${String(s.garage || '').trim() ? 'Le véhicule se trouve actuellement au ' + s.garage.trim() + '. ' : ''}Je vous remercie de bien vouloir enregistrer cette déclaration, ouvrir un dossier et m'indiquer la marche à suivre (expertise, réparation).`, 'Je me tiens à votre disposition pour tout renseignement complémentaire.'];
+  const conseilSin = "Bon à savoir : déclarez le sinistre dans le délai prévu par votre contrat, en général 5 jours ouvrés. Gardez une copie de votre lettre et des pièces jointes (photos, constat, factures).";
+  const SINISTRE = [
+    {k:'accident', nom:'Accident avec un autre véhicule', sous:'Avec constat amiable', champs:['numeroClient','veMarque','veImmat','dateSinistre','heureSinistre','lieuSinistre','tiers','circonstances','degats','garage'], conseil: conseilSin,
+      texte: s => ({objet:"Déclaration de sinistre – accident de la circulation", corps:[debutSinistre(s), `L'accident a eu lieu ${quand(s)}${String(s.tiers || '').trim() ? ', avec ' + s.tiers.trim() : ''}. Les circonstances sont les suivantes : ${v(s.circonstances, "ce qui s'est passé").replace(/\.$/, '')}.`, `Un constat amiable a été rempli et signé avec l'autre conducteur ; vous trouverez mon exemplaire ci-joint.`, `Dégâts constatés sur mon véhicule : ${v(s.degats, 'dégâts').replace(/\.$/, '')}.`, ...finSinistre(s)]})},
+    {k:'seul', nom:'Accident sans autre véhicule', sous:'Choc, sortie de route', champs:['numeroClient','veMarque','veImmat','dateSinistre','heureSinistre','lieuSinistre','circonstances','degats','garage'], conseil: conseilSin,
+      texte: s => ({objet:"Déclaration de sinistre – accident sans tiers", corps:[debutSinistre(s), `L'accident a eu lieu ${quand(s)}, sans autre véhicule en cause. Les circonstances sont les suivantes : ${v(s.circonstances, "ce qui s'est passé").replace(/\.$/, '')}.`, `Dégâts constatés : ${v(s.degats, 'dégâts').replace(/\.$/, '')}.`, ...finSinistre(s)]})},
+    {k:'vol', nom:'Vol du véhicule', sous:'Ou tentative de vol', champs:['numeroClient','veMarque','veImmat','dateSinistre','lieuSinistre','plainte','circonstances'],
+      conseil:"Bon à savoir : pour un vol, le délai est plus court : en général 2 jours ouvrés. Portez plainte d'abord, puis joignez le récépissé à votre lettre. Gardez les clés et la carte grise pour l'assureur.",
+      texte: s => ({objet:'Déclaration de vol de véhicule', corps:[debutSinistre(s), `Mon véhicule a été volé ${quand(s)}.${String(s.circonstances || '').trim() ? ' ' + s.circonstances.trim().replace(/\.$/, '') + '.' : ''}`, `J'ai porté plainte ${v(s.plainte, 'date et lieu du dépôt de plainte')} ; vous trouverez le récépissé ci-joint.`, 'Je tiens à votre disposition les clés du véhicule et le certificat d\'immatriculation.', ...finSinistre(s).slice(1)]})},
+    {k:'bris', nom:'Bris de glace', sous:'Pare-brise, vitre', champs:['numeroClient','veMarque','veImmat','dateSinistre','lieuSinistre','degats','garage'], conseil: conseilSin,
+      texte: s => ({objet:'Déclaration de sinistre – bris de glace', corps:[debutSinistre(s), `Le ${d(s.dateSinistre, 'date')}, ${v(s.lieuSinistre, 'lieu')}, ${v(s.degats, 'le pare-brise a été fissuré par un projectile').replace(/\.$/, '')}.`, ...finSinistre(s)]})},
+    {k:'vandalisme', nom:'Vandalisme', sous:'Dégradations', champs:['numeroClient','veMarque','veImmat','dateSinistre','lieuSinistre','degats','plainte','garage'], conseil: conseilSin,
+      texte: s => ({objet:'Déclaration de sinistre – acte de vandalisme', corps:[debutSinistre(s), `Mon véhicule, stationné ${v(s.lieuSinistre, 'lieu')}, a été dégradé le ${d(s.dateSinistre, 'date')}. Dégâts constatés : ${v(s.degats, 'dégâts').replace(/\.$/, '')}.`, String(s.plainte || '').trim() ? `J'ai porté plainte ${s.plainte.trim()} ; vous trouverez le récépissé ci-joint.` : 'Je vous joins des photos des dégâts.', ...finSinistre(s)]})},
+    {k:'intemperies', nom:'Intempéries', sous:'Grêle, inondation, tempête', champs:['numeroClient','veMarque','veImmat','dateSinistre','lieuSinistre','circonstances','degats','garage'],
+      conseil:"Bon à savoir : pour une catastrophe naturelle reconnue par arrêté, vous disposez de 30 jours après sa publication pour déclarer. Pour la grêle ou une tempête, le délai habituel de votre contrat s'applique.",
+      texte: s => ({objet:'Déclaration de sinistre – intempéries', corps:[debutSinistre(s), `Le ${d(s.dateSinistre, 'date')}, ${v(s.lieuSinistre, 'lieu')}, mon véhicule a été endommagé par ${v(s.circonstances, 'un violent orage de grêle').replace(/\.$/, '')}.`, `Dégâts constatés : ${v(s.degats, 'dégâts').replace(/\.$/, '')}.`, ...finSinistre(s)]})}
+  ];
+
   const TYPES = {
     demission:  {h1:'Lettre de démission', modeles: DEMISSION, dest:'Votre employeur', titre:'Lettre de démission gratuite : 10 modèles à remplir – DocuPrêt'},
     motivation: {h1:'Lettre de motivation', modeles: MOTIVATION, dest:'Le recruteur', titre:'Lettre de motivation gratuite : 10 modèles à remplir – DocuPrêt'},
@@ -995,12 +1097,15 @@
     resiliation:{h1:'Lettre de résiliation', groupe:'vie', court:'Résiliation', modeles: RESILIATION, dest:'Destinataire', destNom:'Entreprise ou organisme', titre:'Lettre de résiliation gratuite : 8 modèles – DocuPrêt'},
     reclamation:{h1:'Réclamation et mise en demeure', groupe:'vie', court:'Réclamation', modeles: RECLAMATION, dest:'Destinataire', destNom:'Entreprise ou personne', titre:'Lettre de réclamation et mise en demeure : 6 modèles – DocuPrêt'},
     procuration:{h1:'Procuration', groupe:'vie', court:'Procuration', forme:'procuration', pj:"Pièces jointes : copies des pièces d'identité du mandant et du mandataire.", modeles: PROCURATION, dest:'', titre:'Procuration gratuite : 4 modèles à remplir – DocuPrêt'},
+    vente:      {h1:'Contrat de vente de véhicule', groupe:'vehicule', court:'Vente', forme:'procuration', sign:['Le vendeur', 'Signature précédée de « Lu et approuvé »', "L'acheteur", 'Signature précédée de « Lu et approuvé »'], signNom:'acheteur', pj:"Documents remis à l'acheteur : certificat de cession signé, carte grise barrée, certificat de situation administrative de moins de 15 jours, procès-verbal du contrôle technique.", modeles: VENTE, dest:'', titre:'Contrat de vente de véhicule entre particuliers : 3 modèles gratuits – DocuPrêt'},
+    pret:       {h1:'Autorisation de prêt de véhicule', groupe:'vehicule', court:'Prêt', forme:'procuration', sign:['Le propriétaire', 'Signature', "La personne autorisée", 'Signature précédée de « Lu et approuvé »'], signNom:'emprunteur', pj:"Pièces jointes : copies de la carte grise, de l'attestation d'assurance et de ma pièce d'identité.", modeles: PRET, dest:'', titre:'Autorisation de prêt de véhicule : modèle gratuit – DocuPrêt'},
+    sinistre:   {h1:'Déclaration de sinistre auto', groupe:'vehicule', court:'Sinistre', modeles: SINISTRE, dest:'Votre assurance', destNom:"Compagnie d'assurance", titre:"Déclaration de sinistre à l'assurance : 6 modèles de lettre – DocuPrêt"},
     quittance:  {h1:'Quittance de loyer', groupe:'logement', court:'Quittance', forme:'quittance', modeles: QUITTANCE, dest:'Le locataire', destNom:'Nom du locataire', titre:'Quittance de loyer gratuite à imprimer – DocuPrêt'}
   };
   ['demission', 'motivation', 'conges', 'rupture'].forEach(k => { TYPES[k].groupe = 'travail'; });
   Object.assign(TYPES.demission, {court:'Démission'}); Object.assign(TYPES.motivation, {court:'Motivation'});
   Object.assign(TYPES.conges, {court:'Congés'}); Object.assign(TYPES.rupture, {court:'Rupture'});
-  const ENVOI_DEFAUT = {demission:'recommande', conges:'aucun', rupture:'recommande', motivation:'aucun', preavis:'recommande', hebergement:'aucun', quittance:'aucun', honneur:'aucun', resiliation:'recommande', reclamation:'recommande', procuration:'aucun'};
+  const ENVOI_DEFAUT = {demission:'recommande', conges:'aucun', rupture:'recommande', motivation:'aucun', preavis:'recommande', hebergement:'aucun', quittance:'aucun', honneur:'aucun', resiliation:'recommande', reclamation:'recommande', procuration:'aucun', vente:'aucun', pret:'aucun', sinistre:'recommande'};
 
   const FAQ = {
     demission: [
@@ -1059,6 +1164,22 @@
       ['Que doit présenter la personne ?', "Sa pièce d'identité, la procuration signée et une copie de votre pièce d'identité."],
       ['Une procuration de vote, c\'est pareil ?', "Non, elle a sa propre démarche officielle : une demande en ligne, puis une validation au commissariat ou à la gendarmerie."]
     ],
+    vente: [
+      ['Ce contrat remplace-t-il le certificat de cession ?', "Non. Le certificat de cession (Cerfa 15776) reste obligatoire pour la carte grise. Le contrat de vente le complète : il précise le prix, le paiement, l'état du véhicule et la date de remise."],
+      ["Le vendeur doit-il donner une garantie ?", "Entre particuliers, la garantie contre les vices cachés s'applique : le vendeur doit signaler les défauts qu'il connaît. Indiquez-les dans le contrat, c'est une protection pour les deux parties."],
+      ['Quels documents remettre à l\'acheteur ?', "La carte grise barrée avec la mention « Vendu le … à … h » et signée, le certificat de cession, un certificat de situation administrative de moins de 15 jours, et le contrôle technique de moins de 6 mois pour un véhicule de plus de 4 ans."],
+      ['Comment être payé en toute sécurité ?', "Privilégiez le virement instantané vérifié sur votre compte, ou un chèque de banque dont vous confirmez l'authenticité auprès de la banque émettrice avant de remettre le véhicule."]
+    ],
+    pret: [
+      ['Faut-il une autorisation écrite pour prêter sa voiture ?', "Ce n'est pas obligatoire, mais c'est très utile en cas de contrôle de police ou d'accident : la personne prouve qu'elle conduit avec votre accord."],
+      ["Qui paie les amendes pendant le prêt ?", "Le titulaire de la carte grise reçoit l'avis de contravention, mais il peut désigner la personne qui conduisait. Ce document l'aide à le prouver."],
+      ["Mon assurance couvre-t-elle l'autre conducteur ?", "En général oui pour un prêt occasionnel, avec parfois une franchise plus élevée. Pour un jeune conducteur ou un usage régulier, prévenez votre assureur."]
+    ],
+    sinistre: [
+      ['Dans quel délai déclarer un sinistre ?', "En général 5 jours ouvrés, 2 jours ouvrés pour un vol, et 30 jours après la publication de l'arrêté pour une catastrophe naturelle. Votre contrat précise les délais exacts."],
+      ['Faut-il envoyer un recommandé ?', "Ce n'est pas toujours obligatoire, beaucoup d'assureurs acceptent la déclaration en ligne ou par téléphone. Le recommandé vous donne une preuve de la date."],
+      ['Que joindre à la lettre ?', "Votre exemplaire du constat amiable, des photos, le récépissé de plainte en cas de vol ou de vandalisme, et les coordonnées des témoins s'il y en a."]
+    ],
     motivation: [
       ['Quelle longueur pour une lettre de motivation ?', "Une page maximum, en trois ou quatre paragraphes : vous, ce que vous apportez, pourquoi cette entreprise, et la proposition d'entretien."],
       ['Faut-il la signer ?', "Sur papier, oui, à la main sous votre nom. Envoyée par e-mail en PDF, la signature n'est pas obligatoire."],
@@ -1070,7 +1191,7 @@
   // ---------- État ----------
   const defaut = () => ({
     type: 'demission', style: 'classique',
-    modele: {demission: 'cdi', motivation: 'annonce', conges: 'payes', rupture: 'demande', preavis: 'classique', hebergement: 'gratuit', quittance: 'mensuelle', honneur: 'libre', resiliation: 'box', reclamation: 'reclamation', procuration: 'colis'},
+    modele: {demission: 'cdi', motivation: 'annonce', conges: 'payes', rupture: 'demande', preavis: 'classique', hebergement: 'gratuit', quittance: 'mensuelle', honneur: 'libre', resiliation: 'box', reclamation: 'reclamation', procuration: 'colis', vente: 'classique', pret: 'ponctuel', sinistre: 'accident'},
     moi: {nom: '', adresse: '', cpville: '', tel: '', email: '', genre: 'n', naissance: ''},
     dest: {entreprise: '', nom: '', civ: 'Madame, Monsieur', adresse: '', cpville: ''},
     champs: {}, lieu: '', date: aujourdhui(), envoi: 'recommande', pj: 'cv',
@@ -1148,7 +1269,8 @@
         <div class="l-titre">${avecTrous(etat.objet || '')}</div>
         <div class="l-corps">${corps}${tableau}</div>
         ${forme === 'procuration'
-          ? `<div style="margin-top:28px">${lieu}</div><div class="l-sign2"><div>Le mandant<br><small>Signature précédée de « Bon pour pouvoir »</small><div class="l-sign-zone"></div>${nomMoi}</div><div>Le mandataire<br><small>Signature précédée de « Bon pour acceptation »</small><div class="l-sign-zone"></div>${etat.champs.mandataire ? esc(etat.champs.mandataire) : '<span class="ph">[Nom de la personne]</span>'}</div></div>`
+          ? (() => { const sg = TYPES[etat.type].sign || ['Le mandant', 'Signature précédée de « Bon pour pouvoir »', 'Le mandataire', 'Signature précédée de « Bon pour acceptation »'], n2 = etat.champs[TYPES[etat.type].signNom || 'mandataire'];
+              return `<div style="margin-top:28px">${lieu}</div><div class="l-sign2"><div>${sg[0]}<br><small>${sg[1]}</small><div class="l-sign-zone"></div>${nomMoi}</div><div>${sg[2]}<br><small>${sg[3]}</small><div class="l-sign-zone"></div>${n2 ? esc(n2) : '<span class="ph">[Nom de la personne]</span>'}</div></div>`; })()
           : `<div class="l-sign">${lieu}<br><span style="font-size:12.5px;color:#555">Signature</span><div class="l-sign-zone"></div>${nomMoi}</div>`}
         ${TYPES[etat.type].pj ? `<div class="l-pj">${TYPES[etat.type].pj}</div>` : ''}`;
       ajuster();
@@ -1320,7 +1442,7 @@
   $('telecharger').addEventListener('click', () => avantSortie(async () => {
     const bouton = $('telecharger'); bouton.disabled = true;
     const texte = bouton.lastChild.textContent; bouton.lastChild.textContent = ' Création…';
-    const nom = ({demission: 'lettre-demission-', motivation: 'lettre-motivation-', conges: 'demande-conges-', rupture: 'rupture-conventionnelle-', preavis: 'preavis-logement-', hebergement: 'attestation-hebergement-', quittance: 'quittance-loyer-', honneur: 'attestation-honneur-', resiliation: 'lettre-resiliation-', reclamation: 'lettre-reclamation-', procuration: 'procuration-'})[etat.type] + (String(etat.moi.nom).trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'docupret') + '.pdf';
+    const nom = ({demission: 'lettre-demission-', motivation: 'lettre-motivation-', conges: 'demande-conges-', rupture: 'rupture-conventionnelle-', preavis: 'preavis-logement-', hebergement: 'attestation-hebergement-', quittance: 'quittance-loyer-', honneur: 'attestation-honneur-', resiliation: 'lettre-resiliation-', reclamation: 'lettre-reclamation-', procuration: 'procuration-', vente: 'contrat-vente-vehicule-', pret: 'autorisation-pret-vehicule-', sinistre: 'declaration-sinistre-'})[etat.type] + (String(etat.moi.nom).trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'docupret') + '.pdf';
     try{
       if (!window.html2pdf) throw new Error('html2pdf');
       await pdfDepuisPage({margin: 0, filename: nom, image: {type: 'jpeg', quality: 0.97},
