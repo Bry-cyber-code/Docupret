@@ -14,10 +14,12 @@
   // Ces valeurs sont publiques par nature : la sécurité est assurée par les règles Firestore
   // (chaque compte ne peut lire et écrire que ses propres clients).
   const CONFIG = {
-    apiKey: '',
-    authDomain: '',
-    projectId: '',
-    appId: ''
+    apiKey: 'AIzaSyDSvwqeTZZeOaz92Yz5QIlgTP1VTKK9Jwg',
+    authDomain: 'docupret-cd4f0.firebaseapp.com',
+    projectId: 'docupret-cd4f0',
+    storageBucket: 'docupret-cd4f0.firebasestorage.app',
+    messagingSenderId: '657987325283',
+    appId: '1:657987325283:web:398f5925bf81a610eb9756'
   };
 
   const CLE_CLIENTS = 'docupret_clients';
