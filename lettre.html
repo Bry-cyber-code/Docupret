@@ -166,13 +166,15 @@
 
   @media print{
     @page{size:A4;margin:0}
-    body{padding:0;background:#fff}
-    body *{visibility:hidden}
-    #page,#page *{visibility:visible}
-    .echelle{transform:none!important;position:absolute;top:0;left:0}
-    #page{position:absolute;left:0;top:0;box-shadow:none}
-    #page .ph{background:none;color:#1d222b}
+    html,body{background:#fff!important;padding:0!important;margin:0!important}
+    body > :not(#impression){display:none!important}
+    #impression{display:block!important;position:static!important}
+    #impression > *{box-shadow:none!important;transform:none!important;margin:0!important}
+    #impression .ph{background:none!important;color:#1d222b!important}
+    #impression .cst{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    #impression .page,#impression .cst{-webkit-print-color-adjust:exact;print-color-adjust:exact}
   }
+  #impression{display:none}
   /* Menu latéral */
   .gauche{display:flex;align-items:center}
   .menu-btn{width:40px;height:40px;border:0;background:none;border-radius:10px;display:grid;place-items:center;margin-left:-8px;cursor:pointer;color:var(--texte)}
@@ -268,6 +270,13 @@
         <a href="lettre.html?type=resiliation">Lettre de résiliation</a>
         <a href="lettre.html?type=reclamation">Réclamation / mise en demeure</a>
         <a href="lettre.html?type=procuration">Procuration</a>
+      </div>
+    </div>
+    <div class="cat">
+      <button type="button" class="cat-btn" aria-expanded="false"><span>Véhicule</span><span class="plus">+</span></button>
+      <div class="sous" hidden>
+        <a href="cession.html">Certificat de cession</a>
+        <a href="constat.html">Constat amiable</a>
       </div>
     </div>
   <a href="logo.html" class="tiroir-lien">Créer votre logo</a>
@@ -1365,6 +1374,20 @@
     if (a && a.classList.contains('bientot')) e.preventDefault();
     else if (a) fermer();
   });
+})();
+</script>
+<script>
+(function(){
+  // Impression : seule la feuille est imprimée, sur une page A4, sans pages blanches en trop
+  function preparer(){
+    retirer();
+    const p = document.getElementById('page'); if (!p) return;
+    const z = document.createElement('div'); z.id = 'impression';
+    const c = p.cloneNode(true); c.removeAttribute('id'); z.appendChild(c); document.body.appendChild(z);
+  }
+  function retirer(){ const z = document.getElementById('impression'); if (z) z.remove(); }
+  window.addEventListener('beforeprint', preparer);
+  window.addEventListener('afterprint', retirer);
 })();
 </script>
 </body>
