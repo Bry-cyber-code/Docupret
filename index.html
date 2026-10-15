@@ -131,6 +131,13 @@
   .etape-num{width:34px;height:34px;border-radius:50%;background:var(--bleu);color:#fff;font-weight:700;display:grid;place-items:center;margin:0 auto 8px}
   .etape b{display:block;font-size:.95rem}
   .etape span{color:var(--gris);font-size:.8rem}
+  .avantages{background:var(--blanc);border:1px solid var(--bord);border-radius:var(--rayon);padding:18px 18px 16px;margin:16px 0 10px}
+  .avantages h2{font-size:1.05rem;margin-bottom:8px}
+  .avantages ul{list-style:none;padding:0;display:grid;gap:8px}
+  .avantages li{font-size:.9rem;color:#3B4558;padding-left:22px;position:relative;line-height:1.45}
+  .avantages li::before{content:"✓";position:absolute;left:0;color:var(--bleu);font-weight:800}
+  .avantages p{margin-top:12px;font-size:.86rem}
+  .avantages a{color:var(--bleu);font-weight:600}
 
   /* Pied de page */
   footer{background:var(--blanc);border-top:1px solid var(--bord);margin-top:32px;padding:22px 0;font-size:.85rem;color:var(--gris)}
@@ -375,6 +382,16 @@
     <div class="etape"><div class="etape-num">1</div><b>Choisissez</b><span>votre document</span></div>
     <div class="etape"><div class="etape-num">2</div><b>Remplissez</b><span>le formulaire</span></div>
     <div class="etape"><div class="etape-num">3</div><b>Téléchargez</b><span>en PDF</span></div>
+  </section>
+
+  <section class="avantages" aria-label="Avec un compte gratuit">
+    <h2>Avec un compte gratuit</h2>
+    <ul>
+      <li><b>Vos clients enregistrés</b>, retrouvés en un geste sur tous vos appareils.</li>
+      <li><b>Devis transformé en facture</b> en un seul clic.</li>
+      <li><b>Envoi par e-mail depuis votre Gmail</b> : le devis ou la facture part de votre propre adresse, avec le PDF en pièce jointe. DocuPrêt demande seulement l'autorisation d'<i>envoyer</i> les documents que vous choisissez : il ne lit jamais vos e-mails.</li>
+    </ul>
+    <p><a href="compte.html#compte">Créer mon compte</a> · <a href="mentions-legales.html#confidentialite">Comment vos données sont protégées</a></p>
   </section>
 
 </main>
