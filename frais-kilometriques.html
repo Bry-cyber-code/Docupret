@@ -64,9 +64,9 @@
   .choix button{border:1.5px solid var(--bord);background:#fff;border-radius:50px;padding:7px 13px;font-size:.9rem;font-weight:600;color:var(--texte)}
   .choix button.on{background:var(--bleu);border-color:var(--bleu);color:#fff}
   .champ-km{position:relative}
-  .champ-km input{width:100%;font:inherit;font-size:1.6rem;font-weight:700;padding:11px 54px 11px 14px;border:1.5px solid var(--bord);border-radius:12px;outline:none;font-variant-numeric:tabular-nums}
+  .champ-km input{width:100%;font:inherit;font-size:1.6rem;font-weight:700;padding:11px 128px 11px 14px;border:1.5px solid var(--bord);border-radius:12px;outline:none;font-variant-numeric:tabular-nums}
   .champ-km input:focus,.petit-champ input:focus{border-color:var(--bleu);box-shadow:0 0 0 4px var(--bleu-clair)}
-  .champ-km span{position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:1.1rem;color:var(--gris);font-weight:600}
+  .champ-km span{position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:1rem;color:var(--gris);font-weight:600}
   .deux{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
   .petit-champ{display:grid;gap:4px;font-size:.8rem;color:var(--gris);font-weight:600}
   .petit-champ input{font:inherit;font-size:16px;padding:10px 11px;border:1.5px solid var(--bord);border-radius:10px;outline:none;width:100%;min-width:0}
@@ -92,6 +92,7 @@
   .recap td{white-space:nowrap}
   .recap td:first-child{white-space:normal}
   .astuce-res{font-size:.82rem;color:var(--texte);background:#fff;border-radius:10px;padding:9px 11px;text-align:left;line-height:1.45}
+  .lien-per{border:0;background:none;padding:0;font:inherit;font-weight:700;color:var(--bleu-fonce);text-decoration:underline;cursor:pointer}
   .unite{position:relative}
   .unite input{padding-right:84px!important}
   .unite i{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-style:normal;font-size:.76rem;color:var(--gris);pointer-events:none}
@@ -266,19 +267,23 @@
     <div class="titre">Distance parcourue pour le travail</div>
     <div class="choix" id="mode"><button type="button" data-v="total">Je connais ma distance</button><button type="button" data-v="domicile">Trajets domicile-travail</button></div>
     <div id="m-total">
-      <div class="champ-km"><input id="km" inputmode="numeric" placeholder="0" aria-label="Kilomètres parcourus"><span>km</span></div>
-      <div class="choix petit" id="periode" style="margin-top:8px"><button type="button" data-v="semaine">par semaine</button><button type="button" data-v="mois">par mois</button><button type="button" data-v="an">par an</button></div>
+      <div class="titre" style="margin-bottom:6px">Je roule pour le travail :</div>
+      <div class="choix" id="periode" style="margin-bottom:8px"><button type="button" data-v="jour">par jour</button><button type="button" data-v="semaine">par semaine</button><button type="button" data-v="mois">par mois</button><button type="button" data-v="an">par an</button></div>
+      <div class="champ-km"><input id="km" inputmode="decimal" placeholder="0" aria-label="Kilomètres parcourus"><span id="u-km">km / semaine</span></div>
+      <div class="avert" id="avert-peu" hidden style="margin-top:8px"></div>
     </div>
     <div id="m-domicile" hidden>
       <div class="deux">
         <label class="petit-champ">Distance aller (km)<input id="aller" inputmode="decimal" placeholder="25"></label>
-        <label class="petit-champ">Jours travaillés par semaine<input id="jsem" inputmode="decimal" placeholder="5"></label>
+        <label class="petit-champ">Autres km pro par an<input id="autres" inputmode="numeric" placeholder="0"></label>
       </div>
-      <label class="petit-champ" style="margin-top:8px">Autres km professionnels dans l'année (facultatif)<input id="autres" inputmode="numeric" placeholder="0"></label>
       <label class="case" style="margin-top:8px"><input type="checkbox" id="justif">Mon trajet dépasse 40 km et je peux le justifier</label>
       <div class="avert" id="avert40" hidden></div>
     </div>
-    <label class="petit-champ" id="bloc-sem">Semaines travaillées dans l'année<input id="semaines" inputmode="numeric" placeholder="45"></label>
+    <div class="deux" id="bloc-sem">
+      <label class="petit-champ">Semaines travaillées par an<input id="semaines" inputmode="numeric" placeholder="45"></label>
+      <label class="petit-champ" id="bloc-jsem">Jours travaillés par semaine<input id="jsem" inputmode="decimal" placeholder="5"></label>
+    </div>
     <p class="note" id="detail-dom"></p>
   </section>
 
@@ -370,7 +375,7 @@
     elec:   {n: 'Électrique', u: 'kWh', conso: {voiture: 17, moto: 8, cyclo: 4}}
   };
   const SEM_DEFAUT = 45, JSEM_DEFAUT = 5;
-  const defaut = () => ({type: 'voiture', cv: '5', carbu: 'gazole', prix: {}, conso: {}, mode: 'total', periode: 'an', vue: 'mois', km: '', aller: '', jsem: '', semaines: '', autres: '', justif: false, trajets: []});
+  const defaut = () => ({type: 'voiture', cv: '5', carbu: 'gazole', prix: {}, conso: {}, mode: 'total', periode: 'semaine', vue: 'mois', km: '', aller: '', jsem: '', semaines: '', autres: '', justif: false, trajets: []});
   let E = defaut();
   try{
     const s = JSON.parse(localStorage.getItem(CLE));
@@ -379,7 +384,6 @@
       // Anciennes données : case « électrique » et jours par an
       if (s.elec === true && !s.carbu) E.carbu = 'elec';
       if (s.jours && !s.semaines) E.semaines = String(Math.round(parseFloat(s.jours) / 5) || '');
-      if (!s.periode) E.periode = 'an';
       if (typeof E.prix !== 'object' || !E.prix) E.prix = {};
       if (typeof E.conso !== 'object' || !E.conso) E.conso = {};
     }
@@ -392,7 +396,7 @@
   const kmf = x => Math.round(x).toLocaleString('fr-FR') + ' km';
   const coef = x => x.toLocaleString('fr-FR', {minimumFractionDigits: 3});
   const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
-  const PER = {semaine: 'par semaine', mois: 'par mois', an: 'par an'};
+  const PER = {jour: 'par jour', semaine: 'par semaine', mois: 'par mois', an: 'par an'};
 
   const carbusDispo = () => Object.keys(CARBU).filter(k => CARBU[k].conso[E.type]);
   const elec = () => E.carbu === 'elec';
@@ -411,8 +415,9 @@
   function distance(){
     const S = semaines();
     if (E.mode === 'total'){
-      const k = nb(E.km), d = E.periode === 'semaine' ? k * S : E.periode === 'mois' ? k * 12 : k;
-      return {reel: d, fisc: d, sem: E.periode === 'semaine' ? S : 52};
+      const k = nb(E.km), j = Math.min(7, nb(E.jsem) || JSEM_DEFAUT);
+      const d = E.periode === 'jour' ? k * j * S : E.periode === 'semaine' ? k * S : E.periode === 'mois' ? k * 12 : k;
+      return {reel: d, fisc: d, sem: E.periode === 'jour' || E.periode === 'semaine' ? S : 52, j, S};
     }
     const aller = nb(E.aller), j = Math.min(7, nb(E.jsem) || JSEM_DEFAUT), autres = nb(E.autres);
     const plafond = !E.justif && aller > 40, allerF = plafond ? 40 : aller;
@@ -447,7 +452,9 @@
 
     // Distance
     $('m-total').hidden = E.mode !== 'total'; $('m-domicile').hidden = E.mode !== 'domicile';
-    $('bloc-sem').hidden = !(E.mode === 'domicile' || E.periode === 'semaine');
+    $('bloc-sem').hidden = !(E.mode === 'domicile' || E.periode === 'jour' || E.periode === 'semaine');
+    $('bloc-jsem').style.visibility = E.mode === 'domicile' || E.periode === 'jour' ? '' : 'hidden';
+    $('u-km').textContent = 'km ' + {jour: '/ jour', semaine: '/ semaine', mois: '/ mois', an: '/ an'}[E.periode];
     $('justif').checked = E.justif;
     for (const k of ['km', 'aller', 'jsem', 'semaines', 'autres']) if (document.activeElement !== $(k)) $(k).value = E[k];
     const D = distance();
@@ -455,7 +462,17 @@
     if (D.plafond) $('avert40').textContent = `Pour les impôts, seuls 40 km par trajet sont retenus au-delà de 40 km aller, sauf circonstances particulières (contraintes familiales, emploi précaire…). Le coût du carburant, lui, est calculé sur vos ${num(D.aller, 1)} km réels.`;
     let det = '';
     if (E.mode === 'domicile' && D.reel) det = `${num(D.aller, 1)} km × 2 × ${num(D.j, 1)} jours × ${num(D.S)} semaines${D.autres ? ' + ' + kmf(D.autres) : ''} = ${kmf(D.reel)} par an`;
-    else if (E.mode === 'total' && D.reel && E.periode !== 'an') det = E.periode === 'semaine' ? `${kmf(nb(E.km))} × ${num(D.sem)} semaines = ${kmf(D.reel)} par an` : `${kmf(nb(E.km))} × 12 mois = ${kmf(D.reel)} par an`;
+    else if (E.mode === 'total' && D.reel){
+      const k = num(nb(E.km), 1) + ' km';
+      det = E.periode === 'jour' ? `${k} × ${num(D.j, 1)} jours × ${num(D.S)} semaines = ${kmf(D.reel)} par an`
+        : E.periode === 'semaine' ? `${k} × ${num(D.S)} semaines = ${kmf(D.reel)} par an`
+        : E.periode === 'mois' ? `${k} × 12 mois = ${kmf(D.reel)} par an`
+        : `${k} sur toute l'année, soit environ ${num(D.reel / 52, 1)} km par semaine`;
+    }
+    // Distance anormalement faible : l'utilisateur s'est sans doute trompé de période
+    const k0 = nb(E.km), peu = E.mode === 'total' && k0 > 0 && ((E.periode === 'an' && k0 < 1500) || (E.periode === 'mois' && k0 < 120));
+    $('avert-peu').hidden = !peu;
+    if (peu) $('avert-peu').innerHTML = `${num(k0, 1)} km sur ${E.periode === 'an' ? "toute l'année" : 'tout le mois'}, c'est très peu. Est-ce plutôt <button type="button" class="lien-per" data-v="jour">par jour</button>, <button type="button" class="lien-per" data-v="semaine">par semaine</button>${E.periode === 'an' ? ' ou <button type="button" class="lien-per" data-v="mois">par mois</button>' : ''} ?`;
     $('detail-dom').textContent = det;
 
     // Calculs annuels
@@ -507,6 +524,7 @@
   }
 
   const chips = (id, cle) => $(id).addEventListener('click', e => { const b = e.target.closest('[data-v]'); if (!b) return; E[cle] = b.dataset.v; rendre(); sauver(); });
+  $('avert-peu').addEventListener('click', e => { const b = e.target.closest('[data-v]'); if (!b) return; E.periode = b.dataset.v; rendre(); sauver(); });
   chips('type', 'type'); chips('cv', 'cv'); chips('mode', 'mode'); chips('periode', 'periode'); chips('vue', 'vue'); chips('carbu', 'carbu');
   $('justif').addEventListener('change', e => { E.justif = e.target.checked; rendre(); sauver(); });
   for (const k of ['km', 'aller', 'jsem', 'semaines', 'autres']) $(k).addEventListener('input', e => { E[k] = e.target.value; rendre(); sauver(); });
