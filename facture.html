@@ -870,7 +870,8 @@ window.DOCU_AFFICHAGE = (function(){
       paiement:{conditions:'30 jours', moyen:'Virement', iban:'', notes:''},
       compteurs:{devis:0, facture:0, recu:0, avoir:0},
       masques:{},
-      numerotation:{annee:true}
+      numerotation:{annee:true}, numMaj:'',
+      envoiMessage:'', modifie:''
     };
   }
 
@@ -895,6 +896,7 @@ window.DOCU_AFFICHAGE = (function(){
   let minuterie;
   function sauver(){
     clearTimeout(minuterie);
+    etat.modifie = new Date().toISOString();
     minuterie = setTimeout(() => { try{ localStorage.setItem(CLE, JSON.stringify(etat)); }catch(e){} }, 300);
   }
 
@@ -904,6 +906,26 @@ window.DOCU_AFFICHAGE = (function(){
     return [p, n.annee === false ? '' : String(new Date().getFullYear())].filter(Boolean).join('-');
   };
   const prochainNumero = t => { const b = baseNumero(t), num = String((etat.compteurs[t] || 0) + 1).padStart(3,'0'); return b ? b + '-' + num : num; };
+
+  // Chaque visite commence un document neuf : seuls vos réglages (entreprise, paiement, TVA, style…) sont repris.
+  // Exception : un brouillon pas encore téléchargé ni envoyé, modifié il y a moins de 12 h, est repris.
+  let brouillonRepris = false;
+  (function(){
+    const q = new URLSearchParams(location.search);
+    if (q.get('depuis') || q.get('ouvrir')) return;
+    const tUrl = q.get('type'), m = String(etat.doc.numero || '').match(/(\d+)\s*$/);
+    const termine = !m || parseInt(m[1], 10) <= (etat.compteurs[etat.type] || 0);
+    const recent = etat.modifie && (Date.now() - new Date(etat.modifie).getTime()) < 12 * 3600 * 1000;
+    const autreType = tUrl && TYPES[tUrl] && tUrl !== etat.type;
+    const contenu = !!(etat.cl.nom || etat.lignes.some(l => String(l.des || '').trim() || num(l.pu)));
+    if (termine || autreType || !recent || !contenu){
+      const d = aujourdhui();
+      etat.cl = etatDefaut().cl;
+      etat.lignes = [ligneVide()];
+      etat.paiement.notes = ''; etat.depuis = ''; etat.ouvert = '';
+      etat.doc = Object.assign(etatDefaut().doc, {numero: '', date: d, echeance: plusJours(d, DELAIS[etat.paiement.conditions] ?? 30), validite: plusJours(d, 30)});
+    } else brouillonRepris = true;
+  })();
 
   // Reprendre un document enregistré dans Mon compte :
   //   facture.html?depuis=ID → transforme un devis en facture (mêmes client et prestations, nouveau numéro)
@@ -1396,16 +1418,11 @@ window.DOCU_AFFICHAGE = (function(){
 
   // Envoi par e-mail : depuis Gmail en un clic (comptes), ou avec une autre application du téléphone
   const MOTS = {devis: ['le devis', 'Devis'], facture: ['la facture', 'Facture'], recu: ['le reçu', 'Reçu'], avoir: ['l\'avoir', 'Avoir']};
+  // Message choisi dans Mon compte → Paramètres ; sinon « Cordialement, » et le nom de l'entreprise
   function messageParDefaut(){
-    const [le] = MOTS[etat.type], n = etat.doc.numero, total = $('total-val').textContent;
-    const phrase = {
-      devis: `Veuillez trouver ci-joint le devis n° ${n} d'un montant de ${total}${etat.doc.validite ? `, valable jusqu'au ${dateFr(etat.doc.validite)}` : ''}.\n\nJe reste à votre disposition pour toute question.`,
-      facture: `Veuillez trouver ci-joint la facture n° ${n} d'un montant de ${total}${etat.doc.echeance ? `, à régler avant le ${dateFr(etat.doc.echeance)}` : ''}.\n\nMerci pour votre confiance.`,
-      recu: `Veuillez trouver ci-joint le reçu n° ${n} correspondant à votre paiement de ${total}.\n\nMerci pour votre confiance.`,
-      avoir: `Veuillez trouver ci-joint l'avoir n° ${n} d'un montant de ${total}.`
-    }[etat.type];
-    const signature = [etat.em.nom, etat.em.tel].filter(Boolean).join('\n');
-    return `${etat.cl.nom ? 'Bonjour ' + etat.cl.nom + ',' : 'Bonjour,'}\n\n${phrase}\n\nCordialement,${signature ? '\n' + signature : ''}`;
+    const perso = String(etat.envoiMessage || '').trim();
+    if (perso) return perso;
+    return 'Cordialement,' + (etat.em.nom ? '\n' + etat.em.nom : '');
   }
   const emailOk = v => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(String(v).trim());
 
@@ -1620,6 +1637,7 @@ window.DOCU_AFFICHAGE = (function(){
 
   // ---------- Démarrage ----------
   rendreGalerie(); remplirChamps(); majLogo(); rendreLignes(); majVisibilite(); rendreApercu();
+  if (brouillonRepris) setTimeout(() => alerte('Votre brouillon en cours est repris. « ＋ Nouveau document » pour repartir de zéro.'), 700);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(ajuster);
 })();
 </script>
@@ -1831,7 +1849,7 @@ window.DOCU_AFFICHAGE = (function(){
   window.addEventListener('load', () => setTimeout(liste, 300));
 })();
 </script>
-<script src="compte.js?v=8"></script>
+<script src="compte.js?v=9"></script>
 <script src="gmail.js?v=2"></script>
 <script>
 // ===== Clients enregistrés =====

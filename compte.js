@@ -110,7 +110,7 @@
       em: d.em || {}, franchise: !!d.franchise,
       paiement: {conditions: p.conditions, moyen: p.moyen, iban: p.iban},
       numerotation: d.numerotation || {annee: true}, compteurs: d.compteurs || {}, numMaj: d.numMaj || '',
-      tauxDefaut: d.tauxDefaut, tvaMode: d.tvaMode,
+      tauxDefaut: d.tauxDefaut, tvaMode: d.tvaMode, envoiMessage: d.envoiMessage || '',
       affichage: localStorage.getItem('docupret_affichage') || '', avatar: localStorage.getItem('docupret_avatar') || '', envoiGmail: localStorage.getItem('docupret_envoi_gmail') || ''
     });
   }
@@ -125,6 +125,7 @@
     else { d.compteurs = Object.assign({}, loc); for (const t in dist) d.compteurs[t] = Math.max(loc[t] || 0, dist[t] || 0); }
     if (p.tauxDefaut != null) d.tauxDefaut = p.tauxDefaut;
     if (p.tvaMode) d.tvaMode = p.tvaMode;
+    if (typeof p.envoiMessage === 'string') d.envoiMessage = p.envoiMessage;
     if (d.doc) d.doc.numero = '';
     try{
       localStorage.setItem(CLE_DOC, JSON.stringify(d));
