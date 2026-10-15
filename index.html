@@ -222,6 +222,13 @@
       </div>
     </div>
     <div class="cat">
+      <button type="button" class="cat-btn" aria-expanded="false"><span>Véhicule</span><span class="plus">+</span></button>
+      <div class="sous" hidden>
+        <a href="cession.html">Certificat de cession</a>
+        <a href="constat.html">Constat amiable</a>
+      </div>
+    </div>
+    <div class="cat">
       <button type="button" class="cat-btn" aria-expanded="false"><span>Logement</span><span class="plus">+</span></button>
       <div class="sous" hidden>
         <a href="lettre.html?type=hebergement">Attestation d'hébergement</a>
@@ -236,13 +243,6 @@
         <a href="lettre.html?type=resiliation">Lettre de résiliation</a>
         <a href="lettre.html?type=reclamation">Réclamation / mise en demeure</a>
         <a href="lettre.html?type=procuration">Procuration</a>
-      </div>
-    </div>
-    <div class="cat">
-      <button type="button" class="cat-btn" aria-expanded="false"><span>Véhicule</span><span class="plus">+</span></button>
-      <div class="sous" hidden>
-        <a href="cession.html">Certificat de cession</a>
-        <a href="constat.html">Constat amiable</a>
       </div>
     </div>
   <a href="logo.html" class="tiroir-lien">Créer votre logo</a>
@@ -276,9 +276,9 @@
     <div class="filtres" id="filtres">
       <button class="filtre" data-cat="pro">Pro</button>
       <button class="filtre" data-cat="travail">Travail</button>
+      <button class="filtre" data-cat="vehicule">Véhicule</button>
       <button class="filtre" data-cat="logement">Logement</button>
       <button class="filtre" data-cat="vie">Vie courante</button>
-      <button class="filtre" data-cat="vehicule">Véhicule</button>
       <button class="filtre actif" data-cat="tous">Tous</button>
     </div>
 
@@ -408,15 +408,15 @@
     {nom:'Lettre de motivation', cat:'travail', label:'Travail', icone:'motivation', page:'lettre.html?type=motivation', badge:'10 modèles', mots:'candidature emploi job stage alternance cv embauche'},
     {nom:'Demande de congés', cat:'travail', label:'Travail', icone:'conges', badge:'7 modèles', page:'lettre.html?type=conges', mots:'congé vacances absence employeur jours'},
     {nom:'Rupture conventionnelle', cat:'travail', label:'Travail', icone:'rupture', badge:'4 modèles', page:'lettre.html?type=rupture', mots:'licenciement quitter emploi employeur départ'},
+    {nom:'Certificat de cession', cat:'vehicule', label:'Véhicule', icone:'cession', page:'cession.html', badge:'Cerfa officiel', mots:'vente voiture moto vendre acheter cerfa 15776 carte grise occasion'},
+    {nom:'Constat amiable', cat:'vehicule', label:'Véhicule', icone:'constat', page:'constat.html', badge:'À imprimer', mots:'accident voiture auto assurance accrochage sinistre'},
     {nom:"Attestation d'hébergement", cat:'logement', label:'Logement', icone:'hebergement', page:'lettre.html?type=hebergement', badge:'6 modèles', mots:'héberger logé domicile caf adresse'},
     {nom:'Préavis locataire', cat:'logement', label:'Logement', icone:'preavis', page:'lettre.html?type=preavis', badge:'10 modèles', mots:'lettre congé bail location appartement propriétaire déménagement quitter logement'},
     {nom:'Quittance de loyer', cat:'logement', label:'Logement', icone:'quittance', page:'lettre.html?type=quittance', badge:'3 modèles', mots:'loyer location propriétaire bailleur locataire reçu'},
     {nom:"Attestation sur l'honneur", cat:'vie', label:'Vie courante', icone:'honneur', page:'lettre.html?type=honneur', badge:'6 modèles', mots:'déclaration certifier'},
     {nom:'Lettre de résiliation', cat:'vie', label:'Vie courante', icone:'resiliation', page:'lettre.html?type=resiliation', badge:'8 modèles', mots:'résilier abonnement box internet mobile mutuelle assurance salle sport contrat'},
     {nom:'Réclamation / mise en demeure', cat:'vie', label:'Vie courante', icone:'reclamation', page:'lettre.html?type=reclamation', badge:'6 modèles', mots:'lettre plainte litige remboursement contestation'},
-    {nom:'Procuration', cat:'vie', label:'Vie courante', icone:'procuration', page:'lettre.html?type=procuration', badge:'4 modèles', mots:'pouvoir mandat autorisation représenter'},
-    {nom:'Certificat de cession', cat:'vehicule', label:'Véhicule', icone:'cession', page:'cession.html', badge:'Cerfa officiel', mots:'vente voiture moto vendre acheter cerfa 15776 carte grise occasion'},
-    {nom:'Constat amiable', cat:'vehicule', label:'Véhicule', icone:'constat', page:'constat.html', badge:'À imprimer', mots:'accident voiture auto assurance accrochage sinistre'}
+    {nom:'Procuration', cat:'vie', label:'Vie courante', icone:'procuration', page:'lettre.html?type=procuration', badge:'4 modèles', mots:'pouvoir mandat autorisation représenter'}
   ];
 
   const grille = document.getElementById('grille');
