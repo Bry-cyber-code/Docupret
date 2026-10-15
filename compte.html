@@ -134,8 +134,16 @@
   .cl-txt b{font-size:.98rem}
   .cl-txt span{font-size:.8rem;color:var(--gris);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .cl-pro{font-size:.66rem;background:var(--fond);border:1px solid var(--bord);border-radius:50px;padding:1px 7px;margin-left:6px;font-weight:600;color:var(--gris);vertical-align:2px}
-  .cl-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
-  .cl-actions a,.cl-actions button{border:1.5px solid var(--bord);background:#fff;border-radius:9px;padding:8px 4px;font-size:.82rem;font-weight:650;color:var(--texte);text-align:center}
+  .cl-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .clients{gap:0!important;border:1px solid var(--bord);border-radius:12px;overflow:hidden;background:#fff}
+  .clients .vide{border:0}
+  .cl-lettre{background:var(--fond);color:var(--bleu-fonce);font-weight:800;font-size:.78rem;padding:5px 14px;border-bottom:1px solid var(--bord);position:sticky;top:0}
+  .cl-ligne{display:flex;align-items:center;gap:12px;width:100%;border:0;border-bottom:1px solid var(--bord);background:#fff;padding:10px 12px;text-align:left;font:inherit;color:var(--texte)}
+  .cl-ligne:last-child{border-bottom:0}
+  .cl-ligne:active,.cl-ligne:hover{background:var(--bleu-clair)}
+  .cl-fl{margin-left:auto;color:var(--gris);font-size:1.3rem;flex-shrink:0}
+  .fiche-infos{display:grid;gap:3px;font-size:.9rem;color:var(--gris);margin:-2px 0 6px}
+  .cl-actions a,.cl-actions button{border:1.5px solid var(--bord);background:#fff;border-radius:10px;padding:12px 6px;font-size:.9rem;font-weight:700;color:var(--texte);text-align:center}
   .cl-actions a.p{border-color:var(--bleu);color:var(--bleu-fonce);background:var(--bleu-clair)}
   .vide{text-align:center;color:var(--gris);font-size:.9rem;padding:18px 8px;line-height:1.5}
   .vide a{color:var(--bleu);text-decoration:underline}
@@ -481,10 +489,28 @@
     const tous = C.clients(), q = C.norm($('cherche').value);
     const l = tous.filter(c => !q || C.norm([c.nom, c.adresse, c.cpville, c.email].join(' ')).includes(q));
     $('nb').textContent = tous.length;
-    $('liste').innerHTML = l.length ? l.map(c => `<div class="cl"><div class="cl-haut"><span class="cl-ini">${esc((c.nom || '?')[0].toUpperCase())}</span><div class="cl-txt"><b>${esc(c.nom)}${c.pro ? '<span class="cl-pro">Pro</span>' : ''}</b><span>${esc([c.adresse, c.cpville].filter(Boolean).join(', ') || 'Pas d\'adresse')}</span>${c.email ? `<span>${esc(c.email)}</span>` : ''}</div></div>
-      <div class="cl-actions"><a class="p" href="facture.html?type=devis&client=${encodeURIComponent(c.id)}">Devis</a><a class="p" href="facture.html?type=facture&client=${encodeURIComponent(c.id)}">Facture</a><button type="button" data-modif="${esc(c.id)}">Modifier</button></div></div>`).join('')
+    const lettre = c => { const x = C.norm(c.nom || '?')[0] || '#'; return /[a-z]/.test(x) ? x.toUpperCase() : '#'; };
+    let prec = '';
+    $('liste').innerHTML = l.length ? l.map(c => {
+      const L = lettre(c), tete = L !== prec ? `<div class="cl-lettre">${L}</div>` : ''; prec = L;
+      return tete + `<button type="button" class="cl-ligne" data-voir="${esc(c.id)}"><span class="cl-ini">${esc((c.nom || '?')[0].toUpperCase())}</span><span class="cl-txt"><b>${esc(c.nom)}${c.pro ? '<span class="cl-pro">Pro</span>' : ''}</b><span>${esc(c.cpville || c.adresse || c.email || 'Pas d\'adresse')}</span></span><span class="cl-fl">›</span></button>`;
+    }).join('')
       : tous.length ? '<p class="vide">Aucun client ne correspond à votre recherche.</p>'
       : '<p class="vide">Aucun client enregistré pour l\'instant.<br>Créez un <a href="facture.html?type=devis">devis</a> ou une <a href="facture.html?type=facture">facture</a> et touchez « Enregistrer ce client », ou ajoutez-en un avec « + Ajouter ».</p>';
+  }
+  function voir(id){
+    const c = C.client(id); if (!c) return;
+    const f = document.createElement('div'); f.className = 'fond';
+    const lignes = [[c.adresse, c.cpville].filter(Boolean).join(', '), c.email, c.siret && 'SIRET ' + c.siret].filter(Boolean);
+    f.innerHTML = `<div class="boite" role="dialog" aria-modal="true"><div class="boite-tete"><b>${esc(c.nom)}${c.pro ? '<span class="cl-pro">Pro</span>' : ''}</b><button type="button" data-fermer aria-label="Fermer">×</button></div>
+      <div class="fiche-infos">${lignes.length ? lignes.map(x => `<span>${esc(x)}</span>`).join('') : '<span>Pas de coordonnées enregistrées</span>'}</div>
+      <div class="cl-actions"><a class="p" href="facture.html?type=devis&client=${encodeURIComponent(c.id)}">Nouveau devis</a><a class="p" href="facture.html?type=facture&client=${encodeURIComponent(c.id)}">Nouvelle facture</a></div>
+      <button type="button" class="btn-sec" data-modif="${esc(c.id)}">Modifier ses coordonnées</button></div>`;
+    f.addEventListener('click', e => {
+      if (e.target === f || e.target.closest('[data-fermer]')) return f.remove();
+      if (e.target.closest('[data-modif]')){ f.remove(); editer(c.id); }
+    });
+    document.body.appendChild(f);
   }
   function editer(id){
     const c = id ? C.client(id) : {};
@@ -517,7 +543,7 @@
   }
   $('cherche').addEventListener('input', rendreClients);
   $('ajouter').addEventListener('click', () => editer());
-  $('liste').addEventListener('click', e => { const b = e.target.closest('[data-modif]'); if (b) editer(b.dataset.modif); });
+  $('liste').addEventListener('click', e => { const b = e.target.closest('[data-voir]'); if (b) voir(b.dataset.voir); });
 
 
   // ---------- Rubriques ----------
