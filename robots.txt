@@ -1,2 +1,6 @@
 User-agent: *
 Allow: /
+Disallow: /kit.html
+Disallow: /kits.html
+
+Sitemap: https://docupret.fr/sitemap.xml
