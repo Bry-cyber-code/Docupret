@@ -2,6 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<meta name="robots" content="noindex">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Studio des kits de l'artisan – DocuPrêt</title>
 <meta name="description" content="Créez votre identité d'entreprise complète : logo vectoriel, carte de visite prête pour l'imprimeur, signature e-mail, tampon, visuels pour les réseaux sociaux et icône de site.">
@@ -235,6 +236,8 @@
   .compte-lien svg{width:24px;height:24px;color:var(--bleu)}
   .compte-lien:hover{color:var(--bleu)}
   @media (min-width:561px){.compte-lien{flex-direction:row;gap:7px;font-size:.88rem;border:1.5px solid var(--bord);padding:7px 13px 7px 10px;border-radius:50px;background:#fff}.compte-lien svg{width:20px;height:20px}.droite{gap:14px}}
+  /* KITS_MASQUES : encart des kits caché tant que la vente n'est pas ouverte (supprimer cette ligne pour le réafficher) */
+  .pro-encart{display:none!important}
 
 </style>
 </head>
@@ -265,7 +268,6 @@
         <a href="frais-kilometriques.html">Frais kilométriques</a>
       </div>
     </div>
-    <a href="kits.html" class="tiroir-lien kits">Kits de l'artisan<small>Pro</small></a>
     <div class="cat">
       <button type="button" class="cat-btn" aria-expanded="false"><span>Pro</span><span class="plus">+</span></button>
       <div class="sous" hidden>
@@ -313,8 +315,7 @@
     </div>
   <a href="logo.html" class="tiroir-lien">Créer votre logo</a>
   <a href="carte.html" class="tiroir-lien">Créer votre carte de visite</a>
-  <a href="#" class="tiroir-lien bientot sep">Aide aux démarches<small>Bientôt</small></a>
-  <a href="#" class="tiroir-lien bientot apropos">À propos<small>Bientôt</small></a>
+  <a href="apropos.html" class="tiroir-lien sep apropos">À propos</a>
 </nav>
 
 <main class="wrap">
@@ -562,7 +563,7 @@
 <footer>
   <div class="wrap pied">
     <span>© 2026 DocuPrêt</span>
-    <nav><a href="mentions-legales.html">Mentions légales</a><a href="mentions-legales.html#confidentialite">Confidentialité</a><a href="mentions-legales.html#cookies">Cookies</a><a href="mentions-legales.html#contact">Contact</a></nav>
+    <nav><a href="apropos.html">À propos</a><a href="mentions-legales.html">Mentions légales</a><a href="mentions-legales.html#confidentialite">Confidentialité</a><a href="mentions-legales.html#cookies">Cookies</a><a href="mentions-legales.html#contact">Contact</a></nav>
   </div>
 </footer>
 
