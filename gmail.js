@@ -12,7 +12,7 @@
   // ===== Configuration =====
   // Identifiant client OAuth (console Google Cloud → API et services → Identifiants).
   // Il est public par nature.
-  const CLIENT_ID = '';
+  const CLIENT_ID = '657987325283-kkrj0dtgikabpsn65mq1tedt69ke5in0.apps.googleusercontent.com';
 
   const PORTEE = 'openid email https://www.googleapis.com/auth/gmail.send';
   const CLE_ADRESSE = 'docupret_gmail', CLE_JETON = 'docupret_gmail_jeton', CLE_REGLAGE = 'docupret_envoi_gmail';
