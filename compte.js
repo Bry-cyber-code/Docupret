@@ -111,7 +111,7 @@
       paiement: {conditions: p.conditions, moyen: p.moyen, iban: p.iban},
       numerotation: d.numerotation || {annee: true}, compteurs: d.compteurs || {}, numMaj: d.numMaj || '',
       tauxDefaut: d.tauxDefaut, tvaMode: d.tvaMode,
-      affichage: localStorage.getItem('docupret_affichage') || '', avatar: localStorage.getItem('docupret_avatar') || ''
+      affichage: localStorage.getItem('docupret_affichage') || '', avatar: localStorage.getItem('docupret_avatar') || '', envoiGmail: localStorage.getItem('docupret_envoi_gmail') || ''
     });
   }
   function appliquer(p){
@@ -130,6 +130,7 @@
       localStorage.setItem(CLE_DOC, JSON.stringify(d));
       if (p.affichage) localStorage.setItem('docupret_affichage', p.affichage);
       if (p.avatar) localStorage.setItem('docupret_avatar', p.avatar);
+      if (p.envoiGmail) localStorage.setItem('docupret_envoi_gmail', p.envoiGmail);
     }catch(e){}
   }
   async function synchroniserParametres(){
@@ -203,7 +204,7 @@
     let d = o.id ? liste.find(x => x.id === o.id) : null;
     if (!d) d = liste.find(x => !x.supprime && x.type === o.type && x.numero === o.numero && x.clientId === o.clientId);
     if (!d){ d = {id: nouvelId()}; liste.push(d); }
-    Object.assign(d, propre({type: o.type, numero: o.numero, date: o.date, clientId: o.clientId, clientNom: o.clientNom, total: o.total, snap: o.snap}));
+    Object.assign(d, propre({type: o.type, numero: o.numero, date: o.date, clientId: o.clientId, clientNom: o.clientNom, total: o.total, snap: o.snap, envoye: o.envoye || d.envoye || null}));
     d.supprime = false; d.maj = new Date().toISOString();
     ecrireDocs(liste); envoyerDocs([d]); prevenir();
     return d;

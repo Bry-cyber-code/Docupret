@@ -169,6 +169,32 @@
   .barre-total small{display:block;font-size:.75rem;color:var(--gris)}
   .barre-total b{font-size:1.15rem}
   .btn{background:var(--bleu);color:#fff;border:0;border-radius:50px;padding:13px 22px;font-weight:650;font-size:1rem;display:flex;align-items:center;gap:8px;white-space:nowrap}
+  .barre-in .btn-env{background:#fff;color:var(--bleu-fonce);border:1.5px solid var(--bleu);margin-left:auto}
+  .barre-in .btn-env svg{stroke:var(--bleu)}
+  .barre-in .btn-env:hover,.barre-in .btn-env:active{background:var(--bleu-clair);color:var(--bleu-fonce)}
+  .lib-court{display:none}
+  @media (max-width:520px){.barre-in .btn{padding:12px 14px;font-size:.95rem}.lib-long{display:none}.lib-court{display:inline}.barre-in{gap:8px}}
+  .env-fond{position:fixed;inset:0;z-index:60;background:rgba(20,28,45,.5);display:flex;align-items:flex-end;justify-content:center}
+  @media (min-width:640px){.env-fond{align-items:center}}
+  .env-boite{background:var(--blanc);width:100%;max-width:520px;max-height:92vh;overflow-y:auto;border-radius:18px 18px 0 0;padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px));display:grid;gap:10px}
+  @media (min-width:640px){.env-boite{border-radius:18px}}
+  .env-tete{display:flex;justify-content:space-between;align-items:center}
+  .env-tete b{font-size:1.08rem}
+  .env-tete button{border:0;background:none;font-size:1.6rem;line-height:1;color:var(--gris);width:36px;height:36px}
+  .env-ch{display:grid;gap:4px;font-size:.8rem;color:var(--gris);font-weight:600}
+  .env-ch input,.env-ch textarea{font:inherit;font-size:16px;padding:10px 12px;border:1.5px solid var(--bord);border-radius:10px;outline:none;width:100%;color:var(--texte);background:#fff;resize:vertical}
+  .env-ch input:focus,.env-ch textarea:focus{border-color:var(--bleu)}
+  .env-pj{font-size:.85rem;font-weight:600;color:var(--texte);background:var(--fond);border-radius:10px;padding:8px 10px}
+  .env-pj span{font-weight:400;color:var(--gris)}
+  .env-err{background:#FDECEC;color:#9B2C28;border-radius:10px;padding:9px 11px;font-size:.86rem}
+  .env-gmail{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;background:var(--bleu);color:#fff;border:0;border-radius:12px;padding:14px;font-weight:700;font-size:1rem}
+  .env-gmail svg{width:19px;height:19px}
+  .env-gmail:disabled{opacity:.65}
+  .env-de{font-size:.8rem;color:var(--gris);text-align:center;margin-top:6px;line-height:1.45}
+  .env-lien{border:0;background:none;padding:0;font:inherit;color:var(--bleu);text-decoration:underline}
+  .env-verrou{font-size:.84rem;background:#FFF7E0;border:1px solid #F3D27A;color:#6B4E00;border-radius:10px;padding:10px 12px;line-height:1.45}
+  .env-verrou a{color:#6B4E00;font-weight:700;text-decoration:underline}
+  .env-autre{width:100%;border:1.5px solid var(--bord);background:#fff;border-radius:12px;padding:12px;font-weight:650;font-size:.92rem;color:var(--texte)}
   .btn:hover{background:var(--bleu-fonce)}
   .btn:disabled{opacity:.6}
   .btn svg{width:18px;height:18px;stroke:#fff}
@@ -315,7 +341,7 @@
     body.assistant .barre-total b{font-size:1.05rem}
     #prec{width:46px;height:46px;border-radius:50%;border:1.5px solid var(--bord);background:#fff;font-size:1.3rem;color:var(--texte);place-items:center;padding:0;flex-shrink:0}
     body.assistant #prec{display:grid}
-    body.assistant #prec[hidden],body.assistant #suiv[hidden],body.assistant #telecharger[hidden]{display:none}
+    body.assistant #prec[hidden],body.assistant #suiv[hidden],body.assistant #telecharger[hidden],body.assistant #envoyer[hidden]{display:none}
     body.assistant #suiv{display:flex}
   }
 
@@ -716,9 +742,13 @@ window.DOCU_AFFICHAGE = (function(){
     <button type="button" id="prec" aria-label="Étape précédente" hidden>←</button>
     <div class="barre-total"><small id="total-label">Total TTC</small><b id="total-val">0,00 €</b></div>
     <button class="btn" id="suiv" type="button" hidden>Suivant →</button>
+    <button class="btn btn-env" id="envoyer" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4z"/></svg>
+      <span>Envoyer</span>
+    </button>
     <button class="btn" id="telecharger" type="button">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>
-      Télécharger le PDF
+      <span class="lib"><span class="lib-long">Télécharger le PDF</span><span class="lib-court">PDF</span></span>
     </button>
   </div>
 </div>
@@ -1323,48 +1353,150 @@ window.DOCU_AFFICHAGE = (function(){
     hote.appendChild(copie); document.body.appendChild(hote);
     const sx = window.scrollX, sy = window.scrollY; window.scrollTo(0, 0);
     try{
-      await html2pdf().set(Object.assign({}, opts, {html2canvas: Object.assign({scale: 2, backgroundColor: '#ffffff', scrollX: 0, scrollY: 0, x: 0, y: 0, windowWidth: 794, width: 794}, opts.html2canvas || {})})).from(copie).save();
+      const travail = html2pdf().set(Object.assign({}, opts, {html2canvas: Object.assign({scale: 2, backgroundColor: '#ffffff', scrollX: 0, scrollY: 0, x: 0, y: 0, windowWidth: 794, width: 794}, opts.html2canvas || {})})).from(copie);
+      if (opts.enMemoire) return await travail.outputPdf('blob');
+      await travail.save();
     } finally { hote.remove(); window.scrollTo(sx, sy); }
   }
 
-  // Téléchargement PDF
+  // ---------- Téléchargement et envoi ----------
+  const manqueDoc = k => (!etat.masques['em.nom'] && !etat.em.nom) ? 'Ajoutez votre nom ou entreprise' : (!etat.masques['cl.nom'] && !etat.cl.nom) ? 'Ajoutez le nom du client' : !k.lignes.length ? 'Ajoutez au moins une prestation' : '';
+  const nomFichier = () => `${TYPES[etat.type].titre.toLowerCase().replace('ç','c')}-${etat.doc.numero || 'document'}.pdf`;
+  const optionsPdf = (enMemoire) => ({
+    margin: 0, filename: nomFichier(), enMemoire,
+    image: {type: 'jpeg', quality: 0.97},
+    html2canvas: {useCORS: true},
+    jsPDF: {unit: 'mm', format: 'a4', orientation: 'portrait'},
+    pagebreak: {mode: ['css', 'legacy'], avoid: ['tr', '.p-bas', '.p-signature']}
+  });
+  // Après un téléchargement ou un envoi : numéro suivant, et document gardé dans la fiche du client
+  function apresSortie(k, envoye){
+    const m = String(etat.doc.numero).match(/(\d+)\s*$/);
+    if (m) etat.compteurs[etat.type] = Math.max(etat.compteurs[etat.type] || 0, parseInt(m[1], 10));
+    sauver();
+    const copie = JSON.parse(JSON.stringify({type: etat.type, modele: etat.modele, couleur: etat.couleur, cl: etat.cl, doc: etat.doc, cols: etat.cols, tvaMode: etat.tvaMode, franchise: etat.franchise, tauxDefaut: etat.tauxDefaut, lignes: etat.lignes, paiement: {notes: etat.paiement.notes}, masques: etat.masques, depuis: etat.depuis || ''}));
+    window.dispatchEvent(new CustomEvent('docupret-telecharge', {detail: {type: etat.type, numero: etat.doc.numero, date: etat.doc.date, total: k.totalTTC, depuis: etat.depuis || '', ouvert: etat.ouvert || '', envoye: envoye || null, snap: copie}}));
+  }
+
   $('telecharger').addEventListener('click', async () => {
-    const k = calculer();
-    const manque = (!etat.masques['em.nom'] && !etat.em.nom) ? 'Ajoutez votre nom ou entreprise' : (!etat.masques['cl.nom'] && !etat.cl.nom) ? 'Ajoutez le nom du client' : !k.lignes.length ? 'Ajoutez au moins une prestation' : '';
+    const k = calculer(), manque = manqueDoc(k);
     if (manque){ alerte(manque); if (window.innerWidth < 960) montrer('p-form'); return; }
-
-    const bouton = $('telecharger');
-    bouton.disabled = true;
-    const texte = bouton.lastChild.textContent;
-    bouton.lastChild.textContent = ' Création…';
-    const nomFichier = `${TYPES[etat.type].titre.toLowerCase().replace('ç','c')}-${etat.doc.numero || 'document'}.pdf`;
-
+    const bouton = $('telecharger'), lib = bouton.querySelector('.lib'), avantTxt = lib.innerHTML;
+    bouton.disabled = true; lib.textContent = 'Création…';
     try{
-      if (window.html2pdf){
-        await pdfDepuisPage({
-          margin: 0,
-          filename: nomFichier,
-          image: {type: 'jpeg', quality: 0.97},
-          html2canvas: {useCORS: true},
-          jsPDF: {unit: 'mm', format: 'a4', orientation: 'portrait'},
-          pagebreak: {mode: ['css', 'legacy'], avoid: ['tr', '.p-bas', '.p-signature']}
-        });
-      } else {
-        window.print();
-      }
-      // Mémoriser le dernier numéro utilisé pour proposer le suivant
-      const m = String(etat.doc.numero).match(/(\d+)\s*$/);
-      if (m) etat.compteurs[etat.type] = Math.max(etat.compteurs[etat.type] || 0, parseInt(m[1], 10));
-      sauver();
-      // Prévenir « Mon compte » : le document peut être gardé dans la fiche du client
-      const copie = JSON.parse(JSON.stringify({type: etat.type, modele: etat.modele, couleur: etat.couleur, cl: etat.cl, doc: etat.doc, cols: etat.cols, tvaMode: etat.tvaMode, franchise: etat.franchise, tauxDefaut: etat.tauxDefaut, lignes: etat.lignes, paiement: {notes: etat.paiement.notes}, masques: etat.masques, depuis: etat.depuis || ''}));
-      window.dispatchEvent(new CustomEvent('docupret-telecharge', {detail: {type: etat.type, numero: etat.doc.numero, date: etat.doc.date, total: k.totalTTC, depuis: etat.depuis || '', ouvert: etat.ouvert || '', snap: copie}}));
+      if (window.html2pdf) await pdfDepuisPage(optionsPdf(false));
+      else window.print();
+      apresSortie(k);
     }catch(err){
       alerte('Oups, le PDF n\'a pas pu être créé. Réessayez.');
     }finally{
-      bouton.disabled = false;
-      bouton.lastChild.textContent = texte;
+      bouton.disabled = false; lib.innerHTML = avantTxt;
     }
+  });
+
+  // Envoi par e-mail : depuis Gmail en un clic (comptes), ou avec une autre application du téléphone
+  const MOTS = {devis: ['le devis', 'Devis'], facture: ['la facture', 'Facture'], recu: ['le reçu', 'Reçu'], avoir: ['l\'avoir', 'Avoir']};
+  function messageParDefaut(){
+    const [le] = MOTS[etat.type], n = etat.doc.numero, total = $('total-val').textContent;
+    const phrase = {
+      devis: `Veuillez trouver ci-joint le devis n° ${n} d'un montant de ${total}${etat.doc.validite ? `, valable jusqu'au ${dateFr(etat.doc.validite)}` : ''}.\n\nJe reste à votre disposition pour toute question.`,
+      facture: `Veuillez trouver ci-joint la facture n° ${n} d'un montant de ${total}${etat.doc.echeance ? `, à régler avant le ${dateFr(etat.doc.echeance)}` : ''}.\n\nMerci pour votre confiance.`,
+      recu: `Veuillez trouver ci-joint le reçu n° ${n} correspondant à votre paiement de ${total}.\n\nMerci pour votre confiance.`,
+      avoir: `Veuillez trouver ci-joint l'avoir n° ${n} d'un montant de ${total}.`
+    }[etat.type];
+    const signature = [etat.em.nom, etat.em.tel].filter(Boolean).join('\n');
+    return `${etat.cl.nom ? 'Bonjour ' + etat.cl.nom + ',' : 'Bonjour,'}\n\n${phrase}\n\nCordialement,${signature ? '\n' + signature : ''}`;
+  }
+  const emailOk = v => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(String(v).trim());
+
+  $('envoyer').addEventListener('click', () => {
+    const k = calculer(), manque = manqueDoc(k);
+    if (manque){ alerte(manque); if (window.innerWidth < 960) montrer('p-form'); return; }
+    const G = window.Gmail, C = window.Compte;
+    const gmailPossible = !!(G && G.active()), connecte = !!(C && C.utilisateur());
+    if (gmailPossible && connecte) G.charger();
+    const [le, Mot] = MOTS[etat.type];
+    const f = document.createElement('div'); f.className = 'env-fond';
+    f.innerHTML = `<div class="env-boite" role="dialog" aria-modal="true" aria-label="Envoyer par e-mail">
+      <div class="env-tete"><b>Envoyer ${le} par e-mail</b><button type="button" data-fermer aria-label="Fermer">×</button></div>
+      <label class="env-ch">À<input type="email" id="env-a" autocomplete="off" inputmode="email" placeholder="e-mail du client"></label>
+      <label class="env-ch">Objet<input id="env-sujet"></label>
+      <label class="env-ch">Message<textarea id="env-msg" rows="7"></textarea></label>
+      <p class="env-pj">📎 ${nomFichier()} <span>joint automatiquement</span></p>
+      <div class="env-err" id="env-err" hidden></div>
+      <div id="env-gmail"></div>
+      <button type="button" class="env-autre" id="env-autre">Envoyer avec une autre application</button>
+    </div>`;
+    document.body.appendChild(f);
+    const $f = sel => f.querySelector(sel);
+    $f('#env-a').value = etat.cl.email || '';
+    $f('#env-sujet').value = `${Mot} ${etat.doc.numero}${etat.em.nom ? ' – ' + etat.em.nom : ''}`;
+    $f('#env-msg').value = messageParDefaut();
+    const erreur = t => { $f('#env-err').hidden = !t; $f('#env-err').textContent = t || ''; };
+    const fermer = () => f.remove();
+    f.addEventListener('click', e => { if (e.target === f || e.target.closest('[data-fermer]')) fermer(); });
+
+    // Le PDF est préparé tout de suite, en mémoire, pendant qu'on relit le message
+    let pdf = null;
+    const preparer = () => pdf || (pdf = window.html2pdf ? pdfDepuisPage(optionsPdf(true)) : Promise.reject(new Error('pdf')));
+    preparer().catch(() => {});
+
+    // Zone Gmail
+    const zone = $f('#env-gmail');
+    function rendreGmail(){
+      if (!gmailPossible){ zone.innerHTML = ''; return; }
+      if (!connecte){ zone.innerHTML = `<p class="env-verrou">🔒 <b>Envoi en un clic depuis votre boîte Gmail</b> : réservé aux comptes gratuits. <a href="compte.html#compte">Créer mon compte</a></p>`; return; }
+      const a = G.adresse();
+      zone.innerHTML = `<button type="button" class="env-gmail" id="env-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4z"/></svg>Envoyer depuis Gmail</button>
+        <p class="env-de">${a ? `Depuis <b>${esc(a)}</b> · <button type="button" class="env-lien" id="env-changer">changer</button>` : 'La première fois, Google vous demandera d\'autoriser DocuPrêt à envoyer des e-mails en votre nom. DocuPrêt ne peut pas lire vos e-mails.'}</p>`;
+      $f('#env-go').addEventListener('click', () => envoyerGmail(false));
+      const ch = $f('#env-changer'); if (ch) ch.addEventListener('click', () => envoyerGmail(true));
+    }
+    function envoyerGmail(forcer){
+      erreur('');
+      const a = $f('#env-a').value.trim();
+      if (!emailOk(a)){ erreur('Indiquez une adresse e-mail valide pour le client.'); $f('#env-a').focus(); return; }
+      const bouton = $f('#env-go'); bouton.disabled = true; bouton.lastChild.textContent = 'Connexion…';
+      // L'autorisation Google doit être demandée tout de suite, dans le clic
+      const t = !forcer && G.jeton();
+      const autorisation = t ? Promise.resolve(t) : G.charger().then(() => G.autoriser(forcer));
+      autorisation.then(async jeton => {
+        bouton.lastChild.textContent = 'Envoi…';
+        const blob = await preparer();
+        await G.envoyer(jeton, {a, sujet: $f('#env-sujet').value.trim() || nomFichier(), texte: $f('#env-msg').value, fichier: nomFichier(), pdf: blob, nom: etat.em.nom});
+        if (etat.cl.email !== a){ etat.cl.email = a; remplirChamps(); }
+        apresSortie(k, {date: new Date().toISOString(), a});
+        fermer();
+        alerte(`${Mot} envoyé${etat.type === 'facture' ? 'e' : ''} à ${a} ✓`);
+      }).catch(err => {
+        erreur(err && err.message === 'pdf' ? 'Le PDF n\'a pas pu être créé. Réessayez.' : (err && err.message) || 'L\'envoi a échoué. Réessayez.');
+        bouton.disabled = false; bouton.lastChild.textContent = 'Envoyer depuis Gmail';
+        if (err && err.expire) rendreGmail();
+      });
+    }
+    rendreGmail();
+
+    // Autre application : menu de partage du téléphone, sinon messagerie + PDF téléchargé
+    $f('#env-autre').addEventListener('click', async () => {
+      erreur('');
+      const a = $f('#env-a').value.trim(), sujet = $f('#env-sujet').value.trim(), texte = $f('#env-msg').value;
+      let blob;
+      try{ blob = await preparer(); }catch(e){ erreur('Le PDF n\'a pas pu être créé. Réessayez.'); return; }
+      const fichier = new File([blob], nomFichier(), {type: 'application/pdf'});
+      try{
+        if (navigator.canShare && navigator.canShare({files: [fichier]})){
+          await navigator.share({files: [fichier], title: sujet, text: texte});
+          apresSortie(k); fermer(); return;
+        }
+      }catch(e){ if (e && e.name === 'AbortError') return; }
+      // Ordinateur : on télécharge le PDF et on ouvre la messagerie avec le message prêt
+      const url = URL.createObjectURL(blob), lien = document.createElement('a');
+      lien.href = url; lien.download = nomFichier(); document.body.appendChild(lien); lien.click(); lien.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 30000);
+      location.href = `mailto:${encodeURIComponent(a)}?subject=${encodeURIComponent(sujet)}&body=${encodeURIComponent(texte + '\n\n(Pièce jointe : ' + nomFichier() + ')')}`;
+      apresSortie(k);
+      alerte('Le PDF est téléchargé : joignez-le à votre e-mail.');
+    });
   });
 
   // ---------- Champs retirables (−) ----------
@@ -1578,7 +1710,7 @@ window.DOCU_AFFICHAGE = (function(){
     for (const id of ['galerie']) $(id).classList.toggle('hors-etape', m && n !== 1);
     document.querySelector('.tete').classList.toggle('hors-etape', m && n !== 1);
     document.querySelector('.faq').classList.toggle('hors-etape', m && n !== 5);
-    if (!m){ $('prec').hidden = true; $('suiv').hidden = true; $('telecharger').hidden = false; return; }
+    if (!m){ $('prec').hidden = true; $('suiv').hidden = true; $('telecharger').hidden = false; $('envoyer').hidden = false; return; }
     const cible = n === 5 ? 'p-apercu' : 'p-form';
     if (!$(cible).classList.contains('actif')) document.querySelector(`#onglets [data-o="${cible}"]`).click();
     const type = (document.querySelector('#types button.on') || {}).textContent || 'Document';
@@ -1586,7 +1718,7 @@ window.DOCU_AFFICHAGE = (function(){
     $('prec').hidden = n === 1;
     $('suiv').hidden = n === 5;
     $('suiv').textContent = n === 4 ? "Voir l'aperçu →" : 'Suivant →';
-    $('telecharger').hidden = n !== 5;
+    $('telecharger').hidden = $('envoyer').hidden = n !== 5;
     coches();
     if (defiler) window.scrollTo(0, 0);
   }
@@ -1699,7 +1831,8 @@ window.DOCU_AFFICHAGE = (function(){
   window.addEventListener('load', () => setTimeout(liste, 300));
 })();
 </script>
-<script src="compte.js?v=7"></script>
+<script src="compte.js?v=8"></script>
+<script src="gmail.js?v=1"></script>
 <script>
 // ===== Clients enregistrés =====
 (function(){
@@ -1763,9 +1896,9 @@ window.DOCU_AFFICHAGE = (function(){
       if (d.type === 'devis') setTimeout(() => Compte.toast('Enregistrez ce client pour garder ce devis et le transformer en facture en un clic.'), 1500);
       return;
     }
-    Compte.enregistrerDocument({id: d.ouvert || undefined, type: d.type, numero: d.numero, date: d.date, clientId: c.id, clientNom: c.nom, total: d.total, snap: d.snap});
+    Compte.enregistrerDocument({id: d.ouvert || undefined, type: d.type, numero: d.numero, date: d.date, clientId: c.id, clientNom: c.nom, total: d.total, snap: d.snap, envoye: d.envoye});
     if (d.depuis && d.type === 'facture') Compte.majDocument(d.depuis, {facture: d.numero});
-    setTimeout(() => Compte.toast(`${mot} ${d.numero} gardé dans la fiche de ${c.nom} ✓`), 1500);
+    if (!d.envoye) setTimeout(() => Compte.toast(`${mot} ${d.numero} gardé dans la fiche de ${c.nom} ✓`), 1500);
   });
 
   // facture.html?client=… : client choisi depuis « Mon compte »

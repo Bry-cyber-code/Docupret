@@ -153,6 +153,8 @@
   .doc-type.t-facture{background:#E7F6EC;color:#1F6B3A}
   .doc-total{margin-left:auto;font-weight:800;font-size:.92rem;font-variant-numeric:tabular-nums;flex-shrink:0}
   .doc-bas{display:flex;justify-content:space-between;align-items:center;font-size:.8rem;color:var(--gris)}
+  .doc-env{color:#1F6B3A;font-weight:650}
+  .gmail-ok{font-size:.88rem;background:#E7F6EC;color:#1F6B3A;border-radius:10px;padding:9px 11px;word-break:break-all}
   .doc-ouvrir{color:var(--bleu);font-weight:650;text-decoration:underline}
   .doc-liens{display:flex;gap:14px;align-items:center}
   .doc-suppr{border:0;background:none;padding:0;font:inherit;font-size:.8rem;color:#C23B36;text-decoration:underline}
@@ -362,6 +364,13 @@
       <span class="num-type"><b>Avoirs</b><span class="num-ex" data-ex="avoir"></span></span><input data-n="avoir.prefixe" aria-label="Début des numéros (avoir)"><input data-n="avoir.prochain" inputmode="numeric" aria-label="Prochain numéro (avoir)">
     </div>
   </section>
+  <section class="carte" id="carte-envoi">
+    <div class="titre-carte">Envoi par e-mail</div>
+    <label class="case"><input type="checkbox" id="envoi-gmail"> Envoyer mes devis, factures, reçus et avoirs en un clic depuis ma boîte Gmail</label>
+    <p class="note" style="margin-top:-4px">Le document part de votre propre adresse, avec le PDF joint, et apparaît dans vos « Messages envoyés ». DocuPrêt peut seulement envoyer : il ne peut pas lire vos e-mails.</p>
+    <div class="gmail-etat" id="gmail-etat"></div>
+    <p class="note">Autre messagerie (Orange, Free, Outlook…) ? Le bouton « Envoyer avec une autre application » ouvre votre messagerie avec le document déjà joint.</p>
+  </section>
   <section class="carte">
     <div class="titre-carte">Affichage sur téléphone</div>
     <p class="note" style="margin-top:-6px">Choisissez comment remplir vos devis et factures sur téléphone. Sur ordinateur, rien ne change.</p>
@@ -441,7 +450,8 @@
   </div>
 </footer>
 
-<script src="compte.js?v=7"></script>
+<script src="compte.js?v=8"></script>
+<script src="gmail.js?v=1"></script>
 <script src="compte-menu.js?v=2"></script>
 <script>
 (function(){
@@ -533,7 +543,7 @@
   function ligneDoc(d, avecClient){
     const conv = d.type === 'devis' ? (d.facture ? `<span class="doc-ok">✓ Facturé ${esc(d.facture)}</span>` : `<a class="doc-conv" href="facture.html?depuis=${encodeURIComponent(d.id)}">Transformer en facture →</a>`) : '';
     return `<div class="doc"><div class="doc-haut"><span class="doc-type t-${esc(d.type)}">${MOT[d.type] || 'Document'}</span><b>${esc(d.numero)}</b><span class="doc-total">${eurs(d.total)}</span></div>
-      <div class="doc-bas"><span>${avecClient ? esc(d.clientNom) + ' · ' : ''}${dFr(d.date)}</span><span class="doc-liens"><a class="doc-ouvrir" href="facture.html?ouvrir=${encodeURIComponent(d.id)}">Rouvrir</a><button type="button" class="doc-suppr" data-suppr-doc="${esc(d.id)}">Supprimer</button></span></div>${conv ? `<div class="doc-conv-l">${conv}</div>` : ''}</div>`;
+      <div class="doc-bas"><span>${avecClient ? esc(d.clientNom) + ' · ' : ''}${dFr(d.date)}${d.envoye ? ` · <span class="doc-env">✉ envoyé le ${new Date(d.envoye.date).toLocaleDateString('fr-FR')}</span>` : ''}</span><span class="doc-liens"><a class="doc-ouvrir" href="facture.html?ouvrir=${encodeURIComponent(d.id)}">Rouvrir</a><button type="button" class="doc-suppr" data-suppr-doc="${esc(d.id)}">Supprimer</button></span></div>${conv ? `<div class="doc-conv-l">${conv}</div>` : ''}</div>`;
   }
   function supprimerDoc(id, ensuite){
     const d = C.document(id); if (!d) return;
@@ -618,6 +628,7 @@
   function rubrique(){
     let r = location.hash.slice(1);
     if (!RUBS.includes(r)) r = 'clients';
+    document.querySelectorAll('.fond').forEach(x => x.remove());
     document.querySelectorAll('.rubrique').forEach(d => d.hidden = d.dataset.r !== r);
     document.querySelectorAll('#rubriques button').forEach(b => b.classList.toggle('on', b.dataset.r === r));
     window.scrollTo(0, 0);
@@ -710,6 +721,19 @@
   });
   $('logo-avatar').addEventListener('change', e => { try{ localStorage.setItem('docupret_avatar', e.target.checked ? '1' : '0'); }catch(err){} C.parametresModifies(); majLogo(); });
 
+  // ---------- Envoi par e-mail ----------
+  function majEnvoi(){
+    const G = window.Gmail;
+    if (!G || !G.actif){ $('carte-envoi').hidden = true; return; }
+    $('envoi-gmail').checked = G.active();
+    const a = G.adresse();
+    $('gmail-etat').innerHTML = !C.utilisateur() ? '<p class="bientot" style="margin:0">🔒 L\'envoi en un clic depuis Gmail est réservé aux comptes. <a href="#compte" style="font-weight:700;text-decoration:underline">Créez votre compte gratuit</a>.</p>'
+      : a ? `<div class="gmail-ok">✅ Boîte connectée : <b>${esc(a)}</b> <button type="button" class="lien" id="gmail-deco">Déconnecter</button></div>`
+      : '<p class="note" style="margin:0">Aucune boîte connectée pour l\'instant : Google vous la demandera lors de votre premier envoi.</p>';
+    const d = $('gmail-deco'); if (d) d.addEventListener('click', () => { G.deconnecter(); C.toast('Boîte Gmail déconnectée'); majEnvoi(); });
+  }
+  $('envoi-gmail').addEventListener('change', e => { if (window.Gmail) Gmail.regler(e.target.checked); C.parametresModifies(); C.toast(e.target.checked ? 'Envoi depuis Gmail activé' : 'Envoi depuis Gmail désactivé'); });
+
   // ---------- Affichage sur téléphone (réservé aux comptes) ----------
   function majAffichage(){
     const connecte = !!C.utilisateur() || (() => { try{ return !!JSON.parse(localStorage.getItem('docupret_compte')); }catch(e){ return false; } })();
@@ -734,9 +758,9 @@
     C.parametresModifies(); remplirParam(); remplirNum(); majLogo(); C.toast('Infos d\'entreprise effacées');
   });
 
-  C.surChangement(() => { rendreCompte(); rendreClients(); majAffichage(); rendreAttente(); });
-  C.surParametres(() => { remplirParam(); remplirNum(); majLogo(); majAffichage(); C.toast('Paramètres récupérés depuis votre compte ✓'); });
-  changerMode('creer'); rendreCompte(); rendreClients(); rendreAttente(); remplirParam(); remplirNum(); majLogo(); majAffichage(); rubrique();
+  C.surChangement(() => { rendreCompte(); rendreClients(); majAffichage(); rendreAttente(); majEnvoi(); });
+  C.surParametres(() => { remplirParam(); remplirNum(); majLogo(); majAffichage(); majEnvoi(); C.toast('Paramètres récupérés depuis votre compte ✓'); });
+  changerMode('creer'); rendreCompte(); rendreClients(); rendreAttente(); remplirParam(); remplirNum(); majLogo(); majAffichage(); majEnvoi(); rubrique();
 })();
 </script>
 <script>
