@@ -13,7 +13,7 @@
 <meta name="theme-color" content="#4A7BD0">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%2036%2036%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22f%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%236A9BF0%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%233563BF%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%2236%22%20height%3D%2236%22%20rx%3D%2210%22%20fill%3D%22url%28%23f%29%22/%3E%3Crect%20x%3D%227.5%22%20y%3D%2211%22%20width%3D%2213%22%20height%3D%2217%22%20rx%3D%222%22%20fill%3D%22%23fff%22%20opacity%3D%22.35%22/%3E%3Cpath%20d%3D%22M14%207.5h7.5l5.5%205.5v13.5a2%202%200%200%201-2%202H14a2%202%200%200%201-2-2v-17a2%202%200%200%201%202-2z%22%20fill%3D%22%23fff%22/%3E%3Cpath%20d%3D%22M21.5%207.5v3.5a2%202%200%200%200%202%202H27z%22%20fill%3D%22%23C9DAF8%22/%3E%3Cpath%20d%3D%22M15.3%2019.6l2.7%202.7%205-5.6%22%20fill%3D%22none%22%20stroke%3D%22%233563BF%22%20stroke-width%3D%222.3%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@700&family=Nunito:wght@800&family=Pacifico&family=Playfair+Display:wght@700&family=Roboto+Slab:wght@700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@700&family=Nunito:wght@800&family=Pacifico&family=Playfair+Display:wght@700&family=Roboto+Slab:wght@700&family=Poppins:wght@700&family=Oswald:wght@600&family=Raleway:wght@800&family=Archivo+Black&family=Merriweather:wght@700&family=Cinzel:wght@700&family=Lobster&family=Righteous&family=Dancing+Script:wght@700&family=Caveat:wght@700&display=swap">
 <style>
   :root{
     --bleu:#4A7BD0; --bleu-fonce:#2F5DAE; --bleu-clair:#EAF1FB;
@@ -87,7 +87,11 @@
   .modele canvas{display:block}
 
   .choix{display:grid;grid-template-columns:repeat(auto-fill,minmax(44px,1fr));gap:7px}
-  .choix.defile{max-height:212px;overflow-y:auto;padding:2px}
+  .choix.defile{max-height:262px;overflow-y:auto;padding:2px}
+  .cats{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:1px 1px 4px;margin-bottom:4px}
+  .cats::-webkit-scrollbar{display:none}
+  .cats button{flex-shrink:0;border:1.5px solid var(--bord);background:#fff;border-radius:50px;padding:6px 12px;font-size:.82rem;font-weight:600;color:var(--gris)}
+  .cats button.on{background:var(--bleu);border-color:var(--bleu);color:#fff}
   .choix button{aspect-ratio:1;border:1.5px solid var(--bord);background:#fff;border-radius:11px;display:grid;place-items:center;padding:0;color:var(--texte);font-size:.78rem;font-weight:700}
   .choix button svg{width:23px;height:23px}
   .choix button.on{border-color:var(--bleu);background:var(--bleu-clair);color:var(--bleu-fonce)}
@@ -312,6 +316,7 @@
       </section>
 
       <section class="panneau" data-p="icone" hidden>
+        <div class="cats" id="cat-icones" role="tablist" aria-label="Catégories d'icônes"></div>
         <div class="choix defile" id="icones"></div>
         <div class="deux">
           <div class="groupe"><span class="titre">Taille <output id="v-tailleIcone"></output></span><input type="range" id="tailleIcone" min="0.6" max="1.4" step="0.05" aria-label="Taille de l'icône"></div>
@@ -336,6 +341,11 @@
         <div class="groupe"><span class="titre">Couleur principale</span><div class="couleurs" id="pal-couleur"></div></div>
         <div class="groupe"><span class="titre">Deuxième couleur (pour le dégradé)</span><div class="couleurs" id="pal-couleur2"></div></div>
         <label class="coche"><input type="checkbox" id="degrade"> Dégradé entre les deux couleurs</label>
+        <div class="groupe"><span class="titre">Fond du logo</span>
+          <div class="seg" id="fondType"><button type="button" data-v="transparent">Transparent</button><button type="button" data-v="couleur">Couleur de fond</button></div>
+          <div class="couleurs" id="pal-fondCouleur" hidden></div>
+          <label class="coche" id="g-fondArrondi" hidden><input type="checkbox" id="fondArrondi"> Coins arrondis</label>
+        </div>
       </section>
 
       <section class="panneau" data-p="effets" hidden>
@@ -442,20 +452,99 @@
     couronne: ['M3 8l4 4 5-7 5 7 4-4-2 11H5z'],
     diamant:  ['M6 3h12l4 6-10 12L2 9z', 'M2 9h20', 'M9 3L7 9l5 12 5-12-2-6'],
     etoile:   ['M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z'],
-    valide:   ['M5 12l5 5L20 7']
+    valide:   ['M5 12l5 5L20 7'],
+    perceuse: ['M3 7h11a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2H3z', 'M16 10h5', 'M6 13l-1.5 8h4.5l1.5-8', 'M3 7v6'],
+    scie:     ['M3 18L15 6l3 3L6 21z', 'M15 6l2.5-2.5a2 2 0 0 1 3 3L18 9', 'M7 15l1.5 1.5M10 12l1.5 1.5M13 9l1.5 1.5'],
+    truelle:  ['M13 3l8 8-9 3-2-2z', 'M10 12l-5 5', 'M3 19l2-2 2 2-2 2z'],
+    pinceau:  ['M17 3l4 4-8.5 8.5-4-4z', 'M8.5 11.5C5 11.5 4 14 4 16.5S3 20 2 20.5c3.5 1.5 8.5.5 10-1.5s.5-4 .5-4'],
+    niveau:   ['M2 8.5h20v7H2z', 'M9.5 8.5v7M14.5 8.5v7', 'M11 12h2'],
+    metre:    ['M3 5h12a3 3 0 0 1 3 3v10H6a3 3 0 0 1-3-3z', C(10.5, 11.5, 3), 'M18 15h4v3h-4'],
+    pelle:    ['M15 3l6 6', 'M18 6l-7.5 7.5', 'M10.5 13.5L6 12l-3 5.5L6.5 21 12 18z'],
+    rateau:   ['M12 22V10', 'M5 10h14', 'M5 10V5M8.5 10V5M12 10V5M15.5 10V5M19 10V5'],
+    balai:    ['M19 2l-6.5 9', 'M9 9.5l6 3.5-3.5 9H3.5z', 'M6.5 16.5l1.5 5M10 15l-.5 6.5'],
+    casque:   ['M2.5 17h19v2.5h-19z', 'M5 17v-1.5a7 7 0 0 1 14 0V17', 'M10 9V6h4v3', 'M8 11v6M16 11v6'],
+    echelle:  ['M7 2v20M17 2v20', 'M7 6h10M7 10h10M7 14h10M7 18h10'],
+    fenetre:  ['M4 3h16v18H4z', 'M12 3v18M4 12h16'],
+    porte:    ['M6 21V3h12v18', 'M3 21h18', 'M14.5 12h.01'],
+    immeuble: ['M4 21V3h11v18', 'M15 9h5v12', 'M2 21h20', 'M8 7h3M8 11h3M8 15h3', 'M17.5 13h.01M17.5 17h.01'],
+    radiateur:['M4 5h16v13H4z', 'M8 5v13M12 5v13M16 5v13', 'M6 18v3M18 18v3'],
+    prise:    ['M9 2v5M15 2v5', 'M6 7h12v4a6 6 0 0 1-12 0z', 'M12 17v5'],
+    solaire:  ['M3 18l3-10h12l3 10z', 'M4.5 13h15', 'M9.5 8L8.5 18M14.5 8l1 10'],
+    magasin:  ['M3 9l2-5h14l2 5', 'M3 9h18a3 3 0 0 1-6 0 3 3 0 0 1-6 0 3 3 0 0 1-6 0z', 'M5 12v9h14v-9', 'M10 21v-5h4v5'],
+    caddie:   ['M2 3h3l2.5 12h11L21 6H6', C(9, 19.5, 1.5), C(17.5, 19.5, 1.5)],
+    sac:      ['M5 8h14l-1 13H6z', 'M9 8V6a3 3 0 0 1 6 0v2'],
+    cadeau:   ['M3 8h18v4H3z', 'M5 12v9h14v-9', 'M12 8v13', 'M12 8C10.5 5 7 4 7 6.5S10 8 12 8zM12 8c1.5-3 5-4 5-1.5S14 8 12 8z'],
+    euro:     ['M18 6a7 7 0 1 0 0 12', 'M4 10h9M4 14h9'],
+    graphique:['M3 3v18h18', 'M7 15l4-4 3 3 6-7', 'M16 7h4v4'],
+    mallette: ['M3 7h18v13H3z', 'M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2', 'M3 13h18'],
+    calendrier:['M4 5h16v16H4z', 'M4 10h16', 'M8 3v4M16 3v4', 'M8 14h.01M12 14h.01M16 14h.01M8 17.5h.01M12 17.5h.01'],
+    horloge:  [C(12, 12, 9), 'M12 7v5l3.5 2'],
+    enveloppe:['M3 5h18v14H3z', 'M3 6l9 7 9-7'],
+    combine:  ['M5 4h3l2 5-2.5 1.5a11 11 0 0 0 6 6L15 14l5 2v3a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2'],
+    localisation:['M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z', C(12, 9.5, 2.5)],
+    chien:    ['M5 4l3.5 2.5h7L19 4l1.5 6.5L18.5 12v3.5a4.5 4.5 0 0 1-4.5 4.5h-4a4.5 4.5 0 0 1-4.5-4.5V12L3.5 10.5z', 'M9.5 11h.01M14.5 11h.01', 'M10.5 15h3l-1.5 1.5z'],
+    chat:     ['M5 3l3.5 5h7L19 3v10a7 7 0 0 1-14 0z', 'M9.5 12h.01M14.5 12h.01', 'M10.8 15.5h2.4', 'M1.5 13.5h4M18.5 13.5h4'],
+    verre:    ['M7 3h10l-.5 5.5a4.5 4.5 0 0 1-9 0z', 'M12 13v8', 'M8 21h8'],
+    pizza:    ['M12 21L3 6c6-3.5 12-3.5 18 0z', 'M5 9.5c4.5-2 9.5-2 14 0', 'M10 11.5h.01M14 13h.01M12 16.5h.01'],
+    toque:    ['M7 21h10', 'M7 17h10v4H7z', 'M7 17v-3.5A4 4 0 0 1 7.5 6 4 4 0 0 1 12 3.5 4 4 0 0 1 16.5 6a4 4 0 0 1 .5 7.5V17'],
+    peigne:   ['M3 8h18v4H3z', 'M5 12v7M8.5 12v7M12 12v7M15.5 12v7M19 12v7'],
+    stethoscope:['M6 3v6a5 5 0 0 0 10 0V3', 'M4 3h4M14 3h4', 'M11 14v2a4 4 0 0 0 8 0v-3', C(19, 11, 2)],
+    pilule:   ['M10.5 3.5a5 5 0 0 1 7 7l-7 7a5 5 0 0 1-7-7z', 'M7 10l7 7'],
+    lotus:    ['M12 20c-4 0-8-2-9.5-6.5C6 13.5 9.5 15 12 20zm0 0c4 0 8-2 9.5-6.5C18 13.5 14.5 15 12 20z', 'M12 20c-2.5-3-2.5-9.5 0-15 2.5 5.5 2.5 12 0 15z'],
+    diplome:  ['M2 9l10-5 10 5-10 5z', 'M6 11v5c3 2 9 2 12 0v-5', 'M22 9v6'],
+    palette:  ['M12 3a9 9 0 0 0 0 18c1.5 0 2-1 2-2s-1-1.5-1-2.5 1-2 2.5-2H18a3 3 0 0 0 3-3C21 7 17 3 12 3z', 'M7.5 11h.01M9.5 7h.01M14.5 7h.01M17 10.5h.01'],
+    micro:    ['M9 3h6v10a3 3 0 0 1-6 0z', 'M5 11a7 7 0 0 0 14 0', 'M12 18v3M8 21h8'],
+    camera:   ['M3 7h12v10H3z', 'M15 10.5l6-3.5v10l-6-3.5'],
+    wifi:     ['M2 9a15 15 0 0 1 20 0', 'M5.5 12.5a10 10 0 0 1 13 0', 'M9 16a5 5 0 0 1 6 0', 'M12 19.5h.01'],
+    code:     ['M8 7l-5 5 5 5', 'M16 7l5 5-5 5', 'M14 4l-4 16'],
+    nuage:    ['M7 18h10a4.5 4.5 0 0 0 .5-9A6 6 0 0 0 6 9.5 4.3 4.3 0 0 0 7 18z'],
+    vague:    ['M2 9c2.5-2 4.5-2 7 0s4.5 2 7 0 4-2 6 0', 'M2 14c2.5-2 4.5-2 7 0s4.5 2 7 0 4-2 6 0', 'M2 19c2.5-2 4.5-2 7 0s4.5 2 7 0 4-2 6 0'],
+    ancre:    [C(12, 5, 2), 'M12 7v14', 'M5 13H3a9 9 0 0 0 18 0h-2', 'M9 10h6'],
+    bateau:   ['M3 16l2 4.5h14l2-4.5z', 'M12 3v13', 'M12 4.5l6.5 9.5H12', 'M12 7.5L7 14h5'],
+    moto:     [C(5.5, 16, 3.5), C(18.5, 16, 3.5), 'M5.5 16l4-6h5l4 6', 'M14.5 10l-1-4h3', 'M9.5 10H7'],
+    tracteur: [C(7, 16, 4.5), C(18.5, 17.5, 2.5), 'M3 11.5V5h7.5l1.5 6.5', 'M12 11.5h7.5v5', 'M15.5 5v6.5'],
+    lune:     ['M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z'],
+    infini:   ['M12 12c-2-2.6-4-4-6-4a4 4 0 0 0 0 8c2 0 4-1.4 6-4zm0 0c2 2.6 4 4 6 4a4 4 0 0 0 0-8c-2 0-4 1.4-6 4z']
   };
-  const NOMS_ICONES = {cle_maison:'clé de maison', cle:'clé à molette', proprete:'propreté', sante:'santé', halteres:'sport', valide:'coche'};
+  const NOMS_ICONES = {cle_maison:'clé de maison', cle:'clé à molette', proprete:'propreté', sante:'santé', halteres:'sport', valide:'coche',
+    metre:'mètre', rateau:'râteau', echelle:'échelle', fenetre:'fenêtre', combine:'téléphone', stethoscope:'stéthoscope', pilule:'médicament', diplome:'diplôme', camera:'caméra', fusee:'fusée', gateau:'gâteau', coeur:'cœur', etoile:'étoile', telephone:'portable'};
+  // Catégories pour retrouver une icône facilement
+  const CATEGORIES = {
+    batiment: ['Bâtiment', ['maison','toit','cle_maison','briques','fenetre','porte','immeuble','echelle','casque','truelle','niveau','metre','rouleau','pinceau','scie','perceuse','marteau','tournevis','cle','crayon','engrenage']],
+    energie: ['Énergie', ['eclair','ampoule','flamme','flocon','soleil','goutte','radiateur','prise','solaire','vague']],
+    nature: ['Nature', ['feuille','arbre','fleur','montagne','rateau','pelle','lune','nuage','soleil','vague','goutte']],
+    animaux: ['Animaux', ['patte','chien','chat','poisson']],
+    transport: ['Transport', ['camion','voiture','moto','velo','tracteur','avion','bateau','ancre','localisation']],
+    commerce: ['Commerce', ['magasin','caddie','sac','panier','cadeau','euro','graphique','mallette','calendrier','horloge','enveloppe','combine','telephone','bulle','globe']],
+    resto: ['Restauration', ['couverts','toque','tasse','gateau','pizza','verre']],
+    beaute: ['Beauté, santé', ['ciseaux','peigne','couture','sante','dent','stethoscope','pilule','halteres','lotus','coeur']],
+    menage: ['Ménage, services', ['proprete','balai','goutte','cle_maison','valide','bouclier','cadenas']],
+    creation: ['Création, tech', ['photo','camera','musique','micro','palette','livre','diplome','ordinateur','code','wifi','crayon']],
+    symboles: ['Symboles', ['etoile','valide','cadenas','bouclier','cible','fusee','couronne','diamant','infini','coeur']]
+  };
 
-  const FORMES = ['aucune', 'cercle', 'carre', 'hexagone', 'losange', 'bouclier', 'feuille', 'contour', 'carreContour'];
-  const PLEINES = ['cercle', 'carre', 'hexagone', 'losange', 'bouclier', 'feuille'];
-  const COULEURS = ['#4A7BD0','#1E2A42','#2FA36B','#1BA1A1','#7B5CC4','#D9537F','#D9534F','#E07A2E','#F2B705','#8B5E3C','#3F5469','#111111'];
+  const FORMES = ['aucune', 'cercle', 'carre', 'hexagone', 'losange', 'bouclier', 'feuille', 'octogone', 'badge', 'arche', 'cercleDouble', 'contour', 'carreContour', 'hexagoneContour', 'bouclierContour', 'losangeContour'];
+  const PLEINES = ['cercle', 'carre', 'hexagone', 'losange', 'bouclier', 'feuille', 'octogone', 'badge', 'arche', 'cercleDouble'];
+  const CONTOURS = {contour: 'cercle', carreContour: 'carre', hexagoneContour: 'hexagone', bouclierContour: 'bouclier', losangeContour: 'losange'};
+  const COULEURS = ['#4A7BD0','#1F6FB2','#0EA5E9','#1E2A42','#2FA36B','#0F766E','#65A30D','#1BA1A1','#7B5CC4','#D9537F','#F472B6','#9D174D','#D9534F','#E07A2E','#B45309','#F2B705','#C9A227','#8B5E3C','#3F5469','#6B7280','#111111'];
+  const FONDS = ['#FFFFFF','#F7F3EA','#FDF0E6','#FFF7D6','#E8F5EE','#E6F4F8','#EEF2F7','#F4ECFA','#1E2A42','#111111','#0F3D2E','#3B1F2B'];
   const POLICES = {
     'Montserrat':       {nom:'Moderne',   poids:700, taille:48, maj:false},
     'Playfair Display': {nom:'Élégant',   poids:700, taille:48, maj:false},
     'Bebas Neue':       {nom:'Impact',    poids:400, taille:62, maj:true},
     'Roboto Slab':      {nom:'Solide',    poids:700, taille:46, maj:false},
     'Nunito':           {nom:'Arrondi',   poids:800, taille:48, maj:false},
-    'Pacifico':         {nom:'Manuscrit', poids:400, taille:42, maj:false}
+    'Pacifico':         {nom:'Manuscrit', poids:400, taille:42, maj:false},
+    'Poppins':          {nom:'Géométrique', poids:700, taille:46, maj:false},
+    'Oswald':           {nom:'Condensé',  poids:600, taille:54, maj:false},
+    'Raleway':          {nom:'Chic',      poids:800, taille:46, maj:false},
+    'Archivo Black':    {nom:'Très gras', poids:400, taille:42, maj:false},
+    'Merriweather':     {nom:'Classique', poids:700, taille:42, maj:false},
+    'Cinzel':           {nom:'Prestige',  poids:700, taille:44, maj:true},
+    'Lobster':          {nom:'Rétro',     poids:400, taille:48, maj:false},
+    'Righteous':        {nom:'Fun',       poids:400, taille:46, maj:false},
+    'Dancing Script':   {nom:'Signature', poids:700, taille:54, maj:false},
+    'Caveat':           {nom:'Écriture',  poids:700, taille:58, maj:false}
   };
 
   // ---------- Couleurs ----------
@@ -471,7 +560,8 @@
 
   // ---------- État ----------
   const STYLE = {tailleNom:1, espacement:0, majuscules:false, couleurTexte:'sombre', textePerso:'#1E2A42', tailleIcone:1, trait:2,
-    couleurIcone:'auto', iconePerso:'#FFFFFF', arrondi:0.24, ecart:22, degrade:false, ombre:false, sloganCouleur:false, traitsSlogan:false};
+    couleurIcone:'auto', iconePerso:'#FFFFFF', arrondi:0.24, ecart:22, degrade:false, ombre:false, sloganCouleur:false, traitsSlogan:false,
+    fondType:'transparent', fondCouleur:'#FFFFFF', fondArrondi:true};
   const defaut = () => ({nom:'Mon Entreprise', slogan:'Votre métier', police:'Montserrat', icone:'maison', forme:'cercle', dispo:'h',
     couleur:'#4A7BD0', couleur2:'#2F5DAE', ...STYLE, fond:'clair', ecrit:false, onglet:'modeles'});
   let etat = defaut();
@@ -500,7 +590,17 @@
     {nom:'Coiffure Élodie', slogan:'Salon de coiffure', icone:'ciseaux', forme:'contour', couleur:'#D9537F', police:'Pacifico', dispo:'v'},
     {nom:'Studio Lumière', slogan:'Photographe', icone:'photo', forme:'carreContour', couleur:'#7B5CC4', police:'Nunito', dispo:'v', traitsSlogan:true},
     {nom:'Bernard Conseil', slogan:'Conseil aux entreprises', icone:'initiales', forme:'cercle', couleur:'#1E2A42', police:'Playfair Display', dispo:'h'},
-    {nom:'Pâtisserie Lou', slogan:'Fait maison', icone:'gateau', forme:'cercle', couleur:'#C46A22', police:'Pacifico', dispo:'v', ombre:true}
+    {nom:'Pâtisserie Lou', slogan:'Fait maison', icone:'gateau', forme:'cercle', couleur:'#C46A22', police:'Pacifico', dispo:'v', ombre:true},
+    {nom:'BTP Laurent', slogan:'Rénovation · Gros œuvre', icone:'casque', forme:'hexagone', couleur:'#F2B705', police:'Oswald', dispo:'h', espacement:1, fondType:'couleur', fondCouleur:'#1E2A42'},
+    {nom:'Le Comptoir', slogan:'Restaurant', icone:'toque', forme:'badge', couleur:'#9D174D', police:'Cinzel', dispo:'v', fondType:'couleur', fondCouleur:'#F7F3EA'},
+    {nom:'Sol & Énergie', slogan:'Panneaux solaires', icone:'solaire', forme:'cercleDouble', couleur:'#0F766E', police:'Poppins', dispo:'h', degrade:true, couleur2:'#65A30D'},
+    {nom:'Toutou Toilettage', slogan:'Salon pour chiens', icone:'chien', forme:'arche', couleur:'#F472B6', police:'Righteous', dispo:'v'},
+    {nom:'Zen Institut', slogan:'Bien-être · Massage', icone:'lotus', forme:'aucune', couleur:'#7B5CC4', police:'Dancing Script', dispo:'v', fondType:'couleur', fondCouleur:'#F4ECFA'},
+    {nom:'Transports Morel', slogan:'Livraison · Déménagement', icone:'camion', forme:'octogone', couleur:'#D9534F', police:'Archivo Black', dispo:'h'},
+    {nom:'Studio Pixel', slogan:'Création web', icone:'code', forme:'carreContour', couleur:'#0EA5E9', police:'Raleway', dispo:'h', couleurTexte:'couleur'},
+    {nom:'Ma Petite Épicerie', slogan:'Produits locaux', icone:'panier', forme:'feuille', couleur:'#65A30D', police:'Lobster', dispo:'v', fondType:'couleur', fondCouleur:'#FFF7D6'},
+    {nom:'Taxi Eric', slogan:'Disponible 24 h / 24', icone:'voiture', forme:'bouclierContour', couleur:'#111111', police:'Merriweather', dispo:'h', fondType:'couleur', fondCouleur:'#F2B705'},
+    {nom:'Brico Services', slogan:'Petits travaux', icone:'perceuse', forme:'losangeContour', couleur:'#E07A2E', police:'Caveat', dispo:'h'}
   ].map(m => ({...STYLE, couleur2: melange(m.couleur, '#000000', .3), ...m}));
 
   // ---------- Dessin ----------
@@ -513,8 +613,12 @@
       ctx.lineTo(x + r, y + t); ctx.quadraticCurveTo(x, y + t, x, y + t - r);
       ctx.lineTo(x, y + r); ctx.quadraticCurveTo(x, y, x + r, y); ctx.closePath();
     };
-    if (forme === 'cercle' || forme === 'contour') ctx.arc(cx, cy, t / 2, 0, Math.PI * 2);
-    else if (forme === 'carre' || forme === 'carreContour') rect(t * arrondi);
+    forme = CONTOURS[forme] || forme;
+    if (forme === 'cercle' || forme === 'cercleDouble') ctx.arc(cx, cy, forme === 'cercleDouble' ? t * 0.41 : t / 2, 0, Math.PI * 2);
+    else if (forme === 'octogone'){ for (let k = 0; k < 8; k++){ const a = Math.PI / 4 * k + Math.PI / 8; ctx[k ? 'lineTo' : 'moveTo'](cx + t / 2 * Math.cos(a), cy + t / 2 * Math.sin(a)); } ctx.closePath(); }
+    else if (forme === 'badge'){ const n = 28; for (let k = 0; k <= n * 2; k++){ const a = Math.PI * k / n - Math.PI / 2, r = k % 2 ? t * 0.455 : t / 2; ctx[k ? 'lineTo' : 'moveTo'](cx + r * Math.cos(a), cy + r * Math.sin(a)); } ctx.closePath(); }
+    else if (forme === 'arche'){ ctx.moveTo(x, y + t); ctx.lineTo(x, cy); ctx.arc(cx, cy, t / 2, Math.PI, 0); ctx.lineTo(x + t, y + t); ctx.closePath(); }
+    else if (forme === 'carre') rect(t * arrondi);
     else if (forme === 'hexagone'){ for (let k = 0; k < 6; k++){ const a = Math.PI / 3 * k - Math.PI / 2; ctx[k ? 'lineTo' : 'moveTo'](cx + t / 2 * Math.cos(a), cy + t / 2 * Math.sin(a)); } ctx.closePath(); }
     else if (forme === 'losange'){ const r = t * 0.06; ctx.moveTo(cx, y); ctx.lineTo(x + t, cy); ctx.lineTo(cx, y + t); ctx.lineTo(x, cy); ctx.closePath(); ctx.lineJoin = 'round'; ctx.lineWidth = r; }
     else if (forme === 'bouclier'){ ctx.moveTo(cx, y); ctx.lineTo(x + t * 0.92, y + t * 0.16); ctx.lineTo(x + t * 0.92, y + t * 0.5); ctx.quadraticCurveTo(x + t * 0.9, y + t * 0.86, cx, y + t); ctx.quadraticCurveTo(x + t * 0.1, y + t * 0.86, x + t * 0.08, y + t * 0.5); ctx.lineTo(x + t * 0.08, y + t * 0.16); ctx.closePath(); }
@@ -562,13 +666,14 @@
     const remplissage = (x0, y0, x1, y1) => s.degrade ? degrade(x0, y0, x1, y1) : c;
 
     if (avecIcone){
-      const plein = PLEINES.includes(s.forme), contour = s.forme === 'contour' || s.forme === 'carreContour';
+      const plein = PLEINES.includes(s.forme), contour = !!CONTOURS[s.forme];
       if (plein){
         ctx.save();
         if (s.ombre){ ctx.shadowColor = 'rgba(20,30,50,.28)'; ctx.shadowBlur = 16 * e; ctx.shadowOffsetY = 6 * e; }
         cheminForme(ctx, s.forme, xI, yI, IC, s.arrondi);
         ctx.fillStyle = remplissage(xI, yI, xI + IC, yI + IC); ctx.fill();
         ctx.restore();
+        if (s.forme === 'cercleDouble'){ ctx.save(); ctx.beginPath(); ctx.arc(xI + IC / 2, yI + IC / 2, IC / 2 - 2.5 * IC / 112, 0, Math.PI * 2); ctx.lineWidth = 5 * IC / 112; ctx.strokeStyle = remplissage(xI, yI, xI + IC, yI + IC); ctx.stroke(); ctx.restore(); }
       }
       if (contour){
         const ep = 6 * IC / 112;
@@ -587,7 +692,7 @@
         ctx.fillText(initiales(s.nom), xI + IC / 2, yI + IC / 2 + (s.police === 'Pacifico' ? -4 : 2));
         ctx.restore();
       } else if (ICONES[s.icone]){
-        const t = s.forme === 'aucune' ? IC * 0.88 : IC * 0.52;
+        const t = s.forme === 'aucune' ? IC * 0.88 : s.forme === 'badge' || s.forme === 'cercleDouble' ? IC * 0.46 : IC * 0.52;
         ctx.save();
         ctx.translate(xI + (IC - t) / 2, yI + (IC - t) / 2);
         ctx.scale(t / 24, t / 24);
@@ -599,7 +704,8 @@
     }
 
     // Texte
-    const sombre = s.fond === 'sombre';
+    const fondC = s.fondType === 'couleur' ? s.fondCouleur : '';
+    const sombre = fondC ? texteSur(fondC) === '#ffffff' : s.fond === 'sombre';
     ctx.textAlign = align; ctx.textBaseline = 'middle';
     if (nom){
       ctx.font = policeNom; if (peutEspacer) ctx.letterSpacing = s.espacement + 'px';
@@ -635,12 +741,17 @@
         }
       }
     }catch(err){ minX = 0; minY = 0; maxX = W - 1; maxY = Ht - 1; }
-    const pad = Math.round(14 * e);
     if (maxX < 0){ toile.width = toile.height = 1; return {w: 1, h: 1}; }
     const bw = maxX - minX + 1, bh = maxY - minY + 1;
+    const pad = fondC ? Math.round(Math.max(bw, bh) * 0.1 + 26 * e) : Math.round(14 * e);
     toile.width = bw + pad * 2; toile.height = bh + pad * 2;
     const fin = toile.getContext('2d');
     fin.clearRect(0, 0, toile.width, toile.height);
+    if (fondC){
+      const r = s.fondArrondi ? Math.min(toile.width, toile.height) * 0.14 : 0, w = toile.width, h = toile.height;
+      fin.beginPath(); fin.moveTo(r, 0); fin.arcTo(w, 0, w, h, r); fin.arcTo(w, h, 0, h, r); fin.arcTo(0, h, 0, 0, r); fin.arcTo(0, 0, w, 0, r); fin.closePath();
+      fin.fillStyle = fondC; fin.fill();
+    }
     fin.drawImage(travail, minX, minY, bw, bh, pad, pad, bw, bh);
     return {w: toile.width, h: toile.height};
   }
@@ -654,9 +765,17 @@
 
   // ---------- Interface ----------
   const svgIcone = paths => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${paths.map(d => `<path d="${d}"/>`).join('')}</svg>`;
-  $('icones').innerHTML = `<button type="button" data-v="aucune" aria-label="Aucune icône">—</button>`
-    + `<button type="button" data-v="initiales" aria-label="Initiales">AB</button>`
-    + Object.entries(ICONES).map(([k, p]) => `<button type="button" data-v="${k}" aria-label="${NOMS_ICONES[k] || k}" title="${NOMS_ICONES[k] || k}">${svgIcone(p)}</button>`).join('');
+  let categorie = 'tous', pret = false;
+  function rendreIcones(){
+    const liste = categorie === 'tous' ? Object.keys(ICONES) : CATEGORIES[categorie][1].filter(k => ICONES[k]);
+    $('icones').innerHTML = (categorie === 'tous' ? `<button type="button" data-v="aucune" aria-label="Aucune icône">—</button><button type="button" data-v="initiales" aria-label="Initiales">AB</button>` : '')
+      + liste.map(k => `<button type="button" data-v="${k}" aria-label="${NOMS_ICONES[k] || k}" title="${NOMS_ICONES[k] || k}">${svgIcone(ICONES[k])}</button>`).join('');
+    $('cat-icones').querySelectorAll('[data-c]').forEach(b => b.classList.toggle('on', b.dataset.c === categorie));
+    if (pret) majInterface();
+  }
+  $('cat-icones').innerHTML = `<button type="button" data-c="tous">Toutes (${Object.keys(ICONES).length})</button>` + Object.entries(CATEGORIES).map(([k, [n]]) => `<button type="button" data-c="${k}">${n}</button>`).join('');
+  $('cat-icones').addEventListener('click', e => { const b = e.target.closest('[data-c]'); if (!b) return; categorie = b.dataset.c; rendreIcones(); $('icones').scrollTop = 0; });
+  rendreIcones();
   const dessinsFormes = {
     aucune: '<path d="M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
     cercle: '<circle cx="12" cy="12" r="9" fill="currentColor"/>',
@@ -666,17 +785,24 @@
     bouclier: '<path d="M12 2l8 2.5V12c0 4.5-3.5 8-8 10-4.5-2-8-5.5-8-10V4.5z" fill="currentColor"/>',
     feuille: '<path d="M12 3h9v9a9 9 0 0 1-9 9H3v-9a9 9 0 0 1 9-9z" fill="currentColor"/>',
     contour: '<circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2.4"/>',
-    carreContour: '<rect x="4" y="4" width="16" height="16" rx="4" fill="none" stroke="currentColor" stroke-width="2.4"/>'
+    carreContour: '<rect x="4" y="4" width="16" height="16" rx="4" fill="none" stroke="currentColor" stroke-width="2.4"/>',
+    octogone: '<path d="M8.3 3h7.4L21 8.3v7.4L15.7 21H8.3L3 15.7V8.3z" fill="currentColor"/>',
+    badge: '<path d="M12 2l1.6 1.4 2.1-.3.9 1.9 2 .8-.1 2.1 1.5 1.5-.9 1.9.9 1.9-1.5 1.5.1 2.1-2 .8-.9 1.9-2.1-.3L12 22l-1.6-1.4-2.1.3-.9-1.9-2-.8.1-2.1-1.5-1.5.9-1.9-.9-1.9 1.5-1.5-.1-2.1 2-.8.9-1.9 2.1.3z" fill="currentColor"/>',
+    arche: '<path d="M4 21V12a8 8 0 0 1 16 0v9z" fill="currentColor"/>',
+    cercleDouble: '<circle cx="12" cy="12" r="7" fill="currentColor"/><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.6"/>',
+    hexagoneContour: '<path d="M12 3.5l7.4 4.25v8.5L12 20.5l-7.4-4.25v-8.5z" fill="none" stroke="currentColor" stroke-width="2.2"/>',
+    bouclierContour: '<path d="M12 3l7 2.3V12c0 4-3 7-7 9-4-2-7-5-7-9V5.3z" fill="none" stroke="currentColor" stroke-width="2.2"/>',
+    losangeContour: '<path d="M12 3l9 9-9 9-9-9z" fill="none" stroke="currentColor" stroke-width="2.2"/>'
   };
-  const NOMS_FORMES = {aucune:'Aucune forme', cercle:'Cercle', carre:'Carré', hexagone:'Hexagone', losange:'Losange', bouclier:'Écusson', feuille:'Feuille', contour:'Cercle contour', carreContour:'Carré contour'};
+  const NOMS_FORMES = {aucune:'Aucune forme', cercle:'Cercle', carre:'Carré', hexagone:'Hexagone', losange:'Losange', bouclier:'Écusson', feuille:'Feuille', octogone:'Octogone', badge:'Badge', arche:'Arche', cercleDouble:'Double cercle', contour:'Cercle contour', carreContour:'Carré contour', hexagoneContour:'Hexagone contour', bouclierContour:'Écusson contour', losangeContour:'Losange contour'};
   $('formes').innerHTML = FORMES.map(f => `<button type="button" data-v="${f}" aria-label="${NOMS_FORMES[f]}" title="${NOMS_FORMES[f]}"><svg viewBox="0 0 24 24">${dessinsFormes[f]}</svg></button>`).join('');
   $('polices').innerHTML = Object.entries(POLICES).map(([f, p]) => `<button type="button" data-v="${f}"><b style="font-family:'${f}',sans-serif">Aa</b><small>${p.nom}</small></button>`).join('');
-  const palette = (id, cle) => {
-    $(id).innerHTML = COULEURS.map(c => `<button type="button" class="pastille" data-v="${c}" style="background:${c}" aria-label="Couleur ${c}"></button>`).join('')
+  const palette = (id, cle, liste) => {
+    $(id).innerHTML = (liste || COULEURS).map(c => `<button type="button" class="pastille" data-v="${c}" style="background:${c}" aria-label="Couleur ${c}"></button>`).join('')
       + `<label class="perso" title="Couleur personnalisée"><input type="color" data-perso="${cle}" aria-label="Couleur personnalisée"></label>`;
     $(id).dataset.cle = cle;
   };
-  palette('pal-couleur', 'couleur'); palette('pal-couleur2', 'couleur2'); palette('pal-textePerso', 'textePerso'); palette('pal-iconePerso', 'iconePerso');
+  palette('pal-couleur', 'couleur'); palette('pal-couleur2', 'couleur2'); palette('pal-textePerso', 'textePerso'); palette('pal-iconePerso', 'iconePerso'); palette('pal-fondCouleur', 'fondCouleur', FONDS.concat(COULEURS.slice(0, 8)));
 
   // Annuler : historique des changements
   const historique = []; let dernierMemo = 0;
@@ -694,13 +820,14 @@
     $('nom').value = etat.nom; $('slogan').value = etat.slogan;
     Object.keys(CURSEURS).forEach(k => { $(k).value = etat[k]; });
     $('majuscules').checked = etat.majuscules; $('degrade').checked = $('degrade2').checked = etat.degrade;
-    $('ombre').checked = etat.ombre; $('sloganCouleur').checked = etat.sloganCouleur; $('trait-slogan').checked = etat.traitsSlogan;
+    $('ombre').checked = etat.ombre; $('sloganCouleur').checked = etat.sloganCouleur; $('trait-slogan').checked = etat.traitsSlogan; $('fondArrondi').checked = etat.fondArrondi;
   }
 
   function majInterface(){
     const on = (id, v) => $(id).querySelectorAll('[data-v]').forEach(b => b.classList.toggle('on', b.dataset.v === v));
     on('icones', etat.icone); on('formes', etat.forme); on('polices', etat.police); on('dispo', etat.dispo);
-    on('couleurTexte', etat.couleurTexte); on('couleurIcone', etat.couleurIcone);
+    on('couleurTexte', etat.couleurTexte); on('couleurIcone', etat.couleurIcone); on('fondType', etat.fondType);
+    $('pal-fondCouleur').hidden = $('g-fondArrondi').hidden = etat.fondType !== 'couleur';
     document.querySelectorAll('.pastille').forEach(b => { const cle = b.parentElement.dataset.cle; b.classList.toggle('on', String(etat[cle]).toLowerCase() === b.dataset.v.toLowerCase()); });
     $('pal-textePerso').hidden = etat.couleurTexte !== 'perso';
     $('pal-iconePerso').hidden = etat.couleurIcone !== 'perso';
@@ -726,11 +853,11 @@
   $('nom').addEventListener('input', e => { avant(true); etat.nom = e.target.value; etat.ecrit = true; rendre(); });
   $('slogan').addEventListener('input', e => { avant(true); etat.slogan = e.target.value; etat.ecrit = true; rendre(); });
   Object.keys(CURSEURS).forEach(k => $(k).addEventListener('input', e => { avant(true); etat[k] = parseFloat(e.target.value); rendre(); }));
-  [['majuscules', 'majuscules'], ['degrade', 'degrade'], ['degrade2', 'degrade'], ['ombre', 'ombre'], ['sloganCouleur', 'sloganCouleur'], ['trait-slogan', 'traitsSlogan']].forEach(([id, cle]) =>
+  [['majuscules', 'majuscules'], ['degrade', 'degrade'], ['degrade2', 'degrade'], ['ombre', 'ombre'], ['sloganCouleur', 'sloganCouleur'], ['trait-slogan', 'traitsSlogan'], ['fondArrondi', 'fondArrondi']].forEach(([id, cle]) =>
     $(id).addEventListener('change', e => { avant(); etat[cle] = e.target.checked; synchroniser(); rendre(); }));
 
   // Choix par boutons
-  [['icones', 'icone'], ['formes', 'forme'], ['polices', 'police'], ['dispo', 'dispo'], ['couleurTexte', 'couleurTexte'], ['couleurIcone', 'couleurIcone']].forEach(([id, cle]) =>
+  [['icones', 'icone'], ['formes', 'forme'], ['polices', 'police'], ['dispo', 'dispo'], ['couleurTexte', 'couleurTexte'], ['couleurIcone', 'couleurIcone'], ['fondType', 'fondType']].forEach(([id, cle]) =>
     $(id).addEventListener('click', e => { const b = e.target.closest('[data-v]'); if (!b) return; avant(); etat[cle] = b.dataset.v; rendre(); }));
   document.querySelectorAll('[id^="pal-"]').forEach(p => {
     p.addEventListener('click', e => { const b = e.target.closest('.pastille'); if (!b) return; avant(); etat[p.dataset.cle] = b.dataset.v; rendre(); });
@@ -756,7 +883,8 @@
       icone: auHasard(Object.keys(ICONES)), forme: auHasard(FORMES.slice(1)), couleur: c,
       couleur2: auHasard(COULEURS.filter(x => x !== c)), police: auHasard(Object.keys(POLICES)), dispo: auHasard(['h', 'h', 'v']),
       degrade: Math.random() < 0.3, ombre: Math.random() < 0.25, couleurTexte: auHasard(['sombre', 'sombre', 'couleur']),
-      couleurIcone: 'auto', majuscules: Math.random() < 0.2, espacement: 0, tailleNom: 1, tailleIcone: 1, trait: 2, ecart: 22, arrondi: 0.24
+      couleurIcone: 'auto', majuscules: Math.random() < 0.2, espacement: 0, tailleNom: 1, tailleIcone: 1, trait: 2, ecart: 22, arrondi: 0.24,
+      fondType: Math.random() < 0.25 ? 'couleur' : 'transparent', fondCouleur: auHasard(FONDS.slice(0, 8))
     });
     synchroniser(); rendre();
   });
@@ -805,7 +933,7 @@
     }
   });
 
-  synchroniser(); rendreModeles(); rendre();
+  synchroniser(); rendreModeles(); rendre(); pret = true;
   if (document.fonts){
     Promise.all(Object.entries(POLICES).map(([f, p]) => document.fonts.load(`${p.poids} 40px "${f}"`).catch(() => {})))
       .then(() => { rendreModeles(); rendre(); });

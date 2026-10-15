@@ -13,7 +13,7 @@
 <meta name="theme-color" content="#4A7BD0">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%2036%2036%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22f%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%236A9BF0%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%233563BF%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%2236%22%20height%3D%2236%22%20rx%3D%2210%22%20fill%3D%22url%28%23f%29%22/%3E%3Crect%20x%3D%227.5%22%20y%3D%2211%22%20width%3D%2213%22%20height%3D%2217%22%20rx%3D%222%22%20fill%3D%22%23fff%22%20opacity%3D%22.35%22/%3E%3Cpath%20d%3D%22M14%207.5h7.5l5.5%205.5v13.5a2%202%200%200%201-2%202H14a2%202%200%200%201-2-2v-17a2%202%200%200%201%202-2z%22%20fill%3D%22%23fff%22/%3E%3Cpath%20d%3D%22M21.5%207.5v3.5a2%202%200%200%200%202%202H27z%22%20fill%3D%22%23C9DAF8%22/%3E%3Cpath%20d%3D%22M15.3%2019.6l2.7%202.7%205-5.6%22%20fill%3D%22none%22%20stroke%3D%22%233563BF%22%20stroke-width%3D%222.3%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@600;700&family=Nunito:wght@800&family=Pacifico&family=Playfair+Display:wght@700&family=Roboto+Slab:wght@700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@600;700&family=Nunito:wght@800&family=Pacifico&family=Playfair+Display:wght@700&family=Roboto+Slab:wght@700&family=Poppins:wght@700&family=Oswald:wght@600&family=Raleway:wght@800&family=Archivo+Black&family=Merriweather:wght@700&family=Cinzel:wght@700&family=Lobster&family=Righteous&family=Dancing+Script:wght@700&family=Caveat:wght@700&display=swap">
 <style>
   :root{
     --bleu:#4A7BD0; --bleu-fonce:#2F5DAE; --bleu-clair:#EAF1FB;
@@ -334,6 +334,7 @@
 
       <section class="panneau" data-p="style" hidden>
         <div class="groupe"><span class="titre">Couleur</span><div class="couleurs" id="pal-couleur"></div></div>
+        <div class="groupe"><span class="titre">Couleur du fond</span><div class="couleurs" id="pal-fond"></div></div>
         <div class="groupe"><span class="titre">Police du nom</span><div class="polices" id="polices"></div></div>
         <div class="groupe"><span class="titre">Taille du nom <output id="v-tailleNom"></output></span><input type="range" id="tailleNom" min="0.7" max="1.3" step="0.05" aria-label="Taille du nom"></div>
         <label class="coche"><input type="checkbox" id="icones"> Petites icônes devant les coordonnées</label>
@@ -396,18 +397,30 @@
   const CLE = 'docufacile_carte', CLE_FACTURE = 'docufacile_v1';
   const W = 1020, H = 660;   // 85 × 55 mm, environ 300 points par pouce
 
-  const COULEURS = ['#4A7BD0','#1E2A42','#1F6FB2','#2FA36B','#1BA1A1','#7B5CC4','#D9537F','#D9534F','#E07A2E','#C9A227','#8B5E3C','#3F5469'];
+  const COULEURS = ['#4A7BD0','#1F6FB2','#0EA5E9','#1E2A42','#2FA36B','#0F766E','#65A30D','#1BA1A1','#7B5CC4','#D9537F','#F472B6','#9D174D','#D9534F','#E07A2E','#B45309','#F2B705','#C9A227','#8B5E3C','#3F5469','#6B7280','#111111'];
+  const FONDS = ['#FFFFFF','#F7F3EA','#FDF0E6','#FFF7D6','#E8F5EE','#E6F4F8','#EEF2F7','#F4ECFA','#1B2333','#111111','#0F3D2E','#3B1F2B'];
   const POLICES = {
     'Montserrat':       {nom:'Moderne',   poids:700, maj:false, k:1},
     'Playfair Display': {nom:'Élégant',   poids:700, maj:false, k:1},
     'Bebas Neue':       {nom:'Impact',    poids:400, maj:true,  k:1.28},
     'Roboto Slab':      {nom:'Solide',    poids:700, maj:false, k:.95},
     'Nunito':           {nom:'Arrondi',   poids:800, maj:false, k:1},
-    'Pacifico':         {nom:'Manuscrit', poids:400, maj:false, k:.9}
+    'Pacifico':         {nom:'Manuscrit', poids:400, maj:false, k:.9},
+    'Poppins':          {nom:'Géométrique', poids:700, maj:false, k:.95},
+    'Oswald':           {nom:'Condensé',  poids:600, maj:false, k:1.1},
+    'Raleway':          {nom:'Chic',      poids:800, maj:false, k:.98},
+    'Archivo Black':    {nom:'Très gras', poids:400, maj:false, k:.86},
+    'Merriweather':     {nom:'Classique', poids:700, maj:false, k:.9},
+    'Cinzel':           {nom:'Prestige',  poids:700, maj:true,  k:.9},
+    'Lobster':          {nom:'Rétro',     poids:400, maj:false, k:1},
+    'Righteous':        {nom:'Fun',       poids:400, maj:false, k:.96},
+    'Dancing Script':   {nom:'Signature', poids:700, maj:false, k:1.15},
+    'Caveat':           {nom:'Écriture',  poids:700, maj:false, k:1.22}
   };
   const MODELES = [
     {k:'classique', nom:'Classique'}, {k:'bande', nom:'Bande'}, {k:'centre', nom:'Centré'},
-    {k:'moderne', nom:'Moderne'}, {k:'minimal', nom:'Minimal'}, {k:'sombre', nom:'Sombre'}
+    {k:'moderne', nom:'Moderne'}, {k:'minimal', nom:'Minimal'}, {k:'sombre', nom:'Sombre'},
+    {k:'cadre', nom:'Cadre'}, {k:'diagonale', nom:'Diagonale'}, {k:'coin', nom:'Arrondi'}, {k:'elegant', nom:'Élégant'}
   ];
   const SANS = 'system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif';
 
@@ -432,7 +445,7 @@
     nom:'Jean Dupont', fonction:'Plombier chauffagiste', entreprise:'Dupont Plomberie',
     tel:'06 12 34 56 78', email:'contact@dupont-plomberie.fr', site:'dupont-plomberie.fr', adresse:'12 rue des Lilas, 69003 Lyon',
     slogan:'Dépannage 7 jours sur 7', qr:'', modele:'classique', couleur:'#1F6FB2', police:'Montserrat',
-    tailleNom:1, logoTaille:1, icones:true, majuscules:false, versoStyle:'couleur', logo:'', face:'recto', onglet:'modeles', exemple:true
+    tailleNom:1, logoTaille:1, icones:true, majuscules:false, versoStyle:'couleur', logo:'', face:'recto', onglet:'modeles', exemple:true, fond:'#FFFFFF'
   });
   let etat = defaut();
   let facture = null;
@@ -527,18 +540,24 @@
 
   // ---------- Recto ----------
   function recto(ctx, s, img){
-    const c = s.couleur, fonce = melange(c, '#000000', .3), cTexte = lisible(c);
+    const c = s.couleur, fonce = melange(c, '#000000', .3);
     const nomTxt = nomAffiche(s), tN = 62 * s.tailleNom, lg = s.logoTaille;
     const fam = t => police(s, t);
-    ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, W, H);
+    // Fond choisi par l'utilisateur ; le modèle « Sombre » garde un fond foncé par défaut
+    const fond = s.modele === 'sombre' && (!s.fond || s.fond.toUpperCase() === '#FFFFFF') ? '#1B2333' : (s.fond || '#FFFFFF');
+    const fs = lum(fond) < 0.3;
+    const T1 = fs ? '#FFFFFF' : '#1E2A42', T2 = fs ? '#D6DCE6' : '#3B4558', T3 = fs ? '#AEB8C8' : '#6B778C';
+    const accent = fs ? (lum(c) < 0.18 ? melange(c, '#FFFFFF', .5) : c) : c;
+    const cTexte = fs ? accent : lisible(c);
+    ctx.fillStyle = fond; ctx.fillRect(0, 0, W, H);
 
     if (s.modele === 'classique'){
       ctx.fillStyle = c; ctx.fillRect(0, H - 24, W, 24);
       if (img) placerImage(ctx, img, 70, 56, 300 * lg, 120 * lg, 'left');
       else if (s.entreprise) ecrire(ctx, s.entreprise.toUpperCase(), 70, 112, {taille: 32, poids: 800, couleur: cTexte, max: W - 140});
-      ecrire(ctx, nomTxt, 70, 318, {taille: tN, famille: fam, couleur: '#1E2A42', max: W - 140});
+      ecrire(ctx, nomTxt, 70, 318, {taille: tN, famille: fam, couleur: T1, max: W - 140});
       ecrire(ctx, s.fonction, 70, 366, {taille: 29, poids: 600, couleur: cTexte, max: W - 140});
-      contacts(ctx, s, 70, 452, 44, {taille: 27, couleur: '#3B4558', icone: c, max: W - 140});
+      contacts(ctx, s, 70, 452, 44, {taille: 27, couleur: T2, icone: accent, max: W - 140});
     }
     else if (s.modele === 'bande'){
       const B = 360;
@@ -547,19 +566,19 @@
       if (img){ ctx.fillStyle = '#FFFFFF'; rectArrondi(ctx, 50, H / 2 - 110 * lg, B - 100, 220 * lg, 22); ctx.fill(); placerImage(ctx, img, 70, H / 2 - 95 * lg, B - 140, 190 * lg, 'center'); }
       else if (s.entreprise) ecrireBloc(ctx, s.entreprise, B / 2, H / 2, B - 70, 48, fam, surCouleur(c));
       const x = B + 56, max = W - x - 50;
-      ecrire(ctx, nomTxt, x, 196, {taille: tN * 0.88, famille: fam, couleur: '#1E2A42', max});
+      ecrire(ctx, nomTxt, x, 196, {taille: tN * 0.88, famille: fam, couleur: T1, max});
       ecrire(ctx, s.fonction, x, 242, {taille: 27, poids: 600, couleur: cTexte, max});
       ctx.fillStyle = c; ctx.fillRect(x, 278, 60, 5);
-      contacts(ctx, s, x, 352, 48, {taille: 26, couleur: '#3B4558', icone: c, max});
+      contacts(ctx, s, x, 352, 48, {taille: 26, couleur: T2, icone: accent, max});
     }
     else if (s.modele === 'centre'){
       ctx.fillStyle = c; ctx.fillRect(0, 0, W, 14); ctx.fillRect(0, H - 14, W, 14);
       if (img){ placerImage(ctx, img, W / 2 - 170 * lg, 46, 340 * lg, 110 * lg, 'center'); }
       else if (s.entreprise) ecrire(ctx, s.entreprise.toUpperCase(), W / 2, 110, {taille: 30, poids: 800, couleur: cTexte, align: 'center', max: W - 140});
-      ecrire(ctx, nomTxt, W / 2, 262, {taille: tN, famille: fam, couleur: '#1E2A42', align: 'center', max: W - 140});
+      ecrire(ctx, nomTxt, W / 2, 262, {taille: tN, famille: fam, couleur: T1, align: 'center', max: W - 140});
       ecrire(ctx, s.fonction, W / 2, 308, {taille: 28, poids: 600, couleur: cTexte, align: 'center', max: W - 140});
       ctx.fillStyle = c; ctx.fillRect(W / 2 - 40, 338, 80, 4);
-      contacts(ctx, s, W / 2, 410, 44, {taille: 26, couleur: '#3B4558', icone: c, max: W - 160, align: 'center'});
+      contacts(ctx, s, W / 2, 410, 44, {taille: 26, couleur: T2, icone: accent, max: W - 160, align: 'center'});
     }
     else if (s.modele === 'moderne'){
       const B = 250;
@@ -568,34 +587,74 @@
       const blanc = surCouleur(c);
       if (img){ ctx.fillStyle = '#FFFFFF'; rectArrondi(ctx, 60, 50, 290 * lg, 150, 18); ctx.fill(); placerImage(ctx, img, 76, 62, 290 * lg - 32, 126, 'center'); }
       else if (s.entreprise) ecrire(ctx, s.entreprise.toUpperCase(), 66, 140, {taille: 38, poids: 800, couleur: blanc, max: W - 132});
-      ecrire(ctx, nomTxt, 66, 340, {taille: tN, famille: fam, couleur: '#1E2A42', max: W - 132});
+      ecrire(ctx, nomTxt, 66, 340, {taille: tN, famille: fam, couleur: T1, max: W - 132});
       ecrire(ctx, s.fonction, 66, 386, {taille: 28, poids: 600, couleur: cTexte, max: W - 132});
       // Deux colonnes de coordonnées
       const liste = coordonnees(s), col = (W - 132) / 2;
       liste.forEach((it, i) => {
         const x = 66 + (i % 2) * col, y = 478 + Math.floor(i / 2) * 56;
         const unSeul = {...s, tel: '', email: '', site: '', adresse: ''}; unSeul[it.k] = it.txt;
-        contacts(ctx, unSeul, x, y, 0, {taille: 25, couleur: '#3B4558', icone: c, max: col - 20});
+        contacts(ctx, unSeul, x, y, 0, {taille: 25, couleur: T2, icone: accent, max: col - 20});
       });
     }
     else if (s.modele === 'minimal'){
       ctx.fillStyle = c; ctx.fillRect(70, 70, 44, 44);
       if (img) placerImage(ctx, img, W - 70 - 240 * lg, 56, 240 * lg, 90 * lg, 'right');
-      ecrire(ctx, nomTxt, 70, 236, {taille: tN * 1.08, famille: fam, couleur: '#1E2A42', max: W - 140});
+      ecrire(ctx, nomTxt, 70, 236, {taille: tN * 1.08, famille: fam, couleur: T1, max: W - 140});
       ecrire(ctx, s.fonction, 70, 282, {taille: 28, poids: 600, couleur: cTexte, max: W - 140});
-      if (s.entreprise) ecrire(ctx, s.entreprise, 70, 324, {taille: 26, poids: 500, couleur: '#6B778C', max: W - 140});
+      if (s.entreprise) ecrire(ctx, s.entreprise, 70, 324, {taille: 26, poids: 500, couleur: T3, max: W - 140});
       const n = coordonnees(s).length;
-      contacts(ctx, s, W - 70, H - 64 - (n - 1) * 42, 42, {taille: 25, couleur: '#3B4558', icone: c, max: 600, align: 'right'});
+      contacts(ctx, s, W - 70, H - 64 - (n - 1) * 42, 42, {taille: 25, couleur: T2, icone: accent, max: 600, align: 'right'});
     }
     else if (s.modele === 'sombre'){
-      ctx.fillStyle = '#1B2333'; ctx.fillRect(0, 0, W, H);
-      const accent = lum(c) < 0.12 ? melange(c, '#FFFFFF', .45) : c;
       ctx.fillStyle = accent; ctx.fillRect(70, 84, 6, H - 168);
       if (img){ ctx.fillStyle = '#FFFFFF'; rectArrondi(ctx, W - 70 - 250 * lg, 64, 250 * lg, 110 * lg, 14); ctx.fill(); placerImage(ctx, img, W - 70 - 250 * lg + 14, 74, 250 * lg - 28, 110 * lg - 20, 'center'); }
       else if (s.entreprise) ecrire(ctx, s.entreprise.toUpperCase(), W - 70, 120, {taille: 26, poids: 800, couleur: accent, align: 'right', max: 460});
-      ecrire(ctx, nomTxt, 106, 262, {taille: tN, famille: fam, couleur: '#FFFFFF', max: W - 180});
+      ecrire(ctx, nomTxt, 106, 262, {taille: tN, famille: fam, couleur: T1, max: W - 180});
       ecrire(ctx, s.fonction, 106, 308, {taille: 28, poids: 600, couleur: accent, max: W - 180});
-      contacts(ctx, s, 106, 400, 44, {taille: 26, couleur: '#D6DCE6', icone: accent, max: W - 180});
+      contacts(ctx, s, 106, 400, 44, {taille: 26, couleur: T2, icone: accent, max: W - 180});
+    }
+    else if (s.modele === 'cadre'){
+      ctx.strokeStyle = c; ctx.lineWidth = 8; ctx.strokeRect(34, 34, W - 68, H - 68);
+      ctx.lineWidth = 2; ctx.strokeRect(50, 50, W - 100, H - 100);
+      if (img) placerImage(ctx, img, W / 2 - 150 * lg, 82, 300 * lg, 100 * lg, 'center');
+      else if (s.entreprise) ecrire(ctx, s.entreprise.toUpperCase(), W / 2, 140, {taille: 28, poids: 800, couleur: cTexte, align: 'center', max: W - 200});
+      ecrire(ctx, nomTxt, W / 2, 278, {taille: tN, famille: fam, couleur: T1, align: 'center', max: W - 200});
+      ecrire(ctx, s.fonction, W / 2, 322, {taille: 27, poids: 600, couleur: cTexte, align: 'center', max: W - 200});
+      contacts(ctx, s, W / 2, 404, 42, {taille: 25, couleur: T2, icone: accent, max: W - 200, align: 'center'});
+    }
+    else if (s.modele === 'diagonale'){
+      const g = ctx.createLinearGradient(W * 0.6, 0, W, H); g.addColorStop(0, c); g.addColorStop(1, fonce);
+      ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(W * 0.62, 0); ctx.lineTo(W, 0); ctx.lineTo(W, H); ctx.lineTo(W * 0.44, H); ctx.closePath(); ctx.fill();
+      const blanc = surCouleur(c);
+      if (img){ ctx.fillStyle = '#FFFFFF'; rectArrondi(ctx, W - 300, 70, 240 * lg, 120 * lg, 16); ctx.fill(); placerImage(ctx, img, W - 286, 82, 240 * lg - 28, 120 * lg - 24, 'center'); }
+      else if (s.entreprise) ecrireBloc(ctx, s.entreprise, W - 180, 140, 250, 34, fam, blanc);
+      const max = W * 0.5;
+      ecrire(ctx, nomTxt, 66, 214, {taille: tN, famille: fam, couleur: T1, max});
+      ecrire(ctx, s.fonction, 66, 260, {taille: 27, poids: 600, couleur: cTexte, max});
+      ctx.fillStyle = accent; ctx.fillRect(66, 292, 56, 5);
+      contacts(ctx, s, 66, 372, 46, {taille: 25, couleur: T2, icone: accent, max: W * 0.52});
+    }
+    else if (s.modele === 'coin'){
+      ctx.fillStyle = c; ctx.beginPath(); ctx.arc(W, 0, 300, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = melange(c, fond, .55); ctx.beginPath(); ctx.arc(0, H, 150, 0, Math.PI * 2); ctx.fill();
+      if (img){ ctx.fillStyle = '#FFFFFF'; ctx.beginPath(); ctx.arc(W - 120, 120, 92 * lg, 0, Math.PI * 2); ctx.fill(); placerImage(ctx, img, W - 120 - 70 * lg, 120 - 70 * lg, 140 * lg, 140 * lg, 'center'); }
+      else if (s.entreprise) ecrireBloc(ctx, s.entreprise, W - 130, 120, 200, 28, fam, surCouleur(c));
+      const max = W - 420;
+      ecrire(ctx, nomTxt, 70, 250, {taille: tN, famille: fam, couleur: T1, max});
+      ecrire(ctx, s.fonction, 70, 296, {taille: 27, poids: 600, couleur: cTexte, max});
+      contacts(ctx, s, 210, 400, 44, {taille: 25, couleur: T2, icone: accent, max: W - 280});
+    }
+    else if (s.modele === 'elegant'){
+      ctx.fillStyle = accent; ctx.fillRect(W / 2 - 140, 70, 280, 2); ctx.fillRect(W / 2 - 140, H - 72, 280, 2);
+      if (img) placerImage(ctx, img, W / 2 - 120 * lg, 96, 240 * lg, 80 * lg, 'center');
+      else if (s.entreprise) ecrire(ctx, s.entreprise.toUpperCase(), W / 2, 146, {taille: 22, poids: 700, couleur: cTexte, align: 'center', max: W - 200});
+      ecrire(ctx, nomTxt, W / 2, 266, {taille: tN * 1.05, famille: fam, couleur: T1, align: 'center', max: W - 160});
+      ecrire(ctx, String(s.fonction || '').toUpperCase(), W / 2, 312, {taille: 21, poids: 600, couleur: T3, align: 'center', max: W - 200});
+      const liste = coordonnees(s).map(x => x.txt);
+      const l1 = liste.slice(0, 2).join('   ·   '), l2 = liste.slice(2).join('   ·   ');
+      ecrire(ctx, l1, W / 2, 432, {taille: 23, poids: 500, couleur: T2, align: 'center', max: W - 120});
+      ecrire(ctx, l2, W / 2, 476, {taille: 23, poids: 500, couleur: T2, align: 'center', max: W - 120});
     }
   }
 
@@ -625,7 +684,9 @@
   }
 
   function verso(ctx, s, img){
-    const c = s.couleur, fonce = melange(c, '#000000', .3), cTexte = lisible(c), lg = s.logoTaille;
+    const c = s.couleur, fonce = melange(c, '#000000', .3), lg = s.logoTaille;
+    const fs = s.versoStyle !== 'couleur' && lum(s.fond || '#FFFFFF') < 0.3;
+    const cTexte = fs ? (lum(c) < 0.18 ? melange(c, '#FFFFFF', .5) : c) : lisible(c), T1 = fs ? '#FFFFFF' : '#1E2A42', T3 = fs ? '#AEB8C8' : '#6B778C';
     const fam = t => police(s, t);
     if (s.versoStyle === 'couleur'){
       const g = ctx.createLinearGradient(0, 0, W, H); g.addColorStop(0, c); g.addColorStop(1, fonce);
@@ -636,22 +697,22 @@
       if (s.slogan) ecrire(ctx, s.slogan, W / 2, H - 92, {taille: 30, poids: 600, couleur: blanc, align: 'center', max: W - 140});
     }
     else if (s.versoStyle === 'qr'){
-      ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, W, H);
+      ctx.fillStyle = s.fond || '#FFFFFF'; ctx.fillRect(0, 0, W, H);
       ctx.fillStyle = c; ctx.fillRect(0, 0, 26, H);
       const T = 380; dessinerQR(ctx, texteQR(s), 86, (H - T) / 2, T);
       const x = 520, max = W - x - 50;
-      ecrire(ctx, 'SCANNEZ-MOI', x, 220, {taille: 22, poids: 700, couleur: '#6B778C', max});
+      ecrire(ctx, 'SCANNEZ-MOI', x, 220, {taille: 22, poids: 700, couleur: T3, max});
       if (img) placerImage(ctx, img, x, 250, max, 110 * lg, 'left');
-      else ecrire(ctx, s.entreprise || s.nom, x, 320, {taille: 50, famille: fam, couleur: '#1E2A42', max});
+      else ecrire(ctx, s.entreprise || s.nom, x, 320, {taille: 50, famille: fam, couleur: T1, max});
       if (s.site) ecrire(ctx, s.site, x, 412, {taille: 27, poids: 600, couleur: cTexte, max});
-      if (s.slogan) ecrire(ctx, s.slogan, x, 456, {taille: 25, poids: 500, couleur: '#6B778C', max});
+      if (s.slogan) ecrire(ctx, s.slogan, x, 456, {taille: 25, poids: 500, couleur: T3, max});
     }
     else {
-      ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, W, H);
+      ctx.fillStyle = s.fond || '#FFFFFF'; ctx.fillRect(0, 0, W, H);
       ctx.fillStyle = c; ctx.fillRect(W / 2 - 50, H - 70, 100, 6);
       if (img) placerImage(ctx, img, W / 2 - 230 * lg, H / 2 - 120 * lg - 20, 460 * lg, 240 * lg, 'center');
       else ecrireBloc(ctx, s.entreprise || s.nom || '', W / 2, H / 2 - 20, W - 160, 64, fam, cTexte);
-      if (s.slogan) ecrire(ctx, s.slogan, W / 2, H - 112, {taille: 28, poids: 600, couleur: '#6B778C', align: 'center', max: W - 140});
+      if (s.slogan) ecrire(ctx, s.slogan, W / 2, H - 112, {taille: 28, poids: 600, couleur: T3, align: 'center', max: W - 140});
     }
   }
 
@@ -664,11 +725,11 @@
   }
 
   // ---------- Interface ----------
-  function palette(id, cle){
-    $(id).innerHTML = COULEURS.map(c => `<button type="button" class="pastille" data-v="${c}" style="background:${c}" aria-label="Couleur ${c}"></button>`).join('')
+  function palette(id, cle, liste){
+    $(id).innerHTML = (liste || COULEURS).map(c => `<button type="button" class="pastille" data-v="${c}" style="background:${c}" aria-label="Couleur ${c}"></button>`).join('')
       + `<label class="perso" title="Couleur personnalisée"><input type="color" id="${id}-perso" aria-label="Couleur personnalisée"></label>`;
   }
-  palette('pal-couleur', 'couleur');
+  palette('pal-couleur', 'couleur'); palette('pal-fond', 'fond', FONDS.concat(COULEURS.slice(0, 6)));
   $('polices').innerHTML = Object.entries(POLICES).map(([f, p]) => `<button type="button" data-v="${f}"><b style="font-family:'${f}',sans-serif">Aa</b><small>${p.nom}</small></button>`).join('');
   $('modeles').innerHTML = MODELES.map(m => `<button type="button" class="modele" data-v="${m.k}"><canvas></canvas>${m.nom}</button>`).join('');
 
@@ -695,6 +756,7 @@
     const on = (sel, v) => document.querySelectorAll(sel).forEach(b => b.classList.toggle('on', b.dataset.v === v));
     on('#modeles .modele', etat.modele); on('#polices [data-v]', etat.police); on('#versoStyle [data-v]', etat.versoStyle);
     document.querySelectorAll('#pal-couleur .pastille').forEach(b => b.classList.toggle('on', b.dataset.v.toLowerCase() === String(etat.couleur).toLowerCase()));
+    document.querySelectorAll('#pal-fond .pastille').forEach(b => b.classList.toggle('on', b.dataset.v.toLowerCase() === String(etat.fond || '#FFFFFF').toLowerCase()));
     document.querySelectorAll('#faces button').forEach(b => b.classList.toggle('on', b.dataset.f === etat.face));
     document.querySelectorAll('#onglets button').forEach(b => b.classList.toggle('on', b.dataset.o === etat.onglet));
     document.querySelectorAll('.panneau').forEach(p => { p.hidden = p.dataset.p !== etat.onglet; });
@@ -740,6 +802,8 @@
   $('versoStyle').addEventListener('click', e => { const b = e.target.closest('[data-v]'); if (!b) return; avant(); etat.versoStyle = b.dataset.v; etat.face = 'verso'; rendre(); });
   $('pal-couleur').addEventListener('click', e => { const b = e.target.closest('.pastille'); if (!b) return; avant(); etat.couleur = b.dataset.v; rendre(); });
   $('pal-couleur-perso').addEventListener('input', e => { avant(true); etat.couleur = e.target.value; rendre(); });
+  $('pal-fond').addEventListener('click', e => { const b = e.target.closest('.pastille'); if (!b) return; avant(); etat.fond = b.dataset.v; rendre(); });
+  $('pal-fond-perso').addEventListener('input', e => { avant(true); etat.fond = e.target.value; rendre(); });
   $('faces').addEventListener('click', e => { const b = e.target.closest('[data-f]'); if (!b) return; etat.face = b.dataset.f; rendre(); });
   $('onglets').addEventListener('click', e => {
     const b = e.target.closest('[data-o]'); if (!b) return;
@@ -791,7 +855,7 @@
   const auHasard = l => l[Math.floor(Math.random() * l.length)];
   $('hasard').addEventListener('click', () => {
     avant();
-    Object.assign(etat, {modele: auHasard(MODELES).k, couleur: auHasard(COULEURS), police: auHasard(Object.keys(POLICES)),
+    Object.assign(etat, {modele: auHasard(MODELES).k, couleur: auHasard(COULEURS), police: auHasard(Object.keys(POLICES)), fond: Math.random() < 0.3 ? auHasard(FONDS) : '#FFFFFF',
       versoStyle: auHasard(['couleur', 'couleur', 'qr', 'blanc']), icones: Math.random() < 0.7, majuscules: Math.random() < 0.2, tailleNom: 1});
     synchroniser(); rendre();
   });
