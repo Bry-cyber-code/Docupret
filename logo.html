@@ -305,9 +305,10 @@
         <div class="groupe"><span class="titre">Slogan ou métier (facultatif)</span><input type="text" id="slogan" maxlength="50" aria-label="Slogan ou métier"></div>
         <div class="groupe"><span class="titre">Police</span><div class="polices" id="polices"></div></div>
         <div class="deux">
-          <div class="groupe"><span class="titre">Taille <output id="v-tailleNom"></output></span><input type="range" id="tailleNom" min="0.6" max="1.4" step="0.05" aria-label="Taille du nom"></div>
+          <div class="groupe"><span class="titre">Taille du nom <output id="v-tailleNom"></output></span><input type="range" id="tailleNom" min="0.5" max="1.8" step="0.05" aria-label="Taille du nom"></div>
           <div class="groupe"><span class="titre">Espacement <output id="v-espacement"></output></span><input type="range" id="espacement" min="0" max="14" step="1" aria-label="Espacement des lettres"></div>
         </div>
+        <div class="groupe"><span class="titre">Taille du slogan <output id="v-tailleSlogan"></output></span><input type="range" id="tailleSlogan" min="0.6" max="1.8" step="0.05" aria-label="Taille du slogan"></div>
         <label class="coche"><input type="checkbox" id="majuscules"> Nom en majuscules</label>
         <div class="groupe"><span class="titre">Couleur du nom</span>
           <div class="seg" id="couleurTexte"><button type="button" data-v="sombre">Sombre</button><button type="button" data-v="couleur">Couleur du logo</button><button type="button" data-v="perso">Autre</button></div>
@@ -319,9 +320,10 @@
         <div class="cats" id="cat-icones" role="tablist" aria-label="Catégories d'icônes"></div>
         <div class="choix defile" id="icones"></div>
         <div class="deux">
-          <div class="groupe"><span class="titre">Taille <output id="v-tailleIcone"></output></span><input type="range" id="tailleIcone" min="0.6" max="1.4" step="0.05" aria-label="Taille de l'icône"></div>
+          <div class="groupe"><span class="titre">Taille de l'icône <output id="v-tailleIcone"></output></span><input type="range" id="tailleIcone" min="0.5" max="2" step="0.05" aria-label="Taille de l'icône"></div>
           <div class="groupe"><span class="titre">Épaisseur <output id="v-trait"></output></span><input type="range" id="trait" min="1.2" max="3.2" step="0.1" aria-label="Épaisseur du trait"></div>
         </div>
+        <div class="groupe"><span class="titre">Taille du dessin dans la forme <output id="v-tailleSymbole"></output></span><input type="range" id="tailleSymbole" min="0.5" max="1.5" step="0.05" aria-label="Taille du dessin dans la forme"></div>
         <div class="groupe"><span class="titre">Couleur de l'icône</span>
           <div class="seg" id="couleurIcone"><button type="button" data-v="auto">Automatique</button><button type="button" data-v="perso">Autre</button></div>
           <div class="couleurs" id="pal-iconePerso" hidden></div>
@@ -559,7 +561,7 @@
   };
 
   // ---------- État ----------
-  const STYLE = {tailleNom:1, espacement:0, majuscules:false, couleurTexte:'sombre', textePerso:'#1E2A42', tailleIcone:1, trait:2,
+  const STYLE = {tailleNom:1, tailleSlogan:1, tailleSymbole:1, espacement:0, majuscules:false, couleurTexte:'sombre', textePerso:'#1E2A42', tailleIcone:1, trait:2,
     couleurIcone:'auto', iconePerso:'#FFFFFF', arrondi:0.24, ecart:22, degrade:false, ombre:false, sloganCouleur:false, traitsSlogan:false,
     fondType:'transparent', fondCouleur:'#FFFFFF', fondArrondi:true};
   const defaut = () => ({nom:'Mon Entreprise', slogan:'Votre métier', police:'Montserrat', icone:'maison', forme:'cercle', dispo:'h',
@@ -639,13 +641,14 @@
     const travail = document.createElement('canvas');
     const ctx = travail.getContext('2d');
     const policeNom = `${pol.poids} ${tN}px "${s.police}", system-ui, sans-serif`;
-    const policeSlogan = `600 15px system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif`;
+    const tS = Math.round(15 * (s.tailleSlogan || 1));
+    const policeSlogan = `600 ${tS}px system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif`;
     ctx.font = policeNom; if (peutEspacer) ctx.letterSpacing = s.espacement + 'px';
     const lNom = nom ? ctx.measureText(nom).width + (peutEspacer ? 0 : s.espacement * nom.length) : 0;
     ctx.font = policeSlogan; if (peutEspacer) ctx.letterSpacing = '1.6px';
     const traits = s.traitsSlogan && slogan ? 34 : 0;
     const lSlogan = slogan ? ctx.measureText(slogan).width + (peutEspacer ? 0 : 1.6 * slogan.length) + traits * 2 : 0;
-    const hNom = nom ? tN * 1.2 : 0, hSlogan = slogan ? 20 : 0, ecartTexte = nom && slogan ? 6 : 0;
+    const hNom = nom ? tN * 1.2 : 0, hSlogan = slogan ? tS * 1.34 : 0, ecartTexte = nom && slogan ? 6 : 0;
     const hTexte = hNom + ecartTexte + hSlogan, lTexte = Math.max(lNom, lSlogan);
 
     let L, H, xI, yI, xT, yT, align;
@@ -688,11 +691,11 @@
         ctx.save();
         ctx.fillStyle = couleurIcone; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
         if (peutEspacer) ctx.letterSpacing = '0px';
-        ctx.font = `${pol.poids} ${Math.round(IC * (pol.maj ? 0.5 : 0.4))}px "${s.police}", system-ui, sans-serif`;
+        ctx.font = `${pol.poids} ${Math.round(IC * (pol.maj ? 0.5 : 0.4) * (s.tailleSymbole || 1))}px "${s.police}", system-ui, sans-serif`;
         ctx.fillText(initiales(s.nom), xI + IC / 2, yI + IC / 2 + (s.police === 'Pacifico' ? -4 : 2));
         ctx.restore();
       } else if (ICONES[s.icone]){
-        const t = s.forme === 'aucune' ? IC * 0.88 : s.forme === 'badge' || s.forme === 'cercleDouble' ? IC * 0.46 : IC * 0.52;
+        const t = (s.forme === 'aucune' ? IC * 0.88 : s.forme === 'badge' || s.forme === 'cercleDouble' ? IC * 0.46 : IC * 0.52) * (s.forme === 'aucune' ? 1 : (s.tailleSymbole || 1));
         ctx.save();
         ctx.translate(xI + (IC - t) / 2, yI + (IC - t) / 2);
         ctx.scale(t / 24, t / 24);
@@ -814,7 +817,7 @@
     $('annuler').disabled = false;
   }
 
-  const CURSEURS = {tailleNom: v => Math.round(v * 100) + ' %', espacement: v => v + ' px', tailleIcone: v => Math.round(v * 100) + ' %', trait: v => String(v).replace('.', ','), arrondi: v => Math.round(v * 200) + ' %', ecart: v => v + ' px'};
+  const CURSEURS = {tailleSlogan: v => Math.round(v * 100) + ' %', tailleSymbole: v => Math.round(v * 100) + ' %', tailleNom: v => Math.round(v * 100) + ' %', espacement: v => v + ' px', tailleIcone: v => Math.round(v * 100) + ' %', trait: v => String(v).replace('.', ','), arrondi: v => Math.round(v * 200) + ' %', ecart: v => v + ' px'};
 
   function synchroniser(){
     $('nom').value = etat.nom; $('slogan').value = etat.slogan;
@@ -883,7 +886,7 @@
       icone: auHasard(Object.keys(ICONES)), forme: auHasard(FORMES.slice(1)), couleur: c,
       couleur2: auHasard(COULEURS.filter(x => x !== c)), police: auHasard(Object.keys(POLICES)), dispo: auHasard(['h', 'h', 'v']),
       degrade: Math.random() < 0.3, ombre: Math.random() < 0.25, couleurTexte: auHasard(['sombre', 'sombre', 'couleur']),
-      couleurIcone: 'auto', majuscules: Math.random() < 0.2, espacement: 0, tailleNom: 1, tailleIcone: 1, trait: 2, ecart: 22, arrondi: 0.24,
+      couleurIcone: 'auto', majuscules: Math.random() < 0.2, espacement: 0, tailleNom: 1, tailleSlogan: 1, tailleSymbole: 1, tailleIcone: 1, trait: 2, ecart: 22, arrondi: 0.24,
       fondType: Math.random() < 0.25 ? 'couleur' : 'transparent', fondCouleur: auHasard(FONDS.slice(0, 8))
     });
     synchroniser(); rendre();

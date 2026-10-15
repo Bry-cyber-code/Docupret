@@ -328,7 +328,7 @@
           </div>
           <input type="file" id="logo-fichier" accept="image/*" hidden>
         </div>
-        <div class="groupe"><span class="titre">Taille du logo <output id="v-logoTaille"></output></span><input type="range" id="logoTaille" min="0.6" max="1.4" step="0.05" aria-label="Taille du logo"></div>
+        <div class="groupe"><span class="titre">Taille du logo <output id="v-logoTaille"></output></span><input type="range" id="logoTaille" min="0.5" max="1.6" step="0.05" aria-label="Taille du logo"></div>
         <p class="note">Pas de logo ? <a href="logo.html">Créez-le gratuitement</a>, il sera repris ici.</p>
       </section>
 
@@ -336,7 +336,9 @@
         <div class="groupe"><span class="titre">Couleur</span><div class="couleurs" id="pal-couleur"></div></div>
         <div class="groupe"><span class="titre">Couleur du fond</span><div class="couleurs" id="pal-fond"></div></div>
         <div class="groupe"><span class="titre">Police du nom</span><div class="polices" id="polices"></div></div>
-        <div class="groupe"><span class="titre">Taille du nom <output id="v-tailleNom"></output></span><input type="range" id="tailleNom" min="0.7" max="1.3" step="0.05" aria-label="Taille du nom"></div>
+        <div class="groupe"><span class="titre">Taille du nom <output id="v-tailleNom"></output></span><input type="range" id="tailleNom" min="0.6" max="1.5" step="0.05" aria-label="Taille du nom"></div>
+        <div class="groupe"><span class="titre">Taille des coordonnées <output id="v-tailleCoord"></output></span><input type="range" id="tailleCoord" min="0.8" max="1.25" step="0.05" aria-label="Taille des coordonnées"></div>
+        <div class="groupe"><span class="titre">Taille du métier <output id="v-tailleFonction"></output></span><input type="range" id="tailleFonction" min="0.7" max="1.4" step="0.05" aria-label="Taille du métier"></div>
         <label class="coche"><input type="checkbox" id="icones"> Petites icônes devant les coordonnées</label>
         <label class="coche"><input type="checkbox" id="majuscules"> Nom en majuscules</label>
       </section>
@@ -445,7 +447,7 @@
     nom:'Jean Dupont', fonction:'Plombier chauffagiste', entreprise:'Dupont Plomberie',
     tel:'06 12 34 56 78', email:'contact@dupont-plomberie.fr', site:'dupont-plomberie.fr', adresse:'12 rue des Lilas, 69003 Lyon',
     slogan:'Dépannage 7 jours sur 7', qr:'', modele:'classique', couleur:'#1F6FB2', police:'Montserrat',
-    tailleNom:1, logoTaille:1, icones:true, majuscules:false, versoStyle:'couleur', logo:'', face:'recto', onglet:'modeles', exemple:true, fond:'#FFFFFF'
+    tailleNom:1, tailleCoord:1, tailleFonction:1, logoTaille:1, icones:true, majuscules:false, versoStyle:'couleur', logo:'', face:'recto', onglet:'modeles', exemple:true, fond:'#FFFFFF'
   });
   let etat = defaut();
   let facture = null;
@@ -502,7 +504,7 @@
 
   // Liste de coordonnées, alignées à gauche, au centre ou à droite
   function contacts(ctx, s, x, y, pas, opt){
-    const liste = coordonnees(s), t = opt.taille || 27, ic = s.icones ? t + 12 : 0;
+    const liste = coordonnees(s), t = Math.round((opt.taille || 27) * (s.tailleCoord || 1)), ic = s.icones ? t + 12 : 0;
     liste.forEach((c, i) => {
       const yy = y + i * pas;
       ctx.font = `500 ${t}px ${SANS}`;
@@ -556,7 +558,7 @@
       if (img) placerImage(ctx, img, 70, 56, 300 * lg, 120 * lg, 'left');
       else if (s.entreprise) ecrire(ctx, s.entreprise.toUpperCase(), 70, 112, {taille: 32, poids: 800, couleur: cTexte, max: W - 140});
       ecrire(ctx, nomTxt, 70, 318, {taille: tN, famille: fam, couleur: T1, max: W - 140});
-      ecrire(ctx, s.fonction, 70, 366, {taille: 29, poids: 600, couleur: cTexte, max: W - 140});
+      ecrire(ctx, s.fonction, 70, 366, {taille: 29 * (s.tailleFonction || 1), poids: 600, couleur: cTexte, max: W - 140});
       contacts(ctx, s, 70, 452, 44, {taille: 27, couleur: T2, icone: accent, max: W - 140});
     }
     else if (s.modele === 'bande'){
@@ -567,7 +569,7 @@
       else if (s.entreprise) ecrireBloc(ctx, s.entreprise, B / 2, H / 2, B - 70, 48, fam, surCouleur(c));
       const x = B + 56, max = W - x - 50;
       ecrire(ctx, nomTxt, x, 196, {taille: tN * 0.88, famille: fam, couleur: T1, max});
-      ecrire(ctx, s.fonction, x, 242, {taille: 27, poids: 600, couleur: cTexte, max});
+      ecrire(ctx, s.fonction, x, 242, {taille: 27 * (s.tailleFonction || 1), poids: 600, couleur: cTexte, max});
       ctx.fillStyle = c; ctx.fillRect(x, 278, 60, 5);
       contacts(ctx, s, x, 352, 48, {taille: 26, couleur: T2, icone: accent, max});
     }
@@ -576,7 +578,7 @@
       if (img){ placerImage(ctx, img, W / 2 - 170 * lg, 46, 340 * lg, 110 * lg, 'center'); }
       else if (s.entreprise) ecrire(ctx, s.entreprise.toUpperCase(), W / 2, 110, {taille: 30, poids: 800, couleur: cTexte, align: 'center', max: W - 140});
       ecrire(ctx, nomTxt, W / 2, 262, {taille: tN, famille: fam, couleur: T1, align: 'center', max: W - 140});
-      ecrire(ctx, s.fonction, W / 2, 308, {taille: 28, poids: 600, couleur: cTexte, align: 'center', max: W - 140});
+      ecrire(ctx, s.fonction, W / 2, 308, {taille: 28 * (s.tailleFonction || 1), poids: 600, couleur: cTexte, align: 'center', max: W - 140});
       ctx.fillStyle = c; ctx.fillRect(W / 2 - 40, 338, 80, 4);
       contacts(ctx, s, W / 2, 410, 44, {taille: 26, couleur: T2, icone: accent, max: W - 160, align: 'center'});
     }
@@ -588,7 +590,7 @@
       if (img){ ctx.fillStyle = '#FFFFFF'; rectArrondi(ctx, 60, 50, 290 * lg, 150, 18); ctx.fill(); placerImage(ctx, img, 76, 62, 290 * lg - 32, 126, 'center'); }
       else if (s.entreprise) ecrire(ctx, s.entreprise.toUpperCase(), 66, 140, {taille: 38, poids: 800, couleur: blanc, max: W - 132});
       ecrire(ctx, nomTxt, 66, 340, {taille: tN, famille: fam, couleur: T1, max: W - 132});
-      ecrire(ctx, s.fonction, 66, 386, {taille: 28, poids: 600, couleur: cTexte, max: W - 132});
+      ecrire(ctx, s.fonction, 66, 386, {taille: 28 * (s.tailleFonction || 1), poids: 600, couleur: cTexte, max: W - 132});
       // Deux colonnes de coordonnées
       const liste = coordonnees(s), col = (W - 132) / 2;
       liste.forEach((it, i) => {
@@ -601,7 +603,7 @@
       ctx.fillStyle = c; ctx.fillRect(70, 70, 44, 44);
       if (img) placerImage(ctx, img, W - 70 - 240 * lg, 56, 240 * lg, 90 * lg, 'right');
       ecrire(ctx, nomTxt, 70, 236, {taille: tN * 1.08, famille: fam, couleur: T1, max: W - 140});
-      ecrire(ctx, s.fonction, 70, 282, {taille: 28, poids: 600, couleur: cTexte, max: W - 140});
+      ecrire(ctx, s.fonction, 70, 282, {taille: 28 * (s.tailleFonction || 1), poids: 600, couleur: cTexte, max: W - 140});
       if (s.entreprise) ecrire(ctx, s.entreprise, 70, 324, {taille: 26, poids: 500, couleur: T3, max: W - 140});
       const n = coordonnees(s).length;
       contacts(ctx, s, W - 70, H - 64 - (n - 1) * 42, 42, {taille: 25, couleur: T2, icone: accent, max: 600, align: 'right'});
@@ -611,7 +613,7 @@
       if (img){ ctx.fillStyle = '#FFFFFF'; rectArrondi(ctx, W - 70 - 250 * lg, 64, 250 * lg, 110 * lg, 14); ctx.fill(); placerImage(ctx, img, W - 70 - 250 * lg + 14, 74, 250 * lg - 28, 110 * lg - 20, 'center'); }
       else if (s.entreprise) ecrire(ctx, s.entreprise.toUpperCase(), W - 70, 120, {taille: 26, poids: 800, couleur: accent, align: 'right', max: 460});
       ecrire(ctx, nomTxt, 106, 262, {taille: tN, famille: fam, couleur: T1, max: W - 180});
-      ecrire(ctx, s.fonction, 106, 308, {taille: 28, poids: 600, couleur: accent, max: W - 180});
+      ecrire(ctx, s.fonction, 106, 308, {taille: 28 * (s.tailleFonction || 1), poids: 600, couleur: accent, max: W - 180});
       contacts(ctx, s, 106, 400, 44, {taille: 26, couleur: T2, icone: accent, max: W - 180});
     }
     else if (s.modele === 'cadre'){
@@ -620,7 +622,7 @@
       if (img) placerImage(ctx, img, W / 2 - 150 * lg, 82, 300 * lg, 100 * lg, 'center');
       else if (s.entreprise) ecrire(ctx, s.entreprise.toUpperCase(), W / 2, 140, {taille: 28, poids: 800, couleur: cTexte, align: 'center', max: W - 200});
       ecrire(ctx, nomTxt, W / 2, 278, {taille: tN, famille: fam, couleur: T1, align: 'center', max: W - 200});
-      ecrire(ctx, s.fonction, W / 2, 322, {taille: 27, poids: 600, couleur: cTexte, align: 'center', max: W - 200});
+      ecrire(ctx, s.fonction, W / 2, 322, {taille: 27 * (s.tailleFonction || 1), poids: 600, couleur: cTexte, align: 'center', max: W - 200});
       contacts(ctx, s, W / 2, 404, 42, {taille: 25, couleur: T2, icone: accent, max: W - 200, align: 'center'});
     }
     else if (s.modele === 'diagonale'){
@@ -631,7 +633,7 @@
       else if (s.entreprise) ecrireBloc(ctx, s.entreprise, W - 180, 140, 250, 34, fam, blanc);
       const max = W * 0.5;
       ecrire(ctx, nomTxt, 66, 214, {taille: tN, famille: fam, couleur: T1, max});
-      ecrire(ctx, s.fonction, 66, 260, {taille: 27, poids: 600, couleur: cTexte, max});
+      ecrire(ctx, s.fonction, 66, 260, {taille: 27 * (s.tailleFonction || 1), poids: 600, couleur: cTexte, max});
       ctx.fillStyle = accent; ctx.fillRect(66, 292, 56, 5);
       contacts(ctx, s, 66, 372, 46, {taille: 25, couleur: T2, icone: accent, max: W * 0.52});
     }
@@ -642,7 +644,7 @@
       else if (s.entreprise) ecrireBloc(ctx, s.entreprise, W - 130, 120, 200, 28, fam, surCouleur(c));
       const max = W - 420;
       ecrire(ctx, nomTxt, 70, 250, {taille: tN, famille: fam, couleur: T1, max});
-      ecrire(ctx, s.fonction, 70, 296, {taille: 27, poids: 600, couleur: cTexte, max});
+      ecrire(ctx, s.fonction, 70, 296, {taille: 27 * (s.tailleFonction || 1), poids: 600, couleur: cTexte, max});
       contacts(ctx, s, 210, 400, 44, {taille: 25, couleur: T2, icone: accent, max: W - 280});
     }
     else if (s.modele === 'elegant'){
@@ -650,11 +652,11 @@
       if (img) placerImage(ctx, img, W / 2 - 120 * lg, 96, 240 * lg, 80 * lg, 'center');
       else if (s.entreprise) ecrire(ctx, s.entreprise.toUpperCase(), W / 2, 146, {taille: 22, poids: 700, couleur: cTexte, align: 'center', max: W - 200});
       ecrire(ctx, nomTxt, W / 2, 266, {taille: tN * 1.05, famille: fam, couleur: T1, align: 'center', max: W - 160});
-      ecrire(ctx, String(s.fonction || '').toUpperCase(), W / 2, 312, {taille: 21, poids: 600, couleur: T3, align: 'center', max: W - 200});
+      ecrire(ctx, String(s.fonction || '').toUpperCase(), W / 2, 312, {taille: 21 * (s.tailleFonction || 1), poids: 600, couleur: T3, align: 'center', max: W - 200});
       const liste = coordonnees(s).map(x => x.txt);
       const l1 = liste.slice(0, 2).join('   ·   '), l2 = liste.slice(2).join('   ·   ');
-      ecrire(ctx, l1, W / 2, 432, {taille: 23, poids: 500, couleur: T2, align: 'center', max: W - 120});
-      ecrire(ctx, l2, W / 2, 476, {taille: 23, poids: 500, couleur: T2, align: 'center', max: W - 120});
+      ecrire(ctx, l1, W / 2, 432, {taille: 23 * (s.tailleCoord || 1), poids: 500, couleur: T2, align: 'center', max: W - 120});
+      ecrire(ctx, l2, W / 2, 476, {taille: 23 * (s.tailleCoord || 1), poids: 500, couleur: T2, align: 'center', max: W - 120});
     }
   }
 
@@ -734,7 +736,7 @@
   $('modeles').innerHTML = MODELES.map(m => `<button type="button" class="modele" data-v="${m.k}"><canvas></canvas>${m.nom}</button>`).join('');
 
   const CHAMPS = ['nom', 'fonction', 'entreprise', 'tel', 'email', 'site', 'adresse', 'slogan', 'qr'];
-  const CURSEURS = {tailleNom: v => Math.round(v * 100) + ' %', logoTaille: v => Math.round(v * 100) + ' %'};
+  const CURSEURS = {tailleNom: v => Math.round(v * 100) + ' %', tailleCoord: v => Math.round(v * 100) + ' %', tailleFonction: v => Math.round(v * 100) + ' %', logoTaille: v => Math.round(v * 100) + ' %'};
 
   // Annuler
   const historique = []; let dernierMemo = 0;
@@ -856,7 +858,7 @@
   $('hasard').addEventListener('click', () => {
     avant();
     Object.assign(etat, {modele: auHasard(MODELES).k, couleur: auHasard(COULEURS), police: auHasard(Object.keys(POLICES)), fond: Math.random() < 0.3 ? auHasard(FONDS) : '#FFFFFF',
-      versoStyle: auHasard(['couleur', 'couleur', 'qr', 'blanc']), icones: Math.random() < 0.7, majuscules: Math.random() < 0.2, tailleNom: 1});
+      versoStyle: auHasard(['couleur', 'couleur', 'qr', 'blanc']), icones: Math.random() < 0.7, majuscules: Math.random() < 0.2, tailleNom: 1, tailleCoord: 1, tailleFonction: 1});
     synchroniser(); rendre();
   });
 
