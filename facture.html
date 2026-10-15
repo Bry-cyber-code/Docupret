@@ -289,6 +289,36 @@
   /* PUB_MASQUEE : emplacements publicitaires cachés tant que Google AdSense n'est pas en place (supprimer cette ligne pour les réafficher) */
   .pub{display:none!important}
 
+  /* ===== Assistant en étapes (téléphone) ===== */
+  .etapes,.etape-titre,#prec,#suiv{display:none}
+  @media (max-width:959px){
+    body.assistant .onglets{display:none}
+    body.assistant .hors-etape{display:none!important}
+    body.assistant .etapes{display:flex;position:sticky;top:60px;z-index:12;background:var(--fond);padding:8px 0 10px;margin:0 -2px 4px;justify-content:space-between}
+    .etapes::before{content:"";position:absolute;left:10%;right:10%;top:22px;height:2px;background:var(--bord);z-index:0}
+    .etapes button{position:relative;z-index:1;flex:1;border:0;background:none;padding:0;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:.68rem;font-weight:600;color:var(--gris);min-width:0}
+    .etapes i{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:.85rem;font-weight:700;background:#fff;border:2px solid var(--bord);color:var(--gris)}
+    .etapes button.fait i{background:#E7F6EC;border-color:#3BA45C;color:#2B8148}
+    .etapes button.on i{background:var(--bleu);border-color:var(--bleu);color:#fff;box-shadow:0 0 0 4px var(--bleu-clair)}
+    .etapes button.on{color:var(--bleu-fonce)}
+    body.assistant .etape-titre{display:block;margin:4px 0 12px}
+    .etape-titre small{display:block;font-size:.78rem;color:var(--gris);font-weight:600}
+    .etape-titre b{font-size:1.35rem;font-weight:800}
+    .etape-titre p{font-size:.86rem;color:var(--gris);margin-top:2px}
+    body.assistant details.bloc{margin-bottom:10px}
+    body.assistant details.bloc summary{cursor:default;padding:12px 16px 8px;font-size:.95rem}
+    body.assistant details.bloc summary::after{content:none}
+    body.assistant details.bloc.seul summary{display:none}
+    body.assistant details.bloc.seul .champs{padding-top:16px}
+    body.assistant .barre-in{gap:8px}
+    body.assistant .barre-total{flex:1;min-width:0}
+    body.assistant .barre-total b{font-size:1.05rem}
+    #prec{width:46px;height:46px;border-radius:50%;border:1.5px solid var(--bord);background:#fff;font-size:1.3rem;color:var(--texte);place-items:center;padding:0;flex-shrink:0}
+    body.assistant #prec{display:grid}
+    body.assistant #prec[hidden],body.assistant #suiv[hidden],body.assistant #telecharger[hidden]{display:none}
+    body.assistant #suiv{display:flex}
+  }
+
   /* ===== Système « fiches » (téléphone) ===== */
   .fiches,.feuille{display:none}
   @media (max-width:959px){
@@ -347,6 +377,15 @@
   .compte-lien:hover{color:var(--bleu)}
   @media (min-width:561px){.compte-lien{flex-direction:row;gap:7px;font-size:.88rem;border:1.5px solid var(--bord);padding:7px 13px 7px 10px;border-radius:50px;background:#fff}.compte-lien svg{width:20px;height:20px}.droite{gap:14px}}
 </style>
+<script>
+// Affichage sur téléphone choisi dans Mon compte → Paramètres (réservé aux comptes)
+window.DOCU_AFFICHAGE = (function(){
+  try{
+    const c = JSON.parse(localStorage.getItem('docupret_compte')), m = localStorage.getItem('docupret_affichage');
+    return c && c.email && (m === 'etapes' || m === 'page') ? m : 'fiches';
+  }catch(e){ return 'fiches'; }
+})();
+</script>
 </head>
 <body>
 
@@ -454,6 +493,15 @@
     <div id="liste-fiches" style="display:grid;gap:8px"></div>
   </div>
 
+  <nav class="etapes" id="etapes" aria-label="Étapes">
+    <button type="button" data-e="1"><i>1</i>Entreprise</button>
+    <button type="button" data-e="2"><i>2</i>Client</button>
+    <button type="button" data-e="3"><i>3</i>Prestations</button>
+    <button type="button" data-e="4"><i>4</i>Paiement</button>
+    <button type="button" data-e="5"><i>5</i>Aperçu</button>
+  </nav>
+  <div class="etape-titre" id="etape-titre"></div>
+
   <div class="onglets" id="onglets">
     <button data-o="p-form" class="on">✏️ Remplir</button>
     <button data-o="p-apercu">👁 Aperçu</button>
@@ -464,7 +512,7 @@
     <!-- ===== FORMULAIRE ===== -->
     <div class="panneau actif" id="p-form">
 
-      <details class="bloc" open data-f="paiement">
+      <details class="bloc" open data-e="4" data-f="paiement">
         <summary>Document</summary>
         <div class="champs">
           <div class="deux">
@@ -498,7 +546,7 @@
         </div>
       </details>
 
-      <details class="bloc seul" open data-f="entreprise">
+      <details class="bloc seul" open data-e="1" data-f="entreprise">
         <summary>Vous</summary>
         <div class="champs">
           <div class="logo-zone">
@@ -526,7 +574,7 @@
         </div>
       </details>
 
-      <details class="bloc seul" open data-f="client">
+      <details class="bloc seul" open data-e="2" data-f="client">
         <summary>Client</summary>
         <div class="champs">
           <button type="button" class="btn-client" id="mes-clients"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>Choisir parmi mes clients</button>
@@ -542,7 +590,7 @@
         </div>
       </details>
 
-      <details class="bloc" open data-f="prestations">
+      <details class="bloc" open data-e="3" data-f="prestations">
         <summary>Prestations</summary>
         <div class="champs">
           <div>
@@ -561,7 +609,7 @@
         </div>
       </details>
 
-      <details class="bloc" open data-f="prestations">
+      <details class="bloc" open data-e="3" data-f="prestations">
         <summary>TVA</summary>
         <div class="champs">
           <label class="coche"><input type="checkbox" data-b="franchise"> TVA non applicable (auto-entrepreneur)</label>
@@ -578,7 +626,7 @@
         </div>
       </details>
 
-      <details class="bloc" data-f="paiement">
+      <details class="bloc" data-e="4" data-f="paiement">
         <summary>Paiement et notes</summary>
         <div class="champs">
           <label class="ch" data-si="devis">Conditions de paiement
@@ -596,7 +644,7 @@
         </div>
       </details>
 
-      <button type="button" class="nouveau" id="nouveau">＋ Nouveau document</button>
+      <button type="button" class="nouveau" id="nouveau" data-e="1">＋ Nouveau document</button>
 
       <!-- PUB : remplacer ce bloc par le code Google AdSense -->
       <div class="pub" style="margin-top:18px">Publicité</div>
@@ -667,7 +715,9 @@
 
 <div class="barre">
   <div class="barre-in">
+    <button type="button" id="prec" aria-label="Étape précédente" hidden>←</button>
     <div class="barre-total"><small id="total-label">Total TTC</small><b id="total-val">0,00 €</b></div>
+    <button class="btn" id="suiv" type="button" hidden>Suivant →</button>
     <button class="btn" id="telecharger" type="button">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>
       Télécharger le PDF
@@ -791,7 +841,8 @@
       lignes:[ligneVide()],
       paiement:{conditions:'30 jours', moyen:'Virement', iban:'', notes:''},
       compteurs:{devis:0, facture:0, recu:0, avoir:0},
-      masques:{}
+      masques:{},
+      numerotation:{annee:true}
     };
   }
 
@@ -819,12 +870,17 @@
     minuterie = setTimeout(() => { try{ localStorage.setItem(CLE, JSON.stringify(etat)); }catch(e){} }, 300);
   }
 
-  const prochainNumero = t => `${TYPES[t].prefixe}-${new Date().getFullYear()}-${String((etat.compteurs[t] || 0) + 1).padStart(3,'0')}`;
+  // Numérotation : réglable dans Mon compte → Paramètres (préfixe, année, prochain numéro)
+  const baseNumero = t => {
+    const n = etat.numerotation || {}, p = (n[t] && typeof n[t].prefixe === 'string') ? n[t].prefixe.trim() : TYPES[t].prefixe;
+    return [p, n.annee === false ? '' : String(new Date().getFullYear())].filter(Boolean).join('-');
+  };
+  const prochainNumero = t => { const b = baseNumero(t), num = String((etat.compteurs[t] || 0) + 1).padStart(3,'0'); return b ? b + '-' + num : num; };
 
   // Type depuis l'adresse (facture.html?type=devis)
   const typeUrl = new URLSearchParams(location.search).get('type');
   if (typeUrl && TYPES[typeUrl] && typeUrl !== etat.type){ etat.type = typeUrl; etat.doc.numero = ''; }
-  if (!etat.doc.numero || !etat.doc.numero.startsWith(TYPES[etat.type].prefixe + '-')) etat.doc.numero = prochainNumero(etat.type);
+  if (!etat.doc.numero || !etat.doc.numero.startsWith(baseNumero(etat.type))) etat.doc.numero = prochainNumero(etat.type);
 
   // ---------- Couleurs ----------
   function rgb(hex){ const h = hex.replace('#',''); return [0,2,4].map(i => parseInt(h.substr(i,2),16)); }
@@ -1463,6 +1519,62 @@
 })();
 </script>
 <script>
+// ===== Assistant en étapes (téléphone uniquement) =====
+(function(){
+  const $ = id => document.getElementById(id);
+  const mq = matchMedia('(max-width:959px)');
+  const NOMS = ['Mon entreprise', 'Votre client', 'Prestations', 'Paiement', 'Aperçu'];
+  const AIDE = ['Vos coordonnées, enregistrées sur ce téléphone pour la prochaine fois.', 'À qui est destiné le document ?', 'Ce que vous facturez, et la TVA.', 'Numéro, date, échéance et moyen de paiement.', 'Vérifiez, choisissez un style, puis téléchargez.'];
+  const val = k => { const el = document.querySelector(`[data-b="${k}"]`); return el ? String(el.value || '').trim() : ''; };
+  const FAIT = {1: () => !!val('em.nom'), 2: () => !!val('cl.nom'), 3: () => !/^0,00/.test($('total-val').textContent), 4: () => !!val('doc.numero')};
+  let n = FAIT[1]() ? 2 : 1;
+  const vues = new Set([1, n]);
+  const ok = k => vues.has(k) && !!(FAIT[k] && FAIT[k]());
+
+  function coches(){
+    document.querySelectorAll('#etapes button').forEach(b => {
+      const k = +b.dataset.e;
+      b.classList.toggle('on', k === n);
+      b.classList.toggle('fait', k !== n && ok(k));
+      b.querySelector('i').textContent = k !== n && ok(k) ? '✓' : k;
+    });
+  }
+  function appliquer(defiler){
+    const m = mq.matches && window.DOCU_AFFICHAGE === 'etapes';
+    document.body.classList.toggle('assistant', m);
+    document.querySelectorAll('#p-form > [data-e]').forEach(el => {
+      el.classList.toggle('hors-etape', m && +el.dataset.e !== n);
+      if (m && el.tagName === 'DETAILS') el.open = true;
+    });
+    for (const id of ['galerie']) $(id).classList.toggle('hors-etape', m && n !== 1);
+    document.querySelector('.tete').classList.toggle('hors-etape', m && n !== 1);
+    document.querySelector('.faq').classList.toggle('hors-etape', m && n !== 5);
+    if (!m){ $('prec').hidden = true; $('suiv').hidden = true; $('telecharger').hidden = false; return; }
+    const cible = n === 5 ? 'p-apercu' : 'p-form';
+    if (!$(cible).classList.contains('actif')) document.querySelector(`#onglets [data-o="${cible}"]`).click();
+    const type = (document.querySelector('#types button.on') || {}).textContent || 'Document';
+    $('etape-titre').innerHTML = `<small>${type} · Étape ${n} sur 5</small><b>${NOMS[n - 1]}</b><p>${AIDE[n - 1]}</p>`;
+    $('prec').hidden = n === 1;
+    $('suiv').hidden = n === 5;
+    $('suiv').textContent = n === 4 ? "Voir l'aperçu →" : 'Suivant →';
+    $('telecharger').hidden = n !== 5;
+    coches();
+    if (defiler) window.scrollTo(0, 0);
+  }
+  const aller = k => { n = Math.max(1, Math.min(5, k)); vues.add(n); appliquer(true); };
+  $('etapes').addEventListener('click', e => { const b = e.target.closest('[data-e]'); if (b) aller(+b.dataset.e); });
+  $('suiv').addEventListener('click', () => aller(n + 1));
+  $('prec').addEventListener('click', () => aller(n - 1));
+  $('types').addEventListener('click', () => setTimeout(() => appliquer(false), 0));
+  document.querySelectorAll('details.bloc summary').forEach(s => s.addEventListener('click', e => { if (document.body.classList.contains('assistant')) e.preventDefault(); }));
+  document.addEventListener('input', () => { if (document.body.classList.contains('assistant')) coches(); });
+  document.addEventListener('click', () => { if (document.body.classList.contains('assistant')) setTimeout(coches, 0); });
+  mq.addEventListener('change', () => appliquer(false));
+  if (window.DOCU_AFFICHAGE === 'etapes') appliquer(false);
+})();
+</script>
+</body>
+<script>
 // ===== Système « fiches » (téléphone uniquement) =====
 (function(){
   const $ = id => document.getElementById(id);
@@ -1544,7 +1656,7 @@
   document.querySelectorAll('details.bloc summary').forEach(x => x.addEventListener('click', e => { if (ouverte) e.preventDefault(); }));
 
   function appliquer(){
-    const m = mq.matches;
+    const m = mq.matches && window.DOCU_AFFICHAGE === 'fiches';
     if (!m && ouverte) fermer();
     document.body.classList.toggle('mode-fiches', m);
     if (m){
@@ -1599,6 +1711,6 @@
   etat();
 })();
 </script>
-<script src="compte-menu.js?v=1"></script>
+<script src="compte-menu.js?v=2"></script>
 </body>
 </html>

@@ -28,6 +28,10 @@
   .cm-txt span{font-size:.78rem;color:var(--gris,#667)}
   .cm-nb{font-size:.74rem;font-weight:700;background:var(--bleu,#4A7BD0);color:#fff;border-radius:50px;padding:2px 8px;flex-shrink:0}
   .cm-note{font-size:.76rem;color:var(--gris,#667);padding:14px 16px;line-height:1.45;margin-top:auto}
+  .cm-avatar.logo{background:#fff;border:1px solid var(--bord,#e2e8f0);overflow:hidden}
+  .cm-avatar.logo img{max-width:88%;max-height:88%;object-fit:contain}
+  .compte-lien img.compte-logo{width:26px;height:26px;border-radius:50%;object-fit:contain;background:#fff;border:1.5px solid var(--bord,#e2e8f0);display:block}
+  @media (min-width:561px){.compte-lien img.compte-logo{width:22px;height:22px}}
   @media (prefers-reduced-motion:reduce){.cm{transition:none}}`;
 
   const ICO = {
@@ -39,8 +43,18 @@
   const lire = (k, d) => { try{ const v = JSON.parse(localStorage.getItem(k)); return v ?? d; }catch(e){ return d; } };
 
   let fond, menu, dernierFocus;
+  // Logo de l'entreprise à la place de l'icône (option dans Mon compte → Paramètres)
+  const logoAvatar = () => { try{ return localStorage.getItem('docupret_avatar') === '1' ? ((lire('docufacile_v1', {}) || {}).em || {}).logo || '' : ''; }catch(e){ return ''; } };
+  const ICONE = lien.querySelector('svg') ? lien.querySelector('svg').outerHTML : '';
+  let styleMis = false;
+  function majAvatar(){
+    if (!styleMis){ const st = document.createElement('style'); st.textContent = CSS; document.head.appendChild(st); styleMis = true; }
+    const l = logoAvatar(), actuel = lien.querySelector('svg,img.compte-logo');
+    if (l){ const img = document.createElement('img'); img.className = 'compte-logo'; img.alt = ''; img.src = l; if (actuel) actuel.replaceWith(img); else lien.prepend(img); }
+    else if (actuel && actuel.tagName === 'IMG'){ const t = document.createElement('span'); t.innerHTML = ICONE; actuel.replaceWith(t.firstChild); }
+  }
+  window.majAvatarCompte = majAvatar;
   function construire(){
-    const st = document.createElement('style'); st.textContent = CSS; document.head.appendChild(st);
     fond = document.createElement('div'); fond.className = 'cm-fond'; fond.hidden = true;
     menu = document.createElement('nav'); menu.className = 'cm'; menu.setAttribute('aria-label', 'Mon compte'); menu.setAttribute('aria-hidden', 'true');
     document.body.append(fond, menu);
@@ -59,7 +73,7 @@
     const nb = (lire('docupret_clients', []) || []).filter(c => c && !c.supprime).length;
     menu.innerHTML = `<div class="cm-tete"><b>Mon compte</b><button type="button" class="cm-fermer" aria-label="Fermer">×</button></div>
       <div class="cm-qui">${email
-        ? `<span class="cm-avatar">${esc(email[0].toUpperCase())}</span><div><small>Connecté avec</small><b>${esc(email)}</b></div>`
+        ? (logoAvatar() ? `<span class="cm-avatar logo"><img src="${logoAvatar()}" alt=""></span>` : `<span class="cm-avatar">${esc(email[0].toUpperCase())}</span>`) + `<div><small>Connecté avec</small><b>${esc(email)}</b></div>`
         : `<span class="cm-avatar vide">${ICO.compte}</span><div><b>Vous n'êtes pas connecté</b><small>Gratuit, avec une simple adresse e-mail</small></div>`}</div>
       ${email ? '' : '<a class="cm-connexion" href="compte.html#compte">Se connecter ou créer un compte</a>'}
       <a class="cm-lien" href="compte.html#clients"><span class="cm-ico">${ICO.clients}</span><span class="cm-txt"><b>Mes clients</b><span>Coordonnées enregistrées</span></span>${nb ? `<span class="cm-nb">${nb}</span>` : ''}</a>
@@ -82,6 +96,7 @@
     fond.hidden = true; document.body.style.overflow = '';
     if (dernierFocus && dernierFocus.focus) dernierFocus.focus();
   }
+  majAvatar();
   lien.setAttribute('aria-haspopup', 'true');
   lien.addEventListener('click', e => { e.preventDefault(); ouvrir(); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && menu && menu.classList.contains('ouvert')) fermer(); });
