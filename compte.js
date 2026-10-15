@@ -35,7 +35,7 @@
   const nouvelId = () => (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2));
   const norm = s => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/\s+/g, ' ').trim();
   const prevenir = () => ecouteurs.forEach(f => { try{ f(); }catch(e){} });
-  const CHAMPS = ['nom', 'adresse', 'cpville', 'email', 'tel', 'pro', 'siret'];
+  const CHAMPS = ['nom', 'adresse', 'cpville', 'email', 'tel', 'pro', 'siret', 'note'];
   const date = x => Date.parse(x || 0) || 0;
 
   function charger(src){
@@ -311,6 +311,7 @@
   .cp-item:active,.cp-item:hover{border-color:var(--bleu,#4A7BD0);background:var(--bleu-clair,#EAF1FD)}
   .cp-item b{font-size:.96rem}
   .cp-item span{font-size:.8rem;color:var(--gris,#667);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .cp-note{color:#8A5A00!important;font-size:.78rem!important}
   .cp-vide{padding:16px;text-align:center;color:var(--gris,#667);font-size:.9rem;line-height:1.5}
   .cp-vide a{color:var(--bleu,#4A7BD0);text-decoration:underline}
   .cp-pied{padding:10px 16px 14px;border-top:1px solid var(--bord,#dde);font-size:.82rem;color:var(--gris,#667);text-align:center}
@@ -329,7 +330,7 @@
     const liste = fond.querySelector('.cp-liste'), cherche = fond.querySelector('.cp-cherche');
     const rendre = () => {
       const q = norm(cherche.value), l = clients().filter(c => !q || norm([c.nom, c.cpville, c.email].join(' ')).includes(q));
-      liste.innerHTML = l.length ? l.map(c => `<button type="button" class="cp-item" data-id="${esc(c.id)}"><b>${esc(c.nom)}</b><span>${esc([c.adresse, c.cpville].filter(Boolean).join(', ') || c.email || '')}</span></button>`).join('')
+      liste.innerHTML = l.length ? l.map(c => `<button type="button" class="cp-item" data-id="${esc(c.id)}"><b>${esc(c.nom)}</b><span>${esc([c.adresse, c.cpville].filter(Boolean).join(', ') || c.email || '')}</span>${c.note ? `<span class="cp-note">📝 ${esc(c.note)}</span>` : ''}</button>`).join('')
         : clients().length ? '<p class="cp-vide">Aucun client ne correspond.</p>'
         : '<p class="cp-vide">Vous n\'avez encore aucun client enregistré.<br>Remplissez les coordonnées d\'un client, puis touchez <b>« Enregistrer ce client »</b>.</p>';
     };

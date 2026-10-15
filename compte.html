@@ -162,6 +162,14 @@
   .doc-ok{display:block;text-align:center;background:#E7F6EC;color:#1F6B3A;border-radius:10px;padding:8px;font-weight:700;font-size:.84rem}
   .fiche-docs{display:grid;gap:8px;margin-top:6px;border-top:1px solid var(--bord);padding-top:12px}
   .fiche-docs > b{font-size:.95rem}
+  .cl-note{color:#8A5A00!important;font-size:.76rem!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .note-client{display:grid;gap:4px;background:#FFF8E6;border:1px solid #F3D27A;border-radius:12px;padding:10px 12px}
+  .note-client > span{font-size:.84rem;font-weight:700;color:#6B4E00}
+  .note-client em{font-style:normal;font-weight:400;font-size:.74rem;color:#8A6D1F}
+  .note-client textarea{font:inherit;font-size:16px;border:1px solid #EAD9A6;border-radius:9px;padding:8px 10px;background:#fff;color:var(--texte);resize:vertical;min-height:52px;outline:none;width:100%}
+  .note-client textarea:focus{border-color:#D9A93A}
+  .note-client small{font-size:.74rem;color:#1F6B3A;min-height:1em}
+  .ch textarea{font:inherit;font-size:16px;padding:10px 12px;border:1.5px solid var(--bord);border-radius:10px;outline:none;width:100%;color:var(--texte);background:#fff;resize:vertical}
   .fiche-infos{display:grid;gap:3px;font-size:.9rem;color:var(--gris);margin:-2px 0 6px}
   .cl-actions a,.cl-actions button{border:1.5px solid var(--bord);background:#fff;border-radius:10px;padding:12px 6px;font-size:.9rem;font-weight:700;color:var(--texte);text-align:center}
   .cl-actions a.p{border-color:var(--bleu);color:var(--bleu-fonce);background:var(--bleu-clair)}
@@ -433,7 +441,7 @@
   </div>
 </footer>
 
-<script src="compte.js?v=6"></script>
+<script src="compte.js?v=7"></script>
 <script src="compte-menu.js?v=2"></script>
 <script>
 (function(){
@@ -508,13 +516,13 @@
   // ---------- Clients ----------
   function rendreClients(){
     const tous = C.clients(), q = C.norm($('cherche').value);
-    const l = tous.filter(c => !q || C.norm([c.nom, c.adresse, c.cpville, c.email].join(' ')).includes(q));
+    const l = tous.filter(c => !q || C.norm([c.nom, c.adresse, c.cpville, c.email, c.note].join(' ')).includes(q));
     $('nb').textContent = tous.length;
     const lettre = c => { const x = C.norm(c.nom || '?')[0] || '#'; return /[a-z]/.test(x) ? x.toUpperCase() : '#'; };
     let prec = '';
     $('liste').innerHTML = l.length ? l.map(c => {
       const L = lettre(c), tete = L !== prec ? `<div class="cl-lettre">${L}</div>` : ''; prec = L;
-      return tete + `<button type="button" class="cl-ligne" data-voir="${esc(c.id)}"><span class="cl-ini">${esc((c.nom || '?')[0].toUpperCase())}</span><span class="cl-txt"><b>${esc(c.nom)}${c.pro ? '<span class="cl-pro">Pro</span>' : ''}</b><span>${esc(c.cpville || c.adresse || c.email || 'Pas d\'adresse')}</span></span><span class="cl-fl">›</span></button>`;
+      return tete + `<button type="button" class="cl-ligne" data-voir="${esc(c.id)}"><span class="cl-ini">${esc((c.nom || '?')[0].toUpperCase())}</span><span class="cl-txt"><b>${esc(c.nom)}${c.pro ? '<span class="cl-pro">Pro</span>' : ''}</b><span>${esc(c.cpville || c.adresse || c.email || 'Pas d\'adresse')}</span>${c.note ? `<span class="cl-note">📝 ${esc(c.note)}</span>` : ''}</span><span class="cl-fl">›</span></button>`;
     }).join('')
       : tous.length ? '<p class="vide">Aucun client ne correspond à votre recherche.</p>'
       : '<p class="vide">Aucun client enregistré pour l\'instant.<br>Créez un <a href="facture.html?type=devis">devis</a> ou une <a href="facture.html?type=facture">facture</a> et touchez « Enregistrer ce client », ou ajoutez-en un avec « + Ajouter ».</p>';
@@ -549,11 +557,17 @@
     const lignes = [[c.adresse, c.cpville].filter(Boolean).join(', '), c.email, c.siret && 'SIRET ' + c.siret].filter(Boolean);
     f.innerHTML = `<div class="boite" role="dialog" aria-modal="true"><div class="boite-tete"><b>${esc(c.nom)}${c.pro ? '<span class="cl-pro">Pro</span>' : ''}</b><button type="button" data-fermer aria-label="Fermer">×</button></div>
       <div class="fiche-infos">${lignes.length ? lignes.map(x => `<span>${esc(x)}</span>`).join('') : '<span>Pas de coordonnées enregistrées</span>'}</div>
+      <label class="note-client"><span>📝 Note personnelle <em>visible seulement par vous</em></span><textarea data-note rows="2" placeholder="Ex. : client très gentil, paie toujours à l'heure, code du portail…">${esc(c.note || '')}</textarea><small data-note-ok></small></label>
       <div class="cl-actions"><a class="p" href="facture.html?type=devis&client=${encodeURIComponent(c.id)}">Nouveau devis</a><a class="p" href="facture.html?type=facture&client=${encodeURIComponent(c.id)}">Nouvelle facture</a></div>
       <div class="fiche-gestion"><button type="button" class="btn-sec" data-modif="${esc(c.id)}">Modifier ses coordonnées</button><button type="button" class="btn-sec danger" data-suppr-client="${esc(c.id)}">Supprimer ce client</button></div>
       ${(() => { const ds = C.documents(c.id); return C.utilisateur()
         ? `<div class="fiche-docs"><b>Devis et factures</b>${ds.length ? ds.map(d => ligneDoc(d, false)).join('') : '<p class="note">Aucun document pour l\'instant. Les devis et factures que vous téléchargez pour ce client apparaîtront ici.</p>'}</div>`
         : '<p class="note fiche-docs">🔒 Avec un compte gratuit, ses devis et factures sont gardés ici, et un devis se transforme en facture en un clic.</p>'; })()}</div>`;
+    let mn;
+    f.querySelector('[data-note]').addEventListener('input', e => {
+      clearTimeout(mn); const v = e.target.value;
+      mn = setTimeout(() => { C.enregistrerClient({id: c.id, nom: c.nom, note: v}); f.querySelector('[data-note-ok]').textContent = '✓ Note enregistrée'; }, 600);
+    });
     f.addEventListener('click', e => {
       if (e.target === f || e.target.closest('[data-fermer]')) return f.remove();
       if (e.target.closest('[data-modif]')){ f.remove(); editer(c.id); }
@@ -574,6 +588,7 @@
       <label class="ch">E-mail (facultatif)<input name="email" type="email" value="${esc(c.email)}" autocomplete="off"></label>
       <label class="case"><input type="checkbox" name="pro" ${c.pro ? 'checked' : ''}> Client professionnel</label>
       <label class="ch" data-siret ${c.pro ? '' : 'hidden'}>SIRET du client<input name="siret" inputmode="numeric" value="${esc(c.siret)}"></label>
+      <label class="ch">Note personnelle (facultatif, visible seulement par vous)<textarea name="note" rows="2" placeholder="Ex. : client très gentil">${esc(c.note)}</textarea></label>
       <div class="msg err" hidden></div>
       <button type="submit" class="btn">Enregistrer</button>
       ${id ? '<button type="button" class="btn-sec danger" data-suppr>Supprimer ce client</button>' : ''}</form>`;
@@ -585,7 +600,7 @@
     });
     form.addEventListener('submit', e => {
       e.preventDefault();
-      const r = C.enregistrerClient({id: id || undefined, nom: form.nom.value, adresse: form.adresse.value, cpville: form.cpville.value, email: form.email.value, pro: form.pro.checked, siret: form.pro.checked ? form.siret.value : ''});
+      const r = C.enregistrerClient({id: id || undefined, nom: form.nom.value, adresse: form.adresse.value, cpville: form.cpville.value, email: form.email.value, pro: form.pro.checked, siret: form.pro.checked ? form.siret.value : '', note: form.note.value});
       if (r.erreur){ const m = f.querySelector('.msg'); m.hidden = false; m.textContent = r.erreur; return; }
       fermer(); C.toast(id ? 'Client modifié ✓' : 'Client ajouté ✓');
     });
