@@ -1,3 +1,58 @@
+/* Bouton « retour » du téléphone : il ferme d'abord le menu, « Mon compte » ou la fenêtre ouverte,
+ * au lieu de quitter le site. Chaque ouverture ajoute une étape dans l'historique du navigateur. */
+(function(){
+  'use strict';
+  if (!window.history || !history.pushState || !window.MutationObserver) return;
+  const clic = el => el && el.dispatchEvent(new MouseEvent('click', {bubbles: true, cancelable: true}));
+  const COUCHES = [
+    {trouver: () => [...document.querySelectorAll('#tiroir.ouvert')], fermer: () => clic(document.getElementById('tiroir-fond'))},
+    {trouver: () => [...document.querySelectorAll('.cm.ouvert')], fermer: () => clic(document.querySelector('.cm-fond'))},
+    {trouver: () => [...document.querySelectorAll('body > .env-fond, body > .loupe, body > .fond')], fermer: el => clic(el)}
+  ];
+  let pile = [], aIgnorer = 0, navigation = null;
+  const ouvertes = () => { const r = []; COUCHES.forEach(c => c.trouver().forEach(el => { if (!el.hidden) r.push({el, fermer: () => c.fermer(el)}); })); return r; };
+  function verifier(){
+    if (navigation) return;
+    const o = ouvertes(), els = o.map(x => x.el);
+    const fermees = pile.filter(x => !els.includes(x.el)).length;
+    const nouvelles = o.filter(x => !pile.some(p => p.el === x.el));
+    pile = pile.filter(x => els.includes(x.el)).concat(nouvelles);
+    const net = nouvelles.length - fermees;
+    if (net > 0) for (let i = 0; i < net; i++) history.pushState({docuCouche: true}, '');
+    else if (net < 0){ aIgnorer++; history.go(net); }   // fermée avec la croix, le fond ou Échap
+  }
+  window.addEventListener('popstate', e => {
+    if (navigation){
+      e.stopImmediatePropagation();
+      const n = navigation; n.fermer.forEach(f => f());
+      location.href = n.url;
+      setTimeout(() => { navigation = null; verifier(); }, 0);
+      return;
+    }
+    if (aIgnorer){ aIgnorer--; e.stopImmediatePropagation(); return; }
+    if (!pile.length) return;
+    e.stopImmediatePropagation();
+    pile.pop().fermer();
+  }, true);
+  // Lien touché dans le menu : on retire d'abord les étapes ajoutées, puis on y va
+  document.addEventListener('click', e => {
+    if (!pile.length || navigation || e.button > 0 || e.ctrlKey || e.metaKey || e.shiftKey) return;
+    const a = e.target.closest && e.target.closest('a[href]');
+    if (!a || !pile.some(p => p.el.contains(a)) || (a.target && a.target !== '_self') || a.hasAttribute('download')) return;
+    const url = new URL(a.getAttribute('href'), location.href);
+    if (url.origin !== location.origin) return;
+    e.preventDefault(); e.stopPropagation();
+    navigation = {url: url.href, fermer: pile.map(p => p.fermer)};
+    const n = pile.length; pile = [];
+    history.go(-n);
+  }, true);
+  const lancer = () => {
+    new MutationObserver(verifier).observe(document.body, {childList: true, subtree: true, attributes: true, attributeFilter: ['class', 'hidden']});
+    verifier();
+  };
+  if (document.body) lancer(); else document.addEventListener('DOMContentLoaded', lancer);
+})();
+
 /* DocuPrêt — menu « Mon compte » qui s'ouvre sur la droite (toutes les pages) */
 (function(){
   'use strict';
