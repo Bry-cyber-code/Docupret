@@ -1668,7 +1668,7 @@ window.DOCU_AFFICHAGE = (function(){
   window.addEventListener('load', () => setTimeout(liste, 300));
 })();
 </script>
-<script src="compte.js?v=4"></script>
+<script src="compte.js?v=5"></script>
 <script>
 // ===== Clients enregistrés =====
 (function(){
@@ -1703,6 +1703,23 @@ window.DOCU_AFFICHAGE = (function(){
   });
   document.addEventListener('input', e => { if (e.target.dataset && /^cl\./.test(e.target.dataset.b || '')) etat(); });
   Compte.surChangement(etat);
+  // ---------- Paramètres synchronisés avec le compte ----------
+  // Une modification de vos infos (nom, logo, TVA, paiement…) ou un nouveau numéro utilisé part dans le compte.
+  let aSaisi = false;
+  const PARAM = /^(em\.|franchise$|paiement\.(conditions|moyen|iban)$|tauxDefaut$)/;
+  document.addEventListener('input', e => {
+    const b = e.target.dataset && e.target.dataset.b;
+    if (b){ aSaisi = true; if (PARAM.test(b)) setTimeout(Compte.parametresModifies, 400); }
+  });
+  const lf = document.getElementById('logo-fichier'); if (lf) lf.addEventListener('change', () => setTimeout(Compte.parametresModifies, 800));
+  const ls = document.getElementById('logo-suppr'); if (ls) ls.addEventListener('click', () => setTimeout(Compte.parametresModifies, 800));
+  $('telecharger').addEventListener('click', () => setTimeout(Compte.parametresModifies, 5000));
+  // Paramètres plus récents dans le compte : on recharge la page si rien n'a encore été saisi
+  window.addEventListener('docupret-parametres', () => {
+    if (!aSaisi) location.reload();
+    else Compte.toast('Vos paramètres ont été mis à jour depuis votre compte : ils s\'appliqueront au prochain document.');
+  });
+
   // facture.html?client=… : client choisi depuis « Mon compte »
   const id = new URLSearchParams(location.search).get('client');
   if (id){ const c = Compte.client(id); if (c) remplir(c); }

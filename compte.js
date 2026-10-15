@@ -56,7 +56,7 @@
         const avant = utilisateur && utilisateur.uid;
         utilisateur = u || null;
         try{ if (utilisateur) localStorage.setItem('docupret_compte', JSON.stringify({email: utilisateur.email})); else localStorage.removeItem('docupret_compte'); }catch(e){}
-        if (utilisateur && utilisateur.uid !== avant) await synchroniser();
+        if (utilisateur && utilisateur.uid !== avant){ await synchroniser(); await synchroniserParametres(); }
         prevenir();
         if (premier){ premier = false; ok(); }
       });
@@ -94,6 +94,73 @@
       });
       await lot.commit();
     }catch(e){ console.warn('Envoi impossible', e); }
+  }
+
+  // ---------- Paramètres (infos d'entreprise, logo, paiement, numérotation, affichage) ----------
+  // Document Firestore : utilisateurs/{uid} → {parametres, majParam}
+  // Le plus récent gagne ; les compteurs de numérotation gardent le plus grand numéro
+  // (pour ne jamais redonner un numéro déjà utilisé), sauf réglage manuel plus récent.
+  const CLE_DOC = 'docufacile_v1', CLE_MAJ = 'docupret_param_maj';
+  const ecouteursParam = new Set();
+  const lireDoc = () => { try{ return JSON.parse(localStorage.getItem(CLE_DOC)) || {}; }catch(e){ return {}; } };
+  const propre = o => JSON.parse(JSON.stringify(o ?? null));
+  function extraire(){
+    const d = lireDoc(), p = d.paiement || {};
+    return propre({
+      em: d.em || {}, franchise: !!d.franchise,
+      paiement: {conditions: p.conditions, moyen: p.moyen, iban: p.iban},
+      numerotation: d.numerotation || {annee: true}, compteurs: d.compteurs || {}, numMaj: d.numMaj || '',
+      tauxDefaut: d.tauxDefaut, tvaMode: d.tvaMode,
+      affichage: localStorage.getItem('docupret_affichage') || '', avatar: localStorage.getItem('docupret_avatar') || ''
+    });
+  }
+  function appliquer(p){
+    const d = lireDoc();
+    d.em = Object.assign({}, d.em || {}, p.em || {});
+    if ('franchise' in p) d.franchise = !!p.franchise;
+    d.paiement = Object.assign({}, d.paiement || {}, p.paiement || {});
+    if (p.numerotation) d.numerotation = p.numerotation;
+    const loc = d.compteurs || {}, dist = p.compteurs || {};
+    if (date(p.numMaj) > date(d.numMaj)){ d.compteurs = Object.assign({}, loc, dist); d.numMaj = p.numMaj; }
+    else { d.compteurs = Object.assign({}, loc); for (const t in dist) d.compteurs[t] = Math.max(loc[t] || 0, dist[t] || 0); }
+    if (p.tauxDefaut != null) d.tauxDefaut = p.tauxDefaut;
+    if (p.tvaMode) d.tvaMode = p.tvaMode;
+    if (d.doc) d.doc.numero = '';
+    try{
+      localStorage.setItem(CLE_DOC, JSON.stringify(d));
+      if (p.affichage) localStorage.setItem('docupret_affichage', p.affichage);
+      if (p.avatar) localStorage.setItem('docupret_avatar', p.avatar);
+    }catch(e){}
+  }
+  async function synchroniserParametres(){
+    if (!db || !utilisateur) return;
+    try{
+      const snap = await db.collection('utilisateurs').doc(utilisateur.uid).get();
+      const r = snap.exists ? snap.data() : null;
+      const majLocal = localStorage.getItem(CLE_MAJ) || '';
+      if (r && r.parametres && date(r.majParam) > date(majLocal)){
+        appliquer(r.parametres);
+        try{ localStorage.setItem(CLE_MAJ, r.majParam); }catch(e){}
+        ecouteursParam.forEach(f => { try{ f(); }catch(e){} });
+        window.dispatchEvent(new Event('docupret-parametres'));
+      } else if (!r || !r.parametres || date(majLocal) > date(r.majParam)){
+        await envoyerParametres();
+      }
+    }catch(e){ console.warn('Synchronisation des paramètres impossible', e); }
+  }
+  async function envoyerParametres(){
+    if (!db || !utilisateur) return;
+    try{
+      const maj = localStorage.getItem(CLE_MAJ) || new Date().toISOString();
+      await db.collection('utilisateurs').doc(utilisateur.uid).set({parametres: extraire(), majParam: maj}, {merge: true});
+    }catch(e){ console.warn('Envoi des paramètres impossible', e); }
+  }
+  let minuterieParam;
+  // À appeler après chaque modification locale des paramètres
+  function parametresModifies(){
+    try{ localStorage.setItem(CLE_MAJ, new Date().toISOString()); }catch(e){}
+    clearTimeout(minuterieParam);
+    minuterieParam = setTimeout(envoyerParametres, 1500);
   }
 
   // ---------- Clients ----------
@@ -168,6 +235,7 @@
     try{
       const snap = await collection().get();
       const lot = db.batch(); snap.forEach(d => lot.delete(d.ref)); await lot.commit();
+      try{ await db.collection('utilisateurs').doc(u.uid).delete(); }catch(e){}
       await u.delete();
     }catch(e){ throw traduire(e); }
     utilisateur = null; prevenir();
@@ -231,6 +299,7 @@
     clients, client, enregistrerClient, supprimerClient, synchroniser,
     inscrire, connecter, deconnecter, motDePasseOublie, changerMotDePasse, supprimerCompte,
     surChangement: f => ecouteurs.add(f),
+    parametresModifies, surParametres: f => ecouteursParam.add(f),
     choisirClient, toast, esc, norm
   };
 })();
