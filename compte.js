@@ -53,6 +53,7 @@
   }
 
   // ---------- Synchronisation ----------
+  const date = x => Date.parse(x || 0) || 0;
   async function synchroniser(){
     if (!sb || !utilisateur) return;
     try{
@@ -63,7 +64,7 @@
       const fusion = new Map(), aEnvoyer = [];
       for (const id of new Set([...distants.keys(), ...locaux.keys()])){
         const d = distants.get(id), l = locaux.get(id);
-        if (d && (!l || (d.maj || '') >= (l.maj || ''))) fusion.set(id, d);
+        if (d && (!l || date(d.maj) >= date(l.maj))) fusion.set(id, d);
         else { fusion.set(id, l); aEnvoyer.push(l); }
       }
       ecrireLocal([...fusion.values()]);
