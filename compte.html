@@ -154,6 +154,10 @@
   .doc-total{margin-left:auto;font-weight:800;font-size:.92rem;font-variant-numeric:tabular-nums;flex-shrink:0}
   .doc-bas{display:flex;justify-content:space-between;align-items:center;font-size:.8rem;color:var(--gris)}
   .doc-ouvrir{color:var(--bleu);font-weight:650;text-decoration:underline}
+  .doc-liens{display:flex;gap:14px;align-items:center}
+  .doc-suppr{border:0;background:none;padding:0;font:inherit;font-size:.8rem;color:#C23B36;text-decoration:underline}
+  .fiche-gestion{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}
+  .fiche-gestion .btn-sec{padding:10px 6px;font-size:.84rem}
   .doc-conv{display:block;text-align:center;background:var(--bleu);color:#fff;border-radius:10px;padding:10px;font-weight:700;font-size:.9rem}
   .doc-ok{display:block;text-align:center;background:#E7F6EC;color:#1F6B3A;border-radius:10px;padding:8px;font-weight:700;font-size:.84rem}
   .fiche-docs{display:grid;gap:8px;margin-top:6px;border-top:1px solid var(--bord);padding-top:12px}
@@ -521,7 +525,18 @@
   function ligneDoc(d, avecClient){
     const conv = d.type === 'devis' ? (d.facture ? `<span class="doc-ok">✓ Facturé ${esc(d.facture)}</span>` : `<a class="doc-conv" href="facture.html?depuis=${encodeURIComponent(d.id)}">Transformer en facture →</a>`) : '';
     return `<div class="doc"><div class="doc-haut"><span class="doc-type t-${esc(d.type)}">${MOT[d.type] || 'Document'}</span><b>${esc(d.numero)}</b><span class="doc-total">${eurs(d.total)}</span></div>
-      <div class="doc-bas"><span>${avecClient ? esc(d.clientNom) + ' · ' : ''}${dFr(d.date)}</span><a class="doc-ouvrir" href="facture.html?ouvrir=${encodeURIComponent(d.id)}">Rouvrir</a></div>${conv ? `<div class="doc-conv-l">${conv}</div>` : ''}</div>`;
+      <div class="doc-bas"><span>${avecClient ? esc(d.clientNom) + ' · ' : ''}${dFr(d.date)}</span><span class="doc-liens"><a class="doc-ouvrir" href="facture.html?ouvrir=${encodeURIComponent(d.id)}">Rouvrir</a><button type="button" class="doc-suppr" data-suppr-doc="${esc(d.id)}">Supprimer</button></span></div>${conv ? `<div class="doc-conv-l">${conv}</div>` : ''}</div>`;
+  }
+  function supprimerDoc(id, ensuite){
+    const d = C.document(id); if (!d) return;
+    if (!confirm(`Supprimer ${(MOT[d.type] || 'le document').toLowerCase()} ${d.numero} de vos documents ?\n\nLe fichier PDF déjà téléchargé ou envoyé n'est pas concerné.`)) return;
+    C.supprimerDocument(id); C.toast(`${MOT[d.type] || 'Document'} ${d.numero} supprimé`); if (ensuite) ensuite();
+  }
+  function supprimerClientAvecDocs(c, ensuite){
+    const n = C.documents(c.id).length;
+    if (!confirm(`Supprimer ${c.nom} de vos clients ?` + (n ? `\n\nSes ${n} devis et factures gardés ici seront aussi supprimés.` : ''))) return;
+    C.documents(c.id).forEach(d => C.supprimerDocument(d.id));
+    C.supprimerClient(c.id); C.toast('Client supprimé'); if (ensuite) ensuite();
   }
   function rendreAttente(){
     const l = C.utilisateur() ? C.documents().filter(d => d.type === 'devis' && !d.facture) : [];
@@ -535,13 +550,16 @@
     f.innerHTML = `<div class="boite" role="dialog" aria-modal="true"><div class="boite-tete"><b>${esc(c.nom)}${c.pro ? '<span class="cl-pro">Pro</span>' : ''}</b><button type="button" data-fermer aria-label="Fermer">×</button></div>
       <div class="fiche-infos">${lignes.length ? lignes.map(x => `<span>${esc(x)}</span>`).join('') : '<span>Pas de coordonnées enregistrées</span>'}</div>
       <div class="cl-actions"><a class="p" href="facture.html?type=devis&client=${encodeURIComponent(c.id)}">Nouveau devis</a><a class="p" href="facture.html?type=facture&client=${encodeURIComponent(c.id)}">Nouvelle facture</a></div>
-      <button type="button" class="btn-sec" data-modif="${esc(c.id)}">Modifier ses coordonnées</button>
+      <div class="fiche-gestion"><button type="button" class="btn-sec" data-modif="${esc(c.id)}">Modifier ses coordonnées</button><button type="button" class="btn-sec danger" data-suppr-client="${esc(c.id)}">Supprimer ce client</button></div>
       ${(() => { const ds = C.documents(c.id); return C.utilisateur()
         ? `<div class="fiche-docs"><b>Devis et factures</b>${ds.length ? ds.map(d => ligneDoc(d, false)).join('') : '<p class="note">Aucun document pour l\'instant. Les devis et factures que vous téléchargez pour ce client apparaîtront ici.</p>'}</div>`
         : '<p class="note fiche-docs">🔒 Avec un compte gratuit, ses devis et factures sont gardés ici, et un devis se transforme en facture en un clic.</p>'; })()}</div>`;
     f.addEventListener('click', e => {
       if (e.target === f || e.target.closest('[data-fermer]')) return f.remove();
       if (e.target.closest('[data-modif]')){ f.remove(); editer(c.id); }
+      if (e.target.closest('[data-suppr-client]')) supprimerClientAvecDocs(c, () => f.remove());
+      const sd = e.target.closest('[data-suppr-doc]');
+      if (sd) supprimerDoc(sd.dataset.supprDoc, () => { f.remove(); voir(c.id); });
     });
     document.body.appendChild(f);
   }
@@ -563,7 +581,7 @@
     form.pro.addEventListener('change', () => { f.querySelector('[data-siret]').hidden = !form.pro.checked; });
     f.addEventListener('click', e => {
       if (e.target === f || e.target.closest('[data-fermer]')) fermer();
-      if (e.target.closest('[data-suppr]') && confirm(`Supprimer ${c.nom} de vos clients ?`)){ C.supprimerClient(id); fermer(); C.toast('Client supprimé'); }
+      if (e.target.closest('[data-suppr]')) supprimerClientAvecDocs(c, fermer);
     });
     form.addEventListener('submit', e => {
       e.preventDefault();
@@ -577,6 +595,7 @@
   $('cherche').addEventListener('input', rendreClients);
   $('ajouter').addEventListener('click', () => editer());
   $('liste').addEventListener('click', e => { const b = e.target.closest('[data-voir]'); if (b) voir(b.dataset.voir); });
+  $('attente').addEventListener('click', e => { const b = e.target.closest('[data-suppr-doc]'); if (b) supprimerDoc(b.dataset.supprDoc); });
 
 
   // ---------- Rubriques ----------
