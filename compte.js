@@ -56,7 +56,7 @@
         const avant = utilisateur && utilisateur.uid;
         utilisateur = u || null;
         try{ if (utilisateur) localStorage.setItem('docupret_compte', JSON.stringify({email: utilisateur.email})); else localStorage.removeItem('docupret_compte'); }catch(e){}
-        if (utilisateur && utilisateur.uid !== avant){ await synchroniser(); await synchroniserParametres(); }
+        if (utilisateur && utilisateur.uid !== avant){ await synchroniser(); await synchroniserParametres(); await synchroniserDocuments(); }
         prevenir();
         if (premier){ premier = false; ok(); }
       });
@@ -163,6 +163,58 @@
     minuterieParam = setTimeout(envoyerParametres, 1500);
   }
 
+  // ---------- Documents (devis, factures…) gardés dans la fiche du client ----------
+  // Local : docupret_documents ; compte : utilisateurs/{uid}/documents/{id}
+  const CLE_DOCS = 'docupret_documents';
+  const lireDocs = () => { try{ const v = JSON.parse(localStorage.getItem(CLE_DOCS)); return Array.isArray(v) ? v : []; }catch(e){ return []; } };
+  const ecrireDocs = l => { try{ localStorage.setItem(CLE_DOCS, JSON.stringify(l)); }catch(e){} };
+  const colDocs = () => db.collection('utilisateurs').doc(utilisateur.uid).collection('documents');
+  async function synchroniserDocuments(){
+    if (!db || !utilisateur) return;
+    try{
+      const snap = await colDocs().get();
+      const distants = new Map(); snap.forEach(d => distants.set(d.id, {...d.data(), id: d.id}));
+      const locaux = new Map(lireDocs().map(c => [c.id, c]));
+      const fusion = new Map(), aEnvoyer = [];
+      for (const id of new Set([...distants.keys(), ...locaux.keys()])){
+        const d = distants.get(id), l = locaux.get(id);
+        if (d && (!l || date(d.maj) >= date(l.maj))) fusion.set(id, d); else { fusion.set(id, l); aEnvoyer.push(l); }
+      }
+      ecrireDocs([...fusion.values()]);
+      if (aEnvoyer.length) await envoyerDocs(aEnvoyer);
+      prevenir();
+    }catch(e){ console.warn('Synchronisation des documents impossible', e); }
+  }
+  async function envoyerDocs(liste){
+    if (!db || !utilisateur || !liste.length) return;
+    try{
+      const lot = db.batch();
+      liste.forEach(c => { const {id, ...data} = c; lot.set(colDocs().doc(id), propre(data)); });
+      await lot.commit();
+    }catch(e){ console.warn('Envoi des documents impossible', e); }
+  }
+  function documents(clientId){
+    return lireDocs().filter(d => !d.supprime && (!clientId || d.clientId === clientId))
+      .sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')) || date(b.maj) - date(a.maj));
+  }
+  const documentId = id => lireDocs().find(d => d.id === id && !d.supprime) || null;
+  function enregistrerDocument(o){
+    const liste = lireDocs();
+    let d = o.id ? liste.find(x => x.id === o.id) : null;
+    if (!d) d = liste.find(x => !x.supprime && x.type === o.type && x.numero === o.numero && x.clientId === o.clientId);
+    if (!d){ d = {id: nouvelId()}; liste.push(d); }
+    Object.assign(d, propre({type: o.type, numero: o.numero, date: o.date, clientId: o.clientId, clientNom: o.clientNom, total: o.total, snap: o.snap}));
+    d.supprime = false; d.maj = new Date().toISOString();
+    ecrireDocs(liste); envoyerDocs([d]); prevenir();
+    return d;
+  }
+  function majDocument(id, champs){
+    const liste = lireDocs(), d = liste.find(x => x.id === id); if (!d) return;
+    Object.assign(d, champs); d.maj = new Date().toISOString();
+    ecrireDocs(liste); envoyerDocs([d]); prevenir();
+  }
+  const supprimerDocument = id => majDocument(id, {supprime: true});
+
   // ---------- Clients ----------
   function clients(){
     return lireLocal().filter(c => !c.supprime).sort((a, b) => norm(a.nom).localeCompare(norm(b.nom), 'fr'));
@@ -235,7 +287,9 @@
     try{
       const snap = await collection().get();
       const lot = db.batch(); snap.forEach(d => lot.delete(d.ref)); await lot.commit();
+      try{ const sd = await colDocs().get(); const l2 = db.batch(); sd.forEach(d => l2.delete(d.ref)); await l2.commit(); }catch(e){}
       try{ await db.collection('utilisateurs').doc(u.uid).delete(); }catch(e){}
+      try{ localStorage.removeItem(CLE_DOCS); }catch(e){}
       await u.delete();
     }catch(e){ throw traduire(e); }
     utilisateur = null; prevenir();
@@ -300,6 +354,7 @@
     inscrire, connecter, deconnecter, motDePasseOublie, changerMotDePasse, supprimerCompte,
     surChangement: f => ecouteurs.add(f),
     parametresModifies, surParametres: f => ecouteursParam.add(f),
+    documents, document: documentId, enregistrerDocument, majDocument, supprimerDocument,
     choisirClient, toast, esc, norm
   };
 })();

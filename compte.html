@@ -142,6 +142,22 @@
   .cl-ligne:last-child{border-bottom:0}
   .cl-ligne:active,.cl-ligne:hover{background:var(--bleu-clair)}
   .cl-fl{margin-left:auto;color:var(--gris);font-size:1.3rem;flex-shrink:0}
+  .attente{background:var(--blanc);border:1.5px solid var(--bleu);border-radius:var(--rayon);padding:14px;display:grid;gap:8px;margin-bottom:6px}
+  .attente-tete{display:flex;align-items:center;gap:8px}
+  .attente-tete b{font-size:1.02rem}
+  .doc{border:1px solid var(--bord);border-radius:12px;padding:10px 12px;display:grid;gap:6px;background:#fff}
+  .doc-haut{display:flex;align-items:center;gap:8px;min-width:0}
+  .doc-haut b{font-size:.92rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .doc-type{font-size:.68rem;font-weight:800;border-radius:50px;padding:2px 8px;background:var(--fond);color:var(--gris);flex-shrink:0}
+  .doc-type.t-devis{background:#FFF4DB;color:#8A5A00}
+  .doc-type.t-facture{background:#E7F6EC;color:#1F6B3A}
+  .doc-total{margin-left:auto;font-weight:800;font-size:.92rem;font-variant-numeric:tabular-nums;flex-shrink:0}
+  .doc-bas{display:flex;justify-content:space-between;align-items:center;font-size:.8rem;color:var(--gris)}
+  .doc-ouvrir{color:var(--bleu);font-weight:650;text-decoration:underline}
+  .doc-conv{display:block;text-align:center;background:var(--bleu);color:#fff;border-radius:10px;padding:10px;font-weight:700;font-size:.9rem}
+  .doc-ok{display:block;text-align:center;background:#E7F6EC;color:#1F6B3A;border-radius:10px;padding:8px;font-weight:700;font-size:.84rem}
+  .fiche-docs{display:grid;gap:8px;margin-top:6px;border-top:1px solid var(--bord);padding-top:12px}
+  .fiche-docs > b{font-size:.95rem}
   .fiche-infos{display:grid;gap:3px;font-size:.9rem;color:var(--gris);margin:-2px 0 6px}
   .cl-actions a,.cl-actions button{border:1.5px solid var(--bord);background:#fff;border-radius:10px;padding:12px 6px;font-size:.9rem;font-weight:700;color:var(--texte);text-align:center}
   .cl-actions a.p{border-color:var(--bleu);color:var(--bleu-fonce);background:var(--bleu-clair)}
@@ -285,6 +301,7 @@
   </nav>
 
   <div class="rubrique" data-r="clients">
+  <section class="attente" id="attente" hidden></section>
   <h2 style="margin-top:4px">Mes clients <span class="compteur" id="nb">0</span></h2>
   <section class="carte">
     <div class="outils-clients"><input type="search" id="cherche" placeholder="Rechercher un client" aria-label="Rechercher un client"><button type="button" class="btn" id="ajouter">+ Ajouter</button></div>
@@ -412,7 +429,7 @@
   </div>
 </footer>
 
-<script src="compte.js?v=5"></script>
+<script src="compte.js?v=6"></script>
 <script src="compte-menu.js?v=2"></script>
 <script>
 (function(){
@@ -498,6 +515,19 @@
       : tous.length ? '<p class="vide">Aucun client ne correspond à votre recherche.</p>'
       : '<p class="vide">Aucun client enregistré pour l\'instant.<br>Créez un <a href="facture.html?type=devis">devis</a> ou une <a href="facture.html?type=facture">facture</a> et touchez « Enregistrer ce client », ou ajoutez-en un avec « + Ajouter ».</p>';
   }
+  const eurs = x => (Number(x) || 0).toLocaleString('fr-FR', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' €';
+  const dFr = iso => iso ? new Date(iso + 'T12:00').toLocaleDateString('fr-FR') : '';
+  const MOT = {devis: 'Devis', facture: 'Facture', recu: 'Reçu', avoir: 'Avoir'};
+  function ligneDoc(d, avecClient){
+    const conv = d.type === 'devis' ? (d.facture ? `<span class="doc-ok">✓ Facturé ${esc(d.facture)}</span>` : `<a class="doc-conv" href="facture.html?depuis=${encodeURIComponent(d.id)}">Transformer en facture →</a>`) : '';
+    return `<div class="doc"><div class="doc-haut"><span class="doc-type t-${esc(d.type)}">${MOT[d.type] || 'Document'}</span><b>${esc(d.numero)}</b><span class="doc-total">${eurs(d.total)}</span></div>
+      <div class="doc-bas"><span>${avecClient ? esc(d.clientNom) + ' · ' : ''}${dFr(d.date)}</span><a class="doc-ouvrir" href="facture.html?ouvrir=${encodeURIComponent(d.id)}">Rouvrir</a></div>${conv ? `<div class="doc-conv-l">${conv}</div>` : ''}</div>`;
+  }
+  function rendreAttente(){
+    const l = C.utilisateur() ? C.documents().filter(d => d.type === 'devis' && !d.facture) : [];
+    $('attente').hidden = !l.length;
+    $('attente').innerHTML = l.length ? `<div class="attente-tete"><b>Devis en attente</b><span class="compteur">${l.length}</span></div><p class="note">Devis accepté ? Transformez-le en facture en un clic : client et prestations sont repris automatiquement.</p>${l.slice(0, 5).map(d => ligneDoc(d, true)).join('')}${l.length > 5 ? `<p class="note">… et ${l.length - 5} autre${l.length > 6 ? 's' : ''}, dans la fiche de chaque client.</p>` : ''}` : '';
+  }
   function voir(id){
     const c = C.client(id); if (!c) return;
     const f = document.createElement('div'); f.className = 'fond';
@@ -505,7 +535,10 @@
     f.innerHTML = `<div class="boite" role="dialog" aria-modal="true"><div class="boite-tete"><b>${esc(c.nom)}${c.pro ? '<span class="cl-pro">Pro</span>' : ''}</b><button type="button" data-fermer aria-label="Fermer">×</button></div>
       <div class="fiche-infos">${lignes.length ? lignes.map(x => `<span>${esc(x)}</span>`).join('') : '<span>Pas de coordonnées enregistrées</span>'}</div>
       <div class="cl-actions"><a class="p" href="facture.html?type=devis&client=${encodeURIComponent(c.id)}">Nouveau devis</a><a class="p" href="facture.html?type=facture&client=${encodeURIComponent(c.id)}">Nouvelle facture</a></div>
-      <button type="button" class="btn-sec" data-modif="${esc(c.id)}">Modifier ses coordonnées</button></div>`;
+      <button type="button" class="btn-sec" data-modif="${esc(c.id)}">Modifier ses coordonnées</button>
+      ${(() => { const ds = C.documents(c.id); return C.utilisateur()
+        ? `<div class="fiche-docs"><b>Devis et factures</b>${ds.length ? ds.map(d => ligneDoc(d, false)).join('') : '<p class="note">Aucun document pour l\'instant. Les devis et factures que vous téléchargez pour ce client apparaîtront ici.</p>'}</div>`
+        : '<p class="note fiche-docs">🔒 Avec un compte gratuit, ses devis et factures sont gardés ici, et un devis se transforme en facture en un clic.</p>'; })()}</div>`;
     f.addEventListener('click', e => {
       if (e.target === f || e.target.closest('[data-fermer]')) return f.remove();
       if (e.target.closest('[data-modif]')){ f.remove(); editer(c.id); }
@@ -667,9 +700,9 @@
     C.parametresModifies(); remplirParam(); remplirNum(); majLogo(); C.toast('Infos d\'entreprise effacées');
   });
 
-  C.surChangement(() => { rendreCompte(); rendreClients(); majAffichage(); });
+  C.surChangement(() => { rendreCompte(); rendreClients(); majAffichage(); rendreAttente(); });
   C.surParametres(() => { remplirParam(); remplirNum(); majLogo(); majAffichage(); C.toast('Paramètres récupérés depuis votre compte ✓'); });
-  changerMode('creer'); rendreCompte(); rendreClients(); remplirParam(); remplirNum(); majLogo(); majAffichage(); rubrique();
+  changerMode('creer'); rendreCompte(); rendreClients(); rendreAttente(); remplirParam(); remplirNum(); majLogo(); majAffichage(); rubrique();
 })();
 </script>
 <script>

@@ -875,6 +875,34 @@ window.DOCU_AFFICHAGE = (function(){
   };
   const prochainNumero = t => { const b = baseNumero(t), num = String((etat.compteurs[t] || 0) + 1).padStart(3,'0'); return b ? b + '-' + num : num; };
 
+  // Reprendre un document enregistré dans Mon compte :
+  //   facture.html?depuis=ID → transforme un devis en facture (mêmes client et prestations, nouveau numéro)
+  //   facture.html?ouvrir=ID → rouvre le document tel quel
+  (function(){
+    const q = new URLSearchParams(location.search), idDep = q.get('depuis'), idOuv = q.get('ouvrir');
+    if (!idDep && !idOuv) return;
+    let docs = []; try{ docs = JSON.parse(localStorage.getItem('docupret_documents')) || []; }catch(e){}
+    const d = docs.find(x => x && x.id === (idDep || idOuv) && !x.supprime);
+    if (d && d.snap){
+      const sn = JSON.parse(JSON.stringify(d.snap));
+      for (const k of ['modele', 'couleur', 'cols', 'tvaMode', 'franchise', 'tauxDefaut', 'masques']) if (sn[k] != null) etat[k] = sn[k];
+      etat.cl = Object.assign(etatDefaut().cl, sn.cl || {});
+      etat.lignes = Array.isArray(sn.lignes) && sn.lignes.length ? sn.lignes : [ligneVide()];
+      const notes = (sn.paiement && sn.paiement.notes) || '';
+      if (idOuv){
+        etat.type = TYPES[sn.type] ? sn.type : etat.type;
+        etat.doc = Object.assign({}, etat.doc, sn.doc || {});
+        etat.paiement.notes = notes; etat.depuis = sn.depuis || ''; etat.ouvert = d.id;
+      } else {
+        const t = aujourdhui();
+        etat.type = 'facture'; etat.ouvert = ''; etat.depuis = d.id;
+        etat.doc = Object.assign({}, etat.doc, {numero: '', date: t, echeance: plusJours(t, DELAIS[etat.paiement.conditions] ?? 30)});
+        etat.paiement.notes = [`Facture établie d'après le devis n° ${d.numero} du ${dateFr(d.date)}.`, notes].filter(Boolean).join('\n');
+      }
+    }
+    try{ history.replaceState(null, '', '?type=' + etat.type); }catch(e){}
+  })();
+
   // Type depuis l'adresse (facture.html?type=devis)
   const typeUrl = new URLSearchParams(location.search).get('type');
   if (typeUrl && TYPES[typeUrl] && typeUrl !== etat.type){ etat.type = typeUrl; etat.doc.numero = ''; }
@@ -1259,7 +1287,7 @@ window.DOCU_AFFICHAGE = (function(){
     const d = aujourdhui();
     etat.cl = etatDefaut().cl;
     etat.lignes = [ligneVide()];
-    etat.paiement.notes = '';
+    etat.paiement.notes = ''; etat.depuis = ''; etat.ouvert = '';
     etat.doc = {numero: prochainNumero(etat.type), date: d, echeance: plusJours(d, DELAIS[etat.paiement.conditions] ?? 30), validite: plusJours(d, 30)};
     remplirChamps(); rendreLignes(); majVisibilite(); rendreApercu(); sauver();
     window.scrollTo({top: 0});
@@ -1328,6 +1356,9 @@ window.DOCU_AFFICHAGE = (function(){
       const m = String(etat.doc.numero).match(/(\d+)\s*$/);
       if (m) etat.compteurs[etat.type] = Math.max(etat.compteurs[etat.type] || 0, parseInt(m[1], 10));
       sauver();
+      // Prévenir « Mon compte » : le document peut être gardé dans la fiche du client
+      const copie = JSON.parse(JSON.stringify({type: etat.type, modele: etat.modele, couleur: etat.couleur, cl: etat.cl, doc: etat.doc, cols: etat.cols, tvaMode: etat.tvaMode, franchise: etat.franchise, tauxDefaut: etat.tauxDefaut, lignes: etat.lignes, paiement: {notes: etat.paiement.notes}, masques: etat.masques, depuis: etat.depuis || ''}));
+      window.dispatchEvent(new CustomEvent('docupret-telecharge', {detail: {type: etat.type, numero: etat.doc.numero, date: etat.doc.date, total: k.totalTTC, depuis: etat.depuis || '', ouvert: etat.ouvert || '', snap: copie}}));
     }catch(err){
       alerte('Oups, le PDF n\'a pas pu être créé. Réessayez.');
     }finally{
@@ -1668,7 +1699,7 @@ window.DOCU_AFFICHAGE = (function(){
   window.addEventListener('load', () => setTimeout(liste, 300));
 })();
 </script>
-<script src="compte.js?v=5"></script>
+<script src="compte.js?v=6"></script>
 <script>
 // ===== Clients enregistrés =====
 (function(){
@@ -1718,6 +1749,23 @@ window.DOCU_AFFICHAGE = (function(){
   window.addEventListener('docupret-parametres', () => {
     if (!aSaisi) location.reload();
     else Compte.toast('Vos paramètres ont été mis à jour depuis votre compte : ils s\'appliqueront au prochain document.');
+  });
+
+  // ---------- Devis et factures gardés dans la fiche du client (comptes) ----------
+  window.addEventListener('docupret-telecharge', e => {
+    const d = e.detail, mot = {devis: 'Devis', facture: 'Facture', recu: 'Reçu', avoir: 'Avoir'}[d.type] || 'Document';
+    if (!Compte.utilisateur()){
+      if (d.type === 'devis') setTimeout(() => Compte.toast('Astuce : avec un compte gratuit, retrouvez vos devis et transformez-les en facture en un clic.'), 1500);
+      return;
+    }
+    const c = Compte.clients().find(x => Compte.norm(x.nom) === Compte.norm(d.snap.cl.nom));
+    if (!c){
+      if (d.type === 'devis') setTimeout(() => Compte.toast('Enregistrez ce client pour garder ce devis et le transformer en facture en un clic.'), 1500);
+      return;
+    }
+    Compte.enregistrerDocument({id: d.ouvert || undefined, type: d.type, numero: d.numero, date: d.date, clientId: c.id, clientNom: c.nom, total: d.total, snap: d.snap});
+    if (d.depuis && d.type === 'facture') Compte.majDocument(d.depuis, {facture: d.numero});
+    setTimeout(() => Compte.toast(`${mot} ${d.numero} gardé dans la fiche de ${c.nom} ✓`), 1500);
   });
 
   // facture.html?client=… : client choisi depuis « Mon compte »
