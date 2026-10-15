@@ -1,28 +1,31 @@
 /* DocuPrêt — Mon compte et clients enregistrés
  *
  * Les clients sont toujours enregistrés sur l'appareil (localStorage).
- * Quand un compte en ligne est configuré (Supabase, voir CONFIG ci-dessous)
+ * Quand le compte en ligne est configuré (Firebase, voir CONFIG ci-dessous)
  * et que la personne est connectée, ils sont aussi synchronisés avec son
  * compte : elle les retrouve sur tous ses appareils.
+ * Base Firestore : utilisateurs/{uid}/clients/{id}
  */
 (function(){
   'use strict';
 
-  // ===== Configuration du compte en ligne =====
-  // Remplir avec les valeurs du projet Supabase (Paramètres du projet → API).
-  // La « clé publique » (anon) est faite pour être visible : la sécurité est
-  // assurée par les règles d'accès de la base (chacun ne voit que ses données).
+  // ===== Configuration Firebase =====
+  // Coller ici le bloc firebaseConfig du projet (console Firebase → Paramètres du projet → Vos applications).
+  // Ces valeurs sont publiques par nature : la sécurité est assurée par les règles Firestore
+  // (chaque compte ne peut lire et écrire que ses propres clients).
   const CONFIG = {
-    url: '',
-    cle: ''
+    apiKey: '',
+    authDomain: '',
+    projectId: '',
+    appId: ''
   };
 
   const CLE_CLIENTS = 'docupret_clients';
-  const LIB = ['https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js',
-               'https://unpkg.com/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js'];
-  const actif = !!(CONFIG.url && CONFIG.cle);
+  const V = '10.12.2';
+  const LIBS = ['firebase-app-compat', 'firebase-auth-compat', 'firebase-firestore-compat'];
+  const actif = !!(CONFIG.apiKey && CONFIG.projectId);
   const ecouteurs = new Set();
-  let sb = null, utilisateur = null, pret = null;
+  let auth = null, db = null, utilisateur = null, pret = null;
 
   // ---------- Outils ----------
   const lireLocal = () => { try{ const v = JSON.parse(localStorage.getItem(CLE_CLIENTS)); return Array.isArray(v) ? v : []; }catch(e){ return []; } };
@@ -31,35 +34,40 @@
   const norm = s => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/\s+/g, ' ').trim();
   const prevenir = () => ecouteurs.forEach(f => { try{ f(); }catch(e){} });
   const CHAMPS = ['nom', 'adresse', 'cpville', 'email', 'tel', 'pro', 'siret'];
+  const date = x => Date.parse(x || 0) || 0;
 
   function charger(src){
     return new Promise((ok, ko) => { const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = ko; document.head.appendChild(s); });
   }
   async function demarrer(){
     if (!actif) return;
-    for (const src of LIB){ try{ await charger(src); break; }catch(e){} }
-    if (!window.supabase) return;
-    sb = window.supabase.createClient(CONFIG.url, CONFIG.cle, {auth: {persistSession: true, autoRefreshToken: true, storageKey: 'docupret_session'}});
-    const {data} = await sb.auth.getSession();
-    utilisateur = data.session ? data.session.user : null;
-    sb.auth.onAuthStateChange((evt, session) => {
-      const avant = utilisateur && utilisateur.id;
-      utilisateur = session ? session.user : null;
-      if (utilisateur && utilisateur.id !== avant) synchroniser();
-      prevenir();
+    try{
+      for (const l of LIBS) await charger(`https://www.gstatic.com/firebasejs/${V}/${l}.js`);
+    }catch(e){ console.warn('Firebase indisponible', e); return; }
+    if (!window.firebase) return;
+    const app = firebase.apps.length ? firebase.app() : firebase.initializeApp(CONFIG);
+    auth = app.auth(); auth.languageCode = 'fr';
+    db = app.firestore();
+    await new Promise(ok => {
+      let premier = true;
+      auth.onAuthStateChanged(async u => {
+        const avant = utilisateur && utilisateur.uid;
+        utilisateur = u || null;
+        if (utilisateur && utilisateur.uid !== avant) await synchroniser();
+        prevenir();
+        if (premier){ premier = false; ok(); }
+      });
     });
-    if (utilisateur) await synchroniser();
-    prevenir();
   }
+  const collection = () => db.collection('utilisateurs').doc(utilisateur.uid).collection('clients');
 
   // ---------- Synchronisation ----------
-  const date = x => Date.parse(x || 0) || 0;
   async function synchroniser(){
-    if (!sb || !utilisateur) return;
+    if (!db || !utilisateur) return;
     try{
-      const {data, error} = await sb.from('clients').select('id,data,maj,supprime');
-      if (error) throw error;
-      const distants = new Map((data || []).map(r => [r.id, {...r.data, id: r.id, maj: r.maj, supprime: r.supprime}]));
+      const snap = await collection().get();
+      const distants = new Map();
+      snap.forEach(d => distants.set(d.id, {...d.data(), id: d.id}));
       const locaux = new Map(lireLocal().map(c => [c.id, c]));
       const fusion = new Map(), aEnvoyer = [];
       for (const id of new Set([...distants.keys(), ...locaux.keys()])){
@@ -73,13 +81,16 @@
     }catch(e){ console.warn('Synchronisation impossible', e); }
   }
   async function envoyer(liste){
-    if (!sb || !utilisateur || !liste.length) return;
-    const lignes = liste.map(c => {
-      const data = {}; CHAMPS.forEach(k => { if (c[k] !== undefined) data[k] = c[k]; });
-      return {user_id: utilisateur.id, id: c.id, data, maj: c.maj, supprime: !!c.supprime};
-    });
-    const {error} = await sb.from('clients').upsert(lignes, {onConflict: 'user_id,id'});
-    if (error) console.warn('Envoi impossible', error);
+    if (!db || !utilisateur || !liste.length) return;
+    try{
+      const lot = db.batch();
+      liste.forEach(c => {
+        const data = {maj: c.maj || new Date().toISOString(), supprime: !!c.supprime};
+        CHAMPS.forEach(k => { if (c[k] !== undefined) data[k] = c[k]; });
+        lot.set(collection().doc(c.id), data);
+      });
+      await lot.commit();
+    }catch(e){ console.warn('Envoi impossible', e); }
   }
 
   // ---------- Clients ----------
@@ -109,43 +120,54 @@
 
   // ---------- Compte ----------
   const MESSAGES = {
-    'Invalid login credentials': 'Adresse e-mail ou mot de passe incorrect.',
-    'User already registered': 'Un compte existe déjà avec cette adresse. Connectez-vous.',
-    'Email not confirmed': "Confirmez d'abord votre adresse : cliquez sur le lien reçu par e-mail.",
-    'Password should be at least 6 characters.': 'Le mot de passe doit contenir au moins 8 caractères.'
+    'auth/email-already-in-use': 'Un compte existe déjà avec cette adresse. Touchez « Me connecter ».',
+    'auth/invalid-email': 'Cette adresse e-mail n\'est pas valide.',
+    'auth/weak-password': 'Le mot de passe doit contenir au moins 8 caractères.',
+    'auth/invalid-credential': 'Adresse e-mail ou mot de passe incorrect.',
+    'auth/invalid-login-credentials': 'Adresse e-mail ou mot de passe incorrect.',
+    'auth/wrong-password': 'Adresse e-mail ou mot de passe incorrect.',
+    'auth/user-not-found': 'Adresse e-mail ou mot de passe incorrect.',
+    'auth/user-disabled': 'Ce compte a été désactivé.',
+    'auth/too-many-requests': 'Trop de tentatives. Réessayez dans quelques minutes.',
+    'auth/network-request-failed': 'Connexion impossible. Vérifiez votre connexion internet.',
+    'auth/requires-recent-login': 'Par sécurité, déconnectez-vous puis reconnectez-vous avant de faire cette action.',
+    'auth/operation-not-allowed': 'La connexion par e-mail n\'est pas encore activée.'
   };
-  const traduire = e => (e && (MESSAGES[e.message] || (/rate limit/i.test(e.message) ? 'Trop de tentatives. Réessayez dans quelques minutes.' : /network|fetch/i.test(e.message) ? 'Connexion impossible. Vérifiez votre connexion internet.' : e.message))) || 'Une erreur est survenue.';
-  async function attendre(){ if (!actif) throw new Error('Les comptes en ligne ne sont pas encore ouverts.'); await pret; if (!sb) throw new Error('Connexion impossible. Vérifiez votre connexion internet.'); }
-
+  const traduire = e => new Error((e && MESSAGES[e.code]) || 'Une erreur est survenue. Réessayez.');
+  async function attendre(){
+    if (!actif) throw new Error('Les comptes en ligne ne sont pas encore ouverts.');
+    await pret;
+    if (!auth) throw new Error('Connexion impossible. Vérifiez votre connexion internet.');
+  }
   async function inscrire(email, mdp){
     await attendre();
-    const retour = location.href.split('#')[0].split('?')[0];
-    const {data, error} = await sb.auth.signUp({email, password: mdp, options: {emailRedirectTo: retour}});
-    if (error) throw new Error(traduire(error));
-    if (data.user && Array.isArray(data.user.identities) && !data.user.identities.length) throw new Error(MESSAGES['User already registered']);
-    return {aConfirmer: !data.session};
+    try{ await auth.createUserWithEmailAndPassword(email, mdp); }catch(e){ throw traduire(e); }
+    return {aConfirmer: false};
   }
   async function connecter(email, mdp){
     await attendre();
-    const {error} = await sb.auth.signInWithPassword({email, password: mdp});
-    if (error) throw new Error(traduire(error));
+    try{ await auth.signInWithEmailAndPassword(email, mdp); }catch(e){ throw traduire(e); }
   }
-  async function deconnecter(){ if (sb) await sb.auth.signOut(); utilisateur = null; prevenir(); }
+  async function deconnecter(){ if (auth) await auth.signOut(); utilisateur = null; prevenir(); }
   async function motDePasseOublie(email){
     await attendre();
-    const {error} = await sb.auth.resetPasswordForEmail(email, {redirectTo: location.href.split('#')[0].split('?')[0] + '?nouveau-mdp=1'});
-    if (error) throw new Error(traduire(error));
+    try{ await auth.sendPasswordResetEmail(email); }
+    catch(e){ if (e.code !== 'auth/user-not-found') throw traduire(e); }
   }
   async function changerMotDePasse(mdp){
     await attendre();
-    const {error} = await sb.auth.updateUser({password: mdp});
-    if (error) throw new Error(traduire(error));
+    if (!auth.currentUser) throw new Error('Connectez-vous d\'abord.');
+    try{ await auth.currentUser.updatePassword(mdp); }catch(e){ throw traduire(e); }
   }
   async function supprimerCompte(){
     await attendre();
-    const {error} = await sb.rpc('supprimer_mon_compte');
-    if (error) throw new Error(traduire(error));
-    await deconnecter();
+    const u = auth.currentUser; if (!u) throw new Error('Connectez-vous d\'abord.');
+    try{
+      const snap = await collection().get();
+      const lot = db.batch(); snap.forEach(d => lot.delete(d.ref)); await lot.commit();
+      await u.delete();
+    }catch(e){ throw traduire(e); }
+    utilisateur = null; prevenir();
   }
 
   // ---------- Fenêtre de choix d'un client (utilisée par la facture) ----------
@@ -202,7 +224,7 @@
   pret = demarrer();
   window.Compte = {
     actif, pret,
-    utilisateur: () => utilisateur,
+    utilisateur: () => utilisateur && {email: utilisateur.email, id: utilisateur.uid},
     clients, client, enregistrerClient, supprimerClient, synchroniser,
     inscrire, connecter, deconnecter, motDePasseOublie, changerMotDePasse, supprimerCompte,
     surChangement: f => ecouteurs.add(f),
