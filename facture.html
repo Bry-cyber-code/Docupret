@@ -677,6 +677,8 @@ window.DOCU_AFFICHAGE = (function(){
             </select>
           </label>
           <label class="ch" data-iban>IBAN<input data-b="paiement.iban"></label>
+          <div class="partenaire" data-partenaire="qonto" data-quand="condition" style="grid-column:1/-1;margin:4px 0" hidden></div>
+          <div class="partenaire" data-partenaire="sumup" data-quand="condition" style="grid-column:1/-1;margin:4px 0" hidden></div>
           <label class="ch">Notes (facultatif)<textarea data-b="paiement.notes" placeholder="Merci pour votre confiance !"></textarea></label>
         </div>
       </details>
@@ -715,6 +717,8 @@ window.DOCU_AFFICHAGE = (function(){
     </div>
 
   </div>
+
+  <div class="partenaire" data-partenaire="indy" data-quand="telechargement" hidden></div>
 
   <section class="faq">
     <h2>Questions fréquentes</h2>
@@ -766,6 +770,7 @@ window.DOCU_AFFICHAGE = (function(){
   </div>
 </div>
 
+<script src="partenaires.js?v=1"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script>
 (function(){
@@ -1159,6 +1164,11 @@ window.DOCU_AFFICHAGE = (function(){
       if (e.hasAttribute('data-sansfranchise') && etat.franchise) cache = true;
       e.hidden = cache;
     });
+    if (window.DocuPartenaires){
+      const sansPaiement = etat.type === 'avoir';
+      DocuPartenaires.condition('qonto', !sansPaiement && etat.type !== 'recu' && etat.paiement.moyen === 'Virement');
+      DocuPartenaires.condition('sumup', !sansPaiement && etat.paiement.moyen === 'Carte bancaire');
+    }
     document.querySelectorAll('#types button').forEach(b => b.classList.toggle('on', b.dataset.t === etat.type));
     document.querySelectorAll('#tva-mode button').forEach(b => b.classList.toggle('on', b.dataset.m === etat.tvaMode));
     document.querySelectorAll('#colonnes .puce').forEach(b => {
@@ -1962,6 +1972,9 @@ window.DOCU_AFFICHAGE = (function(){
 
   // ---------- Devis et factures gardés dans la fiche du client (comptes) ----------
   window.addEventListener('docupret-telecharge', e => {
+    if (e.detail && (e.detail.type === 'facture' || e.detail.type === 'devis')) setTimeout(() => { try{ window.dispatchEvent(new CustomEvent('docupret-partenaire', {detail: {cle: 'indy'}})); }catch(err){} }, 800);
+  });
+  window.addEventListener('docupret-telecharge', e => {
     const d = e.detail, mot = {devis: 'Devis', facture: 'Facture', recu: 'Reçu', avoir: 'Avoir'}[d.type] || 'Document';
     if (!Compte.utilisateur()){
       if (d.type === 'devis') setTimeout(() => Compte.toast('Astuce : avec un compte gratuit, retrouvez vos devis et transformez-les en facture en un clic.'), 1500);
@@ -1983,7 +1996,7 @@ window.DOCU_AFFICHAGE = (function(){
   etat();
 })();
 </script>
-<script src="stats.js?v=1" defer></script>
+<script src="stats.js?v=2" defer></script>
 <script src="compte-menu.js?v=7"></script>
 </body>
 </html>

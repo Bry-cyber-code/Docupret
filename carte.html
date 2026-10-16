@@ -374,12 +374,14 @@
     </div>
   </div>
 
+  <div class="partenaire" data-partenaire="vistaprint" data-quand="telechargement" data-texte="Envoyez votre fichier « Pour un imprimeur » à Vistaprint et recevez vos cartes de visite chez vous." hidden></div>
+
   <section class="faq">
     <h2>Questions fréquentes</h2>
     <details><summary>Comment imprimer mes cartes chez moi ?</summary>
       <p>Choisissez « Imprimer chez moi » : vous obtenez un PDF avec 10 cartes par page A4, la page 1 pour le recto et la page 2 pour le verso. Imprimez en recto verso, à 100 % (sans ajuster à la page), sur du papier épais de 250 à 350 g, puis découpez le long des reperes.</p></details>
     <details><summary>Et pour un imprimeur en ligne ?</summary>
-      <p>Choisissez « Pour un imprimeur » : vous obtenez un PDF au format 85 × 55 mm, recto et verso, en haute qualité.</p></details>
+      <p>Choisissez « Pour un imprimeur » : vous obtenez un PDF recto verso en haute qualité, au format 91 × 61 mm. Il contient 3 mm de fond perdu autour de la carte (85 × 55 mm une fois coupée), comme le demandent les imprimeurs en ligne : le fond va bien jusqu'au bord, sans liseré blanc. Gardez vos textes un peu à l'écart des bords.</p></details>
     <details><summary>Quelle est la taille d'une carte de visite ?</summary>
       <p>Le format standard en France est 85 × 55 mm, celui de la plupart des cartes bancaires.</p></details>
     <details><summary>Mes informations sont-elles enregistrées ?</summary>
@@ -912,16 +914,32 @@
     doc.save(nomFichier() + '-a4.pdf');
   });
 
-  // Une carte au format 85 × 55 mm, recto puis verso
+  // Fichier prêt pour l'imprimeur : 85 × 55 mm + 3 mm de fond perdu de chaque côté (91 × 61 mm), recto puis verso
+  const PERDU = 3, PX_MM = W / 85;
+  function imageFacePerdu(face){
+    const p = Math.round(PERDU * PX_MM), carte = document.createElement('canvas');
+    dessinerFace(carte, etat, face, 1);
+    const cv = document.createElement('canvas'); cv.width = W + 2 * p; cv.height = H + 2 * p;
+    const ctx = cv.getContext('2d');
+    ctx.drawImage(carte, p, p);
+    // Le fond déborde au-delà de la coupe : on prolonge les bords de la carte
+    ctx.drawImage(carte, 0, 0, W, 1, p, 0, W, p);
+    ctx.drawImage(carte, 0, H - 1, W, 1, p, H + p, W, p);
+    ctx.drawImage(cv, p, 0, 1, cv.height, 0, 0, p, cv.height);
+    ctx.drawImage(cv, W + p - 1, 0, 1, cv.height, W + p, 0, p, cv.height);
+    return cv.toDataURL('image/jpeg', 0.95);
+  }
   $('pdf-imprimeur').addEventListener('click', () => {
     if (!verifier()) return;
-    const {jsPDF} = window.jspdf;
-    const doc = new jsPDF({unit: 'mm', format: [85, 55], orientation: 'landscape'});
-    doc.addImage(imageFace('recto'), 'JPEG', 0, 0, 85, 55);
-    doc.addPage([85, 55], 'landscape');
-    doc.addImage(imageFace('verso'), 'JPEG', 0, 0, 85, 55);
+    const {jsPDF} = window.jspdf, L = 85 + 2 * PERDU, Hh = 55 + 2 * PERDU;
+    const doc = new jsPDF({unit: 'mm', format: [L, Hh], orientation: 'landscape'});
+    doc.addImage(imageFacePerdu('recto'), 'JPEG', 0, 0, L, Hh);
+    doc.addPage([L, Hh], 'landscape');
+    doc.addImage(imageFacePerdu('verso'), 'JPEG', 0, 0, L, Hh);
     doc.save(nomFichier() + '-imprimeur.pdf');
+    try{ window.dispatchEvent(new CustomEvent('docupret-partenaire', {detail: {cle: 'vistaprint'}})); }catch(e){}
   });
+  $('pdf-planche').addEventListener('click', () => { try{ window.dispatchEvent(new CustomEvent('docupret-partenaire', {detail: {cle: 'vistaprint'}})); }catch(e){} });
 
   synchroniser(); chargerLogo(rendre);
   if (document.fonts){
@@ -972,7 +990,8 @@
   });
 })();
 </script>
-<script src="stats.js?v=1" defer></script>
+<script src="stats.js?v=2" defer></script>
+<script src="partenaires.js?v=1"></script>
 <script src="compte-menu.js?v=7"></script>
 </body>
 </html>

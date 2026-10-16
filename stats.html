@@ -267,6 +267,7 @@
       <section class="bloc-st"><h2>Documents créés</h2><p class="sous">PDF téléchargés ou envoyés, par type</p><div class="liste-st" id="l-docs"></div></section>
       <section class="bloc-st"><h2>D'où viennent les visiteurs</h2><p class="sous">Site ou application d'où ils arrivent</p><div class="liste-st" id="l-src"></div></section>
       <section class="bloc-st"><h2>Appareils et actions</h2><p class="sous">Téléphone ou ordinateur, comptes, envois</p><div class="liste-st" id="l-app"></div></section>
+      <section class="bloc-st"><h2>Clics vers les partenaires</h2><p class="sous">Personnes envoyées vers Qonto, Indy, SumUp ou Vistaprint</p><div class="liste-st" id="l-part"></div></section>
     </div>
 
     <div class="st-pied">
@@ -445,7 +446,9 @@
     liste('l-pages', fusion(docs, 'p'), nomPage);
     liste('l-docs', fusion(docs, 'ev', k => /^pdf_/.test(k)), nomDoc);
     liste('l-src', fusion(docs, 'src'), k => SOURCES[k] || k);
-    const app = fusion(docs, 'app'), e = fusion(docs, 'ev', k => !/^pdf_/.test(k));
+    const app = fusion(docs, 'app'), e = fusion(docs, 'ev', k => !/^pdf_|^clic_/.test(k));
+    const PART = {clic_qonto: 'Qonto', clic_indy: 'Indy', clic_sumup: 'SumUp', clic_vistaprint: 'Vistaprint'};
+    liste('l-part', fusion(docs, 'ev', k => /^clic_/.test(k)), k => PART[k] || k.replace(/^clic_/, ''));
     const LIB = {telephone: '📱 Sur téléphone', ordinateur: '💻 Sur ordinateur', connexion: 'Connexions à un compte', compte_cree: 'Comptes créés', compte_supprime: 'Comptes supprimés', envoi_gmail: 'Envois depuis Gmail', envoi_autre_appli: 'Envois avec une autre application', appli_installee: 'Applications installées'};
     liste('l-app', Object.assign({}, app, e), k => LIB[k] || k.replace(/_/g, ' '), 12);
   }

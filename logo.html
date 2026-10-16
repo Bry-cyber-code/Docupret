@@ -378,6 +378,8 @@
     </div>
   </div>
 
+  <div class="partenaire" data-partenaire="vistaprint" data-quand="telechargement" data-titre="Votre logo sur vos supports" data-texte="Cartes de visite, flyers, autocollants, vêtements… Vistaprint imprime votre logo et vous livre chez vous." data-bouton="Voir Vistaprint" hidden></div>
+
   <section class="faq">
     <h2>Questions fréquentes</h2>
     <details><summary>Le logo est-il vraiment gratuit ?</summary>
@@ -933,6 +935,7 @@
     a.href = imageLogo(4);
     a.download = 'logo-' + (String(etat.nom).trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'entreprise') + '.png';
     document.body.appendChild(a); a.click(); a.remove();
+    try{ window.dispatchEvent(new CustomEvent('docupret-partenaire', {detail: {cle: 'vistaprint'}})); }catch(e){}
   });
   $('utiliser').addEventListener('click', () => {
     try{
@@ -996,7 +999,8 @@
   });
 })();
 </script>
-<script src="stats.js?v=1" defer></script>
+<script src="stats.js?v=2" defer></script>
+<script src="partenaires.js?v=1"></script>
 <script src="compte-menu.js?v=7"></script>
 </body>
 </html>

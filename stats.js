@@ -63,7 +63,7 @@
   window.addEventListener('docupret-telecharge', e => { const d = e.detail || {}; evenement('pdf_' + (d.type || 'document')); });
   document.addEventListener('click', e => {
     const b = e.target.closest && e.target.closest('button, a');
-    if (!b || b.id === 'telecharger' || b.closest('#env-gmail, .env-boite')) return;
+    if (!b || b.id === 'telecharger' || b.closest('#env-gmail, .env-boite, .partenaire')) return;
     const t = (b.textContent || '').trim();
     if (/t[ée]l[ée]charger|^pdf$|imprimer/i.test(t) && !/application/i.test(t)) evenement('pdf_' + page());
   }, true);
