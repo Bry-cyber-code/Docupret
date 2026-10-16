@@ -16,6 +16,7 @@
 
   const ENVOI = 'https://www.googleapis.com/auth/gmail.send';
   const PORTEE = 'openid email ' + ENVOI;
+  const CLE_OK = 'docupret_gmail_ok';
   const CLE_ADRESSE = 'docupret_gmail', CLE_JETON = 'docupret_gmail_jeton', CLE_REGLAGE = 'docupret_envoi_gmail';
   const actif = !!CLIENT_ID;
   let client = null, chargement = null, attente = null;
@@ -46,6 +47,7 @@
           let ok = true;
           try{ ok = google.accounts.oauth2.hasGrantedAllScopes(rep, ENVOI); }catch(e){ ok = String(rep.scope || '').includes(ENVOI); }
           if (!ok){ const e = new Error(MSG_CASE); e.reautoriser = true; return a.ko(e); }
+          try{ localStorage.setItem(CLE_OK, '1'); }catch(e){}   // autorisation réussie sur cet appareil : le guide ne s'affiche plus
           ecrire(CLE_JETON, {t: rep.access_token, exp: Date.now() + (rep.expires_in || 3600) * 1000}, sessionStorage);
           a.ok(rep.access_token);
         },
@@ -120,11 +122,12 @@
     const t = jeton();
     // Retire vraiment l'autorisation chez Google (même si le module Google n'est pas chargé sur la page)
     if (t) try{ fetch('https://oauth2.googleapis.com/revoke?token=' + encodeURIComponent(t), {method: 'POST', headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).catch(() => {}); }catch(e){}
-    try{ localStorage.removeItem(CLE_ADRESSE); sessionStorage.removeItem(CLE_JETON); }catch(e){}
+    try{ localStorage.removeItem(CLE_ADRESSE); localStorage.removeItem(CLE_OK); sessionStorage.removeItem(CLE_JETON); }catch(e){}
   }
 
   window.Gmail = {
     actif, charger, adresse, jeton, autoriser, envoyer, deconnecter,
+    dejaAutorise: () => { try{ return localStorage.getItem(CLE_OK) === '1'; }catch(e){ return false; } },
     active: () => actif && reglageActive(),
     regler: v => { try{ localStorage.setItem(CLE_REGLAGE, v ? '1' : '0'); }catch(e){} }
   };

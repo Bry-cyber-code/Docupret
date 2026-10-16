@@ -199,6 +199,11 @@
   .env-gmail{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;background:var(--bleu);color:#fff;border:0;border-radius:12px;padding:14px;font-weight:700;font-size:1rem}
   .env-gmail svg{width:19px;height:19px}
   .env-gmail:disabled{opacity:.65}
+  .env-tuto{margin-top:10px;background:#F4F8FF;border:1px solid #CFDDF5;border-radius:12px;padding:11px 13px;font-size:.84rem;line-height:1.45;color:var(--texte);text-align:left}
+  .env-tuto ol{margin:7px 0 6px 1.25em;padding:0;display:grid;gap:5px}
+  .env-tuto li::marker{font-weight:800;color:var(--bleu)}
+  .env-tuto span{color:var(--gris);font-size:.8rem}
+  .env-tuto.attention{border-color:#F3D27A;background:#FFF7E0}
   .env-de{font-size:.8rem;color:var(--gris);text-align:center;margin-top:6px;line-height:1.45}
   .env-lien{border:0;background:none;padding:0;font:inherit;color:var(--bleu);text-decoration:underline}
   .env-verrou{font-size:.84rem;background:#FFF7E0;border:1px solid #F3D27A;color:#6B4E00;border-radius:10px;padding:10px 12px;line-height:1.45}
@@ -1743,7 +1748,17 @@ window.DOCU_AFFICHAGE = (function(){
       if (!connecte){ zone.innerHTML = `<p class="env-verrou">🔒 <b>Envoi en un clic depuis votre boîte Gmail</b> : réservé aux comptes gratuits. <a href="compte.html#compte">Créer mon compte</a></p>`; return; }
       const a = G.adresse();
       zone.innerHTML = `<button type="button" class="env-gmail" id="env-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4z"/></svg>Envoyer depuis Gmail</button>
-        <p class="env-de">${a ? `Depuis <b>${esc(a)}</b> · <button type="button" class="env-lien" id="env-changer">changer</button>` : 'La première fois, Google vous demandera d\'autoriser DocuPrêt à envoyer des e-mails en votre nom. DocuPrêt ne peut pas lire vos e-mails.'}</p>`;
+        <p class="env-de">${a ? `Depuis <b>${esc(a)}</b> · <button type="button" class="env-lien" id="env-changer">changer</button>` : 'La première fois, Google vous demandera d\'autoriser DocuPrêt à envoyer des e-mails en votre nom. DocuPrêt ne peut pas lire vos e-mails.'}</p>
+        ${G.dejaAutorise && G.dejaAutorise() && !reautoriser ? '' : `<div class="env-tuto" id="env-tuto">
+          <b>🧭 Première fois ? Voici quoi faire dans la fenêtre Google :</b>
+          <ol>
+            <li>Choisissez <b>votre compte Gmail</b>.</li>
+            <li>Si Google affiche « <i>Google n'a pas validé cette application</i> », c'est normal : la vérification de DocuPrêt par Google est en cours. Cliquez sur <b>« Paramètres avancés »</b>, en bas à gauche.</li>
+            <li>Cliquez ensuite sur <b>« Accéder à DocuPrêt (non sécurisé) »</b>, tout en bas.</li>
+            <li>Si une case apparaît, <b>cochez « Envoyer des e-mails en votre nom »</b>, puis cliquez sur <b>« Continuer »</b>.</li>
+          </ol>
+          <span>C'est tout : le document part, et vous n'aurez plus à le refaire sur cet appareil.</span>
+        </div>`}`;
       $f('#env-go').addEventListener('click', () => envoyerGmail(reautoriser));
       const ch = $f('#env-changer'); if (ch) ch.addEventListener('click', () => envoyerGmail(true));
     }
@@ -1771,6 +1786,10 @@ window.DOCU_AFFICHAGE = (function(){
         // Autorisation à redonner : le prochain clic rouvre la fenêtre Google avec la case à cocher
         if (err && err.reautoriser){ reautoriser = true; rendreGmail(); const b2 = $f('#env-go'); if (b2) b2.lastChild.textContent = 'Autoriser et envoyer'; erreur(err.message); }
         if (err && err.detail) console.warn('Gmail :', err.detail);
+        if (err && /fermée|refusée/.test(err.message || '')){
+          erreur(err.message + ' Suivez les étapes ci-dessous, puis réessayez.');
+          const tu = $f('#env-tuto'); if (tu){ tu.classList.add('attention'); tu.scrollIntoView({block: 'nearest', behavior: 'smooth'}); }
+        }
       });
     }
     rendreGmail();
@@ -2551,7 +2570,7 @@ window.DOCU_AFFICHAGE = (function(){
 })();
 </script>
 <script src="compte.js?v=15"></script>
-<script src="gmail.js?v=4"></script>
+<script src="gmail.js?v=5"></script>
 <script>
 // ===== Clients enregistrés =====
 (function(){
