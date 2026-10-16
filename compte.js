@@ -267,11 +267,13 @@
   async function inscrire(email, mdp){
     await attendre();
     try{ await auth.createUserWithEmailAndPassword(email, mdp); }catch(e){ throw traduire(e); }
+    try{ window.DocuStats && window.DocuStats.evenement('compte_cree'); }catch(e){}
     return {aConfirmer: false};
   }
   async function connecter(email, mdp){
     await attendre();
     try{ await auth.signInWithEmailAndPassword(email, mdp); }catch(e){ throw traduire(e); }
+    try{ window.DocuStats && window.DocuStats.evenement('connexion'); }catch(e){}
   }
   // Déconnexion : on termine d'abord l'envoi vers le compte, puis on efface les données de cet appareil
   // (paramètres, clients, documents, boîte Gmail). Tout revient à la prochaine connexion.

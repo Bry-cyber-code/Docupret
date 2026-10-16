@@ -1496,6 +1496,7 @@ window.DOCU_AFFICHAGE = (function(){
         await G.envoyer(jeton, {a, sujet: $f('#env-sujet').value.trim() || nomFichier(), texte: $f('#env-msg').value, fichier: nomFichier(), pdf: blob, nom: etat.em.nom});
         if (etat.cl.email !== a){ etat.cl.email = a; remplirChamps(); }
         apresSortie(k, {date: new Date().toISOString(), a});
+        try{ window.DocuStats && window.DocuStats.evenement('envoi_gmail'); }catch(e){}
         fermer();
         alerte(`${Mot} envoyé${etat.type === 'facture' ? 'e' : ''} à ${a} ✓`);
       }).catch(err => {
@@ -1516,6 +1517,7 @@ window.DOCU_AFFICHAGE = (function(){
       try{
         if (navigator.canShare && navigator.canShare({files: [fichier]})){
           await navigator.share({files: [fichier], title: sujet, text: texte});
+          try{ window.DocuStats && window.DocuStats.evenement('envoi_autre_appli'); }catch(e){}
           apresSortie(k); fermer(); return;
         }
       }catch(e){ if (e && e.name === 'AbortError') return; }
@@ -1884,7 +1886,7 @@ window.DOCU_AFFICHAGE = (function(){
   window.addEventListener('load', () => setTimeout(liste, 300));
 })();
 </script>
-<script src="compte.js?v=12"></script>
+<script src="compte.js?v=13"></script>
 <script src="gmail.js?v=3"></script>
 <script>
 // ===== Clients enregistrés =====
@@ -1980,6 +1982,7 @@ window.DOCU_AFFICHAGE = (function(){
   etat();
 })();
 </script>
-<script src="compte-menu.js?v=6"></script>
+<script src="stats.js?v=1" defer></script>
+<script src="compte-menu.js?v=7"></script>
 </body>
 </html>

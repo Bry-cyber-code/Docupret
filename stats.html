@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Statistiques – DocuPrêt</title>
+<meta name="description" content="Statistiques privées du site DocuPrêt.">
+<meta name="robots" content="noindex, nofollow">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:site_name" content="DocuPrêt">
+<meta property="og:title" content="Statistiques – DocuPrêt">
+<meta property="og:description" content="Conditions d'utilisation du site DocuPrêt : documents, compte gratuit, envoi par e-mail et responsabilités.">
+<meta property="og:image" content="https://docupret.fr/img/partage.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:site_name" content="DocuPrêt">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#4A7BD0">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#4A7BD0">
+<style>
+  :root{
+    --bleu:#4A7BD0; --bleu-fonce:#2F5DAE; --bleu-clair:#EAF1FB;
+    --fond:#F6F9FD; --blanc:#FFFFFF; --texte:#1E2A42; --gris:#6B778C; --bord:#E2E8F2; --rayon:14px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{color-scheme:light}
+  input,select,textarea{color:var(--texte);-webkit-text-fill-color:var(--texte);caret-color:var(--texte)}
+  input::placeholder,textarea::placeholder{color:#98A2B3;-webkit-text-fill-color:#98A2B3;opacity:1}
+  [hidden]{display:none!important}
+  html,body{overflow-x:clip}
+  html{scroll-padding-top:76px}
+  body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--fond);color:var(--texte);line-height:1.6}
+  a{color:inherit;text-decoration:none}
+  button{font-family:inherit;cursor:pointer}
+  .wrap{max-width:760px;margin:0 auto;padding:0 16px}
+  header .wrap,footer .wrap{max-width:1100px}
+
+  header{background:var(--blanc);border-bottom:1px solid var(--bord);position:sticky;top:0;z-index:15}
+  .nav{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;height:60px}
+  .nav > :last-child{justify-self:end}
+  .logo{display:flex;align-items:center;gap:9px;justify-self:center}
+  .logo-icone{display:block;width:34px;height:34px;flex-shrink:0}
+  .logo-icone svg{display:block;width:100%;height:100%}
+  .logo-mot{font-weight:800;font-size:1.22rem;letter-spacing:-.02em;color:var(--texte)}
+  .logo-mot span{color:var(--bleu)}
+  .retour{font-size:.9rem;color:var(--gris)}
+  .retour:hover{color:var(--bleu)}
+  @media (max-width:560px){.retour{font-size:1.3rem;padding:4px 6px}.retour span{display:none}}
+
+  h1{font-size:clamp(1.35rem,4.5vw,1.9rem);font-weight:800;margin:20px 0 6px}
+  .maj{color:var(--gris);font-size:.88rem}
+  .sommaire{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 8px}
+  .sommaire a{border:1.5px solid var(--bord);background:var(--blanc);border-radius:50px;padding:6px 12px;font-size:.86rem}
+  .sommaire a:hover{border-color:var(--bleu);color:var(--bleu)}
+
+  section{background:var(--blanc);border:1px solid var(--bord);border-radius:var(--rayon);padding:18px;margin-top:14px}
+  section h2{font-size:1.1rem;margin-bottom:8px}
+  section h3{font-size:.95rem;margin:12px 0 4px}
+  section p,section li{font-size:.94rem;color:#3B4558;max-width:68ch}
+  section p + p{margin-top:8px}
+  section dl + p{margin-top:12px}
+  section ul{padding-left:20px;display:grid;gap:4px;margin-top:6px}
+  dl{display:grid;grid-template-columns:minmax(120px,auto) 1fr;gap:6px 14px;font-size:.94rem}
+  dt{color:var(--gris)}
+  dd{min-width:0;overflow-wrap:anywhere}
+  @media (max-width:480px){dl{grid-template-columns:1fr}dt{margin-top:6px}}
+  main a[href^="mailto"]{color:var(--bleu);font-weight:600;word-break:break-all}
+  .remplir{background:#FFF1D6;color:#9A6512;border-radius:4px;padding:0 4px;font-weight:600}
+
+  footer{background:var(--blanc);border-top:1px solid var(--bord);margin-top:28px;padding:22px 0;font-size:.85rem;color:var(--gris)}
+  .pied{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
+  .pied nav{display:flex;flex-wrap:wrap;gap:16px}
+  /* Menu latéral */
+  .gauche{display:flex;align-items:center;gap:2px}
+  .menu-btn{width:40px;height:40px;border:0;background:none;border-radius:10px;display:grid;place-items:center;margin-left:-8px;cursor:pointer;color:var(--texte)}
+  .menu-btn:hover,.menu-btn:focus-visible{background:var(--bleu-clair)}
+  .menu-btn svg{width:24px;height:24px;stroke:currentColor}
+  .tiroir-fond{position:fixed;inset:0;background:rgba(20,28,45,.45);z-index:50}
+  .tiroir{position:fixed;top:0;left:0;bottom:0;width:min(300px,84vw);background:var(--blanc);z-index:51;transform:translateX(-102%);transition:transform .25s ease;overflow-y:auto;padding-bottom:calc(20px + env(safe-area-inset-bottom,0px));box-shadow:4px 0 24px rgba(0,0,0,.12)}
+  .tiroir.ouvert{transform:none}
+  .tiroir-tete{display:flex;align-items:center;justify-content:space-between;height:60px;padding:env(safe-area-inset-top,0px) 10px 0 16px;border-bottom:1px solid var(--bord)}
+  .tiroir-titre{display:flex;align-items:center;gap:9px}
+  .tiroir-fermer{width:36px;height:36px;border:0;background:none;border-radius:50%;font-size:1.6rem;line-height:1;color:var(--gris);cursor:pointer}
+  .tiroir-fermer:hover{background:var(--fond)}
+  .tiroir-lien{display:block;padding:14px 16px;font-weight:700;font-size:1rem;color:var(--texte);border-bottom:1px solid var(--bord)}
+  .tiroir-lien:hover{color:var(--bleu)}
+  .tiroir-lien.bientot{display:flex;justify-content:space-between;align-items:center;gap:8px;color:var(--gris)}
+  .tiroir-lien.sep{border-top:1px solid var(--bord);margin-top:8px}
+  .tiroir-lien.apropos{border-bottom:0}
+  .tiroir-lien small{font-size:.7rem;font-weight:400;background:var(--fond);border:1px solid var(--bord);border-radius:50px;padding:2px 8px;flex-shrink:0}
+  .tiroir-lien.kits{display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .tiroir-lien.kits small{background:var(--bleu);border-color:var(--bleu);color:#fff;font-weight:700}
+  .cat{border-bottom:1px solid var(--bord)}
+  .cat-btn{width:100%;display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border:0;background:none;font:inherit;font-weight:700;font-size:1rem;color:var(--texte);cursor:pointer;text-align:left}
+  .plus{width:26px;height:26px;border-radius:50%;background:var(--bleu-clair);color:var(--bleu);display:grid;place-items:center;font-size:1.15rem;line-height:1;flex-shrink:0}
+  .sous{padding-bottom:8px}
+  .sous a{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 16px 10px 28px;font-size:.95rem;color:var(--texte)}
+  .sous a:hover{background:var(--fond);color:var(--bleu)}
+  .sous a.bientot{color:var(--gris)}
+  .sous small{font-size:.7rem;background:var(--fond);border:1px solid var(--bord);border-radius:50px;padding:2px 8px;flex-shrink:0}
+  @media (prefers-reduced-motion:reduce){.tiroir{transition:none}}
+
+
+  /* Mon compte (en-tête) */
+  .droite{display:flex;align-items:center;gap:4px;justify-self:end}
+  .compte-lien{display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--texte);font-size:.6rem;font-weight:700;line-height:1;padding:4px 2px;border-radius:10px;white-space:nowrap}
+  .compte-lien svg{width:24px;height:24px;color:var(--bleu)}
+  .compte-lien:hover{color:var(--bleu)}
+  @media (min-width:561px){.compte-lien{flex-direction:row;gap:7px;font-size:.88rem;border:1.5px solid var(--bord);padding:7px 13px 7px 10px;border-radius:50px;background:#fff}.compte-lien svg{width:20px;height:20px}.droite{gap:14px}}
+
+  /* ===== Statistiques ===== */
+  .wrap.st{max-width:980px}
+  .st-etat{background:var(--blanc);border:1px solid var(--bord);border-radius:var(--rayon);padding:22px;margin:16px 0;display:grid;gap:10px}
+  .st-etat a.btn{display:inline-block;background:var(--bleu);color:#fff;border-radius:12px;padding:12px 18px;font-weight:700;justify-self:start}
+  .st-barre{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:14px 0 6px}
+  .st-barre button{border:1.5px solid var(--bord);background:var(--blanc);border-radius:50px;padding:7px 14px;font-size:.88rem;font-weight:650;color:var(--texte)}
+  .st-barre button.on{background:var(--bleu);border-color:var(--bleu);color:#fff}
+  .st-barre .st-maj{margin-left:auto;font-size:.8rem;color:var(--gris)}
+  .tuiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:10px 0 14px}
+  @media (max-width:640px){.tuiles{grid-template-columns:repeat(2,1fr)}}
+  .tuile{background:var(--blanc);border:1px solid var(--bord);border-radius:var(--rayon);padding:14px 14px 12px;display:grid;gap:2px;min-width:0}
+  .tuile small{font-size:.78rem;color:var(--gris);font-weight:650}
+  .tuile b{font-size:1.7rem;font-weight:800;line-height:1.15;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+  .tuile span{font-size:.76rem;color:var(--gris)}
+  .tuile span.hausse{color:#2B8148} .tuile span.baisse{color:#B4432F}
+  .bloc-st{background:var(--blanc);border:1px solid var(--bord);border-radius:var(--rayon);padding:16px;margin-bottom:12px;min-width:0}
+  .bloc-st h2{font-size:1rem;font-weight:800;margin-bottom:2px}
+  .bloc-st .sous{font-size:.8rem;color:var(--gris);margin-bottom:10px}
+  .deux-st{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .deux-st .bloc-st{margin-bottom:0}
+  @media (max-width:760px){.deux-st{grid-template-columns:1fr;gap:12px}}
+  .graphe{position:relative;width:100%}
+  .graphe svg{display:block;width:100%;height:auto;overflow:visible}
+  .graphe .axe text{font-size:11px;fill:#8792A6}
+  .graphe .grille line{stroke:#EDF1F7;stroke-width:1}
+  .infobulle{position:absolute;pointer-events:none;background:var(--texte);color:#fff;border-radius:8px;padding:6px 9px;font-size:.78rem;line-height:1.35;white-space:nowrap;transform:translate(-50%,-110%);opacity:0;transition:opacity .12s}
+  .infobulle b{font-size:.92rem}
+  .liste-st{display:grid;gap:9px}
+  .ligne-st{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:3px 10px;font-size:.88rem}
+  .ligne-st .lib{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .ligne-st .val{font-weight:700;font-variant-numeric:tabular-nums;color:var(--texte)}
+  .ligne-st .piste{grid-column:1 / -1;height:8px;background:#EEF2F8;border-radius:4px;overflow:hidden}
+  .ligne-st .piste i{display:block;height:100%;background:var(--bleu);border-radius:0 4px 4px 0;min-width:4px}
+  .vide-st{font-size:.86rem;color:var(--gris);padding:6px 0}
+  details.tab-st{margin-top:10px;font-size:.84rem}
+  details.tab-st summary{cursor:pointer;color:var(--bleu);font-weight:650}
+  details.tab-st table{width:100%;border-collapse:collapse;margin-top:8px;font-variant-numeric:tabular-nums}
+  details.tab-st th,details.tab-st td{padding:5px 6px;border-bottom:1px solid var(--bord);text-align:right}
+  details.tab-st th:first-child,details.tab-st td:first-child{text-align:left}
+  .st-pied{font-size:.8rem;color:var(--gris);margin:14px 0 4px;display:grid;gap:8px}
+  .st-pied label{display:flex;gap:8px;align-items:flex-start;color:var(--texte);font-size:.86rem}
+  .st-pied input{width:18px;height:18px;margin-top:2px;accent-color:var(--bleu);flex-shrink:0}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <div class="gauche"><button type="button" class="menu-btn" id="menu-btn" aria-label="Ouvrir le menu" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><a href="./" class="retour" aria-label="Revenir à la page précédente">←<span> Retour</span></a></div>
+    <a href="./" class="logo"><span class="logo-icone"><svg viewBox="0 0 36 36" aria-hidden="true"><defs><linearGradient id="lg-tete" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6A9BF0"/><stop offset="1" stop-color="#3563BF"/></linearGradient></defs><rect width="36" height="36" rx="10" fill="url(#lg-tete)"/><rect x="7.5" y="11" width="13" height="17" rx="2" fill="#fff" opacity=".35"/><path d="M14 7.5h7.5l5.5 5.5v13.5a2 2 0 0 1-2 2H14a2 2 0 0 1-2-2v-17a2 2 0 0 1 2-2z" fill="#fff"/><path d="M21.5 7.5v3.5a2 2 0 0 0 2 2H27z" fill="#C9DAF8"/><path d="M15.3 19.6l2.7 2.7 5-5.6" fill="none" stroke="#3563BF" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="logo-mot">Docu<span>Prêt</span></span></a>
+    <div class="droite"><a href="compte.html" class="compte-lien" aria-label="Mon compte"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="10" r="3.2"/><path d="M6.2 18.4c1.3-2.1 3.3-3.2 5.8-3.2s4.5 1.1 5.8 3.2"/></svg><span>Mon compte</span></a></div>
+  </div>
+</header>
+
+<div class="tiroir-fond" id="tiroir-fond" hidden></div>
+<nav class="tiroir" id="tiroir" aria-label="Menu des documents" aria-hidden="true">
+  <div class="tiroir-tete">
+    <span class="tiroir-titre"><span class="logo-icone"><svg viewBox="0 0 36 36" aria-hidden="true"><defs><linearGradient id="lg-menu" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6A9BF0"/><stop offset="1" stop-color="#3563BF"/></linearGradient></defs><rect width="36" height="36" rx="10" fill="url(#lg-menu)"/><rect x="7.5" y="11" width="13" height="17" rx="2" fill="#fff" opacity=".35"/><path d="M14 7.5h7.5l5.5 5.5v13.5a2 2 0 0 1-2 2H14a2 2 0 0 1-2-2v-17a2 2 0 0 1 2-2z" fill="#fff"/><path d="M21.5 7.5v3.5a2 2 0 0 0 2 2H27z" fill="#C9DAF8"/><path d="M15.3 19.6l2.7 2.7 5-5.6" fill="none" stroke="#3563BF" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="logo-mot">Docu<span>Prêt</span></span></span>
+    <button type="button" class="tiroir-fermer" aria-label="Fermer le menu">×</button>
+  </div>
+  <a href="./" class="tiroir-lien">Accueil</a>
+  <a href="facture.html?type=facture" class="tiroir-lien">Facture</a>
+  <a href="facture.html?type=devis" class="tiroir-lien">Devis</a>
+    <div class="cat">
+      <button type="button" class="cat-btn" aria-expanded="false"><span>Outils</span><span class="plus">+</span></button>
+      <div class="sous" hidden>
+        <a href="tva.html">Calculatrice TVA</a>
+        <a href="simulateur.html">Simulateur auto-entrepreneur</a>
+        <a href="tampon.html">Tampon d'entreprise</a>
+        <a href="frais-kilometriques.html">Frais kilométriques</a>
+      </div>
+    </div>
+    <div class="cat">
+      <button type="button" class="cat-btn" aria-expanded="false"><span>Pro</span><span class="plus">+</span></button>
+      <div class="sous" hidden>
+        <a href="facture.html?type=facture">Facture</a>
+        <a href="facture.html?type=devis">Devis</a>
+        <a href="facture.html?type=recu">Reçu de paiement</a>
+        <a href="facture.html?type=avoir">Avoir</a>
+      </div>
+    </div>
+    <div class="cat">
+      <button type="button" class="cat-btn" aria-expanded="false"><span>Travail</span><span class="plus">+</span></button>
+      <div class="sous" hidden>
+        <a href="lettre.html?type=demission">Lettre de démission</a>
+        <a href="lettre.html?type=motivation">Lettre de motivation</a>
+        <a href="lettre.html?type=conges">Demande de congés</a>
+        <a href="lettre.html?type=rupture">Rupture conventionnelle</a>
+      </div>
+    </div>
+    <div class="cat">
+      <button type="button" class="cat-btn" aria-expanded="false"><span>Véhicule</span><span class="plus">+</span></button>
+      <div class="sous" hidden>
+        <a href="cession.html">Certificat de cession</a>
+        <a href="constat.html">Constat amiable</a>
+        <a href="lettre.html?type=vente">Contrat de vente</a>
+        <a href="lettre.html?type=pret">Prêt de véhicule</a>
+        <a href="lettre.html?type=sinistre">Déclaration de sinistre</a>
+      </div>
+    </div>
+    <div class="cat">
+      <button type="button" class="cat-btn" aria-expanded="false"><span>Logement</span><span class="plus">+</span></button>
+      <div class="sous" hidden>
+        <a href="lettre.html?type=hebergement">Attestation d'hébergement</a>
+        <a href="lettre.html?type=preavis">Préavis locataire</a>
+        <a href="lettre.html?type=quittance">Quittance de loyer</a>
+      </div>
+    </div>
+    <div class="cat">
+      <button type="button" class="cat-btn" aria-expanded="false"><span>Vie courante</span><span class="plus">+</span></button>
+      <div class="sous" hidden>
+        <a href="lettre.html?type=honneur">Attestation sur l'honneur</a>
+        <a href="lettre.html?type=resiliation">Lettre de résiliation</a>
+        <a href="lettre.html?type=reclamation">Réclamation / mise en demeure</a>
+        <a href="lettre.html?type=procuration">Procuration</a>
+      </div>
+    </div>
+  <a href="logo.html" class="tiroir-lien">Créer votre logo</a>
+  <a href="carte.html" class="tiroir-lien">Créer votre carte de visite</a>
+  <a href="apropos.html" class="tiroir-lien sep apropos">À propos</a>
+</nav>
+
+
+<main class="wrap st">
+  <h1>Statistiques du site</h1>
+  <p class="maj">Visites et actions sur docupret.fr. Page privée, visible uniquement par vous.</p>
+
+  <section class="st-etat" id="st-attente"><p>Chargement…</p></section>
+
+  <div id="st-contenu" hidden>
+    <div class="st-barre" id="periodes" role="group" aria-label="Période">
+      <button type="button" data-j="1">Aujourd'hui</button>
+      <button type="button" data-j="7" class="on">7 jours</button>
+      <button type="button" data-j="30">30 jours</button>
+      <button type="button" data-j="90">90 jours</button>
+      <span class="st-maj" id="st-maj"></span>
+    </div>
+
+    <div class="tuiles" id="tuiles"></div>
+
+    <section class="bloc-st">
+      <h2>Visiteurs par jour</h2>
+      <p class="sous" id="sous-graphe">Une personne qui revient le même jour n'est comptée qu'une fois.</p>
+      <div class="graphe" id="graphe"></div>
+      <details class="tab-st"><summary>Voir les chiffres jour par jour</summary><table id="tab-jours"></table></details>
+    </section>
+
+    <div class="deux-st">
+      <section class="bloc-st"><h2>Pages les plus vues</h2><p class="sous">Nombre d'affichages de chaque page</p><div class="liste-st" id="l-pages"></div></section>
+      <section class="bloc-st"><h2>Documents créés</h2><p class="sous">PDF téléchargés ou envoyés, par type</p><div class="liste-st" id="l-docs"></div></section>
+      <section class="bloc-st"><h2>D'où viennent les visiteurs</h2><p class="sous">Site ou application d'où ils arrivent</p><div class="liste-st" id="l-src"></div></section>
+      <section class="bloc-st"><h2>Appareils et actions</h2><p class="sous">Téléphone ou ordinateur, comptes, envois</p><div class="liste-st" id="l-app"></div></section>
+    </div>
+
+    <div class="st-pied">
+      <label><input type="checkbox" id="moi" checked> Ne pas compter mes propres visites sur cet appareil</label>
+      <p>Les chiffres sont anonymes : aucune adresse IP, aucun cookie, aucune donnée personnelle des visiteurs n'est enregistrée. Le nombre total de comptes, avec leurs adresses, se trouve aussi dans Firebase → Authentication → Utilisateurs.</p>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap pied">
+    <span>© 2026 DocuPrêt</span>
+    <nav><a href="apropos.html">À propos</a><a href="mentions-legales.html">Mentions légales</a><a href="cgu.html">Conditions d'utilisation</a><a href="mentions-legales.html#confidentialite">Confidentialité</a><a href="mentions-legales.html#cookies">Cookies</a><a href="mentions-legales.html#contact">Contact</a></nav>
+  </div>
+</footer>
+
+<script>
+(function(){
+  // Toujours arriver en haut de la page (sauf avec le bouton retour du navigateur)
+  try{
+    const nav = performance.getEntriesByType('navigation')[0];
+    if (!nav || nav.type !== 'back_forward'){
+      if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+      const enHaut = () => { if (!location.hash){ window.scrollTo(0, 0); try{ document.body.scrollIntoView({block: 'start'}); }catch(e){} } };
+      enHaut();
+      window.addEventListener('load', enHaut);
+    }
+  }catch(e){}
+})();
+(function(){
+  const t = document.getElementById('tiroir'), f = document.getElementById('tiroir-fond'), b = document.getElementById('menu-btn');
+  function ouvrir(){ t.classList.add('ouvert'); f.hidden = false; t.setAttribute('aria-hidden','false'); b.setAttribute('aria-expanded','true'); }
+  function fermer(){ t.classList.remove('ouvert'); f.hidden = true; t.setAttribute('aria-hidden','true'); b.setAttribute('aria-expanded','false'); }
+  b.addEventListener('click', ouvrir);
+  f.addEventListener('click', fermer);
+  t.querySelector('.tiroir-fermer').addEventListener('click', fermer);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') fermer(); });
+  // Flèche de retour : revient à la page précédente du site, sinon à l'accueil
+  document.querySelectorAll('.retour').forEach(a => a.addEventListener('click', e => {
+    let interne = false;
+    try{ interne = !!document.referrer && new URL(document.referrer).origin === location.origin; }catch(err){}
+    if (interne && history.length > 1){ e.preventDefault(); history.back(); }
+  }));
+  t.addEventListener('click', e => {
+    const c = e.target.closest('.cat-btn');
+    if (c){
+      const s = c.nextElementSibling, ouvrirSous = s.hidden;
+      s.hidden = !ouvrirSous;
+      c.setAttribute('aria-expanded', String(ouvrirSous));
+      c.querySelector('.plus').textContent = ouvrirSous ? '−' : '+';
+      return;
+    }
+    const a = e.target.closest('a');
+    if (a && a.classList.contains('bientot')) e.preventDefault();
+    else if (a) fermer();
+  });
+})();
+</script>
+<script src="compte.js?v=13"></script>
+<script src="compte-menu.js?v=7"></script>
+<script>
+(function(){
+  'use strict';
+  const ADMIN = 'QOC6tTqjsKTdO9zR5NfQkhJqkup2';
+  const $ = id => document.getElementById(id), C = window.Compte, esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
+  const nf = new Intl.NumberFormat('fr-FR');
+  const n = v => nf.format(Math.round(v || 0)).replace(/[  ]/g, ' ');
+  const p2 = x => String(x).padStart(2, '0');
+  const cleJour = d => `j-${d.getFullYear()}-${p2(d.getMonth() + 1)}-${p2(d.getDate())}`;
+  const jourCourt = d => d.toLocaleDateString('fr-FR', {day: 'numeric', month: 'short'});
+  const jourLong = d => d.toLocaleDateString('fr-FR', {weekday: 'long', day: 'numeric', month: 'long'});
+
+  const PAGES = {accueil: 'Accueil', facture_facture: 'Facture', facture_devis: 'Devis', facture_recu: 'Reçu', facture_avoir: 'Avoir', facture: 'Facture / devis',
+    lettre_demission: 'Lettre de démission', lettre_motivation: 'Lettre de motivation', lettre_conges: 'Demande de congés', lettre_rupture: 'Rupture conventionnelle',
+    lettre_preavis: 'Préavis locataire', lettre_hebergement: "Attestation d'hébergement", lettre_quittance: 'Quittance de loyer', lettre_honneur: "Attestation sur l'honneur",
+    lettre_resiliation: 'Lettre de résiliation', lettre_reclamation: 'Réclamation / mise en demeure', lettre_procuration: 'Procuration', lettre_vente: 'Contrat de vente véhicule',
+    lettre_pret: 'Prêt de véhicule', lettre_sinistre: 'Déclaration de sinistre', lettre: 'Lettres', cession: 'Certificat de cession', constat: 'Constat amiable',
+    tva: 'Calculatrice TVA', simulateur: 'Simulateur auto-entrepreneur', frais_kilometriques: 'Frais kilométriques', tampon: 'Tampon', logo: 'Logo', carte: 'Carte de visite',
+    compte: 'Mon compte', apropos: 'À propos', mentions_legales: 'Mentions légales', cgu: "Conditions d'utilisation"};
+  const SOURCES = {direct: 'Accès direct ou favori', google: 'Google', bing: 'Bing', facebook: 'Facebook', instagram: 'Instagram', whatsapp: 'WhatsApp', youtube: 'YouTube',
+    tiktok: 'TikTok', chatgpt: 'ChatGPT', yahoo: 'Yahoo', qwant: 'Qwant', ecosia: 'Ecosia', appli: 'Application installée', autre_site: 'Autre site'};
+  const nomPage = k => PAGES[k] || k.replace(/_/g, ' ');
+  const nomDoc = k => { const t = k.replace(/^pdf_/, ''); return PAGES['facture_' + t] || PAGES[t] || PAGES['lettre_' + t] || nomPage(t); };
+
+  function etat(html){ $('st-attente').hidden = false; $('st-attente').innerHTML = html; $('st-contenu').hidden = true; }
+
+  // ---------- Accès ----------
+  let periode = 7, cache = new Map(), db = null;
+  async function demarrer(){
+    await C.pret;
+    const u = C.utilisateur();
+    if (!u) return etat('<p><b>Connectez-vous</b> avec votre compte DocuPrêt pour voir les statistiques.</p><a class="btn" href="compte.html#compte">Me connecter</a>');
+    if (u.id !== ADMIN) return etat('<p>Cette page est réservée au propriétaire du site.</p>');
+    try{ localStorage.setItem('docupret_admin', $('moi').checked ? '1' : '0'); }catch(e){}
+    db = firebase.firestore();
+    $('st-attente').hidden = true; $('st-contenu').hidden = false;
+    charger();
+  }
+  $('moi').addEventListener('change', e => { try{ localStorage.setItem('docupret_admin', e.target.checked ? '1' : '0'); }catch(err){} });
+  try{ if (localStorage.getItem('docupret_admin') === '0') $('moi').checked = false; }catch(e){}
+
+  $('periodes').addEventListener('click', e => {
+    const b = e.target.closest('[data-j]'); if (!b) return;
+    document.querySelectorAll('#periodes button').forEach(x => x.classList.toggle('on', x === b));
+    periode = +b.dataset.j; charger();
+  });
+
+  // ---------- Données ----------
+  function jours(nb, decalage){
+    const l = [], d = new Date(); d.setHours(12, 0, 0, 0); d.setDate(d.getDate() - decalage);
+    for (let i = nb - 1; i >= 0; i--){ const x = new Date(d); x.setDate(d.getDate() - i); l.push(x); }
+    return l;
+  }
+  async function lire(debut, fin){
+    const k = debut + '|' + fin; if (cache.has(k)) return cache.get(k);
+    const FP = firebase.firestore.FieldPath.documentId();
+    const snap = await db.collection('stats').where(FP, '>=', debut).where(FP, '<=', fin).get();
+    const m = new Map(); snap.forEach(d => m.set(d.id, d.data()));
+    cache.set(k, m); return m;
+  }
+  const somme = (docs, f) => docs.reduce((t, d) => t + (f(d) || 0), 0);
+  const fusion = (docs, champ, filtre) => { const o = {}; docs.forEach(d => Object.entries(d[champ] || {}).forEach(([k, v]) => { if (!filtre || filtre(k)) o[k] = (o[k] || 0) + (v || 0); })); return o; };
+  const docsCrees = d => Object.entries(d.ev || {}).reduce((t, [k, v]) => t + (/^pdf_/.test(k) ? v : 0), 0);
+
+  async function charger(){
+    $('st-maj').textContent = 'Mise à jour…';
+    try{
+      const actuels = jours(periode, 0), avant = jours(periode, periode);
+      const m = await lire(cleJour(avant[0]), cleJour(actuels[actuels.length - 1]));
+      const docs = actuels.map(d => m.get(cleJour(d)) || {}), docsAvant = avant.map(d => m.get(cleJour(d)) || {});
+      rendre(actuels, docs, docsAvant);
+      $('st-maj').textContent = 'À jour : ' + new Date().toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'});
+    }catch(e){
+      console.warn(e);
+      $('st-maj').textContent = '';
+      etat('<p><b>Les statistiques ne sont pas encore accessibles.</b></p><p class="maj">Vérifiez que les nouvelles règles Firebase ont bien été publiées, puis rechargez la page.</p>');
+    }
+  }
+
+  // ---------- Affichage ----------
+  function tuile(lib, val, avant){
+    let ev = '';
+    if (periode > 1 && (val || avant)){
+      if (!avant) ev = '<span class="hausse">nouveau sur la période</span>';
+      else { const pc = Math.round((val - avant) / avant * 100); ev = pc === 0 ? '<span>stable</span>' : `<span class="${pc > 0 ? 'hausse' : 'baisse'}">${pc > 0 ? '▲ +' : '▼ '}${pc} % vs période d'avant</span>`; }
+    }
+    return `<div class="tuile"><small>${lib}</small><b>${n(val)}</b>${ev || '<span>&nbsp;</span>'}</div>`;
+  }
+  function liste(id, obj, nommer, max){
+    const l = Object.entries(obj).filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]).slice(0, max || 10);
+    if (!l.length){ $(id).innerHTML = '<p class="vide-st">Pas encore de données sur cette période.</p>'; return; }
+    const haut = l[0][1];
+    $(id).innerHTML = l.map(([k, v]) => `<div class="ligne-st"><span class="lib">${esc(nommer(k))}</span><span class="val">${n(v)}</span><span class="piste"><i style="width:${Math.max(2, v / haut * 100)}%"></i></span></div>`).join('');
+  }
+  function rendre(jrs, docs, docsAvant){
+    const ev = (d, k) => (d.ev || {})[k] || 0;
+    $('tuiles').innerHTML =
+      tuile('Visiteurs', somme(docs, d => d.vis), somme(docsAvant, d => d.vis)) +
+      tuile('Pages vues', somme(docs, d => d.v), somme(docsAvant, d => d.v)) +
+      tuile('Nouveaux visiteurs', somme(docs, d => d.nv), somme(docsAvant, d => d.nv)) +
+      tuile('Documents créés', somme(docs, docsCrees), somme(docsAvant, docsCrees)) +
+      tuile('Comptes créés', somme(docs, d => ev(d, 'compte_cree')), somme(docsAvant, d => ev(d, 'compte_cree'))) +
+      tuile('Envois depuis Gmail', somme(docs, d => ev(d, 'envoi_gmail')), somme(docsAvant, d => ev(d, 'envoi_gmail')));
+    graphe(jrs, docs.map(d => d.vis || 0), docs.map(d => d.v || 0));
+    $('tab-jours').innerHTML = '<tr><th>Jour</th><th>Visiteurs</th><th>Pages vues</th><th>Documents</th></tr>' +
+      jrs.map((j, i) => `<tr><td>${esc(jourCourt(j))}</td><td>${n(docs[i].vis)}</td><td>${n(docs[i].v)}</td><td>${n(docsCrees(docs[i]))}</td></tr>`).reverse().join('');
+    liste('l-pages', fusion(docs, 'p'), nomPage);
+    liste('l-docs', fusion(docs, 'ev', k => /^pdf_/.test(k)), nomDoc);
+    liste('l-src', fusion(docs, 'src'), k => SOURCES[k] || k);
+    const app = fusion(docs, 'app'), e = fusion(docs, 'ev', k => !/^pdf_/.test(k));
+    const LIB = {telephone: '📱 Sur téléphone', ordinateur: '💻 Sur ordinateur', connexion: 'Connexions à un compte', compte_cree: 'Comptes créés', envoi_gmail: 'Envois depuis Gmail', envoi_autre_appli: 'Envois avec une autre application', appli_installee: 'Applications installées'};
+    liste('l-app', Object.assign({}, app, e), k => LIB[k] || k.replace(/_/g, ' '), 12);
+  }
+
+  // Courbe des visiteurs par jour (une seule série), avec infobulle au survol / au doigt
+  function graphe(jrs, vis, vues){
+    const boite = $('graphe'), W = Math.max(300, boite.clientWidth || 600), H = 200, g = 34, d = 10, h = 12, b = 26;
+    const max = Math.max(4, ...vis), pas = Math.ceil(max / 4), top = pas * 4;
+    const x = i => g + (jrs.length === 1 ? (W - g - d) / 2 : i * (W - g - d) / (jrs.length - 1));
+    const y = v => h + (H - h - b) * (1 - v / top);
+    let grille = '', axe = '';
+    for (let k = 0; k <= 4; k++){ const v = k * pas; grille += `<line x1="${g}" x2="${W - d}" y1="${y(v)}" y2="${y(v)}"/>`; axe += `<text x="${g - 8}" y="${y(v) + 4}" text-anchor="end">${n(v)}</text>`; }
+    const etiq = Math.max(1, Math.ceil(jrs.length / (W < 480 ? 4 : 7)));
+    jrs.forEach((j, i) => { if (i % etiq === 0 || i === jrs.length - 1 && jrs.length < 10) axe += `<text x="${x(i)}" y="${H - 6}" text-anchor="middle">${esc(jourCourt(j))}</text>`; });
+    const pts = vis.map((v, i) => `${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(' ');
+    const aire = `${g},${y(0)} ${pts} ${x(vis.length - 1)},${y(0)}`;
+    boite.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Visiteurs par jour">
+      <g class="grille">${grille}</g><g class="axe">${axe}</g>
+      <polygon points="${aire}" fill="#4A7BD0" fill-opacity=".08"/>
+      ${jrs.length > 1 ? `<polyline points="${pts}" fill="none" stroke="#4A7BD0" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>` : ''}
+      <line id="g-vise" y1="${h}" y2="${y(0)}" stroke="#9AA6BA" stroke-width="1" stroke-dasharray="3 3" opacity="0"/>
+      <circle id="g-point" r="5" fill="#4A7BD0" stroke="#fff" stroke-width="2" opacity="${jrs.length === 1 ? 1 : 0}" cx="${x(0)}" cy="${y(vis[0])}"/>
+      <rect x="${g}" y="0" width="${W - g - d}" height="${H - b}" fill="transparent" id="g-zone"/>
+    </svg><div class="infobulle" id="g-bulle"></div>`;
+    const zone = boite.querySelector('#g-zone'), vise = boite.querySelector('#g-vise'), pt = boite.querySelector('#g-point'), bulle = $('g-bulle');
+    const montrer = ev => {
+      const r = boite.querySelector('svg').getBoundingClientRect(), ech = W / r.width;
+      const px = ((ev.touches ? ev.touches[0].clientX : ev.clientX) - r.left) * ech;
+      let i = jrs.length === 1 ? 0 : Math.round((px - g) / ((W - g - d) / (jrs.length - 1))); i = Math.max(0, Math.min(jrs.length - 1, i));
+      vise.setAttribute('x1', x(i)); vise.setAttribute('x2', x(i)); vise.setAttribute('opacity', 1);
+      pt.setAttribute('cx', x(i)); pt.setAttribute('cy', y(vis[i])); pt.setAttribute('opacity', 1);
+      bulle.innerHTML = `${esc(jourLong(jrs[i]))}<br><b>${n(vis[i])}</b> visiteur${vis[i] > 1 ? 's' : ''} · ${n(vues[i])} page${vues[i] > 1 ? 's' : ''} vue${vues[i] > 1 ? 's' : ''}`;
+      const bx = Math.min(Math.max(x(i) / ech, 80), r.width - 80);
+      bulle.style.left = bx + 'px'; bulle.style.top = (y(vis[i]) / ech) + 'px'; bulle.style.opacity = 1;
+    };
+    const cacher = () => { bulle.style.opacity = 0; vise.setAttribute('opacity', 0); if (jrs.length > 1) pt.setAttribute('opacity', 0); };
+    zone.addEventListener('mousemove', montrer); zone.addEventListener('touchstart', montrer, {passive: true}); zone.addEventListener('touchmove', montrer, {passive: true});
+    zone.addEventListener('mouseleave', cacher); zone.addEventListener('touchend', () => setTimeout(cacher, 1800));
+  }
+  let tempo; window.addEventListener('resize', () => { clearTimeout(tempo); tempo = setTimeout(() => { if (!$('st-contenu').hidden) charger(); }, 250); });
+
+  C.surChangement(() => { if ($('st-contenu').hidden) demarrer(); });
+  demarrer();
+})();
+
+</script>
+</body>
+</html>
