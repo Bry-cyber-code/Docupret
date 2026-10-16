@@ -125,6 +125,33 @@
   @media (max-width:640px){.tuiles{grid-template-columns:repeat(2,1fr)}}
   .tuile{background:var(--blanc);border:1px solid var(--bord);border-radius:var(--rayon);padding:14px 14px 12px;display:grid;gap:2px;min-width:0}
   .tuile small{font-size:.78rem;color:var(--gris);font-weight:650}
+  button.tuile{font:inherit;color:inherit;text-align:left;cursor:pointer;transition:border-color .15s,box-shadow .15s}
+  button.tuile:hover{border-color:#B9CDEE;box-shadow:0 4px 14px rgba(74,123,208,.12)}
+  .tuile small em{font-style:normal;color:var(--bleu);font-weight:700;margin-left:4px;white-space:nowrap}
+  .dd-fond{position:fixed;inset:0;background:rgba(20,28,45,.45);z-index:50;display:flex;align-items:flex-end;justify-content:center}
+  @media (min-width:640px){.dd-fond{align-items:center}}
+  .dd-boite{background:var(--blanc);width:100%;max-width:560px;max-height:88vh;overflow:auto;border-radius:18px 18px 0 0;padding:16px 18px 20px}
+  @media (min-width:640px){.dd-boite{border-radius:18px}}
+  .dd-tete{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:12px}
+  .dd-tete b{font-size:1.15rem;display:block}
+  .dd-tete small{color:var(--gris);font-size:.85rem}
+  .dd-tete button{border:0;background:var(--fond);width:34px;height:34px;border-radius:50%;font-size:1.3rem;line-height:1;cursor:pointer;color:var(--texte)}
+  .dd-liste{display:grid;gap:10px}
+  .dd-ligne{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:4px 10px;align-items:baseline}
+  .dd-nom{font-weight:650;font-size:.93rem;min-width:0;overflow-wrap:anywhere}
+  .dd-val{font-weight:800;font-variant-numeric:tabular-nums}
+  .dd-val small{font-weight:600;color:var(--gris);font-size:.75rem;margin-left:6px}
+  .dd-evo{font-size:.75rem;color:var(--gris);min-width:58px;text-align:right}
+  .dd-evo.hausse{color:#2B8148} .dd-evo.baisse{color:#B4432F}
+  .dd-ligne .piste{grid-column:1 / -1;display:block;height:8px;background:#EEF2F8;border-radius:4px;overflow:hidden}
+  .dd-ligne .piste i{display:block;height:100%;background:var(--bleu);border-radius:0 4px 4px 0;min-width:4px}
+  .dd-boite h3{font-size:.95rem;margin:18px 0 8px}
+  .dd-jours{display:grid;gap:8px}
+  .dd-jour{background:var(--fond);border-radius:10px;padding:8px 11px;font-size:.85rem;display:grid;gap:2px}
+  .dd-jour b{font-size:.82rem}
+  .dd-jour b::first-letter{text-transform:uppercase}
+  .dd-jour span{color:var(--texte);line-height:1.45}
+  .dd-note{margin-top:16px;font-size:.78rem;color:var(--gris);line-height:1.45}
   .tuile-large{grid-column:1 / -1;background:var(--bleu-clair);border-color:#CFDDF6}
   .tuile b{font-size:1.7rem;font-weight:800;line-height:1.15;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
   .tuile span{font-size:.76rem;color:var(--gris)}
@@ -345,7 +372,7 @@
     lettre_demission: 'Lettre de démission', lettre_motivation: 'Lettre de motivation', lettre_conges: 'Demande de congés', lettre_rupture: 'Rupture conventionnelle',
     lettre_preavis: 'Préavis locataire', lettre_hebergement: "Attestation d'hébergement", lettre_quittance: 'Quittance de loyer', lettre_honneur: "Attestation sur l'honneur",
     lettre_resiliation: 'Lettre de résiliation', lettre_reclamation: 'Réclamation / mise en demeure', lettre_procuration: 'Procuration', lettre_vente: 'Contrat de vente véhicule',
-    lettre_pret: 'Prêt de véhicule', lettre_sinistre: 'Déclaration de sinistre', lettre: 'Lettres', cession: 'Certificat de cession', constat: 'Constat amiable',
+    lettre_pret: 'Prêt de véhicule', flyer: 'Flyer', kits: 'Kits', kit: 'Kit', lettre_sinistre: 'Déclaration de sinistre', lettre: 'Lettres', cession: 'Certificat de cession', constat: 'Constat amiable',
     tva: 'Calculatrice TVA', simulateur: 'Simulateur auto-entrepreneur', frais_kilometriques: 'Frais kilométriques', tampon: 'Tampon', logo: 'Logo', carte: 'Carte de visite',
     compte: 'Mon compte', apropos: 'À propos', mentions_legales: 'Mentions légales', cgu: "Conditions d'utilisation"};
   const SOURCES = {direct: 'Accès direct ou favori', google: 'Google', bing: 'Bing', facebook: 'Facebook', instagram: 'Instagram', whatsapp: 'WhatsApp', youtube: 'YouTube',
@@ -416,12 +443,13 @@
   }
 
   // ---------- Affichage ----------
-  function tuile(lib, val, avant){
+  function tuile(lib, val, avant, action){
     let ev = '';
     if (periode > 1 && (val || avant)){
       if (!avant) ev = '<span class="hausse">nouveau sur la période</span>';
       else { const pc = Math.round((val - avant) / avant * 100); ev = pc === 0 ? '<span>stable</span>' : `<span class="${pc > 0 ? 'hausse' : 'baisse'}">${pc > 0 ? '▲ +' : '▼ '}${pc} % vs période d'avant</span>`; }
     }
+    if (action) return `<button type="button" class="tuile tuile-clic" data-action="${action}" title="Voir le détail"><small>${lib} <em>Voir le détail ›</em></small><b>${n(val)}</b>${ev || '<span>&nbsp;</span>'}</button>`;
     return `<div class="tuile"><small>${lib}</small><b>${n(val)}</b>${ev || '<span>&nbsp;</span>'}</div>`;
   }
   function liste(id, obj, nommer, max){
@@ -430,14 +458,47 @@
     const haut = l[0][1];
     $(id).innerHTML = l.map(([k, v]) => `<div class="ligne-st"><span class="lib">${esc(nommer(k))}</span><span class="val">${n(v)}</span><span class="piste"><i style="width:${Math.max(2, v / haut * 100)}%"></i></span></div>`).join('');
   }
+  // ---------- Détail des documents créés (seulement le type : aucune donnée personnelle n'est enregistrée) ----------
+  let dernier = null;
+  function detailDocs(){
+    if (!dernier) return;
+    const {jrs, docs, docsAvant} = dernier;
+    const types = fusion(docs, 'ev', k => /^pdf_/.test(k)), avant = fusion(docsAvant, 'ev', k => /^pdf_/.test(k));
+    const l = Object.entries(types).filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]);
+    const total = l.reduce((a, [, v]) => a + v, 0), haut = l.length ? l[0][1] : 1;
+    const periodeTxt = periode === 1 ? "aujourd'hui" : `sur les ${periode} derniers jours`;
+    const lignes = l.map(([k, v]) => {
+      const av = avant[k] || 0, pc = av ? Math.round((v - av) / av * 100) : null;
+      const evo = periode > 1 ? (av ? (pc === 0 ? '<span class="dd-evo">stable</span>' : `<span class="dd-evo ${pc > 0 ? 'hausse' : 'baisse'}">${pc > 0 ? '▲ +' : '▼ '}${pc} %</span>`) : '<span class="dd-evo hausse">nouveau</span>') : '';
+      return `<div class="dd-ligne"><span class="dd-nom">${esc(nomDoc(k))}</span><span class="dd-val">${n(v)}<small>${Math.round(v / total * 100)} %</small></span>${evo}<span class="piste"><i style="width:${Math.max(2, v / haut * 100)}%"></i></span></div>`;
+    }).join('');
+    // Jour par jour
+    const parJour = jrs.map((j, i) => [j, Object.entries(docs[i].ev || {}).filter(([k, v]) => /^pdf_/.test(k) && v > 0).sort((a, b) => b[1] - a[1])]).filter(([, x]) => x.length).reverse();
+    const jours = parJour.map(([j, x]) => `<div class="dd-jour"><b>${esc(jourLong(j))}</b><span>${x.map(([k, v]) => `${n(v)} ${esc(nomDoc(k))}`).join(' · ')}</span></div>`).join('');
+    const f = document.createElement('div'); f.className = 'dd-fond';
+    f.innerHTML = `<div class="dd-boite" role="dialog" aria-modal="true" aria-label="Documents créés">
+      <div class="dd-tete"><div><b>Documents créés</b><small>${n(total)} document${total > 1 ? 's' : ''} ${periodeTxt}</small></div><button type="button" data-fermer aria-label="Fermer">×</button></div>
+      ${l.length ? `<div class="dd-liste">${lignes}</div>${jours ? `<h3>Jour par jour</h3><div class="dd-jours">${jours}</div>` : ''}` : '<p class="vide-st">Aucun document créé sur cette période.</p>'}
+      <p class="dd-note">🔒 Seul le <b>type</b> de document est compté, au moment où il est téléchargé, imprimé ou envoyé. Aucun nom, aucune adresse, aucun montant ni aucun contenu n'est enregistré.</p>
+    </div>`;
+    const fermer = () => { f.remove(); document.removeEventListener('keydown', echap); };
+    const echap = e => { if (e.key === 'Escape') fermer(); };
+    f.addEventListener('click', e => { if (e.target === f || e.target.closest('[data-fermer]')) fermer(); });
+    document.addEventListener('keydown', echap);
+    document.body.appendChild(f);
+    f.querySelector('[data-fermer]').focus();
+  }
+  document.addEventListener('click', e => { const t = e.target.closest('[data-action="docs"]'); if (t) detailDocs(); });
+
   function rendre(jrs, docs, docsAvant, comptes){
+    dernier = {jrs, docs, docsAvant};
     const ev = (d, k) => (d.ev || {})[k] || 0;
     $('tuiles').innerHTML =
       `<div class="tuile tuile-large"><small>Comptes au total</small><b>${n(comptes)}</b><span>Toutes périodes confondues · ${n(somme(docs, d => ev(d, 'compte_cree')))} créé${somme(docs, d => ev(d, 'compte_cree')) > 1 ? 's' : ''} sur la période choisie</span></div>` +
       tuile('Visiteurs', somme(docs, d => d.vis), somme(docsAvant, d => d.vis)) +
       tuile('Pages vues', somme(docs, d => d.v), somme(docsAvant, d => d.v)) +
       tuile('Nouveaux visiteurs', somme(docs, d => d.nv), somme(docsAvant, d => d.nv)) +
-      tuile('Documents créés', somme(docs, docsCrees), somme(docsAvant, docsCrees)) +
+      tuile('Documents créés', somme(docs, docsCrees), somme(docsAvant, docsCrees), 'docs') +
       tuile('Nouveaux comptes', somme(docs, d => ev(d, 'compte_cree')), somme(docsAvant, d => ev(d, 'compte_cree'))) +
       tuile('Envois depuis Gmail', somme(docs, d => ev(d, 'envoi_gmail')), somme(docsAvant, d => ev(d, 'envoi_gmail')));
     graphe(jrs, docs.map(d => d.vis || 0), docs.map(d => d.v || 0));
