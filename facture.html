@@ -1737,17 +1737,18 @@ window.DOCU_AFFICHAGE = (function(){
 
     // Zone Gmail
     const zone = $f('#env-gmail');
+    let reautoriser = false;
     function rendreGmail(){
       if (!gmailPossible){ zone.innerHTML = ''; return; }
       if (!connecte){ zone.innerHTML = `<p class="env-verrou">🔒 <b>Envoi en un clic depuis votre boîte Gmail</b> : réservé aux comptes gratuits. <a href="compte.html#compte">Créer mon compte</a></p>`; return; }
       const a = G.adresse();
       zone.innerHTML = `<button type="button" class="env-gmail" id="env-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4z"/></svg>Envoyer depuis Gmail</button>
         <p class="env-de">${a ? `Depuis <b>${esc(a)}</b> · <button type="button" class="env-lien" id="env-changer">changer</button>` : 'La première fois, Google vous demandera d\'autoriser DocuPrêt à envoyer des e-mails en votre nom. DocuPrêt ne peut pas lire vos e-mails.'}</p>`;
-      $f('#env-go').addEventListener('click', () => envoyerGmail(false));
+      $f('#env-go').addEventListener('click', () => envoyerGmail(reautoriser));
       const ch = $f('#env-changer'); if (ch) ch.addEventListener('click', () => envoyerGmail(true));
     }
     function envoyerGmail(forcer){
-      erreur('');
+      erreur(''); reautoriser = false;
       const a = $f('#env-a').value.trim();
       if (!emailOk(a)){ erreur('Indiquez une adresse e-mail valide pour le client.'); $f('#env-a').focus(); return; }
       const bouton = $f('#env-go'); bouton.disabled = true; bouton.lastChild.textContent = 'Connexion…';
@@ -1767,6 +1768,9 @@ window.DOCU_AFFICHAGE = (function(){
         erreur(err && err.message === 'pdf' ? 'Le PDF n\'a pas pu être créé. Réessayez.' : (err && err.message) || 'L\'envoi a échoué. Réessayez.');
         bouton.disabled = false; bouton.lastChild.textContent = 'Envoyer depuis Gmail';
         if (err && err.expire) rendreGmail();
+        // Autorisation à redonner : le prochain clic rouvre la fenêtre Google avec la case à cocher
+        if (err && err.reautoriser){ reautoriser = true; rendreGmail(); const b2 = $f('#env-go'); if (b2) b2.lastChild.textContent = 'Autoriser et envoyer'; erreur(err.message); }
+        if (err && err.detail) console.warn('Gmail :', err.detail);
       });
     }
     rendreGmail();
@@ -2547,7 +2551,7 @@ window.DOCU_AFFICHAGE = (function(){
 })();
 </script>
 <script src="compte.js?v=15"></script>
-<script src="gmail.js?v=3"></script>
+<script src="gmail.js?v=4"></script>
 <script>
 // ===== Clients enregistrés =====
 (function(){

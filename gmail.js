@@ -14,7 +14,8 @@
   // Il est public par nature.
   const CLIENT_ID = '657987325283-kkrj0dtgikabpsn65mq1tedt69ke5in0.apps.googleusercontent.com';
 
-  const PORTEE = 'openid email https://www.googleapis.com/auth/gmail.send';
+  const ENVOI = 'https://www.googleapis.com/auth/gmail.send';
+  const PORTEE = 'openid email ' + ENVOI;
   const CLE_ADRESSE = 'docupret_gmail', CLE_JETON = 'docupret_gmail_jeton', CLE_REGLAGE = 'docupret_envoi_gmail';
   const actif = !!CLIENT_ID;
   let client = null, chargement = null, attente = null;
@@ -24,6 +25,8 @@
   const adresse = () => (lire(CLE_ADRESSE) || {}).email || '';
   const jeton = () => { const j = lire(CLE_JETON, sessionStorage); return j && j.exp > Date.now() + 60000 ? j.t : ''; };
   const reglageActive = () => { try{ return localStorage.getItem(CLE_REGLAGE) !== '0'; }catch(e){ return true; } };
+
+  const MSG_CASE = "Google n'a pas donné l'autorisation d'envoyer des e-mails. Touchez « Autoriser et envoyer » : dans la fenêtre Google, cochez bien la case « Envoyer des e-mails en votre nom », puis cliquez sur « Continuer ».";
 
   function charger(){
     if (!actif) return Promise.resolve(false);
@@ -39,6 +42,10 @@
         callback: rep => {
           const a = attente; attente = null; if (!a) return;
           if (rep.error || !rep.access_token) return a.ko(new Error(rep.error === 'access_denied' ? 'Autorisation refusée.' : 'Connexion à Gmail impossible.'));
+          // Sur ordinateur, Google affiche une case « Envoyer des e-mails en votre nom » : si elle n'est pas cochée, l'envoi est impossible
+          let ok = true;
+          try{ ok = google.accounts.oauth2.hasGrantedAllScopes(rep, ENVOI); }catch(e){ ok = String(rep.scope || '').includes(ENVOI); }
+          if (!ok){ const e = new Error(MSG_CASE); e.reautoriser = true; return a.ko(e); }
           ecrire(CLE_JETON, {t: rep.access_token, exp: Date.now() + (rep.expires_in || 3600) * 1000}, sessionStorage);
           a.ok(rep.access_token);
         },
@@ -57,12 +64,11 @@
       const a = adresse();
       client.requestAccessToken(Object.assign({prompt: a && !forcer ? '' : 'consent'}, a ? {login_hint: a} : {}));
     }).then(async t => {
-      if (!adresse() || forcer){
-        try{
-          const r = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {headers: {Authorization: 'Bearer ' + t}});
-          const u = await r.json(); if (u.email) ecrire(CLE_ADRESSE, {email: u.email});
-        }catch(e){}
-      }
+      // L'adresse d'envoi est toujours celle du compte Google réellement choisi dans la fenêtre
+      try{
+        const r = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {headers: {Authorization: 'Bearer ' + t}});
+        const u = await r.json(); if (u.email) ecrire(CLE_ADRESSE, {email: u.email});
+      }catch(e){}
       return t;
     });
   }
@@ -75,10 +81,10 @@
 
   async function mime(o){
     const limite = 'docupret_' + Math.random().toString(36).slice(2);
-    const de = o.nom ? `${entete(o.nom.replace(/["<>]/g, ''))} <${adresse()}>` : adresse();
+    const ad = adresse(), de = ad ? (o.nom ? `${entete(o.nom.replace(/["<>]/g, ''))} <${ad}>` : ad) : '';
     const pj = await blobB64(o.pdf);
     return [
-      `From: ${de}`, `To: ${o.a}`, `Subject: ${entete(o.sujet)}`, 'MIME-Version: 1.0',
+      ...(de ? [`From: ${de}`] : []), `To: ${o.a}`, `Subject: ${entete(o.sujet)}`, 'MIME-Version: 1.0',
       `Content-Type: multipart/mixed; boundary="${limite}"`, '',
       `--${limite}`, 'Content-Type: text/plain; charset="UTF-8"', 'Content-Transfer-Encoding: base64', '', couper(b64(o.texte)), '',
       `--${limite}`, `Content-Type: application/pdf; name="${o.fichier}"`, `Content-Disposition: attachment; filename="${o.fichier}"`, 'Content-Transfer-Encoding: base64', '', couper(pj), '',
@@ -93,7 +99,19 @@
       method: 'POST', headers: {Authorization: 'Bearer ' + t, 'Content-Type': 'application/json'}, body: JSON.stringify({raw})
     });
     if (r.status === 401){ try{ sessionStorage.removeItem(CLE_JETON); }catch(e){} const e = new Error('Votre connexion Gmail a expiré. Touchez à nouveau « Envoyer ».'); e.expire = true; throw e; }
-    if (r.status === 403) throw new Error('Gmail a refusé l\'envoi. Vérifiez que vous avez bien autorisé l\'envoi d\'e-mails, puis réessayez.');
+    if (r.status === 403 || r.status === 400){
+      let detail = '';
+      try{ const j = await r.json(); detail = JSON.stringify(j.error || j); }catch(e){}
+      // On repart d'une autorisation neuve au prochain essai
+      try{ sessionStorage.removeItem(CLE_JETON); }catch(e){}
+      let e;
+      if (/insufficient|scope|PERMISSION/i.test(detail)) e = new Error(MSG_CASE);
+      else if (/delegation|from|sender|invalid.*(address|header)/i.test(detail)){ try{ localStorage.removeItem(CLE_ADRESSE); }catch(x){} e = new Error("Gmail a refusé l'adresse d'expéditeur. Touchez « Autoriser et envoyer » et choisissez le compte Gmail avec lequel vous voulez envoyer."); }
+      else if (r.status === 400) e = new Error("Gmail n'a pas accepté ce message. Vérifiez l'adresse du client, puis réessayez.");
+      else e = new Error("Gmail a refusé l'envoi. Touchez « Autoriser et envoyer » pour donner à nouveau l'autorisation, en cochant bien la case « Envoyer des e-mails en votre nom ».");
+      e.reautoriser = r.status === 403 || /delegation|from|sender/i.test(detail); e.detail = detail;
+      throw e;
+    }
     if (!r.ok) throw new Error('L\'envoi a échoué. Vérifiez votre connexion internet et réessayez.');
     return r.json();
   }
