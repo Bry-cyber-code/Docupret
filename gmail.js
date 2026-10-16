@@ -100,7 +100,8 @@
 
   function deconnecter(){
     const t = jeton();
-    try{ if (t && window.google && google.accounts) google.accounts.oauth2.revoke(t, () => {}); }catch(e){}
+    // Retire vraiment l'autorisation chez Google (même si le module Google n'est pas chargé sur la page)
+    if (t) try{ fetch('https://oauth2.googleapis.com/revoke?token=' + encodeURIComponent(t), {method: 'POST', headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).catch(() => {}); }catch(e){}
     try{ localStorage.removeItem(CLE_ADRESSE); sessionStorage.removeItem(CLE_JETON); }catch(e){}
   }
 
