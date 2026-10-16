@@ -99,7 +99,7 @@
 
   let fond, menu, dernierFocus;
   // Logo de l'entreprise à la place de l'icône (option dans Mon compte → Paramètres)
-  const logoAvatar = () => { try{ return localStorage.getItem('docupret_avatar') === '1' ? ((lire('docufacile_v1', {}) || {}).em || {}).logo || '' : ''; }catch(e){ return ''; } };
+  const logoAvatar = () => { try{ return localStorage.getItem('docupret_avatar') === '1' && lire('docupret_compte', null) ? ((lire('docufacile_v1', {}) || {}).em || {}).logo || '' : ''; }catch(e){ return ''; } };
   const ICONE = lien.querySelector('svg') ? lien.querySelector('svg').outerHTML : '';
   let styleMis = false;
   function majAvatar(){

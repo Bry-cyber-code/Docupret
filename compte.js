@@ -58,7 +58,7 @@
         try{ if (utilisateur) localStorage.setItem('docupret_compte', JSON.stringify({email: utilisateur.email})); else localStorage.removeItem('docupret_compte'); }catch(e){}
         if (utilisateur && utilisateur.uid !== avant){ await synchroniser(); await synchroniserParametres(); await synchroniserDocuments(); }
         prevenir();
-        if (premier){ premier = false; ok(); }
+        if (premier){ premier = false; resolu = true; ok(); }
       });
     });
   }
@@ -395,11 +395,11 @@
     if (clients().length > 6) cherche.focus();
   }
 
-  pret = demarrer().finally(() => { resolu = true; prevenir(); });
+  pret = demarrer().finally(() => prevenir());
   window.Compte = {
     actif, pret,
     utilisateur: () => utilisateur && {email: utilisateur.email, id: utilisateur.uid},
-    connecte, demanderCompte, avantages: AVANTAGES,
+    connecte, demanderCompte, avantages: AVANTAGES, verifie: () => resolu,
     clients, client, enregistrerClient, supprimerClient, synchroniser,
     inscrire, connecter, deconnecter, motDePasseOublie, changerMotDePasse, supprimerCompte,
     surChangement: f => ecouteurs.add(f),

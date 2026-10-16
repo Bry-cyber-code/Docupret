@@ -413,6 +413,7 @@ window.DOCU_AFFICHAGE = (function(){
   }catch(e){ return 'fiches'; }
 })();
 </script>
+<script>(function(){try{var q=new URLSearchParams(location.search).get('type'),l=document.createElement('link');l.rel='canonical';l.href='https://docupret.fr'+location.pathname.replace(/index\.html$/,'')+(q&&/^[a-z]+$/.test(q)?'?type='+q:'');document.head.appendChild(l);}catch(e){}})();</script>
 </head>
 <body>
 
@@ -718,7 +719,7 @@ window.DOCU_AFFICHAGE = (function(){
     <details><summary>Comment numéroter mes factures ?</summary>
       <p>Les numéros doivent se suivre sans trou, par exemple F-2026-001, F-2026-002… Le numéro suivant est proposé automatiquement à chaque nouveau document.</p></details>
     <details><summary>Mes données sont-elles enregistrées ?</summary>
-      <p>Non. Le document est créé directement dans votre navigateur. Vos infos sont gardées uniquement sur votre appareil pour gagner du temps la prochaine fois.</p></details>
+      <p>Le document est créé directement dans votre navigateur : son contenu n'est pas envoyé sur nos serveurs. Vos coordonnées sont gardées sur votre appareil pour gagner du temps la prochaine fois. Avec un compte gratuit, vos clients, vos paramètres et une copie de vos devis et factures sont en plus enregistrés dans votre compte, pour les retrouver sur tous vos appareils.</p></details>
   </section>
 
   <!-- PUB : remplacer ce bloc par le code Google AdSense -->
@@ -1874,7 +1875,7 @@ window.DOCU_AFFICHAGE = (function(){
   window.addEventListener('load', () => setTimeout(liste, 300));
 })();
 </script>
-<script src="compte.js?v=11"></script>
+<script src="compte.js?v=12"></script>
 <script src="gmail.js?v=3"></script>
 <script>
 // ===== Clients enregistrés =====
@@ -1918,6 +1919,18 @@ window.DOCU_AFFICHAGE = (function(){
   });
   document.addEventListener('input', e => { if (e.target.dataset && /^cl\./.test(e.target.dataset.b || '')) etat(); });
   Compte.surChangement(etat);
+  // Sans compte : les réglages réservés aux comptes (numérotation personnalisée, message d'envoi) ne s'appliquent pas
+  Promise.resolve(Compte.pret).then(() => {
+    if (Compte.connecte() || !Compte.verifie()) return;
+    try{
+      const d = JSON.parse(localStorage.getItem('docufacile_v1')) || {}, n = d.numerotation || {};
+      const perso = d.envoiMessage || n.annee === false || ['devis', 'facture', 'recu', 'avoir'].some(t => n[t]);
+      if (!perso) return;
+      d.numerotation = {annee: true}; d.envoiMessage = '';
+      localStorage.setItem('docufacile_v1', JSON.stringify(d));
+      if (window.docuRafraichirReglages) window.docuRafraichirReglages();
+    }catch(e){}
+  });
   // ---------- Paramètres synchronisés avec le compte ----------
   // Une modification de vos infos (nom, logo, TVA, paiement…) ou un nouveau numéro utilisé part dans le compte.
   let aSaisi = false;
@@ -1958,6 +1971,6 @@ window.DOCU_AFFICHAGE = (function(){
   etat();
 })();
 </script>
-<script src="compte-menu.js?v=4"></script>
+<script src="compte-menu.js?v=5"></script>
 </body>
 </html>

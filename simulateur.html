@@ -107,6 +107,15 @@
   .taux th:first-child,.taux td:first-child{text-align:left}
   .taux th{font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;color:var(--gris);background:var(--fond)}
   .taux tr:last-child td{border-bottom:0}
+  @media (max-width:560px){
+    .taux{min-width:0;font-size:.88rem}
+    .taux thead{display:none}
+    .taux tr{display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;padding:12px 14px;border-bottom:1px solid var(--bord)}
+    .taux tr:last-child{border-bottom:0}
+    .taux td{border:0;padding:0;text-align:left;display:flex;flex-direction:column}
+    .taux td:first-child{grid-column:1 / -1;font-weight:700;margin-bottom:2px}
+    .taux td[data-l]::before{content:attr(data-l);font-size:.7rem;text-transform:uppercase;letter-spacing:.04em;color:var(--gris)}
+  }
   .faq details{background:var(--blanc);border:1px solid var(--bord);border-radius:12px;margin-bottom:8px}
   .faq summary{padding:12px 16px;font-weight:600;cursor:pointer;font-size:.95rem}
   .faq p{padding:0 16px 14px;color:var(--gris);font-size:.9rem}
@@ -155,6 +164,7 @@
   .compte-lien:hover{color:var(--bleu)}
   @media (min-width:561px){.compte-lien{flex-direction:row;gap:7px;font-size:.88rem;border:1.5px solid var(--bord);padding:7px 13px 7px 10px;border-radius:50px;background:#fff}.compte-lien svg{width:20px;height:20px}.droite{gap:14px}}
 </style>
+<script>(function(){try{var q=new URLSearchParams(location.search).get('type'),l=document.createElement('link');l.rel='canonical';l.href='https://docupret.fr'+location.pathname.replace(/index\.html$/,'')+(q&&/^[a-z]+$/.test(q)?'?type='+q:'');document.head.appendChild(l);}catch(e){}})();</script>
 </head>
 <body>
 
@@ -399,7 +409,7 @@
 
   // Construction de l'interface
   $('activites').innerHTML = Object.entries(ACTIVITES).map(([k, a]) => `<button type="button" class="activite" data-a="${k}"><i></i><span><b>${a.nom}</b><small>${a.ex}</small></span></button>`).join('');
-  $('taux').innerHTML = Object.values(ACTIVITES).map(a => `<tr><td>${a.nom}</td><td>${pct(a.cot)}</td><td>${pct(a.cfp)}</td><td>${pct(a.vl)}</td><td>${eur(a.plafond)}</td></tr>`).join('');
+  $('taux').innerHTML = Object.values(ACTIVITES).map(a => `<tr><td>${a.nom}</td><td data-l="Cotisations">${pct(a.cot)}</td><td data-l="Formation">${pct(a.cfp)}</td><td data-l="Versement libératoire">${pct(a.vl)}</td><td data-l="Plafond de CA">${eur(a.plafond)}</td></tr>`).join('');
 
   $('ca').value = etat.ca; $('depenses').value = etat.depenses;
   $('acre').checked = etat.acre; $('acre-date').value = etat.acreTaux; $('vl').checked = etat.vl;
@@ -465,6 +475,6 @@
   });
 })();
 </script>
-<script src="compte-menu.js?v=4"></script>
+<script src="compte-menu.js?v=5"></script>
 </body>
 </html>
