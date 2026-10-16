@@ -98,6 +98,10 @@
   .m-etapes u{display:flex;height:6px;background:radial-gradient(circle,var(--bleu) 2px,transparent 2.5px) 0 0/8px 6px repeat-x;margin-bottom:3px;text-decoration:none}
   .m-etapes i{height:12px;background:#fff;border:1px solid #C9D4E6}
   .m-page i{height:4px}
+  .m-feuille{background:#fff;gap:3px}
+  .m-feuille s{display:block;height:5px;width:55%;background:var(--bleu);border-radius:2px;text-decoration:none}
+  .m-feuille i{height:3px;background:#C9D4E6;border-radius:2px}
+  .m-feuille u{display:block;height:8px;border:1px solid #C9D4E6;border-radius:2px;background:#FFF8D9}
   .enreg-auto{text-align:center;margin-top:12px}
   .ch select{font:inherit;font-size:16px;padding:11px 10px;border:1.5px solid var(--bord);border-radius:10px;outline:none;width:100%;min-width:0;color:var(--texte);background:#fff}
   h2{font-size:1.1rem;margin:24px 0 10px;display:flex;align-items:center;gap:8px}
@@ -508,9 +512,10 @@
   </section>
   <section class="carte">
     <div class="titre-carte">Affichage sur téléphone</div>
-    <p class="note" style="margin-top:-6px">Choisissez comment remplir vos devis et factures sur téléphone. Sur ordinateur, rien ne change.</p>
+    <p class="note" style="margin-top:-6px">Choisissez comment remplir vos devis et factures sur téléphone. Sur ordinateur, on écrit toujours sur la feuille.</p>
     <div class="choix-aff" id="choix-aff">
-      <button type="button" data-a="fiches"><span class="mini m-fiches"><i></i><i></i><i></i><i></i></span><span class="aff-txt"><b>Fiches <em>Recommandé</em></b><span>Une vue d'ensemble : touchez ce que vous voulez remplir.</span></span></button>
+      <button type="button" data-a="feuille"><span class="mini m-feuille"><s></s><i></i><i style="width:60%"></i><u></u><u></u><i style="width:40%;margin-left:auto"></i></span><span class="aff-txt"><b>Sur la feuille <em>Recommandé</em></b><span>On écrit directement sur le devis ou la facture, comme sur papier.</span></span></button>
+      <button type="button" data-a="liste"><span class="mini m-fiches"><i></i><i></i><i></i><i></i></span><span class="aff-txt"><b>Fiches</b><span>Une vue d'ensemble : touchez ce que vous voulez remplir.</span></span></button>
       <button type="button" data-a="etapes"><span class="mini m-etapes"><u></u><i></i><i></i></span><span class="aff-txt"><b>Étapes <span class="verrou">🔒</span></b><span>Guidé de 1 à 5, une étape à la fois.</span></span></button>
       <button type="button" data-a="page"><span class="mini m-page"><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="aff-txt"><b>Tout sur une page <span class="verrou">🔒</span></b><span>Tous les champs les uns sous les autres.</span></span></button>
     </div>
@@ -591,7 +596,7 @@
 <script src="compte.js?v=15"></script>
 <script src="gmail.js?v=5"></script>
 <script src="stats.js?v=2" defer></script>
-<script src="compte-menu.js?v=8"></script>
+<script src="compte-menu.js?v=9"></script>
 <script>
 (function(){
   'use strict';
@@ -972,11 +977,11 @@
   // ---------- Affichage sur téléphone (réservé aux comptes) ----------
   function majAffichage(){
     const connecte = !!C.utilisateur() || (() => { try{ return !!JSON.parse(localStorage.getItem('docupret_compte')); }catch(e){ return false; } })();
-    let a = localStorage.getItem('docupret_affichage') || 'fiches';
-    if (!connecte) a = 'fiches';
+    let a = localStorage.getItem('docupret_affichage') || 'feuille';
+    if (!['feuille', 'liste', 'etapes', 'page'].includes(a) || (!connecte && (a === 'etapes' || a === 'page'))) a = 'feuille';
     document.querySelectorAll('#choix-aff button').forEach(b => {
       b.classList.toggle('on', b.dataset.a === a);
-      b.classList.toggle('verrouille', !connecte && b.dataset.a !== 'fiches');
+      b.classList.toggle('verrouille', !connecte && (b.dataset.a === 'etapes' || b.dataset.a === 'page'));
     });
     $('aff-verrou').hidden = connecte;
   }

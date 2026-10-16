@@ -427,12 +427,15 @@
   @media (min-width:561px){.compte-lien{flex-direction:row;gap:7px;font-size:.88rem;border:1.5px solid var(--bord);padding:7px 13px 7px 10px;border-radius:50px;background:#fff}.compte-lien svg{width:20px;height:20px}.droite{gap:14px}}
 </style>
 <script>
-// Affichage sur téléphone choisi dans Mon compte → Paramètres (réservé aux comptes)
+// Affichage sur téléphone choisi dans Mon compte → Paramètres
+//   « feuille » (par défaut) : on écrit directement sur le document
+//   « liste » : les fiches à toucher une par une ; « etapes » et « page » : réservés aux comptes
 window.DOCU_AFFICHAGE = (function(){
   try{
     const c = JSON.parse(localStorage.getItem('docupret_compte')), m = localStorage.getItem('docupret_affichage');
-    return c && c.email && (m === 'etapes' || m === 'page') ? m : 'fiches';
-  }catch(e){ return 'fiches'; }
+    if (m === 'liste') return 'fiches';
+    return c && c.email && (m === 'etapes' || m === 'page') ? m : 'feuille';
+  }catch(e){ return 'feuille'; }
 })();
 </script>
 <script>(function(){try{var q=new URLSearchParams(location.search).get('type'),l=document.createElement('link');l.rel='canonical';l.href='https://docupret.fr'+location.pathname.replace(/index\.html$/,'')+(q&&/^[a-z]+$/.test(q)?'?type='+q:'');document.head.appendChild(l);}catch(e){}})();</script>
@@ -488,6 +491,95 @@ window.DOCU_AFFICHAGE = (function(){
   .o-btn.fait{color:#2FA36B;border-color:#BFE6D2}
   .o-lien{display:block;width:100%;margin-top:10px;border:none;background:none;color:var(--gris);font:inherit;font-size:.8rem;text-decoration:underline;cursor:pointer}
   .o-aide{font-size:.8rem;color:var(--gris);line-height:1.45;background:var(--fond);border-radius:10px;padding:9px 10px;margin-top:4px}
+
+
+  /* ===================== TÉLÉPHONE : on écrit sur la feuille ===================== */
+  .tel-barre,.tel-aide,.o-tete-tel,.o-fond{display:none}
+  @media (max-width:959px){
+    body.feuille-tel #p-form,body.feuille-tel .galerie,body.feuille-tel .fiches,body.feuille-tel .etapes,body.feuille-tel .etape-titre,body.feuille-tel .onglets,body.feuille-tel .style-bar{display:none!important}
+    body.feuille-tel #p-apercu{display:block!important;position:static}
+    body.feuille-tel .zone{display:block}
+    body.feuille-tel .cadre{background:none;padding:0;overflow:visible;border-radius:0}
+    body.feuille-tel .support{height:auto!important}
+    body.feuille-tel .echelle{position:static;transform:none!important}
+    body.feuille-tel .tete{margin-bottom:10px}
+    /* barre d'outils */
+    body.feuille-tel .tel-barre{display:flex;gap:8px;position:sticky;top:62px;z-index:6;background:var(--fond);padding:6px 0 8px}
+    .tel-barre button{flex:1;display:flex;align-items:center;justify-content:center;gap:7px;border:1.5px solid var(--bord);background:#fff;border-radius:12px;padding:11px 8px;font:inherit;font-size:.9rem;font-weight:650;color:var(--texte);box-shadow:0 1px 4px rgba(30,42,66,.06)}
+    .tel-barre button:first-child{flex:1.6;border-color:#C5D6F2;color:var(--bleu-fonce)}
+    body.feuille-tel .tel-aide{display:block;font-size:.8rem;color:var(--gris);margin:0 2px 10px;line-height:1.45}
+    /* panneau de réglages qui monte du bas */
+    body.feuille-tel .outils{display:none!important}
+    body.feuille-tel .outils.ouvert{display:block!important;position:fixed;left:0;right:0;bottom:0;top:auto;z-index:61;max-height:82vh;overflow:auto;background:#fff;border-radius:20px 20px 0 0;padding:0 18px 22px;box-shadow:0 -10px 30px rgba(20,28,45,.2);animation:monte .2s ease-out}
+    @keyframes monte{from{transform:translateY(40px);opacity:.6}to{transform:none;opacity:1}}
+    body.feuille-tel .o-tete-tel{display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:#fff;padding:14px 0 8px;z-index:1;border-bottom:1px solid var(--bord)}
+    .o-tete-tel b{font-size:1.05rem}
+    .o-tete-tel button{width:36px;height:36px;border-radius:50%;border:0;background:var(--fond);font-size:1.4rem;line-height:1;color:var(--texte)}
+    body.feuille-tel .o-aide-pc{display:none}
+    body.feuille-tel .o-fond:not([hidden]){display:block;position:fixed;inset:0;background:rgba(20,28,45,.4);z-index:60}
+    body.feuille-tel .o-modeles{grid-template-columns:1fr 1fr 1fr}
+    body.feuille-tel .o-couleurs button,body.feuille-tel .o-couleurs label{width:34px;height:34px}
+    body.feuille-tel .o-btn{padding:12px 10px;font-size:.92rem}
+    body.feuille-tel .o-puces button{padding:8px 13px;font-size:.88rem}
+
+    /* la feuille, mise en page pour le téléphone */
+    body.feuille-tel #page{width:auto;min-height:0;padding:20px 16px 22px;font-size:15px;line-height:1.5;border-radius:16px;border:1px solid var(--bord);box-shadow:0 2px 14px rgba(30,42,66,.07);overflow:hidden}
+    body.feuille-tel #page.m-metier{padding-top:20px;border-top:6px solid var(--c)}
+    body.feuille-tel #page .p-deco-haut,body.feuille-tel #page .p-deco-bas,body.feuille-tel #page .p-filigrane{display:none}
+    body.feuille-tel #page .p-entete{flex-direction:column;gap:14px}
+    body.feuille-tel #page .p-titre{order:-1;text-align:left;width:100%}
+    body.feuille-tel #page .p-titre .p-h1{font-size:24px;letter-spacing:1px;margin-bottom:8px;justify-content:flex-start}
+    body.feuille-tel #page .p-meta{font-size:14px}
+    body.feuille-tel #page .p-meta .ed-l{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:4px}
+    body.feuille-tel #page .p-titre .ed-plus{margin-left:0}
+    body.feuille-tel #page .p-emetteur{max-width:none;width:100%}
+    body.feuille-tel #page .p-emetteur b{font-size:17px}
+    body.feuille-tel #page.m-moderne .p-entete{margin:-20px -16px 0;padding:20px 16px 18px}
+    body.feuille-tel #page .p-client{width:auto;margin:18px 0;padding:14px}
+    body.feuille-tel #page.m-moderne .p-client{width:auto}
+    body.feuille-tel #page .p-client b{font-size:16px}
+    body.feuille-tel #page .ed-l{display:flex;align-items:center;gap:6px;flex-wrap:wrap;min-height:32px}
+    body.feuille-tel #page .ed-l > .ed{flex:1;min-width:0}
+    body.feuille-tel #page .ed-l > b{flex:1;min-width:0}
+    body.feuille-tel #page .ed-l > .ed-sel{flex:1;text-align:left}
+    body.feuille-tel #page .ed-l > .ed-moins{margin-left:auto}
+    /* chaque ligne de prestation devient une petite carte */
+    body.feuille-tel #page .p-table,body.feuille-tel #page .p-table tbody{display:block;width:100%}
+    body.feuille-tel #page .p-table thead{display:none}
+    body.feuille-tel #page .p-table tr{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px;border:1px solid #E3E8F0;border-radius:12px;padding:12px 12px 10px;margin-bottom:10px;position:relative;background:#fff}
+    body.feuille-tel #page .p-table td{display:block;border:0;padding:0;text-align:left;white-space:normal;position:static;min-width:0}
+    body.feuille-tel #page .p-table td::before{content:attr(data-l);display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#8A94A6;margin-bottom:3px}
+    body.feuille-tel #page .p-table td[data-c="des"]{grid-column:1 / -1;padding-right:34px}
+    body.feuille-tel #page .p-table td[data-c="total"]{grid-column:1 / -1;display:flex;justify-content:space-between;align-items:center;border-top:1px dashed #E3E8F0;padding-top:8px;font-weight:700;font-size:16px}
+    body.feuille-tel #page .p-table td[data-c="total"]::before{margin:0}
+    body.feuille-tel #page .p-table td .ed{background:#F5F8FD;border-radius:8px;padding:7px 9px;margin:0;min-height:38px}
+    body.feuille-tel #page .p-table td[data-c="total"] .ed{flex:0 1 55%;text-align:right}
+    body.feuille-tel #page .p-table td .ed-date{background:#F5F8FD;border-radius:8px;padding:7px 9px;margin:0;width:100%!important}
+    body.feuille-tel #page .ed-suppr{opacity:1;right:8px;top:8px;width:30px;height:30px;font-size:18px}
+    body.feuille-tel #page .ed-ajout{padding:13px;font-size:14px;border-radius:12px}
+    /* bas du document */
+    body.feuille-tel #page .p-bas{flex-direction:column;gap:16px}
+    body.feuille-tel #page .p-paiement{font-size:14px;width:100%}
+    body.feuille-tel #page .p-totaux{width:100%}
+    body.feuille-tel #page .p-totaux td{padding:7px 10px}
+    body.feuille-tel #page .p-signature{width:auto;font-size:13px}
+    body.feuille-tel #page .p-mentions{font-size:12.5px}
+    body.feuille-tel #page .p-pied{position:static;margin-top:18px;font-size:12px}
+    body.feuille-tel #page .p-paye{position:static;display:inline-block;transform:rotate(-5deg);margin:6px 0 12px;font-size:20px}
+    /* cases à écrire : assez grandes pour le doigt, et pas de zoom automatique de l'iPhone */
+    body.feuille-tel #page .ed,body.feuille-tel #page .ed-date,body.feuille-tel #page .ed-sel{font-size:16px}
+    body.feuille-tel #page .p-meta .ed,body.feuille-tel #page .p-meta .ed-date{font-size:16px}
+    body.feuille-tel #page .ed{padding:3px 5px;margin:0 -5px;min-height:1.6em}
+    body.feuille-tel #page .ed:hover{background:none}
+    body.feuille-tel #page .ed:focus{background:rgba(242,196,25,.16)}
+    body.feuille-tel #page .ed-moins,body.feuille-tel #page .ed-plus{width:28px;height:28px;font-size:17px;opacity:.75;flex:0 0 auto;margin-left:2px}
+    body.feuille-tel #page .ed-plus{opacity:1}
+    body.feuille-tel #page .ed-logo-vide{width:100%;padding:14px;font-size:14px}
+    body.feuille-tel #page .ed-logo .ed-x{opacity:1;width:28px;height:28px}
+    body.feuille-tel #page .ed-signature .ed{min-height:4em}
+    body.feuille-tel .barre{z-index:40}
+    body.reglages-ouverts{overflow:hidden}
+  }
 
   /* Champs modifiables sur la feuille */
   .page .ed{outline:none;border-radius:3px;cursor:text;padding:0 2px;margin:0 -2px;transition:background .12s}
@@ -663,7 +755,8 @@ window.DOCU_AFFICHAGE = (function(){
 
     <!-- ===== OUTILS (ordinateur, mode feuille) ===== -->
     <aside class="outils" id="outils" hidden aria-label="Réglages du document">
-      <div class="o-bloc"><p class="o-aide">✍️ Cliquez sur la feuille pour écrire directement dessus.</p></div>
+      <div class="o-tete-tel"><b>Réglages du document</b><button type="button" id="o-fermer" aria-label="Fermer">×</button></div>
+      <div class="o-bloc o-aide-pc"><p class="o-aide">✍️ Cliquez sur la feuille pour écrire directement dessus.</p></div>
       <div class="o-bloc"><b class="o-titre">Modèle</b><div class="o-modeles" id="o-modeles"></div></div>
       <div class="o-bloc"><b class="o-titre">Couleur</b><div class="o-couleurs" id="o-couleurs"></div></div>
       <div class="o-bloc"><b class="o-titre">TVA</b>
@@ -839,6 +932,11 @@ window.DOCU_AFFICHAGE = (function(){
 
     <!-- ===== APERÇU ===== -->
     <div class="panneau" id="p-apercu">
+      <div class="tel-barre" id="tel-barre">
+        <button type="button" id="tel-reglages"><span>🎨</span>Modèle, couleur, TVA</button>
+        <button type="button" id="tel-apercu"><span>👁</span>Aperçu</button>
+      </div>
+      <p class="tel-aide" id="tel-aide">✍️ Touchez la feuille pour écrire dessus · <b>−</b> retire une ligne · <b>＋</b> en ajoute une</p>
       <div class="style-bar">
         <div class="modeles" id="modeles">
           <button type="button" class="modele" data-mod="classique">
@@ -1319,7 +1417,9 @@ window.DOCU_AFFICHAGE = (function(){
 
     // Mentions
     const mentions = [];
-    if (fr) mentions.push(esc(texteDoc('franchise')));
+    // TVA activée mais à 0 % sur tout le document : la mention « TVA non applicable » s'ajoute toute seule
+    const tvaZero = !fr && (k.lignes.length ? k.lignes.every(l => l.t === 0) : tauxDef() === 0);
+    if (fr || tvaZero) mentions.push(esc(texteDoc('franchise')));
     if (t === 'facture' && cl.pro) mentions.push(esc(texteDoc('penalites')));
     if (t === 'devis' && aff('doc.validite') && etat.doc.validite) mentions.push(esc(texteDoc('validite')));
 
@@ -1376,6 +1476,7 @@ window.DOCU_AFFICHAGE = (function(){
   }
 
   function rendreApercu(){
+    if (doux && feuille() && telephone()){ rendreDoux(); return; }
     const f = feuille() ? memoriserCurseur() : null;
     redessin = true;
     let k;
@@ -1391,6 +1492,7 @@ window.DOCU_AFFICHAGE = (function(){
 
   // Mise à l'échelle de la page A4 dans l'aperçu
   function ajuster(){
+    if (document.body.classList.contains('feuille-tel')){ $('echelle').style.transform = 'none'; $('support').style.height = 'auto'; return; }
     const cadre = $('cadre');
     const largeur = cadre.clientWidth - 24;
     if (largeur <= 0) return;
@@ -1964,9 +2066,39 @@ window.DOCU_AFFICHAGE = (function(){
   // =====================================================================
   // Chaque zone de la feuille est reliée au même réglage que le formulaire (caché) :
   // on écrit dans le formulaire, qui reste la seule source (comptes, clients, envoi…).
-  var enCours = null, redessin = false;          // zone où se trouve le curseur (affichée « brute » pendant la saisie)
-  function lirePref(){ try{ return localStorage.getItem('docupret_saisie') || ''; }catch(e){ return ''; } }
-  function feuille(){ return !!(window.matchMedia && matchMedia('(min-width:1100px)').matches) && lirePref() !== 'formulaire'; }
+  var enCours = null, redessin = false, doux = false;
+  // Met à jour la feuille sans toucher à la case en cours de saisie : totaux, montants des lignes, pied de page…
+  function rendreDoux(){
+    const page = $('page'), a = document.activeElement;
+    enCours = a && a.dataset && a.dataset.ed && page.contains(a) ? a.dataset.ed : null;
+    const t = document.createElement('div');
+    const k = remplirEdition(t);
+    const vivants = page.querySelectorAll('.ed, .ed-date, .ed-sel'), neufs = t.querySelectorAll('.ed, .ed-date, .ed-sel');
+    if (vivants.length !== neufs.length && !enCours){ doux = false; rendreApercu(); return; }
+    page.querySelectorAll('[data-zone]').forEach(z => {
+      if (a && z.contains(a)) return;
+      const n = t.querySelector(`[data-zone="${z.dataset.zone}"]`);
+      if (n && n.innerHTML !== z.innerHTML) z.innerHTML = n.innerHTML;
+    });
+    page.querySelectorAll('.ed').forEach(el => {
+      if (el === a) return;
+      const n = t.querySelector(`.ed[data-ed="${el.dataset.ed}"]`);
+      if (n && n.textContent !== el.textContent) el.textContent = n.textContent;
+    });
+    majOutils();
+    $('total-label').textContent = etat.type === 'recu' ? 'Montant payé' : etat.type === 'avoir' ? "Total de l'avoir" : (etat.franchise ? 'Total' : 'Total TTC');
+    $('total-val').textContent = eur(k.totalTTC);
+  }
+  // Valeur « brute » d'une case (montant tapé, texte personnalisé…)
+  function valeurBrute(cle){
+    let m = cle.match(/^L:(\d+):(\w+)$/); if (m) return (etat.lignes[+m[1]] || {})[m[2]] ?? '';
+    m = cle.match(/^T:(\w+)$/); if (m) return avecDate(etat.textes[m[1]] || '');
+    return null;
+  }          // zone où se trouve le curseur (affichée « brute » pendant la saisie)
+  const telephone = () => !!(window.matchMedia && matchMedia('(max-width:959px)').matches);
+  const clePref = () => 'docupret_saisie';
+  function lirePref(){ try{ return localStorage.getItem(clePref()) || ''; }catch(e){ return ''; } }
+  function feuille(){ return telephone() ? window.DOCU_AFFICHAGE === 'feuille' : !!(window.matchMedia && matchMedia('(min-width:1100px)').matches) && lirePref() !== 'formulaire'; }
   const CE = (() => { try{ const d = document.createElement('div'); d.contentEditable = 'plaintext-only'; return d.contentEditable === 'plaintext-only' ? 'plaintext-only' : 'true'; }catch(e){ return 'true'; } })();
 
   function remplirEdition(page){
@@ -2006,7 +2138,7 @@ window.DOCU_AFFICHAGE = (function(){
     if (c.qte) cols.push({h: 'Total' + suffixe, v: (l, i) => eur(etat.tvaMode === 'TTC' && !fr ? k.toutes[i].ttc : k.toutes[i].ht), n: true});
     else cols.push({h: 'Montant' + suffixe, v: (l, i) => E(`L:${i}:pu`, brut(`L:${i}:pu`, l.pu, eur(num(l.pu))), '0,00 €', {fmt: true}), n: true});
     const plusieurs = etat.lignes.length > 1;
-    const corps = etat.lignes.map((l, i) => `<tr data-ligne="${i}">${cols.map((col, j) => `<td class="${col.n ? 'n' : ''}">${col.v(l, i)}${j === cols.length - 1 && plusieurs ? `<button type="button" class="ed-suppr" data-act="suppr" data-i="${i}" title="Supprimer cette ligne" aria-label="Supprimer cette ligne">×</button>` : ''}</td>`).join('')}</tr>`).join('');
+    const corps = etat.lignes.map((l, i) => `<tr data-ligne="${i}">${cols.map((col, j) => `<td class="${col.n ? 'n' : ''}" data-l="${esc(col.h)}" data-c="${col.large ? 'des' : j === cols.length - 1 ? 'total' : 'autre'}"${j === cols.length - 1 && c.qte ? ` data-zone="lt${i}"` : ''}>${col.v(l, i)}${j === cols.length - 1 && plusieurs ? `<button type="button" class="ed-suppr" data-act="suppr" data-i="${i}" title="Supprimer cette ligne" aria-label="Supprimer cette ligne">×</button>` : ''}</td>`).join('')}</tr>`).join('');
 
     // Totaux (comme sur le PDF)
     let totaux = '';
@@ -2045,7 +2177,9 @@ window.DOCU_AFFICHAGE = (function(){
       const v = enCours === cle ? avecDate(etat.textes[k2] || '') : texteDoc(k2);
       return `<div class="ed-l">${E(cle, v, avecDate(TEXTES_DEF[k2]), {multi: k2 === 'signature'})}${perso ? `<button type="button" class="ed-moins ed-reinit" data-act="texte-defaut" data-k="${k2}" title="Remettre le texte d'origine" aria-label="Remettre le texte d'origine">↺</button>` : ''}</div>`; };
     const mentions = [];
-    if (fr) mentions.push(txt('franchise'));
+    // TVA activée mais à 0 % sur tout le document : la mention « TVA non applicable » s'ajoute toute seule
+    const tvaZero = !fr && (k.lignes.length ? k.lignes.every(l => l.t === 0) : tauxDef() === 0);
+    if (fr || tvaZero) mentions.push(txt('franchise'));
     if (t === 'facture' && cl.pro) mentions.push(txt('penalites'));
     if (t === 'devis' && aff('doc.validite') && etat.doc.validite) mentions.push(txt('validite'));
 
@@ -2094,7 +2228,7 @@ window.DOCU_AFFICHAGE = (function(){
         <div class="p-titre"><div class="p-h1">${met ? `<img class="p-ico" alt="" src="${svgUri(36, 36, `<circle cx="18" cy="18" r="18" fill="${etat.couleur}"/><g transform="translate(6 6)" fill="none" stroke="${texteSur(etat.couleur)}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${met.icone}</g>`)}">` : ''}${T.titre}</div>${meta ? `<div class="p-meta">${meta}</div>` : ''}</div>
       </div>
       <div class="p-client"><span class="p-label">${T.client}</span>${blocClient}</div>
-      ${phrase}
+      <div data-zone="phrase">${phrase}</div>
       <table class="p-table">
         <thead><tr>${cols.map(col => `<th class="${col.n ? 'n' : ''}" ${col.large ? 'style="width:45%"' : ''}>${col.h}</th>`).join('')}</tr></thead>
         <tbody>${corps}</tbody>
@@ -2102,12 +2236,12 @@ window.DOCU_AFFICHAGE = (function(){
       <button type="button" class="ed-ajout" data-act="ajout">＋ Ajouter une ligne</button>
       <div class="p-bas">
         <div class="p-paiement">${paiement}</div>
-        <table class="p-totaux">${totaux}</table>
+        <table class="p-totaux" data-zone="totaux">${totaux}</table>
       </div>
       ${t === 'devis' ? `<div class="p-signature ed-signature">${txt('signature')}</div>` : ''}
-      ${mentions.length ? `<div class="p-mentions">${mentions.map(m => `<div>${m}</div>`).join('')}</div>` : ''}
+      ${mentions.length ? `<div class="p-mentions" data-zone="mentions">${mentions.map(m => `<div>${m}</div>`).join('')}</div>` : ''}
       ${t === 'recu' ? '<div class="p-paye">PAYÉ</div>' : ''}
-      ${pied ? `<div class="p-pied">${pied}</div>` : ''}
+      ${pied ? `<div class="p-pied" data-zone="pied">${pied}</div>` : ''}
     `;
     return k;
   }
@@ -2182,7 +2316,8 @@ window.DOCU_AFFICHAGE = (function(){
     const el = e.target.closest && e.target.closest('.ed'); if (!el || e.isComposing) return;
     let v = texteDe(el);
     if (!el.dataset.multi) v = v.replace(/\n+/g, ' ');
-    ecrireValeur(el.dataset.ed, v);
+    doux = telephone();
+    try{ ecrireValeur(el.dataset.ed, v); } finally { doux = false; }
   });
   pageEl.addEventListener('compositionend', e => { const el = e.target.closest && e.target.closest('.ed'); if (el) el.dispatchEvent(new Event('input', {bubbles: true})); });
   pageEl.addEventListener('change', e => {
@@ -2190,8 +2325,17 @@ window.DOCU_AFFICHAGE = (function(){
     ecrireValeur(el.dataset.ed, el.value);
   });
   // Les montants s'affichent « 1 200,00 € » ; pendant la saisie, on voit le chiffre tapé
-  pageEl.addEventListener('focusin', e => { const el = e.target; if (!redessin && el.dataset && el.dataset.fmt){ enCours = el.dataset.ed; rendreApercu(); const n = $('page').querySelector(`[data-ed="${el.dataset.ed}"]`); if (n) placerCurseur(n, null); } });
-  pageEl.addEventListener('focusout', e => { if (!redessin && e.target.dataset && (e.target.dataset.fmt || /^T:/.test(e.target.dataset.ed || ''))) setTimeout(() => { if (feuille()) rendreApercu(); }, 0); });
+  pageEl.addEventListener('focusin', e => { const el = e.target;
+    // Téléphone : on affiche le chiffre tapé sans redessiner la feuille (le clavier ne se ferme pas)
+    if (!redessin && telephone() && el.dataset && (el.dataset.fmt || /^T:/.test(el.dataset.ed || ''))){ const v = valeurBrute(el.dataset.ed); enCours = el.dataset.ed; if (v != null && el.textContent !== v){ el.textContent = v; placerCurseur(el, null); } return; }
+    if (!redessin && el.dataset && el.dataset.fmt){ enCours = el.dataset.ed; rendreApercu(); const n = $('page').querySelector(`[data-ed="${el.dataset.ed}"]`); if (n) placerCurseur(n, null); } });
+  pageEl.addEventListener('focusout', e => {
+    if (!redessin && telephone() && feuille()){
+      // Téléphone : en quittant une case, la feuille se remet au propre (montants « 1 200,00 € »…)
+      setTimeout(() => { const a = document.activeElement; if (a && a.closest && a.closest('#page') && a.matches('.ed, .ed-date, .ed-sel')){ doux = true; try{ enCours = null; rendreDoux(); } finally { doux = false; } } else rendreApercu(); }, 0);
+      return;
+    }
+    if (!redessin && e.target.dataset && (e.target.dataset.fmt || /^T:/.test(e.target.dataset.ed || ''))) setTimeout(() => { if (feuille()) rendreApercu(); }, 0); });
   pageEl.addEventListener('keydown', e => {
     const el = e.target.closest && e.target.closest('.ed'); if (!el) return;
     if (e.key === 'Enter' && !el.dataset.multi){
@@ -2325,19 +2469,48 @@ window.DOCU_AFFICHAGE = (function(){
   $('o-nouveau').addEventListener('click', () => $('nouveau').click());
   $('o-restaurer').addEventListener('click', () => { etat.masques = {}; majVisibilite(); rendreApercu(); sauver(); });
 
+  // ----- Téléphone : panneau de réglages et aperçu du PDF -----
+  const fondR = document.createElement('div'); fondR.className = 'o-fond'; fondR.hidden = true; document.body.appendChild(fondR);
+  function ouvrirReglages(){
+    $('outils').classList.add('ouvert'); fondR.hidden = false; document.body.classList.add('reglages-ouverts');
+    try{ history.pushState({reglages: 1}, ''); }catch(e){}
+  }
+  function fermerReglages(sansHisto){
+    if (!$('outils').classList.contains('ouvert')) return;
+    $('outils').classList.remove('ouvert'); fondR.hidden = true; document.body.classList.remove('reglages-ouverts');
+    if (!sansHisto && history.state && history.state.reglages) try{ history.back(); }catch(e){}
+  }
+  window.addEventListener('popstate', () => { if ($('outils').classList.contains('ouvert') && !(history.state && history.state.reglages)) fermerReglages(true); });
+  $('tel-reglages').addEventListener('click', ouvrirReglages);
+  $('o-fermer').addEventListener('click', () => fermerReglages());
+  fondR.addEventListener('click', () => fermerReglages());
+  $('tel-apercu').addEventListener('click', () => {
+    const largeur = Math.min(window.innerWidth - 24, 560), s = largeur / 794;
+    const l = document.createElement('div'); l.className = 'loupe';
+    l.innerHTML = `<div class="loupe-support" style="width:${largeur}px;height:${1123 * s}px"></div><div class="loupe-bas"><span class="loupe-nom">Aperçu du PDF</span><button type="button" class="btn" data-fermer>Fermer</button></div>`;
+    const p = window.docuPagePropre(); p.style.transform = `scale(${s})`; p.style.transformOrigin = 'top left';
+    l.firstElementChild.appendChild(p);
+    l.addEventListener('click', e => { if (e.target === l || e.target.closest('[data-fermer]')) l.remove(); });
+    document.body.appendChild(l);
+  });
+
   // ----- Passer d'un mode à l'autre -----
   function appliquerMode(){
-    const pc = !!(window.matchMedia && matchMedia('(min-width:1100px)').matches), m = feuille();
+    const pc = !!(window.matchMedia && (matchMedia('(min-width:1100px)').matches || telephone())), m = feuille();
     document.body.classList.toggle('mode-feuille', m);
+    document.body.classList.toggle('feuille-tel', m && telephone());
     $('outils').hidden = !m;
     $('vers-feuille').hidden = !(pc && !m);
+    if (!(m && telephone())) fermerReglages(true);
     if (!m) enCours = null;
     rendreApercu();
   }
   const ecrirePref = v => { try{ if (v) localStorage.setItem('docupret_saisie', v); else localStorage.removeItem('docupret_saisie'); }catch(e){} };
-  $('o-formulaire').addEventListener('click', () => { ecrirePref('formulaire'); appliquerMode(); window.scrollTo({top: 0}); });
-  $('vers-feuille').addEventListener('click', () => { ecrirePref(''); appliquerMode(); window.scrollTo({top: 0}); });
-  if (window.matchMedia) matchMedia('(min-width:1100px)').addEventListener('change', appliquerMode);
+  // Téléphone : le choix est le même que dans Mon compte › Paramètres › Affichage sur téléphone
+  const affichageTel = v => { try{ localStorage.setItem('docupret_affichage', v); }catch(e){} try{ window.Compte && Compte.parametresModifies && Compte.parametresModifies(); }catch(e){} setTimeout(() => location.reload(), 150); };
+  $('o-formulaire').addEventListener('click', () => { if (telephone()) return affichageTel('liste'); ecrirePref('formulaire'); appliquerMode(); window.scrollTo({top: 0}); });
+  $('vers-feuille').addEventListener('click', () => { if (telephone()) return affichageTel('feuille'); ecrirePref(''); appliquerMode(); window.scrollTo({top: 0}); });
+  if (window.matchMedia){ matchMedia('(min-width:1100px)').addEventListener('change', appliquerMode); matchMedia('(max-width:959px)').addEventListener('change', appliquerMode); }
 
   // ---------- Démarrage ----------
   rendreGalerie(); remplirChamps(); majLogo(); rendreLignes(); majVisibilite(); appliquerMode();
@@ -2670,6 +2843,6 @@ window.DOCU_AFFICHAGE = (function(){
 })();
 </script>
 <script src="stats.js?v=2" defer></script>
-<script src="compte-menu.js?v=8"></script>
+<script src="compte-menu.js?v=9"></script>
 </body>
 </html>
