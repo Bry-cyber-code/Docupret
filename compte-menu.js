@@ -19,7 +19,7 @@
     pile = pile.filter(x => els.includes(x.el)).concat(nouvelles);
     const net = nouvelles.length - fermees;
     if (net > 0) for (let i = 0; i < net; i++) history.pushState({docuCouche: true}, '');
-    else if (net < 0){ aIgnorer++; history.go(net); }   // fermée avec la croix, le fond ou Échap
+    else if (net < 0){ aIgnorer++; history.go(net); setTimeout(() => { aIgnorer = 0; }, 1500); }   // fermée avec la croix, le fond ou Échap
   }
   window.addEventListener('popstate', e => {
     if (navigation){
@@ -45,6 +45,9 @@
     navigation = {url: url.href, fermer: pile.map(p => p.fermer)};
     const n = pile.length; pile = [];
     history.go(-n);
+    // Sécurité : si le navigateur ne revient pas en arrière, on suit le lien directement (sinon le clic ne ferait rien)
+    const cible = navigation;
+    setTimeout(() => { if (navigation === cible){ navigation = null; cible.fermer.forEach(f => { try{ f(); }catch(err){} }); location.href = cible.url; } }, 700);
   }, true);
   const lancer = () => {
     new MutationObserver(verifier).observe(document.body, {childList: true, subtree: true, attributes: true, attributeFilter: ['class', 'hidden']});

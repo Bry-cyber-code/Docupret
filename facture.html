@@ -1542,7 +1542,9 @@ window.DOCU_AFFICHAGE = (function(){
   }
 
   function remplirChamps(){
+    const actif = document.activeElement;
     document.querySelectorAll('[data-b]').forEach(e => {
+      if (e === actif && e.type !== 'checkbox') return;   // ne jamais réécrire la case où l'on tape
       const v = lire(etat, e.dataset.b);
       if (e.type === 'checkbox') e.checked = !!v;
       else e.value = v ?? '';
@@ -1737,6 +1739,13 @@ window.DOCU_AFFICHAGE = (function(){
     document.body.appendChild(d);
   }
 
+  // Échap ferme la fenêtre ouverte (confirmation, aperçu d'un modèle…)
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Escape') return;
+    const l = [...document.querySelectorAll('body > .loupe')].pop();
+    if (l){ const b = l.querySelector('[data-non], [data-fermer]'); if (b) b.click(); else l.remove(); }
+  });
+
   // Message temporaire
   function alerte(txt){
     const a = document.createElement('div'); a.className = 'alerte'; a.textContent = txt;
@@ -1757,8 +1766,11 @@ window.DOCU_AFFICHAGE = (function(){
     const sx = window.scrollX, sy = window.scrollY; window.scrollTo(0, 0);
     try{
       const travail = html2pdf().set(Object.assign({}, opts, {html2canvas: Object.assign({scale: 2, backgroundColor: '#ffffff', scrollX: 0, scrollY: 0, x: 0, y: 0, windowWidth: 794, width: 794}, opts.html2canvas || {})})).from(copie);
-      if (opts.enMemoire) return await travail.outputPdf('blob');
-      await travail.save();
+      // Sécurité : si la création du PDF ne répond plus, on rend la main au lieu de rester bloqué
+      const delai = new Promise((_, ko) => setTimeout(() => ko(new Error('delai')), 45000));
+      delai.catch(() => {});
+      if (opts.enMemoire) return await Promise.race([travail.outputPdf('blob'), delai]);
+      await Promise.race([travail.save(), delai]);
     } finally { hote.remove(); window.scrollTo(sx, sy); }
   }
 
@@ -2048,6 +2060,9 @@ window.DOCU_AFFICHAGE = (function(){
     if (MODE_PDF) return;
     let s; try{ s = JSON.parse(localStorage.getItem(CLE)); }catch(e){}
     if (!s || typeof s !== 'object') return;
+    // Seulement si un réglage a vraiment changé (sinon deux onglets ouverts se renverraient les réglages sans fin)
+    const reglages = () => JSON.stringify([etat.numerotation, etat.envoiMessage, etat.franchise, etat.tauxDefaut, etat.tvaMode, etat.em, etat.paiement.conditions, etat.paiement.moyen, etat.paiement.iban, etat.compteurs, etat.numMaj, etat.doc.numero]);
+    const avant = reglages();
     const auto = etat.doc.numero === prochainNumero(etat.type);
     ['numerotation', 'envoiMessage', 'franchise', 'tauxDefaut', 'tvaMode'].forEach(k => { if (k in s) etat[k] = s[k]; });
     if (s.em) Object.assign(etat.em, s.em);
@@ -2056,6 +2071,7 @@ window.DOCU_AFFICHAGE = (function(){
     if (dateMs(s.numMaj) > dateMs(etat.numMaj)){ etat.compteurs = Object.assign({}, etat.compteurs, dist); etat.numMaj = s.numMaj; }
     else for (const t in dist) etat.compteurs[t] = Math.max(etat.compteurs[t] || 0, dist[t] || 0);
     if (auto || !etat.doc.numero) etat.doc.numero = prochainNumero(etat.type);
+    if (reglages() === avant) return;
     remplirChamps(); majLogo(); majVisibilite(); rendreApercu(); sauver();
   }
   window.docuRafraichirReglages = rafraichirReglages;
@@ -2845,6 +2861,6 @@ window.DOCU_AFFICHAGE = (function(){
 })();
 </script>
 <script src="stats.js?v=2" defer></script>
-<script src="compte-menu.js?v=9"></script>
+<script src="compte-menu.js?v=10"></script>
 </body>
 </html>
