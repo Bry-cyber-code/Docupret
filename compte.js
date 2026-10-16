@@ -272,7 +272,19 @@
     await attendre();
     try{ await auth.signInWithEmailAndPassword(email, mdp); }catch(e){ throw traduire(e); }
   }
-  async function deconnecter(){ if (auth) await auth.signOut(); utilisateur = null; prevenir(); }
+  // Déconnexion : on termine d'abord l'envoi vers le compte, puis on efface les données de cet appareil
+  // (paramètres, clients, documents, boîte Gmail). Tout revient à la prochaine connexion.
+  async function deconnecter(){
+    if (utilisateur){
+      if (navigator.onLine === false) throw new Error('Pas de connexion internet : reconnectez-vous à internet avant de vous déconnecter, pour ne rien perdre.');
+      try{ await synchroniser(); await synchroniserDocuments(); await synchroniserParametres(); }catch(e){}
+    }
+    try{ if (window.Gmail) window.Gmail.deconnecter(); }catch(e){}
+    if (auth) await auth.signOut();
+    utilisateur = null;
+    try{ ['docufacile_v1', CLE_CLIENTS, CLE_DOCS, CLE_MAJ, 'docupret_affichage', 'docupret_avatar', 'docupret_envoi_gmail'].forEach(k => localStorage.removeItem(k)); }catch(e){}
+    prevenir();
+  }
   async function motDePasseOublie(email){
     await attendre();
     try{ await auth.sendPasswordResetEmail(email); }

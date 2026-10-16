@@ -452,7 +452,7 @@
   </div>
 </footer>
 
-<script src="compte.js?v=9"></script>
+<script src="compte.js?v=10"></script>
 <script src="gmail.js?v=3"></script>
 <script src="compte-menu.js?v=3"></script>
 <script>
@@ -517,7 +517,12 @@
     try{ await C.changerMotDePasse(m); message('msg2', 'Mot de passe enregistré ✓', true); history.replaceState(null, '', location.pathname); setTimeout(rendreCompte, 1200); }
     catch(err){ message('msg2', err.message); }
   });
-  $('deco').addEventListener('click', async () => { await C.deconnecter(); rendreCompte(); C.toast('Vous êtes déconnecté. Vos clients restent sur cet appareil.'); });
+  $('deco').addEventListener('click', async () => {
+    const bt = $('deco'); bt.disabled = true;
+    try{ await C.deconnecter(); }catch(e){ bt.disabled = false; C.toast(e.message || 'Déconnexion impossible. Réessayez.'); return; }
+    C.toast('Vous êtes déconnecté. Vos données restent dans votre compte.');
+    setTimeout(() => location.reload(), 900);
+  });
   $('changer-mdp').addEventListener('click', () => { $('bloc-connecte').hidden = true; $('bloc-nouveau').hidden = false; $('mdp2').focus(); });
   $('suppr-compte').addEventListener('click', async () => {
     if (!confirm('Supprimer définitivement votre compte et tous les clients enregistrés dedans ?\n\nCette action est irréversible.')) return;
@@ -728,7 +733,7 @@
     const G = window.Gmail;
     if (!G || !G.actif){ $('carte-envoi').hidden = true; return; }
     $('envoi-gmail').checked = G.active();
-    const a = G.adresse();
+    const a = G.adresse() || (G.jeton() ? 'votre boîte Gmail' : '');
     $('gmail-etat').innerHTML = !C.utilisateur() ? '<p class="bientot" style="margin:0">🔒 L\'envoi en un clic depuis Gmail est réservé aux comptes. <a href="#compte" style="font-weight:700;text-decoration:underline">Créez votre compte gratuit</a>.</p>'
       : a ? `<div class="gmail-ok">✅ Boîte connectée : <b>${esc(a)}</b> <button type="button" class="lien" id="gmail-deco">Déconnecter</button></div>`
       : '<p class="note" style="margin:0">Aucune boîte connectée pour l\'instant : Google vous la demandera lors de votre premier envoi.</p>';
