@@ -312,6 +312,7 @@
       const lot = db.batch(); snap.forEach(d => lot.delete(d.ref)); await lot.commit();
       try{ const sd = await colDocs().get(); const l2 = db.batch(); sd.forEach(d => l2.delete(d.ref)); await l2.commit(); }catch(e){}
       try{ await db.collection('utilisateurs').doc(u.uid).delete(); }catch(e){}
+      try{ await db.collection('classement').doc(u.uid).delete(); }catch(e){}
       try{ localStorage.removeItem(CLE_DOCS); }catch(e){}
       await u.delete();
       try{ window.DocuStats && window.DocuStats.evenement('compte_supprime'); }catch(e){}

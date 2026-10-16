@@ -174,6 +174,30 @@
   .ligne-st .val{font-weight:700;font-variant-numeric:tabular-nums;color:var(--texte)}
   .ligne-st .piste{grid-column:1 / -1;height:8px;background:#EEF2F8;border-radius:4px;overflow:hidden}
   .ligne-st .piste i{display:block;height:100%;background:var(--bleu);border-radius:0 4px 4px 0;min-width:4px}
+  .grp-st{font-size:.74rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--gris);margin:22px 2px 8px}
+  .large-st{grid-column:1 / -1}
+  .heures{display:grid;grid-template-columns:repeat(24,1fr);align-items:end;gap:3px;height:130px;padding-top:6px}
+  .heures div{display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%;min-width:0}
+  .heures i{display:block;width:100%;background:var(--bleu);border-radius:3px 3px 0 0;min-height:2px}
+  .heures i.zero{background:#EEF2F8}
+  .heures-lib{display:grid;grid-template-columns:repeat(24,1fr);gap:3px;font-size:.66rem;color:var(--gris);margin-top:4px;text-align:center}
+  .heures-lib span{white-space:nowrap;overflow:visible}
+  .note-st{font-size:.8rem;color:var(--gris);margin-top:10px}
+  .fin-st{display:grid;gap:12px}
+  .fin-ligne{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:3px 10px;font-size:.88rem}
+  .fin-ligne .lib{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:650}
+  .fin-ligne .pc{font-weight:800;font-variant-numeric:tabular-nums}
+  .fin-ligne .det{grid-column:1 / -1;font-size:.78rem;color:var(--gris)}
+  .fin-ligne .piste{grid-column:1 / -1;height:8px;background:#F6E3DF;border-radius:4px;overflow:hidden}
+  .fin-ligne .piste i{display:block;height:100%;background:#2B8148;border-radius:0 4px 4px 0;min-width:4px}
+  .classement{width:100%;border-collapse:collapse;font-size:.86rem;font-variant-numeric:tabular-nums}
+  .classement th{font-size:.74rem;color:var(--gris);font-weight:700;text-align:left;padding:0 6px 6px;border-bottom:1px solid var(--bord)}
+  .classement td{padding:9px 6px;border-bottom:1px solid var(--bord);vertical-align:top}
+  .classement td.rg{font-weight:800;color:var(--gris);width:28px}
+  .classement td.nb{text-align:right;font-weight:800;font-size:1rem}
+  .classement .mail{font-weight:650;word-break:break-all}
+  .classement .types{display:block;font-size:.76rem;color:var(--gris);margin-top:2px}
+  .classement tr:nth-child(2) td.rg{color:#C9A227}.classement tr:nth-child(3) td.rg{color:#8E9AAB}.classement tr:nth-child(4) td.rg{color:#B07A4F}
   .vide-st{font-size:.86rem;color:var(--gris);padding:6px 0}
   details.tab-st{margin-top:10px;font-size:.84rem}
   details.tab-st summary{cursor:pointer;color:var(--bleu);font-weight:650}
@@ -289,17 +313,50 @@
       <details class="tab-st"><summary>Voir les chiffres jour par jour</summary><table id="tab-jours"></table></details>
     </section>
 
+    <h2 class="grp-st">Documents</h2>
     <div class="deux-st">
       <section class="bloc-st"><h2>Pages les plus vues</h2><p class="sous">Nombre d'affichages de chaque page</p><div class="liste-st" id="l-pages"></div></section>
       <section class="bloc-st"><h2>Documents créés</h2><p class="sous">PDF téléchargés ou envoyés, par type</p><div class="liste-st" id="l-docs"></div></section>
-      <section class="bloc-st"><h2>D'où viennent les visiteurs</h2><p class="sous">Site ou application d'où ils arrivent</p><div class="liste-st" id="l-src"></div></section>
-      <section class="bloc-st"><h2>Appareils et actions</h2><p class="sous">Téléphone ou ordinateur, comptes, envois</p><div class="liste-st" id="l-app"></div></section>
+      <section class="bloc-st large-st"><h2>Documents commencés et terminés</h2><p class="sous">Sur 100 personnes qui commencent à remplir un document, combien vont jusqu'au téléchargement</p><div class="fin-st" id="l-fin"></div></section>
+    </div>
+
+    <h2 class="grp-st">Comportement des visiteurs</h2>
+    <div class="deux-st">
+      <section class="bloc-st"><h2>Pages d'arrivée</h2><p class="sous">La première page vue en arrivant sur le site</p><div class="liste-st" id="l-ent"></div></section>
+      <section class="bloc-st"><h2>Pages de sortie</h2><p class="sous">La dernière page vue avant de partir</p><div class="liste-st" id="l-sort"></div></section>
+      <section class="bloc-st"><h2>Temps passé sur le site</h2><p class="sous">Durée de chaque visite, page à l’écran</p><div class="liste-st" id="l-dur"></div></section>
+      <section class="bloc-st"><h2>Pages vues par visite</h2><p class="sous">Nombre de pages ouvertes pendant une visite</p><div class="liste-st" id="l-ppv"></div></section>
+    </div>
+
+    <h2 class="grp-st">Recherches</h2>
+    <div class="deux-st">
+      <section class="bloc-st"><h2>Ce que les gens cherchent</h2><p class="sous">Mots tapés dans la barre de recherche de l’accueil</p><div class="liste-st" id="l-rech"></div></section>
+      <section class="bloc-st"><h2>Recherches sans résultat</h2><p class="sous">Documents demandés que le site ne propose pas encore</p><div class="liste-st" id="l-rech0"></div></section>
+    </div>
+
+    <h2 class="grp-st">Horaires</h2>
+    <div class="deux-st">
+      <section class="bloc-st large-st"><h2>Heures de visite</h2><p class="sous">Nombre de visites selon l'heure de la journée (heure du visiteur)</p><div id="g-heures"></div></section>
+      <section class="bloc-st"><h2>Jours de la semaine</h2><p class="sous">Visiteurs selon le jour</p><div class="liste-st" id="l-jours"></div></section>
+      <section class="bloc-st"><h2>Pays et territoires</h2><p class="sous">D’après le fuseau horaire de l’appareil, jamais l’adresse IP</p><div class="liste-st" id="l-pays"></div></section>
+    </div>
+
+    <h2 class="grp-st">Provenance et appareils</h2>
+    <div class="deux-st">
+      <section class="bloc-st"><h2>D'où viennent les visiteurs</h2><p class="sous">Site ou application d’où ils arrivent</p><div class="liste-st" id="l-src"></div></section>
+      <section class="bloc-st"><h2>Téléphones et ordinateurs</h2><p class="sous">iPhone, Android, Windows, Mac…</p><div class="liste-st" id="l-os"></div></section>
+      <section class="bloc-st"><h2>Navigateurs</h2><p class="sous">Chrome, Safari, Samsung, appli Facebook…</p><div class="liste-st" id="l-nav"></div></section>
+      <section class="bloc-st"><h2>Tailles d'écran</h2><p class="sous">Pour vérifier que le site s’affiche bien partout</p><div class="liste-st" id="l-ecr"></div></section>
+      <section class="bloc-st"><h2>Comptes et actions</h2><p class="sous">Connexions, comptes, envois, applications installées</p><div class="liste-st" id="l-app"></div></section>
       <section class="bloc-st"><h2>Clics vers les partenaires</h2><p class="sous">Personnes envoyées vers Qonto, Indy, SumUp ou Vistaprint</p><div class="liste-st" id="l-part"></div></section>
     </div>
 
+    <h2 class="grp-st">Classement des comptes</h2>
+    <section class="bloc-st"><h2>Les 20 comptes qui téléchargent le plus</h2><p class="sous">Tous documents confondus, depuis le début du classement (17 octobre 2026). Visible uniquement par vous.</p><div id="l-classement"></div></section>
+
     <div class="st-pied">
       <label><input type="checkbox" id="moi" checked> Ne pas compter mes propres visites sur cet appareil</label>
-      <p>Les chiffres sont anonymes : aucune adresse IP, aucun cookie, aucune donnée personnelle des visiteurs n'est enregistrée. Le nombre total de comptes, avec leurs adresses, se trouve aussi dans Firebase → Authentication → Utilisateurs.</p>
+      <p>Les chiffres des visiteurs sont anonymes : aucune adresse IP, aucun cookie, aucune donnée personnelle n'est enregistrée. Seul le classement est rattaché aux comptes : il ne contient que l'adresse e-mail du compte et le nombre de documents téléchargés par type, jamais leur contenu. Les nouveaux détails (comportement, recherches, horaires, appareils, lieu) sont comptés depuis le 17 octobre 2026.</p>
     </div>
   </div>
 </main>
@@ -353,7 +410,7 @@
   });
 })();
 </script>
-<script src="compte.js?v=15"></script>
+<script src="compte.js?v=16"></script>
 <script src="compte-menu.js?v=10"></script>
 <script>
 (function(){
@@ -377,6 +434,20 @@
     compte: 'Mon compte', apropos: 'À propos', mentions_legales: 'Mentions légales', cgu: "Conditions d'utilisation"};
   const SOURCES = {direct: 'Accès direct ou favori', google: 'Google', bing: 'Bing', facebook: 'Facebook', instagram: 'Instagram', whatsapp: 'WhatsApp', youtube: 'YouTube',
     tiktok: 'TikTok', chatgpt: 'ChatGPT', yahoo: 'Yahoo', qwant: 'Qwant', ecosia: 'Ecosia', appli: 'Application installée', autre_site: 'Autre site'};
+  Object.assign(SOURCES, {gmail: 'Gmail', snapchat: 'Snapchat', linkedin: 'LinkedIn', duckduckgo: 'DuckDuckGo', outlook: 'Outlook / Hotmail', leboncoin: 'Leboncoin'});
+  const OS = {iphone: 'iPhone', ipad: 'iPad', android: 'Téléphone Android', tablette_android: 'Tablette Android', windows: 'Ordinateur Windows', mac: 'Mac', chromebook: 'Chromebook', linux: 'Linux', autre: 'Autre'};
+  const NAV = {chrome: 'Chrome', safari: 'Safari', samsung: 'Samsung Internet', firefox: 'Firefox', edge: 'Edge', opera: 'Opera', appli_facebook: 'Dans l’appli Facebook', appli_instagram: 'Dans l’appli Instagram', appli_snapchat: 'Dans l’appli Snapchat', appli_tiktok: 'Dans l’appli TikTok', appli_google: 'Appli Google', autre: 'Autre'};
+  const ECR = {petit_telephone: 'Petit téléphone', telephone: 'Téléphone', tablette: 'Tablette', ordinateur: 'Ordinateur', grand_ecran: 'Grand écran'};
+  const DUR = {a_moins_30s: 'Moins de 30 secondes', b_30s_2min: '30 secondes à 2 minutes', c_2_5min: '2 à 5 minutes', d_5_15min: '5 à 15 minutes', e_plus_15min: 'Plus de 15 minutes'};
+  const PPV = {p1: '1 seule page', p2: '2 pages', p3_4: '3 ou 4 pages', p5_9: '5 à 9 pages', p10_plus: '10 pages ou plus'};
+  const PAYS = {france: '🇫🇷 France métropolitaine', belgique: '🇧🇪 Belgique', suisse: '🇨🇭 Suisse', luxembourg: '🇱🇺 Luxembourg', monaco: '🇲🇨 Monaco', la_reunion: '🇷🇪 La Réunion', mayotte: '🇾🇹 Mayotte',
+    guadeloupe: '🇬🇵 Guadeloupe', martinique: '🇲🇶 Martinique', guyane: '🇬🇫 Guyane', saint_barthelemy: 'Saint-Barthélemy', saint_martin: 'Saint-Martin', saint_pierre_et_miquelon: 'Saint-Pierre-et-Miquelon',
+    nouvelle_caledonie: '🇳🇨 Nouvelle-Calédonie', polynesie: '🇵🇫 Polynésie française', wallis_et_futuna: 'Wallis-et-Futuna', canada: '🇨🇦 Canada', maroc: '🇲🇦 Maroc', algerie: '🇩🇿 Algérie', tunisie: '🇹🇳 Tunisie',
+    senegal: '🇸🇳 Sénégal', cote_d_ivoire: "🇨🇮 Côte d'Ivoire (et Afrique de l'Ouest)", cameroun: '🇨🇲 Cameroun', rd_congo: '🇨🇩 RD Congo', congo: '🇨🇬 Congo', gabon: '🇬🇦 Gabon', mali: '🇲🇱 Mali',
+    burkina_faso: '🇧🇫 Burkina Faso', guinee: '🇬🇳 Guinée', togo: '🇹🇬 Togo', benin: '🇧🇯 Bénin', niger: '🇳🇪 Niger', madagascar: '🇲🇬 Madagascar', maurice: '🇲🇺 Maurice', comores: '🇰🇲 Comores', haiti: '🇭🇹 Haïti',
+    royaume_uni: '🇬🇧 Royaume-Uni', espagne: '🇪🇸 Espagne', italie: '🇮🇹 Italie', allemagne: '🇩🇪 Allemagne', portugal: '🇵🇹 Portugal', pays_bas: '🇳🇱 Pays-Bas', irlande: '🇮🇪 Irlande', andorre: '🇦🇩 Andorre',
+    etats_unis: '🇺🇸 États-Unis', autre_europe: 'Autre pays d’Europe', autre_afrique: 'Autre pays d’Afrique', autre_amerique: 'Autre pays d’Amérique', asie: 'Asie', oceanie: 'Océanie', ocean_indien: 'Océan Indien', inconnu: 'Inconnu'};
+  const JOURS = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
   const nomPage = k => PAGES[k] || k.replace(/_/g, ' ');
   const nomDoc = k => { const t = k.replace(/^pdf_/, ''); return PAGES['facture_' + t] || PAGES[t] || PAGES['lettre_' + t] || nomPage(t); };
 
@@ -434,6 +505,7 @@
       const m = await lire(cleJour(avant[0]), cleJour(actuels[actuels.length - 1]));
       const docs = actuels.map(d => m.get(cleJour(d)) || {}), docsAvant = avant.map(d => m.get(cleJour(d)) || {});
       rendre(actuels, docs, docsAvant, await totalComptes());
+      chargerClassement();
       $('st-maj').textContent = 'À jour : ' + new Date().toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'});
     }catch(e){
       console.warn(e);
@@ -452,8 +524,9 @@
     if (action) return `<button type="button" class="tuile tuile-clic" data-action="${action}" title="Voir le détail"><small>${lib} <em>Voir le détail ›</em></small><b>${n(val)}</b>${ev || '<span>&nbsp;</span>'}</button>`;
     return `<div class="tuile"><small>${lib}</small><b>${n(val)}</b>${ev || '<span>&nbsp;</span>'}</div>`;
   }
-  function liste(id, obj, nommer, max){
-    const l = Object.entries(obj).filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]).slice(0, max || 10);
+  function liste(id, obj, nommer, max, ordre){
+    let l = Object.entries(obj).filter(([, v]) => v > 0);
+    l = ordre ? ordre.filter(k => (obj[k] || 0) > 0).map(k => [k, obj[k]]) : l.sort((a, b) => b[1] - a[1]).slice(0, max || 10);
     if (!l.length){ $(id).innerHTML = '<p class="vide-st">Pas encore de données sur cette période.</p>'; return; }
     const haut = l[0][1];
     $(id).innerHTML = l.map(([k, v]) => `<div class="ligne-st"><span class="lib">${esc(nommer(k))}</span><span class="val">${n(v)}</span><span class="piste"><i style="width:${Math.max(2, v / haut * 100)}%"></i></span></div>`).join('');
@@ -500,7 +573,12 @@
       tuile('Nouveaux visiteurs', somme(docs, d => d.nv), somme(docsAvant, d => d.nv)) +
       tuile('Documents créés', somme(docs, docsCrees), somme(docsAvant, docsCrees), 'docs') +
       tuile('Nouveaux comptes', somme(docs, d => ev(d, 'compte_cree')), somme(docsAvant, d => ev(d, 'compte_cree'))) +
-      tuile('Envois depuis Gmail', somme(docs, d => ev(d, 'envoi_gmail')), somme(docsAvant, d => ev(d, 'envoi_gmail')));
+      tuile('Envois depuis Gmail', somme(docs, d => ev(d, 'envoi_gmail')), somme(docsAvant, d => ev(d, 'envoi_gmail'))) +
+      tuileTexte('Temps moyen par visite', duree(tempsMoyen(docs)), tempsMoyen(docs), tempsMoyen(docsAvant)) +
+      tuileTexte('Pages par visite', pagesParVisite(docs) ? pagesParVisite(docs).toFixed(1).replace('.', ',') : '–', pagesParVisite(docs), pagesParVisite(docsAvant)) +
+      tuileTexte('Partis après 1 page', rebond(docs) === null ? '–' : rebond(docs) + ' %', rebond(docs), rebond(docsAvant), true) +
+      tuile('Visites de retour', somme(docs, d => Math.max(0, (d.vis || 0) - (d.nv || 0))), somme(docsAvant, d => Math.max(0, (d.vis || 0) - (d.nv || 0))));
+    detailsEnPlus(jrs, docs);
     graphe(jrs, docs.map(d => d.vis || 0), docs.map(d => d.v || 0));
     $('tab-jours').innerHTML = '<tr><th>Jour</th><th>Visiteurs</th><th>Pages vues</th><th>Documents</th></tr>' +
       jrs.map((j, i) => `<tr><td>${esc(jourCourt(j))}</td><td>${n(docs[i].vis)}</td><td>${n(docs[i].v)}</td><td>${n(docsCrees(docs[i]))}</td></tr>`).reverse().join('');
@@ -512,6 +590,71 @@
     liste('l-part', fusion(docs, 'ev', k => /^clic_/.test(k)), k => PART[k] || k.replace(/^clic_/, ''));
     const LIB = {telephone: '📱 Sur téléphone', ordinateur: '💻 Sur ordinateur', connexion: 'Connexions à un compte', compte_cree: 'Comptes créés', compte_supprime: 'Comptes supprimés', envoi_gmail: 'Envois depuis Gmail', envoi_autre_appli: 'Envois avec une autre application', appli_installee: 'Applications installées'};
     liste('l-app', Object.assign({}, app, e), k => LIB[k] || k.replace(/_/g, ' '), 12);
+  }
+
+  // ---------- Mesures détaillées (comptées depuis le 17/10/2026) ----------
+  const sommeMap = (docs, champ) => Object.values(fusion(docs, champ)).reduce((a, v) => a + Math.max(0, v), 0);
+  function tempsMoyen(docs){ const nb = sommeMap(docs, 'dur'); return nb ? somme(docs, d => d.t) / nb : null; }
+  function pagesParVisite(docs){ const vis = somme(docs, d => d.vis); return vis ? somme(docs, d => d.v) / vis : null; }
+  function rebond(docs){ const nb = sommeMap(docs, 'ppv'); return nb ? Math.round(Math.max(0, fusion(docs, 'ppv').p1 || 0) / nb * 100) : null; }
+  function duree(s){ if (s === null) return '–'; s = Math.round(s); return s < 60 ? s + ' s' : Math.floor(s / 60) + ' min ' + String(s % 60).padStart(2, '0'); }
+  function tuileTexte(lib, texte, val, avant, inverse){
+    let ev = '';
+    if (periode > 1 && val !== null && avant){
+      const pc = Math.round((val - avant) / avant * 100), bien = inverse ? pc < 0 : pc > 0;
+      ev = pc === 0 ? '<span>stable</span>' : `<span class="${bien ? 'hausse' : 'baisse'}">${pc > 0 ? '▲ +' : '▼ '}${pc} % vs période d'avant</span>`;
+    }
+    return `<div class="tuile"><small>${lib}</small><b>${texte}</b>${ev || '<span>&nbsp;</span>'}</div>`;
+  }
+  function detailsEnPlus(jrs, docs){
+    // Documents commencés et terminés
+    const deb = fusion(docs, 'deb'), fin = fusion(docs, 'fin');
+    const l = Object.keys(Object.assign({}, deb, fin)).map(k => [k, Math.max(deb[k] || 0, fin[k] || 0), Math.max(0, fin[k] || 0)]).filter(x => x[1] > 0).sort((a, b) => b[1] - a[1]).slice(0, 15);
+    $('l-fin').innerHTML = l.length ? l.map(([k, d, f]) => {
+      const pc = Math.round(f / d * 100);
+      return `<div class="fin-ligne"><span class="lib">${esc(nomDoc('pdf_' + k))}</span><span class="pc">${pc} %</span><span class="det">${n(d)} commencé${d > 1 ? 's' : ''} · ${n(f)} terminé${f > 1 ? 's' : ''} · ${n(d - f)} abandonné${d - f > 1 ? 's' : ''}</span><span class="piste"><i style="width:${Math.max(2, pc)}%"></i></span></div>`;
+    }).join('') : '<p class="vide-st">Pas encore de données sur cette période.</p>';
+    // Comportement
+    liste('l-ent', fusion(docs, 'ent'), nomPage);
+    liste('l-sort', fusion(docs, 'sort'), nomPage);
+    liste('l-dur', fusion(docs, 'dur'), k => DUR[k] || k, 0, Object.keys(DUR));
+    liste('l-ppv', fusion(docs, 'ppv'), k => PPV[k] || k, 0, Object.keys(PPV));
+    // Recherches
+    const lisible = k => k.replace(/^x/, '').replace(/_/g, ' ');
+    liste('l-rech', fusion(docs, 'rech'), lisible, 15);
+    liste('l-rech0', fusion(docs, 'rech0'), lisible, 15);
+    // Heures
+    const h = fusion(docs, 'h'), vals = Array.from({length: 24}, (_, i) => Math.max(0, h['h' + String(i).padStart(2, '0')] || 0)), haut = Math.max(...vals);
+    $('g-heures').innerHTML = haut ? `<div class="heures">${vals.map((v, i) => `<div title="${i} h – ${i + 1} h : ${n(v)} visite${v > 1 ? 's' : ''}"><i class="${v ? '' : 'zero'}" style="height:${v ? Math.max(4, v / haut * 100) : 2}%"></i></div>`).join('')}</div>
+      <div class="heures-lib">${vals.map((v, i) => `<span>${i % 3 === 0 ? i + 'h' : ''}</span>`).join('')}</div>
+      <p class="note-st">Heure la plus fréquentée : <b>${vals.indexOf(haut)} h – ${vals.indexOf(haut) + 1} h</b> (${n(haut)} visite${haut > 1 ? 's' : ''}).</p>` : '<p class="vide-st">Pas encore de données sur cette période.</p>';
+    // Jours de la semaine (d'après les dates)
+    const js = {}; jrs.forEach((j, i) => { const k = JOURS[(j.getDay() + 6) % 7]; js[k] = (js[k] || 0) + (docs[i].vis || 0); });
+    liste('l-jours', js, k => k, 0, JOURS);
+    // Lieu et appareils
+    liste('l-pays', fusion(docs, 'pays'), k => PAYS[k] || k.replace(/_/g, ' '), 15);
+    liste('l-os', fusion(docs, 'os'), k => OS[k] || k);
+    liste('l-nav', fusion(docs, 'nav'), k => NAV[k] || k);
+    liste('l-ecr', fusion(docs, 'ecr'), k => ECR[k] || k, 0, Object.keys(ECR));
+  }
+
+  // ---------- Classement des 20 comptes qui téléchargent le plus ----------
+  async function chargerClassement(){
+    const z = $('l-classement');
+    try{
+      const snap = await db.collection('classement').orderBy('n', 'desc').limit(20).get();
+      if (snap.empty){ z.innerHTML = '<p class="vide-st">Aucun téléchargement fait avec un compte pour l’instant. Le classement se remplira dès qu’une personne connectée téléchargera un document.</p>'; return; }
+      let r = 0;
+      z.innerHTML = `<table class="classement"><tr><th>#</th><th>Compte</th><th style="text-align:right">Documents</th></tr>` + snap.docs.map(d => {
+        const x = d.data(), types = Object.entries(x.types || {}).sort((a, b) => b[1] - a[1]);
+        const quand = x.maj && x.maj.toDate ? x.maj.toDate().toLocaleDateString('fr-FR', {day: 'numeric', month: 'short', year: 'numeric'}) : '';
+        r++;
+        return `<tr><td class="rg">${r}</td><td><span class="mail">${esc(x.email || 'Compte sans e-mail')}</span><span class="types">${types.slice(0, 3).map(([k, v]) => `${n(v)} ${esc(nomDoc('pdf_' + k))}`).join(' · ')}${types.length > 3 ? ' · …' : ''}${quand ? ` — dernier le ${esc(quand)}` : ''}</span></td><td class="nb">${n(x.n)}</td></tr>`;
+      }).join('') + '</table>';
+    }catch(e){
+      console.warn(e);
+      z.innerHTML = '<p class="vide-st"><b>Le classement n’est pas encore accessible.</b> Il faut publier les nouvelles règles Firebase.</p>';
+    }
   }
 
   // Courbe des visiteurs par jour (une seule série), avec infobulle au survol / au doigt
