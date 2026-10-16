@@ -7,7 +7,7 @@
   const COUCHES = [
     {trouver: () => [...document.querySelectorAll('#tiroir.ouvert')], fermer: () => clic(document.getElementById('tiroir-fond'))},
     {trouver: () => [...document.querySelectorAll('.cm.ouvert')], fermer: () => clic(document.querySelector('.cm-fond'))},
-    {trouver: () => [...document.querySelectorAll('body > .env-fond, body > .loupe, body > .fond, body > .cp-fond')], fermer: el => clic(el)}
+    {trouver: () => [...document.querySelectorAll('body > .env-fond, body > .loupe, body > .fond, body > .cp-fond, body > .ia-fond')], fermer: el => clic(el)}
   ];
   let pile = [], aIgnorer = 0, navigation = null;
   const ouvertes = () => { const r = []; COUCHES.forEach(c => c.trouver().forEach(el => { if (!el.hidden) r.push({el, fermer: () => c.fermer(el)}); })); return r; };
@@ -38,7 +38,7 @@
   document.addEventListener('click', e => {
     if (!pile.length || navigation || e.button > 0 || e.ctrlKey || e.metaKey || e.shiftKey) return;
     const a = e.target.closest && e.target.closest('a[href]');
-    if (!a || !pile.some(p => p.el.contains(a)) || (a.target && a.target !== '_self') || a.hasAttribute('download')) return;
+    if (!a || a.getAttribute('href') === '#' || !pile.some(p => p.el.contains(a)) || (a.target && a.target !== '_self') || a.hasAttribute('download')) return;
     const url = new URL(a.getAttribute('href'), location.href);
     if (url.origin !== location.origin) return;
     e.preventDefault(); e.stopPropagation();
@@ -155,4 +155,57 @@
   lien.setAttribute('aria-haspopup', 'true');
   lien.addEventListener('click', e => { e.preventDefault(); ouvrir(); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && menu && menu.classList.contains('ouvert')) fermer(); });
+})();
+
+/* DocuPrêt — « Installer l'application » : icône sur l'écran d'accueil, ouverture en plein écran,
+ * et pages déjà ouvertes utilisables sans réseau. */
+(function(){
+  'use strict';
+  if ('serviceWorker' in navigator && location.protocol === 'https:'){
+    window.addEventListener('load', () => { navigator.serviceWorker.register('/sw.js').catch(() => {}); });
+  }
+  const installee = () => (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
+  if (installee()) return;
+  let invite = null;
+  window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); invite = e; });
+  window.addEventListener('appinstalled', () => { invite = null; const l = document.querySelector('.tiroir-installer'); if (l) l.remove(); });
+
+  const ios = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const CSS = `.tiroir-installer{display:flex!important;align-items:center;gap:10px;color:var(--bleu,#4A7BD0)!important}
+  .tiroir-installer svg{width:20px;height:20px;flex-shrink:0}
+  .ia-fond{position:fixed;inset:0;z-index:80;background:rgba(20,28,45,.5);display:flex;align-items:flex-end;justify-content:center}
+  @media (min-width:640px){.ia-fond{align-items:center}}
+  .ia-boite{background:#fff;width:100%;max-width:440px;border-radius:18px 18px 0 0;padding:18px 18px calc(18px + env(safe-area-inset-bottom,0px));display:grid;gap:12px}
+  @media (min-width:640px){.ia-boite{border-radius:18px}}
+  .ia-tete{display:flex;align-items:center;justify-content:space-between}
+  .ia-tete b{font-size:1.08rem;color:var(--texte,#1E2A42)}
+  .ia-tete button{border:0;background:none;font-size:1.6rem;line-height:1;color:var(--gris,#667);width:36px;height:36px;border-radius:50%}
+  .ia-boite ol{margin:0;padding-left:22px;display:grid;gap:8px;font-size:.94rem;color:#3B4558;line-height:1.45}
+  .ia-boite p{margin:0;font-size:.86rem;color:var(--gris,#667);line-height:1.45}`;
+  const ICONE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="2.5"/><path d="M12 8v6M9 11l3 3 3-3"/><path d="M10.5 18.5h3"/></svg>';
+
+  function aide(){
+    const f = document.createElement('div'); f.className = 'ia-fond';
+    f.innerHTML = `<div class="ia-boite" role="dialog" aria-modal="true" aria-label="Installer DocuPrêt"><div class="ia-tete"><b>Installer DocuPrêt</b><button type="button" data-fermer aria-label="Fermer">×</button></div>
+      ${ios ? `<ol><li>En bas de Safari, touchez le bouton <b>Partager</b> (le carré avec une flèche vers le haut).</li><li>Choisissez <b>« Sur l'écran d'accueil »</b>.</li><li>Touchez <b>« Ajouter »</b>.</li></ol>`
+            : `<ol><li>Touchez le menu <b>⋮</b> de votre navigateur, en haut à droite.</li><li>Choisissez <b>« Installer l'application »</b> ou <b>« Ajouter à l'écran d'accueil »</b>.</li><li>Confirmez.</li></ol>`}
+      <p>DocuPrêt apparaît alors avec son icône sur votre téléphone, comme une application : il s'ouvre en plein écran, et les pages déjà utilisées fonctionnent même sans réseau.</p></div>`;
+    f.addEventListener('click', e => { if (e.target === f || e.target.closest('[data-fermer]')) f.remove(); });
+    document.body.appendChild(f);
+  }
+  function ajouter(){
+    const t = document.getElementById('tiroir');
+    if (!t || t.querySelector('.tiroir-installer')) return;
+    const st = document.createElement('style'); st.textContent = CSS; document.head.appendChild(st);
+    const a = document.createElement('a'); a.href = '#'; a.className = 'tiroir-lien tiroir-installer';
+    a.innerHTML = ICONE + 'Installer l\'application';
+    a.addEventListener('click', async e => {
+      e.preventDefault();
+      if (invite){ invite.prompt(); try{ await invite.userChoice; }catch(err){} invite = null; return; }
+      aide();
+    });
+    const apropos = t.querySelector('.apropos');
+    if (apropos) t.insertBefore(a, apropos); else t.appendChild(a);
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', ajouter); else ajouter();
 })();

@@ -1,0 +1,21 @@
+{
+  "name": "DocuPrêt – Vos documents en 2 minutes",
+  "short_name": "DocuPrêt",
+  "description": "Factures, devis, lettres et attestations gratuits, prêts à télécharger en PDF.",
+  "lang": "fr",
+  "start_url": "/?source=appli",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F4F7FD",
+  "theme_color": "#4A7BD0",
+  "icons": [
+    {"src": "/img/icone-192.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "/img/icone-512.png", "sizes": "512x512", "type": "image/png"},
+    {"src": "/img/icone-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ],
+  "shortcuts": [
+    {"name": "Nouvelle facture", "url": "/facture.html?type=facture", "icons": [{"src": "/img/icone-96.png", "sizes": "96x96"}]},
+    {"name": "Nouveau devis", "url": "/facture.html?type=devis", "icons": [{"src": "/img/icone-96.png", "sizes": "96x96"}]}
+  ]
+}

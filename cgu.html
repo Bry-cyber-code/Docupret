@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Conditions d'utilisation – DocuPrêt</title>
+<meta name="description" content="Conditions d'utilisation du site DocuPrêt : documents, compte gratuit, envoi par e-mail et responsabilités.">
+<meta name="robots" content="noindex, follow">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:site_name" content="DocuPrêt">
+<meta property="og:title" content="Conditions d'utilisation – DocuPrêt">
+<meta property="og:description" content="Conditions d'utilisation du site DocuPrêt : documents, compte gratuit, envoi par e-mail et responsabilités.">
+<meta property="og:image" content="https://docupret.fr/img/partage.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:site_name" content="DocuPrêt">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#4A7BD0">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#4A7BD0">
+<style>
+  :root{
+    --bleu:#4A7BD0; --bleu-fonce:#2F5DAE; --bleu-clair:#EAF1FB;
+    --fond:#F6F9FD; --blanc:#FFFFFF; --texte:#1E2A42; --gris:#6B778C; --bord:#E2E8F2; --rayon:14px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{color-scheme:light}
+  input,select,textarea{color:var(--texte);-webkit-text-fill-color:var(--texte);caret-color:var(--texte)}
+  input::placeholder,textarea::placeholder{color:#98A2B3;-webkit-text-fill-color:#98A2B3;opacity:1}
+  [hidden]{display:none!important}
+  html,body{overflow-x:clip}
+  html{scroll-padding-top:76px}
+  body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--fond);color:var(--texte);line-height:1.6}
+  a{color:inherit;text-decoration:none}
+  button{font-family:inherit;cursor:pointer}
+  .wrap{max-width:760px;margin:0 auto;padding:0 16px}
+  header .wrap,footer .wrap{max-width:1100px}
+
+  header{background:var(--blanc);border-bottom:1px solid var(--bord);position:sticky;top:0;z-index:15}
+  .nav{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;height:60px}
+  .nav > :last-child{justify-self:end}
+  .logo{display:flex;align-items:center;gap:9px;justify-self:center}
+  .logo-icone{display:block;width:34px;height:34px;flex-shrink:0}
+  .logo-icone svg{display:block;width:100%;height:100%}
+  .logo-mot{font-weight:800;font-size:1.22rem;letter-spacing:-.02em;color:var(--texte)}
+  .logo-mot span{color:var(--bleu)}
+  .retour{font-size:.9rem;color:var(--gris)}
+  .retour:hover{color:var(--bleu)}
+  @media (max-width:560px){.retour{font-size:1.3rem;padding:4px 6px}.retour span{display:none}}
+
+  h1{font-size:clamp(1.35rem,4.5vw,1.9rem);font-weight:800;margin:20px 0 6px}
+  .maj{color:var(--gris);font-size:.88rem}
+  .sommaire{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 8px}
+  .sommaire a{border:1.5px solid var(--bord);background:var(--blanc);border-radius:50px;padding:6px 12px;font-size:.86rem}
+  .sommaire a:hover{border-color:var(--bleu);color:var(--bleu)}
+
+  section{background:var(--blanc);border:1px solid var(--bord);border-radius:var(--rayon);padding:18px;margin-top:14px}
+  section h2{font-size:1.1rem;margin-bottom:8px}
+  section h3{font-size:.95rem;margin:12px 0 4px}
+  section p,section li{font-size:.94rem;color:#3B4558;max-width:68ch}
+  section p + p{margin-top:8px}
+  section dl + p{margin-top:12px}
+  section ul{padding-left:20px;display:grid;gap:4px;margin-top:6px}
+  dl{display:grid;grid-template-columns:minmax(120px,auto) 1fr;gap:6px 14px;font-size:.94rem}
+  dt{color:var(--gris)}
+  dd{min-width:0;overflow-wrap:anywhere}
+  @media (max-width:480px){dl{grid-template-columns:1fr}dt{margin-top:6px}}
+  main a[href^="mailto"]{color:var(--bleu);font-weight:600;word-break:break-all}
+  .remplir{background:#FFF1D6;color:#9A6512;border-radius:4px;padding:0 4px;font-weight:600}
+
+  footer{background:var(--blanc);border-top:1px solid var(--bord);margin-top:28px;padding:22px 0;font-size:.85rem;color:var(--gris)}
+  .pied{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
+  .pied nav{display:flex;flex-wrap:wrap;gap:16px}
+  /* Menu latéral */
+  .gauche{display:flex;align-items:center;gap:2px}
+  .menu-btn{width:40px;height:40px;border:0;background:none;border-radius:10px;display:grid;place-items:center;margin-left:-8px;cursor:pointer;color:var(--texte)}
+  .menu-btn:hover,.menu-btn:focus-visible{background:var(--bleu-clair)}
+  .menu-btn svg{width:24px;height:24px;stroke:currentColor}
+  .tiroir-fond{position:fixed;inset:0;background:rgba(20,28,45,.45);z-index:50}
+  .tiroir{position:fixed;top:0;left:0;bottom:0;width:min(300px,84vw);background:var(--blanc);z-index:51;transform:translateX(-102%);transition:transform .25s ease;overflow-y:auto;padding-bottom:calc(20px + env(safe-area-inset-bottom,0px));box-shadow:4px 0 24px rgba(0,0,0,.12)}
+  .tiroir.ouvert{transform:none}
+  .tiroir-tete{display:flex;align-items:center;justify-content:space-between;height:60px;padding:env(safe-area-inset-top,0px) 10px 0 16px;border-bottom:1px solid var(--bord)}
+  .tiroir-titre{display:flex;align-items:center;gap:9px}
+  .tiroir-fermer{width:36px;height:36px;border:0;background:none;border-radius:50%;font-size:1.6rem;line-height:1;color:var(--gris);cursor:pointer}
+  .tiroir-fermer:hover{background:var(--fond)}
+  .tiroir-lien{display:block;padding:14px 16px;font-weight:700;font-size:1rem;color:var(--texte);border-bottom:1px solid var(--bord)}
+  .tiroir-lien:hover{color:var(--bleu)}
+  .tiroir-lien.bientot{display:flex;justify-content:space-between;align-items:center;gap:8px;color:var(--gris)}
+  .tiroir-lien.sep{border-top:1px solid var(--bord);margin-top:8px}
+  .tiroir-lien.apropos{border-bottom:0}
+  .tiroir-lien small{font-size:.7rem;font-weight:400;background:var(--fond);border:1px solid var(--bord);border-radius:50px;padding:2px 8px;flex-shrink:0}
+  .tiroir-lien.kits{display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .tiroir-lien.kits small{background:var(--bleu);border-color:var(--bleu);color:#fff;font-weight:700}
+  .cat{border-bottom:1px solid var(--bord)}
+  .cat-btn{width:100%;display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border:0;background:none;font:inherit;font-weight:700;font-size:1rem;color:var(--texte);cursor:pointer;text-align:left}
+  .plus{width:26px;height:26px;border-radius:50%;background:var(--bleu-clair);color:var(--bleu);display:grid;place-items:center;font-size:1.15rem;line-height:1;flex-shrink:0}
+  .sous{padding-bottom:8px}
+  .sous a{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 16px 10px 28px;font-size:.95rem;color:var(--texte)}
+  .sous a:hover{background:var(--fond);color:var(--bleu)}
+  .sous a.bientot{color:var(--gris)}
+  .sous small{font-size:.7rem;background:var(--fond);border:1px solid var(--bord);border-radius:50px;padding:2px 8px;flex-shrink:0}
+  @media (prefers-reduced-motion:reduce){.tiroir{transition:none}}
+
+
+  /* Mon compte (en-tête) */
+  .droite{display:flex;align-items:center;gap:4px;justify-self:end}
+  .compte-lien{display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--texte);font-size:.6rem;font-weight:700;line-height:1;padding:4px 2px;border-radius:10px;white-space:nowrap}
+  .compte-lien svg{width:24px;height:24px;color:var(--bleu)}
+  .compte-lien:hover{color:var(--bleu)}
+  @media (min-width:561px){.compte-lien{flex-direction:row;gap:7px;font-size:.88rem;border:1.5px solid var(--bord);padding:7px 13px 7px 10px;border-radius:50px;background:#fff}.compte-lien svg{width:20px;height:20px}.droite{gap:14px}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <div class="gauche"><button type="button" class="menu-btn" id="menu-btn" aria-label="Ouvrir le menu" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><a href="./" class="retour" aria-label="Revenir à la page précédente">←<span> Retour</span></a></div>
+    <a href="./" class="logo"><span class="logo-icone"><svg viewBox="0 0 36 36" aria-hidden="true"><defs><linearGradient id="lg-tete" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6A9BF0"/><stop offset="1" stop-color="#3563BF"/></linearGradient></defs><rect width="36" height="36" rx="10" fill="url(#lg-tete)"/><rect x="7.5" y="11" width="13" height="17" rx="2" fill="#fff" opacity=".35"/><path d="M14 7.5h7.5l5.5 5.5v13.5a2 2 0 0 1-2 2H14a2 2 0 0 1-2-2v-17a2 2 0 0 1 2-2z" fill="#fff"/><path d="M21.5 7.5v3.5a2 2 0 0 0 2 2H27z" fill="#C9DAF8"/><path d="M15.3 19.6l2.7 2.7 5-5.6" fill="none" stroke="#3563BF" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="logo-mot">Docu<span>Prêt</span></span></a>
+    <div class="droite"><a href="compte.html" class="compte-lien" aria-label="Mon compte"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="10" r="3.2"/><path d="M6.2 18.4c1.3-2.1 3.3-3.2 5.8-3.2s4.5 1.1 5.8 3.2"/></svg><span>Mon compte</span></a></div>
+  </div>
+</header>
+
+<div class="tiroir-fond" id="tiroir-fond" hidden></div>
+<nav class="tiroir" id="tiroir" aria-label="Menu des documents" aria-hidden="true">
+  <div class="tiroir-tete">
+    <span class="tiroir-titre"><span class="logo-icone"><svg viewBox="0 0 36 36" aria-hidden="true"><defs><linearGradient id="lg-menu" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6A9BF0"/><stop offset="1" stop-color="#3563BF"/></linearGradient></defs><rect width="36" height="36" rx="10" fill="url(#lg-menu)"/><rect x="7.5" y="11" width="13" height="17" rx="2" fill="#fff" opacity=".35"/><path d="M14 7.5h7.5l5.5 5.5v13.5a2 2 0 0 1-2 2H14a2 2 0 0 1-2-2v-17a2 2 0 0 1 2-2z" fill="#fff"/><path d="M21.5 7.5v3.5a2 2 0 0 0 2 2H27z" fill="#C9DAF8"/><path d="M15.3 19.6l2.7 2.7 5-5.6" fill="none" stroke="#3563BF" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="logo-mot">Docu<span>Prêt</span></span></span>
+    <button type="button" class="tiroir-fermer" aria-label="Fermer le menu">×</button>
+  </div>
+  <a href="./" class="tiroir-lien">Accueil</a>
+  <a href="facture.html?type=facture" class="tiroir-lien">Facture</a>
+  <a href="facture.html?type=devis" class="tiroir-lien">Devis</a>
+    <div class="cat">
+      <button type="button" class="cat-btn" aria-expanded="false"><span>Outils</span><span class="plus">+</span></button>
+      <div class="sous" hidden>
+        <a href="tva.html">Calculatrice TVA</a>
+        <a href="simulateur.html">Simulateur auto-entrepreneur</a>
+        <a href="tampon.html">Tampon d'entreprise</a>
+        <a href="frais-kilometriques.html">Frais kilométriques</a>
+      </div>
+    </div>
+    <div class="cat">
+      <button type="button" class="cat-btn" aria-expanded="false"><span>Pro</span><span class="plus">+</span></button>
+      <div class="sous" hidden>
+        <a href="facture.html?type=facture">Facture</a>
+        <a href="facture.html?type=devis">Devis</a>
+        <a href="facture.html?type=recu">Reçu de paiement</a>
+        <a href="facture.html?type=avoir">Avoir</a>
+      </div>
+    </div>
+    <div class="cat">
+      <button type="button" class="cat-btn" aria-expanded="false"><span>Travail</span><span class="plus">+</span></button>
+      <div class="sous" hidden>
+        <a href="lettre.html?type=demission">Lettre de démission</a>
+        <a href="lettre.html?type=motivation">Lettre de motivation</a>
+        <a href="lettre.html?type=conges">Demande de congés</a>
+        <a href="lettre.html?type=rupture">Rupture conventionnelle</a>
+      </div>
+    </div>
+    <div class="cat">
+      <button type="button" class="cat-btn" aria-expanded="false"><span>Véhicule</span><span class="plus">+</span></button>
+      <div class="sous" hidden>
+        <a href="cession.html">Certificat de cession</a>
+        <a href="constat.html">Constat amiable</a>
+        <a href="lettre.html?type=vente">Contrat de vente</a>
+        <a href="lettre.html?type=pret">Prêt de véhicule</a>
+        <a href="lettre.html?type=sinistre">Déclaration de sinistre</a>
+      </div>
+    </div>
+    <div class="cat">
+      <button type="button" class="cat-btn" aria-expanded="false"><span>Logement</span><span class="plus">+</span></button>
+      <div class="sous" hidden>
+        <a href="lettre.html?type=hebergement">Attestation d'hébergement</a>
+        <a href="lettre.html?type=preavis">Préavis locataire</a>
+        <a href="lettre.html?type=quittance">Quittance de loyer</a>
+      </div>
+    </div>
+    <div class="cat">
+      <button type="button" class="cat-btn" aria-expanded="false"><span>Vie courante</span><span class="plus">+</span></button>
+      <div class="sous" hidden>
+        <a href="lettre.html?type=honneur">Attestation sur l'honneur</a>
+        <a href="lettre.html?type=resiliation">Lettre de résiliation</a>
+        <a href="lettre.html?type=reclamation">Réclamation / mise en demeure</a>
+        <a href="lettre.html?type=procuration">Procuration</a>
+      </div>
+    </div>
+  <a href="logo.html" class="tiroir-lien">Créer votre logo</a>
+  <a href="carte.html" class="tiroir-lien">Créer votre carte de visite</a>
+  <a href="apropos.html" class="tiroir-lien sep apropos">À propos</a>
+</nav>
+
+
+<main class="wrap">
+  <h1>Conditions d'utilisation</h1>
+  <p class="maj">Dernière mise à jour : octobre 2026</p>
+
+  <nav class="sommaire" aria-label="Sommaire">
+    <a href="#objet">Le service</a>
+    <a href="#documents">Vos documents</a>
+    <a href="#compte">Le compte</a>
+    <a href="#gmail">Envoi Gmail</a>
+    <a href="#interdit">Usages interdits</a>
+    <a href="#responsabilite">Responsabilité</a>
+    <a href="#evolution">Évolutions</a>
+  </nav>
+
+  <section id="objet">
+    <h2>1. Le service DocuPrêt</h2>
+    <p>DocuPrêt (<a href="https://docupret.fr">docupret.fr</a>) est un site édité par Bryan Prestat, entrepreneur individuel (voir les <a href="mentions-legales.html">mentions légales</a>). Il permet de créer gratuitement des documents (devis, factures, reçus, avoirs, lettres, attestations, contrats, logos, cartes de visite…) et d'utiliser des outils de calcul.</p>
+    <p>En utilisant le site, vous acceptez les présentes conditions. Le site est <b>gratuit</b> et peut afficher des publicités, qui n'apparaissent jamais dans les documents que vous téléchargez.</p>
+    <p>DocuPrêt est un <b>site indépendant et non officiel</b> : il n'a aucun lien avec l'administration ni avec les organismes cités sur le site.</p>
+  </section>
+
+  <section id="documents">
+    <h2>2. Vos documents</h2>
+    <p>Les documents sont créés dans votre navigateur à partir des informations que <b>vous</b> saisissez. Vous en êtes l'auteur et le seul responsable : exactitude des informations, respect des règles qui s'appliquent à votre activité (mentions obligatoires, TVA, numérotation…), et usage que vous en faites.</p>
+    <p>Les modèles, exemples et calculs sont fournis <b>à titre d'aide</b>. Ils ne constituent pas un conseil juridique, fiscal ou comptable, et ne remplacent pas l'avis d'un professionnel (expert-comptable, avocat, notaire). Vérifiez toujours qu'un document correspond à votre situation avant de l'utiliser.</p>
+    <p>Les documents que vous créez vous appartiennent.</p>
+  </section>
+
+  <section id="compte">
+    <h2>3. Le compte gratuit</h2>
+    <p>Le compte est <b>facultatif</b> et gratuit. Il débloque des fonctions supplémentaires : clients enregistrés, paramètres, copie de vos devis et factures, transformation d'un devis en facture, envoi depuis Gmail et synchronisation entre appareils.</p>
+    <ul>
+      <li>Vous vous engagez à utiliser une adresse e-mail valide qui vous appartient, et à garder votre mot de passe confidentiel. Toute action faite depuis votre compte est réputée faite par vous.</li>
+      <li>Vous êtes responsable des informations que vous enregistrez sur vos clients. Elles doivent concerner votre activité et être exactes ; vos clients doivent pouvoir vous demander de les modifier ou de les supprimer.</li>
+      <li>Vous pouvez <b>supprimer votre compte à tout moment</b> depuis « Mon compte » → « Compte » → « Supprimer mon compte » : toutes ses données sont alors effacées.</li>
+      <li>Un compte utilisé de façon abusive ou contraire à ces conditions peut être suspendu ou supprimé.</li>
+    </ul>
+    <p>Pensez à <b>garder une copie de vos factures</b> (PDF) de votre côté : la loi vous impose de les conserver, et DocuPrêt ne remplace pas votre propre archivage.</p>
+  </section>
+
+  <section id="gmail">
+    <h2>4. Envoi par e-mail depuis Gmail</h2>
+    <p>Si vous l'activez, DocuPrêt peut envoyer vos documents depuis votre boîte Gmail, après votre autorisation auprès de Google. Chaque e-mail est envoyé uniquement quand <b>vous</b> touchez « Envoyer », vers l'adresse que vous avez choisie. DocuPrêt ne peut ni lire, ni modifier, ni supprimer vos e-mails. Vous pouvez désactiver cette fonction ou retirer l'autorisation à tout moment dans « Mon compte » → « Paramètres ».</p>
+    <p>Vous restez responsable des e-mails envoyés depuis votre adresse : n'envoyez des documents qu'à des personnes concernées.</p>
+  </section>
+
+  <section id="interdit">
+    <h2>5. Usages interdits</h2>
+    <p>Il est interdit d'utiliser DocuPrêt pour :</p>
+    <ul>
+      <li>créer de faux documents, des documents trompeurs ou au nom d'une autre personne ou entreprise sans son accord ;</li>
+      <li>envoyer des e-mails non sollicités (spam) ou frauduleux ;</li>
+      <li>tenter d'accéder aux données d'autres utilisateurs, perturber le fonctionnement du site ou en fausser les statistiques ;</li>
+      <li>toute activité contraire à la loi.</li>
+    </ul>
+  </section>
+
+  <section id="responsabilite">
+    <h2>6. Disponibilité et responsabilité</h2>
+    <p>DocuPrêt est fourni gratuitement, « tel quel ». Nous faisons de notre mieux pour qu'il fonctionne bien et que ses informations soient à jour, mais nous ne pouvons pas garantir l'absence d'erreur ni un accès permanent : le site peut être interrompu pour maintenance ou en cas de problème technique.</p>
+    <p>Dans les limites prévues par la loi, l'éditeur ne pourra être tenu responsable des conséquences de l'utilisation des documents créés, d'une erreur dans un modèle ou un calcul, ou d'une perte de données. Les fonctions gratuites peuvent évoluer ou être retirées.</p>
+  </section>
+
+  <section id="evolution">
+    <h2>7. Évolution des conditions</h2>
+    <p>Ces conditions peuvent être modifiées, par exemple quand de nouvelles fonctions arrivent. La date de mise à jour figure en haut de la page. Elles sont soumises au droit français.</p>
+    <p>Une question ? Écrivez à <a href="mailto:contact.docupret.fr@gmail.com">contact.docupret.fr@gmail.com</a>. Pour savoir comment vos données sont protégées, consultez la partie <a href="mentions-legales.html#confidentialite">Confidentialité</a>.</p>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap pied">
+    <span>© 2026 DocuPrêt</span>
+    <nav><a href="apropos.html">À propos</a><a href="mentions-legales.html">Mentions légales</a><a href="cgu.html">Conditions d'utilisation</a><a href="mentions-legales.html#confidentialite">Confidentialité</a><a href="mentions-legales.html#cookies">Cookies</a><a href="mentions-legales.html#contact">Contact</a></nav>
+  </div>
+</footer>
+
+<script>
+(function(){
+  // Toujours arriver en haut de la page (sauf avec le bouton retour du navigateur)
+  try{
+    const nav = performance.getEntriesByType('navigation')[0];
+    if (!nav || nav.type !== 'back_forward'){
+      if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+      const enHaut = () => { if (!location.hash){ window.scrollTo(0, 0); try{ document.body.scrollIntoView({block: 'start'}); }catch(e){} } };
+      enHaut();
+      window.addEventListener('load', enHaut);
+    }
+  }catch(e){}
+})();
+(function(){
+  const t = document.getElementById('tiroir'), f = document.getElementById('tiroir-fond'), b = document.getElementById('menu-btn');
+  function ouvrir(){ t.classList.add('ouvert'); f.hidden = false; t.setAttribute('aria-hidden','false'); b.setAttribute('aria-expanded','true'); }
+  function fermer(){ t.classList.remove('ouvert'); f.hidden = true; t.setAttribute('aria-hidden','true'); b.setAttribute('aria-expanded','false'); }
+  b.addEventListener('click', ouvrir);
+  f.addEventListener('click', fermer);
+  t.querySelector('.tiroir-fermer').addEventListener('click', fermer);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') fermer(); });
+  // Flèche de retour : revient à la page précédente du site, sinon à l'accueil
+  document.querySelectorAll('.retour').forEach(a => a.addEventListener('click', e => {
+    let interne = false;
+    try{ interne = !!document.referrer && new URL(document.referrer).origin === location.origin; }catch(err){}
+    if (interne && history.length > 1){ e.preventDefault(); history.back(); }
+  }));
+  t.addEventListener('click', e => {
+    const c = e.target.closest('.cat-btn');
+    if (c){
+      const s = c.nextElementSibling, ouvrirSous = s.hidden;
+      s.hidden = !ouvrirSous;
+      c.setAttribute('aria-expanded', String(ouvrirSous));
+      c.querySelector('.plus').textContent = ouvrirSous ? '−' : '+';
+      return;
+    }
+    const a = e.target.closest('a');
+    if (a && a.classList.contains('bientot')) e.preventDefault();
+    else if (a) fermer();
+  });
+})();
+</script>
+<script src="compte-menu.js?v=6"></script>
+</body>
+</html>
