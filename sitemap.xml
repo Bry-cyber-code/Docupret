@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://docupret.fr/</loc><lastmod>2026-10-16</lastmod></url>
-  <url><loc>https://docupret.fr/facture.html?type=facture</loc><lastmod>2026-10-16</lastmod></url>
-  <url><loc>https://docupret.fr/facture.html?type=devis</loc><lastmod>2026-10-16</lastmod></url>
-  <url><loc>https://docupret.fr/facture.html?type=recu</loc><lastmod>2026-10-16</lastmod></url>
-  <url><loc>https://docupret.fr/facture.html?type=avoir</loc><lastmod>2026-10-16</lastmod></url>
-  <url><loc>https://docupret.fr/lettre.html?type=demission</loc><lastmod>2026-10-16</lastmod></url>
-  <url><loc>https://docupret.fr/lettre.html?type=motivation</loc><lastmod>2026-10-16</lastmod></url>
-  <url><loc>https://docupret.fr/lettre.html?type=conges</loc><lastmod>2026-10-16</lastmod></url>
-  <url><loc>https://docupret.fr/lettre.html?type=rupture</loc><lastmod>2026-10-16</lastmod></url>
-  <url><loc>https://docupret.fr/lettre.html?type=preavis</loc><lastmod>2026-10-16</lastmod></url>
-  <url><loc>https://docupret.fr/lettre.html?type=hebergement</loc><lastmod>2026-10-16</lastmod></url>
-  <url><loc>https://docupret.fr/lettre.html?type=quittance</loc><lastmod>2026-10-16</lastmod></url>
-  <url><loc>https://docupret.fr/lettre.html?type=honneur</loc><lastmod>2026-10-16</lastmod></url>
-  <url><loc>https://docupret.fr/lettre.html?type=resiliation</loc><lastmod>2026-10-16</lastmod></url>
-  <url><loc>https://docupret.fr/lettre.html?type=reclamation</loc><lastmod>2026-10-16</lastmod></url>
-  <url><loc>https://docupret.fr/lettre.html?type=procuration</loc><lastmod>2026-10-16</lastmod></url>
-  <url><loc>https://docupret.fr/lettre.html?type=vente</loc><lastmod>2026-10-16</lastmod></url>
-  <url><loc>https://docupret.fr/lettre.html?type=pret</loc><lastmod>2026-10-16</lastmod></url>
-  <url><loc>https://docupret.fr/lettre.html?type=sinistre</loc><lastmod>2026-10-16</lastmod></url>
+  <url><loc>https://docupret.fr/facture.html</loc><lastmod>2026-10-16</lastmod></url>
+  <url><loc>https://docupret.fr/devis.html</loc><lastmod>2026-10-16</lastmod></url>
+  <url><loc>https://docupret.fr/recu.html</loc><lastmod>2026-10-16</lastmod></url>
+  <url><loc>https://docupret.fr/avoir.html</loc><lastmod>2026-10-16</lastmod></url>
+  <url><loc>https://docupret.fr/lettre-demission.html</loc><lastmod>2026-10-16</lastmod></url>
+  <url><loc>https://docupret.fr/lettre-motivation.html</loc><lastmod>2026-10-16</lastmod></url>
+  <url><loc>https://docupret.fr/demande-conges.html</loc><lastmod>2026-10-16</lastmod></url>
+  <url><loc>https://docupret.fr/rupture-conventionnelle.html</loc><lastmod>2026-10-16</lastmod></url>
+  <url><loc>https://docupret.fr/preavis-locataire.html</loc><lastmod>2026-10-16</lastmod></url>
+  <url><loc>https://docupret.fr/attestation-hebergement.html</loc><lastmod>2026-10-16</lastmod></url>
+  <url><loc>https://docupret.fr/quittance-loyer.html</loc><lastmod>2026-10-16</lastmod></url>
+  <url><loc>https://docupret.fr/attestation-sur-l-honneur.html</loc><lastmod>2026-10-16</lastmod></url>
+  <url><loc>https://docupret.fr/lettre-resiliation.html</loc><lastmod>2026-10-16</lastmod></url>
+  <url><loc>https://docupret.fr/lettre-reclamation.html</loc><lastmod>2026-10-16</lastmod></url>
+  <url><loc>https://docupret.fr/procuration.html</loc><lastmod>2026-10-16</lastmod></url>
+  <url><loc>https://docupret.fr/contrat-vente-vehicule.html</loc><lastmod>2026-10-16</lastmod></url>
+  <url><loc>https://docupret.fr/pret-vehicule.html</loc><lastmod>2026-10-16</lastmod></url>
+  <url><loc>https://docupret.fr/declaration-sinistre.html</loc><lastmod>2026-10-16</lastmod></url>
   <url><loc>https://docupret.fr/cession.html</loc><lastmod>2026-10-16</lastmod></url>
   <url><loc>https://docupret.fr/constat.html</loc><lastmod>2026-10-16</lastmod></url>
   <url><loc>https://docupret.fr/tva.html</loc><lastmod>2026-10-16</lastmod></url>

@@ -31,7 +31,9 @@
   function page(){
     const q = new URLSearchParams(location.search), f = location.pathname.split('/').pop().replace(/\.html$/, '') || 'accueil';
     const t = q.get('type');
-    return f === 'index' ? 'accueil' : (t && /^[a-z]+$/.test(t) && (f === 'facture' || f === 'lettre') ? `${f}_${t}` : f);
+    if (f === 'index') return 'accueil';
+    if (t && /^[a-z]+$/.test(t) && (f === 'facture' || f === 'lettre')) return `${f}_${t}`;
+    return window.DOCU_PAGE_STATS || f;
   }
   function source(){
     if (new URLSearchParams(location.search).get('source') === 'appli' || (window.matchMedia && matchMedia('(display-mode: standalone)').matches)) return 'appli';

@@ -4,12 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Créer une facture gratuite en PDF – DocuPrêt</title>
-<meta name="description" content="Générateur gratuit de factures, devis et reçus : choisissez un modèle, votre couleur, ajoutez votre logo et téléchargez le PDF. Sans inscription.">
+<meta name="description" content="Créez une facture professionnelle gratuite en ligne : mentions obligatoires, TVA ou franchise auto-entrepreneur, logo, numérotation. Téléchargez le PDF ou envoyez-la par e-mail.">
 <meta property="og:type" content="website">
+<meta property="og:url" content="https://docupret.fr/facture.html">
 <meta property="og:locale" content="fr_FR">
 <meta property="og:site_name" content="DocuPrêt">
 <meta property="og:title" content="Créer une facture gratuite en PDF – DocuPrêt">
-<meta property="og:description" content="Générateur gratuit de factures, devis et reçus : choisissez un modèle, votre couleur, ajoutez votre logo et téléchargez le PDF. Sans inscription.">
+<meta property="og:description" content="Créez une facture professionnelle gratuite en ligne : mentions obligatoires, TVA ou franchise auto-entrepreneur, logo, numérotation. Téléchargez le PDF ou envoyez-la par e-mail.">
 <meta property="og:image" content="https://docupret.fr/img/partage.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -425,6 +426,9 @@
   .compte-lien svg{width:24px;height:24px;color:var(--bleu)}
   .compte-lien:hover{color:var(--bleu)}
   @media (min-width:561px){.compte-lien{flex-direction:row;gap:7px;font-size:.88rem;border:1.5px solid var(--bord);padding:7px 13px 7px 10px;border-radius:50px;background:#fff}.compte-lien svg{width:20px;height:20px}.droite{gap:14px}}
+  .presentation-doc{margin:28px 0 6px;background:var(--blanc);border:1px solid var(--bord);border-radius:var(--rayon);padding:18px 18px 16px}
+  .presentation-doc h2{font-size:1.08rem;margin-bottom:6px}
+  .presentation-doc p{color:var(--gris);font-size:.93rem;line-height:1.6}
 </style>
 <script>
 // Affichage sur téléphone choisi dans Mon compte → Paramètres
@@ -438,7 +442,10 @@ window.DOCU_AFFICHAGE = (function(){
   }catch(e){ return 'feuille'; }
 })();
 </script>
-<script>(function(){try{var q=new URLSearchParams(location.search).get('type'),l=document.createElement('link');l.rel='canonical';l.href='https://docupret.fr'+location.pathname.replace(/index\.html$/,'')+(q&&/^[a-z]+$/.test(q)?'?type='+q:'');document.head.appendChild(l);}catch(e){}})();</script>
+<!--PAGE-TYPE-->
+<link rel="canonical" href="https://docupret.fr/facture.html">
+<script>window.DOCU_TYPE_PAGE="facture";window.DOCU_PAGE_STATS="facture_facture";window.DOCU_URL_TYPE={"facture": "facture.html", "devis": "devis.html", "recu": "recu.html", "avoir": "avoir.html"};(function(){try{var q=new URLSearchParams(location.search).get('type');if(q&&window.DOCU_URL_TYPE[q])document.querySelector('link[rel=canonical]').href='https://docupret.fr/'+window.DOCU_URL_TYPE[q];}catch(e){}})();</script>
+<!--/PAGE-TYPE-->
 <style>
   /* ===== Ordinateur : on écrit directement sur la feuille ===== */
   .outils{display:none}
@@ -650,8 +657,8 @@ window.DOCU_AFFICHAGE = (function(){
     <button type="button" class="tiroir-fermer" aria-label="Fermer le menu">×</button>
   </div>
   <a href="./" class="tiroir-lien">Accueil</a>
-  <a href="facture.html?type=facture" class="tiroir-lien">Facture</a>
-  <a href="facture.html?type=devis" class="tiroir-lien">Devis</a>
+  <a href="facture.html" class="tiroir-lien">Facture</a>
+  <a href="devis.html" class="tiroir-lien">Devis</a>
     <div class="cat">
       <button type="button" class="cat-btn" aria-expanded="false"><span>Outils</span><span class="plus">+</span></button>
       <div class="sous" hidden>
@@ -664,19 +671,19 @@ window.DOCU_AFFICHAGE = (function(){
     <div class="cat">
       <button type="button" class="cat-btn" aria-expanded="false"><span>Pro</span><span class="plus">+</span></button>
       <div class="sous" hidden>
-        <a href="facture.html?type=facture">Facture</a>
-        <a href="facture.html?type=devis">Devis</a>
-        <a href="facture.html?type=recu">Reçu de paiement</a>
-        <a href="facture.html?type=avoir">Avoir</a>
+        <a href="facture.html">Facture</a>
+        <a href="devis.html">Devis</a>
+        <a href="recu.html">Reçu de paiement</a>
+        <a href="avoir.html">Avoir</a>
       </div>
     </div>
     <div class="cat">
       <button type="button" class="cat-btn" aria-expanded="false"><span>Travail</span><span class="plus">+</span></button>
       <div class="sous" hidden>
-        <a href="lettre.html?type=demission">Lettre de démission</a>
-        <a href="lettre.html?type=motivation">Lettre de motivation</a>
-        <a href="lettre.html?type=conges">Demande de congés</a>
-        <a href="lettre.html?type=rupture">Rupture conventionnelle</a>
+        <a href="lettre-demission.html">Lettre de démission</a>
+        <a href="lettre-motivation.html">Lettre de motivation</a>
+        <a href="demande-conges.html">Demande de congés</a>
+        <a href="rupture-conventionnelle.html">Rupture conventionnelle</a>
       </div>
     </div>
     <div class="cat">
@@ -684,26 +691,26 @@ window.DOCU_AFFICHAGE = (function(){
       <div class="sous" hidden>
         <a href="cession.html">Certificat de cession</a>
         <a href="constat.html">Constat amiable</a>
-        <a href="lettre.html?type=vente">Contrat de vente</a>
-        <a href="lettre.html?type=pret">Prêt de véhicule</a>
-        <a href="lettre.html?type=sinistre">Déclaration de sinistre</a>
+        <a href="contrat-vente-vehicule.html">Contrat de vente</a>
+        <a href="pret-vehicule.html">Prêt de véhicule</a>
+        <a href="declaration-sinistre.html">Déclaration de sinistre</a>
       </div>
     </div>
     <div class="cat">
       <button type="button" class="cat-btn" aria-expanded="false"><span>Logement</span><span class="plus">+</span></button>
       <div class="sous" hidden>
-        <a href="lettre.html?type=hebergement">Attestation d'hébergement</a>
-        <a href="lettre.html?type=preavis">Préavis locataire</a>
-        <a href="lettre.html?type=quittance">Quittance de loyer</a>
+        <a href="attestation-hebergement.html">Attestation d'hébergement</a>
+        <a href="preavis-locataire.html">Préavis locataire</a>
+        <a href="quittance-loyer.html">Quittance de loyer</a>
       </div>
     </div>
     <div class="cat">
       <button type="button" class="cat-btn" aria-expanded="false"><span>Vie courante</span><span class="plus">+</span></button>
       <div class="sous" hidden>
-        <a href="lettre.html?type=honneur">Attestation sur l'honneur</a>
-        <a href="lettre.html?type=resiliation">Lettre de résiliation</a>
-        <a href="lettre.html?type=reclamation">Réclamation / mise en demeure</a>
-        <a href="lettre.html?type=procuration">Procuration</a>
+        <a href="attestation-sur-l-honneur.html">Attestation sur l'honneur</a>
+        <a href="lettre-resiliation.html">Lettre de résiliation</a>
+        <a href="lettre-reclamation.html">Réclamation / mise en demeure</a>
+        <a href="procuration.html">Procuration</a>
       </div>
     </div>
   <a href="logo.html" class="tiroir-lien">Créer votre logo</a>
@@ -967,6 +974,8 @@ window.DOCU_AFFICHAGE = (function(){
   </div>
 
   <div class="partenaire" data-partenaire="indy" data-quand="telechargement" hidden></div>
+
+  <!--PRESENTATION--><section class="presentation-doc"><h2>Une facture gratuite, conforme et prête à envoyer</h2><p>Remplissez votre facture directement sur la page : vos coordonnées, celles de votre client et vos prestations. Les totaux, la TVA (ou la mention « TVA non applicable » des auto-entrepreneurs) et les mentions obligatoires sont calculés pour vous. Téléchargez ensuite le PDF ou envoyez-le par e-mail, gratuitement et sans inscription.</p></section><!--/PRESENTATION-->
 
   <section class="faq">
     <h2>Questions fréquentes</h2>
@@ -1250,7 +1259,7 @@ window.DOCU_AFFICHAGE = (function(){
   (function(){
     const q = new URLSearchParams(location.search);
     if (q.get('depuis') || q.get('ouvrir')) return;
-    const tUrl = TYPES[q.get('type')] ? q.get('type') : etat.type;
+    const tUrl = TYPES[q.get('type')] ? q.get('type') : TYPES[window.DOCU_TYPE_PAGE] ? window.DOCU_TYPE_PAGE : etat.type;
     const auto = lireAuto();
     // Ancien brouillon (enregistré avant cette version) : on le garde aussi
     const m = String(etat.doc.numero || '').match(/(\d+)\s*$/);
@@ -1263,7 +1272,7 @@ window.DOCU_AFFICHAGE = (function(){
       const d = docs.find(x => x && x.id === idB && x.brouillon && !x.supprime);
       viderDocument();
       if (d && d.snap){ appliquerBrouillon(d.snap); etat.brouillonId = d.id; brouillonCompte = d; brouillonRepris = true; }
-      try{ history.replaceState(null, '', '?type=' + etat.type); }catch(e){}
+      try{ history.replaceState(null, '', (window.DOCU_URL_TYPE && window.DOCU_URL_TYPE[etat.type]) || ('?type=' + etat.type)); }catch(e){}
       return;
     }
     viderDocument();
@@ -1305,11 +1314,11 @@ window.DOCU_AFFICHAGE = (function(){
         etat.paiement.notes = [`Facture établie d'après le devis n° ${d.numero} du ${dateFr(d.date)}.`, notes].filter(Boolean).join('\n');
       }
     }
-    try{ history.replaceState(null, '', '?type=' + etat.type); }catch(e){}
+    try{ history.replaceState(null, '', (window.DOCU_URL_TYPE && window.DOCU_URL_TYPE[etat.type]) || ('?type=' + etat.type)); }catch(e){}
   })();
 
-  // Type depuis l'adresse (facture.html?type=devis)
-  const typeUrl = new URLSearchParams(location.search).get('type');
+  // Type depuis l'adresse (devis.html)
+  const typeUrl = new URLSearchParams(location.search).get('type') || window.DOCU_TYPE_PAGE;
   if (typeUrl && TYPES[typeUrl] && typeUrl !== etat.type){ etat.type = typeUrl; etat.doc.numero = ''; }
   if (!etat.doc.numero || !etat.doc.numero.startsWith(baseNumero(etat.type))) etat.doc.numero = prochainNumero(etat.type);
   if (brouillonRepris){ const m = String(etat.doc.numero).match(/(\d+)\s*$/); if (m && parseInt(m[1], 10) <= (etat.compteurs[etat.type] || 0)) etat.doc.numero = prochainNumero(etat.type); }
@@ -1577,7 +1586,7 @@ window.DOCU_AFFICHAGE = (function(){
     etat.type = b.dataset.t; etat.fini = '';
     etat.doc.numero = prochainNumero(etat.type);
     rendreGalerie();
-    try{ history.replaceState(null, '', '?type=' + etat.type); }catch(err){}
+    try{ history.replaceState(null, '', (window.DOCU_URL_TYPE && window.DOCU_URL_TYPE[etat.type]) || ('?type=' + etat.type)); }catch(err){}
     remplirChamps(); majVisibilite(); rendreApercu(); sauver();
   });
 
@@ -2860,7 +2869,7 @@ window.DOCU_AFFICHAGE = (function(){
   etat();
 })();
 </script>
-<script src="stats.js?v=2" defer></script>
+<script src="stats.js?v=3" defer></script>
 <script src="compte-menu.js?v=10"></script>
 </body>
 </html>

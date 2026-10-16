@@ -3,5 +3,6 @@ Allow: /
 Disallow: /kit.html
 Disallow: /kits.html
 Disallow: /stats.html
+Disallow: /outils/
 
 Sitemap: https://docupret.fr/sitemap.xml
