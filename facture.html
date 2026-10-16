@@ -423,6 +423,90 @@ window.DOCU_AFFICHAGE = (function(){
 })();
 </script>
 <script>(function(){try{var q=new URLSearchParams(location.search).get('type'),l=document.createElement('link');l.rel='canonical';l.href='https://docupret.fr'+location.pathname.replace(/index\.html$/,'')+(q&&/^[a-z]+$/.test(q)?'?type='+q:'');document.head.appendChild(l);}catch(e){}})();</script>
+<style>
+  /* ===== Ordinateur : on écrit directement sur la feuille ===== */
+  .outils{display:none}
+  .outils[hidden],.vers-feuille[hidden]{display:none!important}
+  .vers-feuille{display:flex;align-items:center;gap:10px;width:100%;margin-bottom:12px;padding:12px 14px;border:1.5px dashed #BFD0EE;border-radius:var(--rayon);background:var(--bleu-clair);color:var(--bleu-fonce);font:inherit;font-weight:600;cursor:pointer;text-align:left}
+  .vers-feuille small{display:block;font-weight:400;color:var(--gris);font-size:.82rem}
+  @media (min-width:1100px){
+    body.mode-feuille #p-form,body.mode-feuille .galerie,body.mode-feuille .style-bar{display:none!important}
+    body.mode-feuille .zone{grid-template-columns:250px minmax(0,1fr);gap:22px}
+    body.mode-feuille #p-apercu{position:static}
+    body.mode-feuille .outils{display:block;position:sticky;top:76px;max-height:calc(100vh - 170px);overflow:auto;background:var(--blanc);border:1px solid var(--bord);border-radius:var(--rayon);padding:6px 14px 12px;scrollbar-width:thin}
+    body.mode-feuille .cadre{padding-top:20px}
+  }
+  .outils .o-bloc{padding:12px 0;border-bottom:1px solid var(--bord)}
+  .outils .o-bloc:last-child{border-bottom:none}
+  .outils .o-titre{display:block;font-size:.74rem;text-transform:uppercase;letter-spacing:.06em;color:var(--gris);font-weight:700;margin-bottom:8px}
+  .o-modeles{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+  .o-modeles button{display:flex;align-items:center;gap:6px;padding:6px 7px;border:1.5px solid var(--bord);border-radius:9px;background:#fff;font:inherit;font-size:.8rem;cursor:pointer;color:var(--texte);text-align:left;min-width:0}
+  .o-modeles button i{flex:0 0 auto;width:10px;height:10px;border-radius:3px}
+  .o-modeles button span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .o-modeles button:hover{border-color:#C5D6F2}
+  .o-modeles button.on{border-color:var(--bleu);background:var(--bleu-clair);font-weight:650}
+  .o-couleurs{display:flex;flex-wrap:wrap;gap:7px}
+  .o-couleurs button,.o-couleurs label{width:26px;height:26px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1.5px var(--bord);cursor:pointer;padding:0}
+  .o-couleurs button.on{box-shadow:0 0 0 2px var(--texte)}
+  .o-couleurs label{background:conic-gradient(#f44,#fd4,#4d4,#4dd,#44f,#d4d,#f44);position:relative;overflow:hidden}
+  .o-couleurs label input{position:absolute;inset:0;opacity:0;cursor:pointer}
+  .o-switch{display:flex;align-items:center;gap:10px;font-weight:600;font-size:.92rem;cursor:pointer}
+  .o-switch input{position:absolute;opacity:0;width:1px;height:1px}
+  .o-switch span{flex:0 0 auto;width:40px;height:23px;border-radius:20px;background:#CBD3E0;position:relative;transition:background .15s}
+  .o-switch span::after{content:"";position:absolute;left:3px;top:3px;width:17px;height:17px;border-radius:50%;background:#fff;transition:transform .15s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+  .o-switch input:checked + span{background:#2FA36B}
+  .o-switch input:checked + span::after{transform:translateX(17px)}
+  .o-switch input:focus-visible + span{outline:2px solid var(--bleu);outline-offset:2px}
+  .o-note{font-size:.78rem;color:var(--gris);margin-top:7px;line-height:1.4}
+  .o-seg{display:flex;background:var(--fond);border:1px solid var(--bord);border-radius:9px;padding:3px;margin-top:10px}
+  .o-seg button{flex:1;border:none;background:none;padding:6px 4px;border-radius:7px;font:inherit;font-size:.82rem;cursor:pointer;color:var(--gris)}
+  .o-seg button.on{background:#fff;color:var(--texte);font-weight:650;box-shadow:0 1px 3px rgba(30,42,66,.12)}
+  .o-ligne{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:.86rem;margin-top:10px}
+  .o-ligne select{font:inherit;font-size:.86rem;padding:5px 8px;border:1px solid var(--bord);border-radius:8px;background:#fff}
+  .o-coche{display:flex;align-items:center;gap:8px;font-size:.86rem;margin-top:9px;cursor:pointer}
+  .o-coche input{width:16px;height:16px;accent-color:var(--bleu)}
+  .o-puces{display:flex;flex-wrap:wrap;gap:5px}
+  .o-puces button{border:1.5px solid var(--bord);background:#fff;border-radius:20px;padding:5px 10px;font:inherit;font-size:.8rem;cursor:pointer;color:var(--gris)}
+  .o-puces button.on{border-color:var(--bleu);background:var(--bleu-clair);color:var(--bleu-fonce);font-weight:650}
+  .o-puces button:disabled{opacity:.4;cursor:default}
+  .o-btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;margin-top:8px;padding:8px 10px;border:1.5px solid var(--bord);border-radius:10px;background:#fff;font:inherit;font-size:.84rem;font-weight:600;color:var(--texte);cursor:pointer}
+  .o-btn:hover{border-color:#C5D6F2;background:var(--fond)}
+  .o-btn.verrouille::before{content:"🔒";font-size:.8rem}
+  .o-btn.fait{color:#2FA36B;border-color:#BFE6D2}
+  .o-lien{display:block;width:100%;margin-top:10px;border:none;background:none;color:var(--gris);font:inherit;font-size:.8rem;text-decoration:underline;cursor:pointer}
+  .o-aide{font-size:.8rem;color:var(--gris);line-height:1.45;background:var(--fond);border-radius:10px;padding:9px 10px;margin-top:4px}
+
+  /* Champs modifiables sur la feuille */
+  .page .ed{outline:none;border-radius:3px;cursor:text;padding:0 2px;margin:0 -2px;transition:background .12s}
+  .page .ed:hover{background:rgba(74,123,208,.09)}
+  .page .ed:focus{background:rgba(242,196,25,.16);box-shadow:0 0 0 1.5px #E8B90F}
+  .page .ed:empty::before{content:attr(data-ph);color:#AEB7C4;font-weight:400}
+  .m-moderne .p-titre .ed:empty::before{color:var(--c-texte);opacity:.65}
+  .page .ed-multi{white-space:pre-wrap}
+  .page td .ed{display:block;min-height:1.45em}
+  .page .p-paiement .ed-multi,.page .p-pied .ed{display:inline-block;min-width:40%}
+  .page .ed-date,.page .ed-sel{font:inherit;color:inherit;border:none;background:transparent;padding:1px 2px;margin:-1px -2px;border-radius:3px;cursor:pointer;max-width:100%}
+  .page .ed-date,.page .ed-sel{width:auto!important;min-width:0;height:auto!important;display:inline-block;vertical-align:baseline;line-height:inherit}
+  .page .ed-sel{-webkit-appearance:none;appearance:none;padding-right:15px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%238A94A6' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 3px center/8px auto}
+  .page .ed-date{font-weight:inherit;width:8.6em!important}
+  .page .ed-date::-webkit-calendar-picker-indicator{width:11px;height:11px;margin-left:2px;padding:0;opacity:.55;cursor:pointer}
+  .page .ed-date:hover,.page .ed-sel:hover{background:rgba(74,123,208,.09)}
+  .page .ed-date:focus,.page .ed-sel:focus{outline:none;box-shadow:0 0 0 1.5px #E8B90F}
+  .page .p-meta .ed-date{font-weight:700;color:#23272f}
+  .m-moderne .p-meta .ed-date{color:var(--c-texte)}
+  .m-moderne .p-meta .ed-date::-webkit-calendar-picker-indicator{filter:invert(var(--inv,0))}
+  .page .p-table td:last-child{position:relative}
+  .page .ed-suppr{position:absolute;right:-34px;top:6px;width:24px;height:24px;border-radius:50%;border:1px solid #E2E8F2;background:#fff;color:#C0392B;cursor:pointer;font:15px/1 Arial,sans-serif;opacity:0;transition:opacity .12s}
+  .page tr:hover .ed-suppr,.page .ed-suppr:focus{opacity:1}
+  .page .ed-ajout{display:block;width:100%;margin-top:8px;border:1.5px dashed #C5D3EA;background:#F7FAFF;color:#3E6CC0;border-radius:6px;padding:9px 12px;font:600 12px Helvetica,Arial,sans-serif;cursor:pointer}
+  .page .ed-ajout:hover{background:#EEF4FF}
+  .page .ed-logo-vide{display:block;margin-bottom:10px;border:1.5px dashed #C5D3EA;background:#F7FAFF;color:#3E6CC0;border-radius:8px;padding:12px 16px;font:600 12px Helvetica,Arial,sans-serif;cursor:pointer}
+  .page .ed-logo{position:relative;display:inline-block}
+  .page .ed-logo img{cursor:pointer}
+  .page .ed-logo .ed-x{position:absolute;right:-10px;top:-10px;width:22px;height:22px;border-radius:50%;border:1px solid #E2E8F2;background:#fff;color:#C0392B;cursor:pointer;font:14px/1 Arial,sans-serif;opacity:0}
+  .page .ed-logo:hover .ed-x{opacity:1}
+  .page .ed-aide{position:absolute;left:0;right:0;top:-30px;text-align:center;font:12px Helvetica,Arial,sans-serif;color:#8A94A6}
+</style>
 </head>
 <body>
 
@@ -545,8 +629,38 @@ window.DOCU_AFFICHAGE = (function(){
 
   <div class="zone">
 
+    <!-- ===== OUTILS (ordinateur, mode feuille) ===== -->
+    <aside class="outils" id="outils" hidden aria-label="Réglages du document">
+      <div class="o-bloc"><p class="o-aide">✍️ Cliquez sur la feuille pour écrire directement dessus.</p></div>
+      <div class="o-bloc"><b class="o-titre">Modèle</b><div class="o-modeles" id="o-modeles"></div></div>
+      <div class="o-bloc"><b class="o-titre">Couleur</b><div class="o-couleurs" id="o-couleurs"></div></div>
+      <div class="o-bloc"><b class="o-titre">TVA</b>
+        <label class="o-switch"><input type="checkbox" id="o-tva"><span></span>Facturer la TVA</label>
+        <p class="o-note" id="o-tva-note">Désactivée : la mention « TVA non applicable, art. 293 B du CGI » est ajoutée (auto-entrepreneur).</p>
+        <div id="o-tva-reglages">
+          <div class="o-seg" id="o-tvamode"><button type="button" data-m="HT">Prix en HT</button><button type="button" data-m="TTC">Prix en TTC</button></div>
+          <label class="o-ligne">Taux<select id="o-taux"><option value="20">20 %</option><option value="10">10 %</option><option value="5,5">5,5 %</option><option value="2,1">2,1 %</option><option value="0">0 %</option></select></label>
+          <label class="o-coche"><input type="checkbox" id="o-col-tva"> Taux différent par ligne</label>
+        </div>
+      </div>
+      <div class="o-bloc"><b class="o-titre">Colonnes</b>
+        <div class="o-puces" id="o-colonnes"><button type="button" data-col="ref">Réf.</button><button type="button" data-col="date">Date</button><button type="button" data-col="qte">Quantité</button><button type="button" data-col="unite">Unité</button><button type="button" data-col="remise">Remise</button></div>
+      </div>
+      <div class="o-bloc"><b class="o-titre">Client</b>
+        <label class="o-coche" style="margin-top:0"><input type="checkbox" id="o-pro"> Client professionnel</label>
+        <button type="button" class="o-btn" id="o-mes-clients">Choisir parmi mes clients</button>
+        <button type="button" class="o-btn" id="o-enreg">Enregistrer ce client</button>
+      </div>
+      <div class="o-bloc">
+        <button type="button" class="o-btn" id="o-nouveau">＋ Nouveau document</button>
+        <button type="button" class="o-btn" id="o-restaurer" hidden>Réafficher les champs retirés</button>
+        <button type="button" class="o-lien" id="o-formulaire">Remplir plutôt avec le formulaire</button>
+      </div>
+    </aside>
+
     <!-- ===== FORMULAIRE ===== -->
     <div class="panneau actif" id="p-form">
+      <button type="button" class="vers-feuille" id="vers-feuille" hidden>✍️<span>Écrire directement sur la feuille<small>Plus rapide sur ordinateur : on remplit le document comme sur papier.</small></span></button>
 
       <details class="bloc" open data-e="4" data-f="paiement">
         <summary>Document</summary>
@@ -1008,7 +1122,7 @@ window.DOCU_AFFICHAGE = (function(){
     const totalHT = arr(utiles.reduce((s, l) => s + l.ht, 0));
     const totalTVA = arr(Object.values(groupes).reduce((s, v) => s + v, 0));
     const totalTTC = arr(utiles.reduce((s, l) => s + l.ttc, 0));
-    return {lignes: utiles, groupes, totalHT, totalTVA, totalTTC};
+    return {lignes: utiles, toutes: lignes, groupes, totalHT, totalTVA, totalTTC};
   }
 
   // ---------- Aperçu ----------
@@ -1135,7 +1249,14 @@ window.DOCU_AFFICHAGE = (function(){
   }
 
   function rendreApercu(){
-    const k = remplirPage($('page'));
+    const f = feuille() ? memoriserCurseur() : null;
+    redessin = true;
+    let k;
+    try{
+      k = feuille() ? remplirEdition($('page')) : remplirPage($('page'));
+      if (f) restaurerCurseur(f);
+    } finally { redessin = false; }
+    if (feuille()) majOutils();
     $('total-label').textContent = etat.type === 'recu' ? 'Montant payé' : etat.type === 'avoir' ? "Total de l'avoir" : (etat.franchise ? 'Total' : 'Total TTC');
     $('total-val').textContent = eur(k.totalTTC);
     ajuster();
@@ -1391,8 +1512,9 @@ window.DOCU_AFFICHAGE = (function(){
   // PDF : on photographie une copie de la page posée en haut à gauche, à taille réelle,
   // pour éviter les pages coupées ou décalées sur téléphone (zoom de l'aperçu, défilement).
   async function pdfDepuisPage(opts, avant){
-    const copie = $('page').cloneNode(true);
-    copie.removeAttribute('id'); copie.style.transform = 'none'; copie.style.boxShadow = 'none'; copie.style.margin = '0';
+    // Toujours la version « propre » de la page (sans les zones à remplir de l'écran)
+    const copie = document.createElement('div'); remplirPage(copie);
+    copie.style.transform = 'none'; copie.style.boxShadow = 'none'; copie.style.margin = '0';
     if (avant) avant(copie);
     const hote = document.createElement('div');
     hote.style.cssText = 'position:absolute;left:0;top:0;width:794px;z-index:-1;background:#fff;pointer-events:none';
@@ -1426,7 +1548,7 @@ window.DOCU_AFFICHAGE = (function(){
 
   $('telecharger').addEventListener('click', async () => {
     const k = calculer(), manque = manqueDoc(k);
-    if (manque){ alerte(manque); if (window.innerWidth < 960) montrer('p-form'); return; }
+    if (manque){ alerte(manque); if (window.innerWidth < 960) montrer('p-form'); else allerAuManque(); return; }
     const bouton = $('telecharger'), lib = bouton.querySelector('.lib'), avantTxt = lib.innerHTML;
     bouton.disabled = true; lib.textContent = 'Création…';
     try{
@@ -1452,7 +1574,7 @@ window.DOCU_AFFICHAGE = (function(){
 
   $('envoyer').addEventListener('click', () => {
     const k = calculer(), manque = manqueDoc(k);
-    if (manque){ alerte(manque); if (window.innerWidth < 960) montrer('p-form'); return; }
+    if (manque){ alerte(manque); if (window.innerWidth < 960) montrer('p-form'); else allerAuManque(); return; }
     const G = window.Gmail, C = window.Compte;
     const gmailPossible = !!(G && G.active()), connecte = !!(C && C.utilisateur());
     if (gmailPossible && connecte) G.charger();
@@ -1682,8 +1804,311 @@ window.DOCU_AFFICHAGE = (function(){
   window.addEventListener('storage', e => { if (e.key === CLE) rafraichirReglages(); });
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') rafraichirReglages(); });
 
+  // =====================================================================
+  // ===== Ordinateur : remplir directement sur la feuille (mode feuille) =====
+  // =====================================================================
+  // Chaque zone de la feuille est reliée au même réglage que le formulaire (caché) :
+  // on écrit dans le formulaire, qui reste la seule source (comptes, clients, envoi…).
+  var enCours = null, redessin = false;          // zone où se trouve le curseur (affichée « brute » pendant la saisie)
+  function lirePref(){ try{ return localStorage.getItem('docupret_saisie') || ''; }catch(e){ return ''; } }
+  function feuille(){ return !!(window.matchMedia && matchMedia('(min-width:1100px)').matches) && lirePref() !== 'formulaire'; }
+  const CE = (() => { try{ const d = document.createElement('div'); d.contentEditable = 'plaintext-only'; return d.contentEditable === 'plaintext-only' ? 'plaintext-only' : 'true'; }catch(e){ return 'true'; } })();
+
+  function remplirEdition(page){
+    const t = etat.type, T = TYPES[t], em = etat.em, cl = etat.cl, c = etat.cols, fr = etat.franchise;
+    const k = calculer();
+    const met = METIERS[etat.modele];
+    page.className = 'page ' + (met ? 'm-metier m-' + etat.modele : 'm-' + etat.modele);
+    page.style.setProperty('--c', etat.couleur);
+    page.style.setProperty('--c-clair', clair(etat.couleur));
+    page.style.setProperty('--c-texte', texteSur(etat.couleur));
+    page.style.setProperty('--inv', texteSur(etat.couleur) === '#ffffff' ? 1 : 0);
+    const suffixe = fr ? '' : (etat.tvaMode === 'TTC' ? ' TTC' : ' HT');
+    const afficheTVA = c.tva && !fr;
+    const aff = x => !etat.masques[x];
+    // Zone de texte modifiable
+    const E = (cle, v, ph, o) => { o = o || {};
+      return `<span class="ed${o.multi ? ' ed-multi' : ''}" data-ed="${cle}" data-ph="${esc(ph)}"${o.fmt ? ' data-fmt="1"' : ''}${o.multi ? ' data-multi="1"' : ''} contenteditable="${CE}" spellcheck="${o.sansCorrection ? 'false' : 'true'}" role="textbox" aria-label="${esc(ph)}">${esc(v ?? '')}</span>`; };
+    const D = (cle, v) => `<input type="date" class="ed-date" data-ed="${cle}" value="${esc(v || '')}" aria-label="Date">`;
+    const S = (cle, v) => {
+      const src = document.querySelector(`#p-form select[data-b="${cle}"]`);
+      const opts = src ? [...src.options].map(o => o.value || o.text) : [];
+      if (v && !opts.includes(v)) opts.unshift(v);
+      return `<select class="ed-sel" data-ed="${cle}">${opts.map(o => `<option${o === v ? ' selected' : ''}>${esc(o)}</option>`).join('')}</select>`;
+    };
+    const brut = (cle, raw, joli) => enCours === cle ? (raw ?? '') : (vide(raw) ? '' : joli);
+
+    // Colonnes du tableau
+    const cols = [];
+    if (c.ref) cols.push({h: 'Réf.', v: (l, i) => E(`L:${i}:ref`, l.ref, 'Réf.')});
+    if (c.date) cols.push({h: 'Date', v: (l, i) => D(`L:${i}:date`, l.date)});
+    cols.push({h: 'Désignation', v: (l, i) => E(`L:${i}:des`, l.des, 'Désignation de la prestation', {multi: true}), large: true});
+    if (c.qte) cols.push({h: 'Qté', v: (l, i) => E(`L:${i}:qte`, l.qte, '1'), n: true});
+    if (c.qte && c.unite) cols.push({h: 'Unité', v: (l, i) => E(`L:${i}:unite`, l.unite, 'u')});
+    if (c.qte) cols.push({h: 'Prix unit.' + suffixe, v: (l, i) => E(`L:${i}:pu`, brut(`L:${i}:pu`, l.pu, eur(num(l.pu))), '0,00 €', {fmt: true}), n: true});
+    if (c.remise) cols.push({h: 'Remise', v: (l, i) => E(`L:${i}:remise`, brut(`L:${i}:remise`, l.remise, nb(num(l.remise)) + ' %'), '0 %', {fmt: true}), n: true});
+    if (afficheTVA) cols.push({h: 'TVA', v: (l, i) => E(`L:${i}:tva`, brut(`L:${i}:tva`, l.tva, taux(num(l.tva))), taux(tauxDef()), {fmt: true}), n: true});
+    if (c.qte) cols.push({h: 'Total' + suffixe, v: (l, i) => eur(etat.tvaMode === 'TTC' && !fr ? k.toutes[i].ttc : k.toutes[i].ht), n: true});
+    else cols.push({h: 'Montant' + suffixe, v: (l, i) => E(`L:${i}:pu`, brut(`L:${i}:pu`, l.pu, eur(num(l.pu))), '0,00 €', {fmt: true}), n: true});
+    const plusieurs = etat.lignes.length > 1;
+    const corps = etat.lignes.map((l, i) => `<tr data-ligne="${i}">${cols.map((col, j) => `<td class="${col.n ? 'n' : ''}">${col.v(l, i)}${j === cols.length - 1 && plusieurs ? `<button type="button" class="ed-suppr" data-act="suppr" data-i="${i}" title="Supprimer cette ligne" aria-label="Supprimer cette ligne">×</button>` : ''}</td>`).join('')}</tr>`).join('');
+
+    // Totaux (comme sur le PDF)
+    let totaux = '';
+    if (fr) totaux = `<tr class="fin"><td>${t === 'recu' ? 'Montant payé' : t === 'avoir' ? "Total de l'avoir" : 'Total'}</td><td>${eur(k.totalTTC)}</td></tr>`;
+    else {
+      totaux += `<tr><td>Total HT</td><td>${eur(k.totalHT)}</td></tr>`;
+      Object.keys(k.groupes).map(Number).sort((a, b) => b - a).forEach(r => { totaux += `<tr><td>TVA ${taux(r)}</td><td>${eur(k.groupes[r])}</td></tr>`; });
+      if (!Object.keys(k.groupes).length) totaux += `<tr><td>TVA</td><td>${eur(0)}</td></tr>`;
+      totaux += `<tr class="fin"><td>${t === 'recu' ? 'Montant payé' : t === 'avoir' ? "Total de l'avoir TTC" : 'Total TTC'}</td><td>${eur(k.totalTTC)}</td></tr>`;
+    }
+
+    // Numéro et dates
+    let meta = (aff('doc.numero') ? `<div>N° <b>${E('doc.numero', etat.doc.numero, 'numéro', {sansCorrection: true})}</b></div>` : '')
+      + (aff('doc.date') ? `<div>Date : <b>${D('doc.date', etat.doc.date)}</b></div>` : '');
+    if (t === 'facture' && aff('doc.echeance')) meta += `<div>Échéance : <b>${D('doc.echeance', etat.doc.echeance)}</b></div>`;
+    if (t === 'devis' && aff('doc.validite')) meta += `<div>Valable jusqu'au : <b>${D('doc.validite', etat.doc.validite)}</b></div>`;
+    if (t === 'avoir') meta += `<div>Facture d'origine : <b>${E('doc.factureRef', etat.doc.factureRef, 'n° de facture', {sansCorrection: true})}</b></div>`;
+
+    // Paiement
+    const pa = etat.paiement;
+    let paiement = '';
+    if (t === 'recu') paiement += aff('paiement.moyen') ? `<div><b>Payé par :</b> ${S('paiement.moyen', pa.moyen)}</div>` : '';
+    else if (t === 'avoir') paiement += `<div><b>Remboursement :</b> ${S('doc.remboursement', etat.doc.remboursement)}</div>`;
+    else {
+      if (aff('paiement.conditions')) paiement += `<div><b>Conditions de paiement :</b> ${S('paiement.conditions', pa.conditions)}</div>`;
+      if (aff('paiement.moyen')) paiement += `<div><b>Mode de paiement :</b> ${S('paiement.moyen', pa.moyen)}</div>`;
+      if (pa.moyen === 'Virement' && aff('paiement.moyen') && aff('paiement.iban')) paiement += `<div><b>IBAN :</b> ${E('paiement.iban', pa.iban, 'FR76 0000 0000 0000 (facultatif)', {sansCorrection: true})}</div>`;
+    }
+    if (aff('paiement.notes')) paiement += `<div style="margin-top:10px">${E('paiement.notes', pa.notes, 'Un mot pour le client (facultatif) : « Merci pour votre confiance ! »', {multi: true})}</div>`;
+
+    // Mentions légales automatiques
+    const mentions = [];
+    if (fr) mentions.push('TVA non applicable, art. 293 B du CGI.');
+    if (t === 'facture' && cl.pro) mentions.push("En cas de retard de paiement : pénalités au taux de 3 fois le taux d'intérêt légal et indemnité forfaitaire pour frais de recouvrement de 40 €. Pas d'escompte pour paiement anticipé.");
+    if (t === 'devis' && aff('doc.validite') && etat.doc.validite) mentions.push(`Devis valable jusqu'au ${dateFr(etat.doc.validite)}.`);
+
+    // Pied de page
+    const pied = [aff('em.nom') && em.nom && esc(em.nom), aff('em.siret') && em.siret && 'SIRET ' + esc(em.siret),
+      !fr && aff('em.tvaintra') ? (em.tvaintra ? 'TVA ' : '') + E('em.tvaintra', em.tvaintra, 'N° de TVA (facultatif)', {sansCorrection: true}) : '',
+      aff('em.mentions') ? E('em.mentions', em.mentions, 'Mentions en bas de page (assurance, RCS…), facultatif') : ''].filter(Boolean).join(' · ');
+
+    // Phrase (reçu, avoir)
+    const nomEm = em.nom ? esc(em.nom) : '<span class="ph">votre nom</span>';
+    const nomCl = cl.nom ? esc(cl.nom) : '<span class="ph">nom du client</span>';
+    const phrase = t === 'recu'
+      ? `<p class="p-phrase">Je soussigné(e) ${nomEm} déclare avoir reçu de ${nomCl} la somme de <b>${eur(k.totalTTC)}</b>${aff('doc.date') && etat.doc.date ? ' le ' + dateFr(etat.doc.date) : ''}, pour les éléments ci-dessous.</p>`
+      : t === 'avoir'
+      ? `<p class="p-phrase">Avoir émis sur la facture ${etat.doc.factureRef ? `<b>${esc(etat.doc.factureRef)}</b>` : '<span class="ph">n° de facture</span>'} du ${D('doc.factureDate', etat.doc.factureDate)}, pour le motif suivant : ${S('doc.motif', etat.doc.motif)}.</p>`
+      : '';
+
+    const ligne = (cle, v, ph, avant, o) => aff(cle) ? `<div>${avant || ''}${E(cle, v, ph, o)}</div>` : '';
+    const blocClient = (aff('cl.nom') ? `<b>${E('cl.nom', cl.nom, 'Nom du client')}</b>` : '')
+      + ligne('cl.adresse', cl.adresse, 'Adresse') + ligne('cl.cpville', cl.cpville, 'Code postal, ville')
+      + ligne('cl.tel', cl.tel, 'Téléphone (facultatif)', '', {sansCorrection: true}) + ligne('cl.email', cl.email, 'E-mail (facultatif)', '', {sansCorrection: true})
+      + (cl.pro ? ligne('cl.siret', cl.siret, '000 000 000 00000', 'SIRET : ', {sansCorrection: true}) : '');
+
+    const logo = em.logo
+      ? `<div class="ed-logo"><img class="p-logo" src="${em.logo}" alt="" data-act="logo" title="Changer le logo"><button type="button" class="ed-x" data-act="logo-suppr" title="Retirer le logo" aria-label="Retirer le logo">×</button></div>`
+      : `<button type="button" class="ed-logo-vide" data-act="logo">＋ Ajouter votre logo</button>`;
+    const deco = met ? decors(etat.modele, etat.couleur) : null;
+    page.innerHTML = (met ? `<img class="p-deco-haut" alt="" src="${deco.haut}"><img class="p-deco-bas" alt="" src="${deco.bas}"><img class="p-filigrane" alt="" src="${iconeSvg(met.icone, etat.couleur, 240, 1.2)}">` : '') + `
+      <div class="p-entete">
+        <div class="p-emetteur">
+          ${logo}
+          ${aff('em.nom') ? `<b>${E('em.nom', em.nom, 'Votre entreprise')}</b>` : ''}
+          ${ligne('em.adresse', em.adresse, 'Adresse')}
+          ${ligne('em.cpville', em.cpville, 'Code postal, ville')}
+          ${ligne('em.tel', em.tel, 'Téléphone', '', {sansCorrection: true})}
+          ${ligne('em.email', em.email, 'E-mail', '', {sansCorrection: true})}
+          ${ligne('em.siret', em.siret, '000 000 000 00000', 'SIRET : ', {sansCorrection: true})}
+        </div>
+        <div class="p-titre"><div class="p-h1">${met ? `<img class="p-ico" alt="" src="${svgUri(36, 36, `<circle cx="18" cy="18" r="18" fill="${etat.couleur}"/><g transform="translate(6 6)" fill="none" stroke="${texteSur(etat.couleur)}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${met.icone}</g>`)}">` : ''}${T.titre}</div>${meta ? `<div class="p-meta">${meta}</div>` : ''}</div>
+      </div>
+      <div class="p-client"><span class="p-label">${T.client}</span>${blocClient}</div>
+      ${phrase}
+      <table class="p-table">
+        <thead><tr>${cols.map(col => `<th class="${col.n ? 'n' : ''}" ${col.large ? 'style="width:45%"' : ''}>${col.h}</th>`).join('')}</tr></thead>
+        <tbody>${corps}</tbody>
+      </table>
+      <button type="button" class="ed-ajout" data-act="ajout">＋ Ajouter une ligne</button>
+      <div class="p-bas">
+        <div class="p-paiement">${paiement}</div>
+        <table class="p-totaux">${totaux}</table>
+      </div>
+      ${t === 'devis' ? `<div class="p-signature"><b>Bon pour accord</b><br>Date et signature du client, précédées de la mention « Bon pour accord »</div>` : ''}
+      ${mentions.length ? `<div class="p-mentions">${mentions.map(m => `<div>${m}</div>`).join('')}</div>` : ''}
+      ${t === 'recu' ? '<div class="p-paye">PAYÉ</div>' : ''}
+      ${pied ? `<div class="p-pied">${pied}</div>` : ''}
+    `;
+    return k;
+  }
+  window.docuPagePropre = () => { const d = document.createElement('div'); remplirPage(d); return d; };
+
+  // ----- Curseur : on le garde au même endroit quand la feuille se redessine -----
+  function texteDe(el){
+    let t = '';
+    (function w(n){ n.childNodes.forEach(x => {
+      if (x.nodeType === 3) t += x.nodeValue;
+      else if (x.nodeName === 'BR') t += '\n';
+      else { if ((x.nodeName === 'DIV' || x.nodeName === 'P') && t && !t.endsWith('\n')) t += '\n'; w(x); }
+    }); })(el);
+    return t.replace(/ /g, ' ');
+  }
+  function longueur(frag){ const d = document.createElement('div'); d.appendChild(frag); return texteDe(d).length; }
+  function memoriserCurseur(){
+    const a = document.activeElement;
+    if (!a || !a.dataset || !a.dataset.ed || !a.closest('#page')) { enCours = null; return null; }
+    enCours = a.dataset.ed;
+    let pos = null;
+    if (a.isContentEditable){
+      const s = getSelection();
+      if (s.rangeCount && a.contains(s.getRangeAt(0).endContainer)){
+        const r = document.createRange(); r.selectNodeContents(a); r.setEnd(s.getRangeAt(0).endContainer, s.getRangeAt(0).endOffset);
+        pos = longueur(r.cloneContents());
+      }
+    }
+    return {cle: a.dataset.ed, pos};
+  }
+  function placerCurseur(el, pos){
+    el.focus({preventScroll: true});
+    if (!el.isContentEditable) return;
+    const s = getSelection(), r = document.createRange();
+    let reste = pos == null ? Infinity : pos, place = false;
+    const w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+    let n;
+    while ((n = w.nextNode())){ if (reste <= n.nodeValue.length){ r.setStart(n, reste); place = true; break; } reste -= n.nodeValue.length; }
+    if (!place){ r.selectNodeContents(el); r.collapse(false); } else r.collapse(true);
+    s.removeAllRanges(); s.addRange(r);
+  }
+  function restaurerCurseur(f){
+    const el = $('page').querySelector(`[data-ed="${f.cle}"]`);
+    if (el) placerCurseur(el, f.pos); else enCours = null;
+  }
+
+  // ----- Écrire une valeur, comme si on l'avait tapée dans le formulaire -----
+  function ecrireValeur(cle, v){
+    const m = cle.match(/^L:(\d+):(\w+)$/);
+    if (m){
+      const i = +m[1], champ = m[2]; if (!etat.lignes[i]) return;
+      etat.lignes[i][champ] = v;
+      const f = $('lignes').querySelector(`[data-i="${i}"][data-k="${champ}"]`); if (f) f.value = v;
+      rendreApercu(); sauver();
+      return;
+    }
+    const f = document.querySelector(`#p-form [data-b="${cle}"]`);
+    if (f){ f.value = v; f.dispatchEvent(new Event('input', {bubbles: true})); }
+    else { ecrire(etat, cle, v); majVisibilite(); rendreApercu(); sauver(); }
+  }
+
+  const pageEl = $('page');
+  pageEl.addEventListener('input', e => {
+    const el = e.target.closest && e.target.closest('.ed'); if (!el || e.isComposing) return;
+    let v = texteDe(el);
+    if (!el.dataset.multi) v = v.replace(/\n+/g, ' ');
+    ecrireValeur(el.dataset.ed, v);
+  });
+  pageEl.addEventListener('compositionend', e => { const el = e.target.closest && e.target.closest('.ed'); if (el) el.dispatchEvent(new Event('input', {bubbles: true})); });
+  pageEl.addEventListener('change', e => {
+    const el = e.target; if (!el.dataset || !el.dataset.ed || !(el.tagName === 'INPUT' || el.tagName === 'SELECT')) return;
+    ecrireValeur(el.dataset.ed, el.value);
+  });
+  // Les montants s'affichent « 1 200,00 € » ; pendant la saisie, on voit le chiffre tapé
+  pageEl.addEventListener('focusin', e => { const el = e.target; if (!redessin && el.dataset && el.dataset.fmt){ enCours = el.dataset.ed; rendreApercu(); const n = $('page').querySelector(`[data-ed="${el.dataset.ed}"]`); if (n) placerCurseur(n, null); } });
+  pageEl.addEventListener('focusout', e => { if (!redessin && e.target.dataset && e.target.dataset.fmt) setTimeout(() => { if (feuille()) rendreApercu(); }, 0); });
+  pageEl.addEventListener('keydown', e => {
+    const el = e.target.closest && e.target.closest('.ed'); if (!el) return;
+    if (e.key === 'Enter' && !el.dataset.multi){
+      e.preventDefault();
+      const tous = [...$('page').querySelectorAll('.ed, .ed-date, .ed-sel')], i = tous.indexOf(el);
+      if (tous[i + 1]) placerCurseur(tous[i + 1], null); else el.blur();
+    }
+  });
+  pageEl.addEventListener('paste', e => {
+    const el = e.target.closest && e.target.closest('.ed'); if (!el || CE === 'plaintext-only') return;
+    e.preventDefault();
+    const txt = (e.clipboardData || window.clipboardData).getData('text');
+    document.execCommand('insertText', false, el.dataset.multi ? txt : txt.replace(/\s*\n\s*/g, ' '));
+  });
+  pageEl.addEventListener('click', e => {
+    const b = e.target.closest('[data-act]'); if (!b || !feuille()) return;
+    const act = b.dataset.act;
+    if (act === 'logo') $('logo-fichier').click();
+    else if (act === 'logo-suppr') $('logo-suppr').click();
+    else if (act === 'ajout'){
+      etat.lignes.push(ligneVide()); rendreLignes(); rendreApercu(); sauver();
+      const n = $('page').querySelector(`[data-ed="L:${etat.lignes.length - 1}:des"]`); if (n) placerCurseur(n, null);
+    } else if (act === 'suppr'){
+      etat.lignes.splice(+b.dataset.i, 1); if (!etat.lignes.length) etat.lignes = [ligneVide()];
+      rendreLignes(); rendreApercu(); sauver();
+    }
+  });
+  function allerAuManque(){
+    if (!feuille()) return;
+    const k = calculer();
+    const cle = (!etat.masques['em.nom'] && !etat.em.nom) ? 'em.nom' : (!etat.masques['cl.nom'] && !etat.cl.nom) ? 'cl.nom' : !k.lignes.length ? 'L:0:des' : '';
+    const n = cle && $('page').querySelector(`[data-ed="${cle}"]`);
+    if (n){ n.scrollIntoView({block: 'center', behavior: 'smooth'}); placerCurseur(n, null); }
+  }
+
+  // ----- Colonne d'outils -----
+  $('o-modeles').innerHTML = MODELES.map(m => `<button type="button" data-mod="${m.k}" title="${esc(m.nom)}"><i style="background:${m.couleur}"></i><span>${esc(m.nom)}</span></button>`).join('');
+  $('o-couleurs').innerHTML = COULEURS.map(c => `<button type="button" data-c="${c}" style="background:${c}" aria-label="Couleur ${c}"></button>`).join('')
+    + '<label title="Couleur personnalisée"><input type="color" id="o-couleur-perso" aria-label="Couleur personnalisée"></label>';
+  function formulaire(cle){ return document.querySelector(`#p-form [data-b="${cle}"]`); }
+  function cocher(cle, v){ const f = formulaire(cle); if (f){ f.checked = v; f.dispatchEvent(new Event('input', {bubbles: true})); } }
+  function majOutils(){
+    document.querySelectorAll('#o-modeles button').forEach(b => b.classList.toggle('on', b.dataset.mod === etat.modele));
+    document.querySelectorAll('#o-couleurs button').forEach(b => b.classList.toggle('on', b.dataset.c.toLowerCase() === etat.couleur.toLowerCase()));
+    $('o-tva').checked = !etat.franchise;
+    $('o-tva-note').hidden = !etat.franchise;
+    $('o-tva-reglages').hidden = etat.franchise;
+    document.querySelectorAll('#o-tvamode button').forEach(b => b.classList.toggle('on', b.dataset.m === etat.tvaMode));
+    const tx = String(etat.tauxDefaut ?? '').trim() === '' ? '20' : String(etat.tauxDefaut).replace('.', ',');
+    const sel = $('o-taux');
+    if (![...sel.options].some(o => o.value === tx)) sel.insertAdjacentHTML('beforeend', `<option value="${esc(tx)}">${esc(tx)} %</option>`);
+    sel.value = tx;
+    $('o-col-tva').checked = !!etat.cols.tva;
+    document.querySelectorAll('#o-colonnes button').forEach(b => { b.classList.toggle('on', !!etat.cols[b.dataset.col]); b.disabled = b.dataset.col === 'unite' && !etat.cols.qte; });
+    $('o-pro').checked = !!etat.cl.pro;
+    $('o-restaurer').hidden = !Object.keys(etat.masques || {}).length;
+    setTimeout(() => {
+      const src = $('enreg-client'), b = $('o-enreg'), mc = $('mes-clients');
+      b.textContent = (src.querySelector('span') || src).textContent;
+      b.classList.toggle('verrouille', src.classList.contains('verrouille')); b.classList.toggle('fait', src.classList.contains('fait'));
+      $('o-mes-clients').classList.toggle('verrouille', mc.classList.contains('verrouille'));
+    }, 0);
+  }
+  $('o-modeles').addEventListener('click', e => { const b = e.target.closest('[data-mod]'); if (b){ const m = $('modeles').querySelector(`[data-mod="${b.dataset.mod}"]`); if (m) m.click(); } });
+  $('o-couleurs').addEventListener('click', e => { const b = e.target.closest('[data-c]'); if (b){ const m = $('couleurs').querySelector(`[data-c="${b.dataset.c}"]`); if (m) m.click(); } });
+  $('o-couleur-perso').addEventListener('input', e => { const p = $('couleur-perso'); p.value = e.target.value; p.dispatchEvent(new Event('input', {bubbles: true})); });
+  $('o-tva').addEventListener('change', e => cocher('franchise', !e.target.checked));
+  $('o-tvamode').addEventListener('click', e => { const b = e.target.closest('[data-m]'); if (b) $('tva-mode').querySelector(`[data-m="${b.dataset.m}"]`).click(); });
+  $('o-taux').addEventListener('change', e => { const f = formulaire('tauxDefaut'); if (f){ f.value = e.target.value; f.dispatchEvent(new Event('input', {bubbles: true})); } });
+  $('o-col-tva').addEventListener('change', () => $('colonnes').querySelector('[data-col="tva"]').click());
+  $('o-colonnes').addEventListener('click', e => { const b = e.target.closest('[data-col]'); if (b && !b.disabled) $('colonnes').querySelector(`[data-col="${b.dataset.col}"]`).click(); });
+  $('o-pro').addEventListener('change', e => cocher('cl.pro', e.target.checked));
+  $('o-mes-clients').addEventListener('click', () => $('mes-clients').click());
+  $('o-enreg').addEventListener('click', () => { $('enreg-client').click(); setTimeout(majOutils, 50); });
+  $('o-nouveau').addEventListener('click', () => $('nouveau').click());
+  $('o-restaurer').addEventListener('click', () => { etat.masques = {}; majVisibilite(); rendreApercu(); sauver(); });
+
+  // ----- Passer d'un mode à l'autre -----
+  function appliquerMode(){
+    const pc = !!(window.matchMedia && matchMedia('(min-width:1100px)').matches), m = feuille();
+    document.body.classList.toggle('mode-feuille', m);
+    $('outils').hidden = !m;
+    $('vers-feuille').hidden = !(pc && !m);
+    if (!m) enCours = null;
+    rendreApercu();
+  }
+  const ecrirePref = v => { try{ if (v) localStorage.setItem('docupret_saisie', v); else localStorage.removeItem('docupret_saisie'); }catch(e){} };
+  $('o-formulaire').addEventListener('click', () => { ecrirePref('formulaire'); appliquerMode(); window.scrollTo({top: 0}); });
+  $('vers-feuille').addEventListener('click', () => { ecrirePref(''); appliquerMode(); window.scrollTo({top: 0}); });
+  if (window.matchMedia) matchMedia('(min-width:1100px)').addEventListener('change', appliquerMode);
+
   // ---------- Démarrage ----------
-  rendreGalerie(); remplirChamps(); majLogo(); rendreLignes(); majVisibilite(); rendreApercu();
+  rendreGalerie(); remplirChamps(); majLogo(); rendreLignes(); majVisibilite(); appliquerMode();
   if (brouillonRepris) setTimeout(() => alerte('Votre brouillon en cours est repris. « ＋ Nouveau document » pour repartir de zéro.'), 700);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(ajuster);
 })();
@@ -1737,7 +2162,8 @@ window.DOCU_AFFICHAGE = (function(){
     retirer();
     const p = document.getElementById('page'); if (!p) return;
     const z = document.createElement('div'); z.id = 'impression';
-    const c = p.cloneNode(true); c.removeAttribute('id'); z.appendChild(c); document.body.appendChild(z);
+    let c; if (window.docuPagePropre) c = window.docuPagePropre(); else { c = p.cloneNode(true); c.removeAttribute('id'); }
+    z.appendChild(c); document.body.appendChild(z);
   }
   function retirer(){ const z = document.getElementById('impression'); if (z) z.remove(); }
   window.addEventListener('beforeprint', preparer);
