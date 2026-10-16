@@ -605,6 +605,7 @@ window.DOCU_AFFICHAGE = (function(){
           <label class="ch">Nom ou entreprise<input data-b="cl.nom"></label>
           <label class="ch">Adresse<input data-b="cl.adresse"></label>
           <label class="ch">Code postal et ville<input data-b="cl.cpville"></label>
+          <label class="ch">Téléphone (facultatif)<input type="tel" data-b="cl.tel" autocomplete="off" inputmode="tel"></label>
           <label class="ch">E-mail (facultatif)<input type="email" data-b="cl.email"></label>
           <label class="coche"><input type="checkbox" data-b="cl.pro"> Client professionnel</label>
           <label class="ch" data-pro>SIRET du client<input data-b="cl.siret" inputmode="numeric"></label>
@@ -862,7 +863,7 @@ window.DOCU_AFFICHAGE = (function(){
     return {
       type:'facture', modele:'classique', couleur:'#4A7BD0',
       em:{nom:'', adresse:'', cpville:'', siret:'', tvaintra:'', tel:'', email:'', mentions:'', logo:''},
-      cl:{nom:'', adresse:'', cpville:'', email:'', pro:false, siret:''},
+      cl:{nom:'', adresse:'', cpville:'', tel:'', email:'', pro:false, siret:''},
       doc:{numero:'', date:d, echeance:plusJours(d, 30), validite:plusJours(d, 30), factureRef:'', factureDate:'', motif:'Remise commerciale', remboursement:'Déduit de la prochaine facture'},
       cols:{ref:false, date:false, qte:true, unite:false, remise:false, tva:true},
       tvaMode:'HT', franchise:false, tauxDefaut:20,
@@ -1080,6 +1081,7 @@ window.DOCU_AFFICHAGE = (function(){
     const blocClient = (aff('cl.nom') ? `<b>${cl.nom ? esc(cl.nom) : '<span class="ph">Nom du client</span>'}</b>` : '')
       + champ('cl.adresse', cl.adresse, 'Adresse', `<div>${esc(cl.adresse)}</div>`)
       + champ('cl.cpville', cl.cpville, 'Code postal, ville', `<div>${esc(cl.cpville)}</div>`)
+      + si('cl.tel', cl.tel, `<div>${esc(cl.tel)}</div>`)
       + si('cl.email', cl.email, `<div>${esc(cl.email)}</div>`)
       + (cl.pro ? si('cl.siret', cl.siret, `<div>SIRET : ${esc(cl.siret)}</div>`) : '');
 
@@ -1519,7 +1521,7 @@ window.DOCU_AFFICHAGE = (function(){
   // ---------- Champs retirables (−) ----------
   const MASQUABLES = ['doc.numero','doc.date','paiement.conditions','doc.echeance','doc.validite',
     'em.nom','em.adresse','em.cpville','em.siret','em.tvaintra','em.tel','em.email','em.mentions',
-    'cl.nom','cl.adresse','cl.cpville','cl.email','cl.siret','paiement.moyen','paiement.iban','paiement.notes'];
+    'cl.nom','cl.adresse','cl.cpville','cl.tel','cl.email','cl.siret','paiement.moyen','paiement.iban','paiement.notes'];
   document.querySelectorAll('label.ch').forEach(lab => {
     const champ = lab.querySelector('[data-b]');
     if (!champ || !MASQUABLES.includes(champ.dataset.b)) return;
@@ -1877,7 +1879,7 @@ window.DOCU_AFFICHAGE = (function(){
 (function(){
   if (!window.Compte) return;
   const $ = id => document.getElementById(id);
-  const LIENS = {nom: 'cl.nom', adresse: 'cl.adresse', cpville: 'cl.cpville', email: 'cl.email', pro: 'cl.pro', siret: 'cl.siret'};
+  const LIENS = {nom: 'cl.nom', adresse: 'cl.adresse', cpville: 'cl.cpville', tel: 'cl.tel', email: 'cl.email', pro: 'cl.pro', siret: 'cl.siret'};
   const champ = b => document.querySelector(`[data-b="${b}"]`);
   const lire = () => { const o = {}; for (const [k, b] of Object.entries(LIENS)){ const e = champ(b); if (e) o[k] = e.type === 'checkbox' ? e.checked : e.value.trim(); } return o; };
   function remplir(c){

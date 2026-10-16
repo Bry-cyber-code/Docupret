@@ -571,7 +571,7 @@
   function voir(id){
     const c = C.client(id); if (!c) return;
     const f = document.createElement('div'); f.className = 'fond';
-    const lignes = [[c.adresse, c.cpville].filter(Boolean).join(', '), c.email, c.siret && 'SIRET ' + c.siret].filter(Boolean);
+    const lignes = [[c.adresse, c.cpville].filter(Boolean).join(', '), c.tel, c.email, c.siret && 'SIRET ' + c.siret].filter(Boolean);
     f.innerHTML = `<div class="boite" role="dialog" aria-modal="true"><div class="boite-tete"><b>${esc(c.nom)}${c.pro ? '<span class="cl-pro">Pro</span>' : ''}</b><button type="button" data-fermer aria-label="Fermer">×</button></div>
       <div class="fiche-infos">${lignes.length ? lignes.map(x => `<span>${esc(x)}</span>`).join('') : '<span>Pas de coordonnées enregistrées</span>'}</div>
       <label class="note-client"><span>📝 Note personnelle <em>visible seulement par vous</em></span><textarea data-note rows="2" placeholder="Ex. : client très gentil, paie toujours à l'heure, code du portail…">${esc(c.note || '')}</textarea><small data-note-ok></small></label>
@@ -602,6 +602,7 @@
       <label class="ch">Nom ou entreprise<input name="nom" value="${esc(c.nom)}" required></label>
       <label class="ch">Adresse<input name="adresse" value="${esc(c.adresse)}" autocomplete="off"></label>
       <label class="ch">Code postal et ville<input name="cpville" value="${esc(c.cpville)}" autocomplete="off"></label>
+      <label class="ch">Téléphone (facultatif)<input name="tel" type="tel" inputmode="tel" value="${esc(c.tel)}" autocomplete="off"></label>
       <label class="ch">E-mail (facultatif)<input name="email" type="email" value="${esc(c.email)}" autocomplete="off"></label>
       <label class="case"><input type="checkbox" name="pro" ${c.pro ? 'checked' : ''}> Client professionnel</label>
       <label class="ch" data-siret ${c.pro ? '' : 'hidden'}>SIRET du client<input name="siret" inputmode="numeric" value="${esc(c.siret)}"></label>
@@ -617,7 +618,7 @@
     });
     form.addEventListener('submit', e => {
       e.preventDefault();
-      const r = C.enregistrerClient({id: id || undefined, nom: form.nom.value, adresse: form.adresse.value, cpville: form.cpville.value, email: form.email.value, pro: form.pro.checked, siret: form.pro.checked ? form.siret.value : '', note: form.note.value});
+      const r = C.enregistrerClient({id: id || undefined, nom: form.nom.value, adresse: form.adresse.value, cpville: form.cpville.value, tel: form.tel.value, email: form.email.value, pro: form.pro.checked, siret: form.pro.checked ? form.siret.value : '', note: form.note.value});
       if (r.erreur){ const m = f.querySelector('.msg'); m.hidden = false; m.textContent = r.erreur; return; }
       fermer(); C.toast(id ? 'Client modifié ✓' : 'Client ajouté ✓');
     });
