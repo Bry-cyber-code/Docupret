@@ -505,6 +505,20 @@ window.DOCU_AFFICHAGE = (function(){
   .page .ed-logo img{cursor:pointer}
   .page .ed-logo .ed-x{position:absolute;right:-10px;top:-10px;width:22px;height:22px;border-radius:50%;border:1px solid #E2E8F2;background:#fff;color:#C0392B;cursor:pointer;font:14px/1 Arial,sans-serif;opacity:0}
   .page .ed-logo:hover .ed-x{opacity:1}
+  .page .ed-l{position:relative}
+  .page .p-emetteur .ed-l > b{display:inline-block;margin-bottom:2px}
+  .page .ed-moins,.page .ed-plus{display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;margin-left:5px;vertical-align:middle;border-radius:50%;border:1px solid #D5DCE8;background:#fff;color:#8A94A6;font:600 13px/1 Arial,sans-serif;cursor:pointer;padding:0;opacity:.45;transition:opacity .12s,color .12s,border-color .12s}
+  .page .ed-l:hover > .ed-moins,.page .ed-moins:focus{opacity:1}
+  .page .ed-moins:hover{color:#C0392B;border-color:#E9B4AE;background:#FFF5F4}
+  .page .ed-plus{margin:3px 0 0;opacity:.8;color:#3E6CC0;border-color:#BFD0EE;background:#F4F8FF}
+  .page .ed-plus:hover{opacity:1;background:#E6EFFF}
+  .page .p-titre .ed-plus{margin-left:auto}
+  .m-moderne .p-titre .ed-moins,.m-moderne .p-titre .ed-plus{background:rgba(255,255,255,.9)}
+  .ed-menu{position:absolute;z-index:60;min-width:200px;background:#fff;border:1px solid var(--bord);border-radius:12px;box-shadow:0 10px 30px rgba(30,42,66,.16);padding:6px;display:flex;flex-direction:column}
+  .ed-menu small{font-size:.72rem;color:var(--gris);text-transform:uppercase;letter-spacing:.05em;padding:6px 10px 4px}
+  .ed-menu button{border:none;background:none;text-align:left;padding:8px 10px;border-radius:8px;font:inherit;font-size:.9rem;cursor:pointer;color:var(--texte)}
+  .ed-menu button:hover{background:var(--bleu-clair)}
+  .ed-menu [data-libre]{border-top:1px solid var(--bord);border-radius:0 0 8px 8px;color:var(--bleu-fonce);font-weight:600}
   .page .ed-aide{position:absolute;left:0;right:0;top:-30px;text-align:center;font:12px Helvetica,Arial,sans-serif;color:#8A94A6}
 </style>
 </head>
@@ -1002,6 +1016,7 @@ window.DOCU_AFFICHAGE = (function(){
       paiement:{conditions:'30 jours', moyen:'Virement', iban:'', notes:''},
       compteurs:{devis:0, facture:0, recu:0, avoir:0},
       masques:{},
+      extra:{em:[], cl:[], meta:[], paiement:[]},
       numerotation:{annee:true}, numMaj:'',
       envoiMessage:'', modifie:''
     };
@@ -1018,6 +1033,7 @@ window.DOCU_AFFICHAGE = (function(){
           else base[k] = s[k];
         }
         if (!Array.isArray(base.lignes) || !base.lignes.length) base.lignes = [ligneVide()];
+        for (const b of ['em', 'cl', 'meta', 'paiement']) if (!Array.isArray(base.extra[b])) base.extra[b] = [];
         base.lignes = base.lignes.map(l => ({...ligneVide(), ...l}));
       }
     }catch(e){}
@@ -1055,6 +1071,7 @@ window.DOCU_AFFICHAGE = (function(){
       etat.cl = etatDefaut().cl;
       etat.lignes = [ligneVide()];
       etat.paiement.notes = ''; etat.depuis = ''; etat.ouvert = '';
+      etat.extra.cl = []; etat.extra.meta = [];
       etat.doc = Object.assign(etatDefaut().doc, {numero: '', date: d, echeance: plusJours(d, DELAIS[etat.paiement.conditions] ?? 30), validite: plusJours(d, 30)});
     } else brouillonRepris = true;
   })();
@@ -1070,6 +1087,8 @@ window.DOCU_AFFICHAGE = (function(){
     if (d && d.snap){
       const sn = JSON.parse(JSON.stringify(d.snap));
       for (const k of ['modele', 'couleur', 'cols', 'tvaMode', 'franchise', 'tauxDefaut', 'masques']) if (sn[k] != null) etat[k] = sn[k];
+      etat.extra.cl = (sn.extra && Array.isArray(sn.extra.cl)) ? sn.extra.cl : [];
+      etat.extra.meta = (sn.extra && Array.isArray(sn.extra.meta)) ? sn.extra.meta : [];
       etat.cl = Object.assign(etatDefaut().cl, sn.cl || {});
       etat.lignes = Array.isArray(sn.lignes) && sn.lignes.length ? sn.lignes : [ligneVide()];
       const notes = (sn.paiement && sn.paiement.notes) || '';
@@ -1177,6 +1196,8 @@ window.DOCU_AFFICHAGE = (function(){
     if (t === 'facture') meta += si('doc.echeance', etat.doc.echeance, `<div>Échéance : <b>${dateFr(etat.doc.echeance)}</b></div>`);
     if (t === 'devis') meta += si('doc.validite', etat.doc.validite, `<div>Valable jusqu'au : <b>${dateFr(etat.doc.validite)}</b></div>`);
     if (t === 'avoir') meta += si('doc.factureRef', etat.doc.factureRef, `<div>Facture d'origine : <b>${esc(etat.doc.factureRef)}</b></div>`);
+    const plus = b => ((etat.extra || {})[b] || []).filter(x => String(x || '').trim()).map(x => `<div>${esc(x)}</div>`).join('');
+    meta += plus('meta');
 
     // Paiement
     const pa = etat.paiement;
@@ -1190,6 +1211,7 @@ window.DOCU_AFFICHAGE = (function(){
       paiement += si('paiement.moyen', pa.moyen, `<div><b>Mode de paiement :</b> ${esc(pa.moyen)}</div>`);
       if (pa.moyen === 'Virement' && aff('paiement.moyen')) paiement += si('paiement.iban', pa.iban, `<div><b>IBAN :</b> ${esc(pa.iban)}</div>`);
     }
+    paiement += plus('paiement');
     paiement += si('paiement.notes', pa.notes, `<div style="margin-top:10px">${esc(pa.notes).replace(/\n/g, '<br>')}</div>`);
 
     // Mentions
@@ -1214,7 +1236,8 @@ window.DOCU_AFFICHAGE = (function(){
       + champ('cl.cpville', cl.cpville, 'Code postal, ville', `<div>${esc(cl.cpville)}</div>`)
       + si('cl.tel', cl.tel, `<div>${esc(cl.tel)}</div>`)
       + si('cl.email', cl.email, `<div>${esc(cl.email)}</div>`)
-      + (cl.pro ? si('cl.siret', cl.siret, `<div>SIRET : ${esc(cl.siret)}</div>`) : '');
+      + (cl.pro ? si('cl.siret', cl.siret, `<div>SIRET : ${esc(cl.siret)}</div>`) : '')
+      + plus('cl');
 
     const deco = met ? decors(etat.modele, etat.couleur) : null;
     page.innerHTML = (met ? `<img class="p-deco-haut" alt="" src="${deco.haut}"><img class="p-deco-bas" alt="" src="${deco.bas}"><img class="p-filigrane" alt="" src="${iconeSvg(met.icone, etat.couleur, 240, 1.2)}">` : '') + `
@@ -1227,6 +1250,7 @@ window.DOCU_AFFICHAGE = (function(){
           ${si('em.tel', em.tel, `<div>${esc(em.tel)}</div>`)}
           ${si('em.email', em.email, `<div>${esc(em.email)}</div>`)}
           ${si('em.siret', em.siret, `<div>SIRET : ${esc(em.siret)}</div>`)}
+          ${plus('em')}
         </div>
         <div class="p-titre"><div class="p-h1">${met ? `<img class="p-ico" alt="" src="${svgUri(36, 36, `<circle cx="18" cy="18" r="18" fill="${etat.couleur}"/><g transform="translate(6 6)" fill="none" stroke="${texteSur(etat.couleur)}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${met.icone}</g>`)}">` : ''}${T.titre}</div>${meta ? `<div class="p-meta">${meta}</div>` : ''}</div>
       </div>
@@ -1485,6 +1509,7 @@ window.DOCU_AFFICHAGE = (function(){
     etat.cl = etatDefaut().cl;
     etat.lignes = [ligneVide()];
     etat.paiement.notes = ''; etat.depuis = ''; etat.ouvert = '';
+    etat.extra.cl = []; etat.extra.meta = [];
     etat.doc = {numero: prochainNumero(etat.type), date: d, echeance: plusJours(d, DELAIS[etat.paiement.conditions] ?? 30), validite: plusJours(d, 30)};
     remplirChamps(); rendreLignes(); majVisibilite(); rendreApercu(); sauver();
     window.scrollTo({top: 0});
@@ -1542,7 +1567,7 @@ window.DOCU_AFFICHAGE = (function(){
     const m = String(etat.doc.numero).match(/(\d+)\s*$/);
     if (m) etat.compteurs[etat.type] = Math.max(etat.compteurs[etat.type] || 0, parseInt(m[1], 10));
     sauver();
-    const copie = JSON.parse(JSON.stringify({type: etat.type, modele: etat.modele, couleur: etat.couleur, cl: etat.cl, doc: etat.doc, cols: etat.cols, tvaMode: etat.tvaMode, franchise: etat.franchise, tauxDefaut: etat.tauxDefaut, lignes: etat.lignes, paiement: {notes: etat.paiement.notes}, masques: etat.masques, depuis: etat.depuis || ''}));
+    const copie = JSON.parse(JSON.stringify({type: etat.type, modele: etat.modele, couleur: etat.couleur, cl: etat.cl, doc: etat.doc, cols: etat.cols, tvaMode: etat.tvaMode, franchise: etat.franchise, tauxDefaut: etat.tauxDefaut, lignes: etat.lignes, paiement: {notes: etat.paiement.notes}, masques: etat.masques, extra: {cl: etat.extra.cl, meta: etat.extra.meta}, depuis: etat.depuis || ''}));
     window.dispatchEvent(new CustomEvent('docupret-telecharge', {detail: {type: etat.type, numero: etat.doc.numero, date: etat.doc.date, total: k.totalTTC, depuis: etat.depuis || '', ouvert: etat.ouvert || '', envoye: envoye || null, snap: copie}}));
   }
 
@@ -1864,10 +1889,11 @@ window.DOCU_AFFICHAGE = (function(){
     }
 
     // Numéro et dates
-    let meta = (aff('doc.numero') ? `<div>N° <b>${E('doc.numero', etat.doc.numero, 'numéro', {sansCorrection: true})}</b></div>` : '')
-      + (aff('doc.date') ? `<div>Date : <b>${D('doc.date', etat.doc.date)}</b></div>` : '');
-    if (t === 'facture' && aff('doc.echeance')) meta += `<div>Échéance : <b>${D('doc.echeance', etat.doc.echeance)}</b></div>`;
-    if (t === 'devis' && aff('doc.validite')) meta += `<div>Valable jusqu'au : <b>${D('doc.validite', etat.doc.validite)}</b></div>`;
+    const mBtn = cle => `<button type="button" class="ed-moins" data-act="masquer" data-k="${cle}" title="Retirer cette ligne" aria-label="Retirer cette ligne">−</button>`;
+    let meta = (aff('doc.numero') ? `<div class="ed-l">N° <b>${E('doc.numero', etat.doc.numero, 'numéro', {sansCorrection: true})}</b>${mBtn('doc.numero')}</div>` : '')
+      + (aff('doc.date') ? `<div class="ed-l">Date : <b>${D('doc.date', etat.doc.date)}</b>${mBtn('doc.date')}</div>` : '');
+    if (t === 'facture' && aff('doc.echeance')) meta += `<div class="ed-l">Échéance : <b>${D('doc.echeance', etat.doc.echeance)}</b>${mBtn('doc.echeance')}</div>`;
+    if (t === 'devis' && aff('doc.validite')) meta += `<div class="ed-l">Valable jusqu'au : <b>${D('doc.validite', etat.doc.validite)}</b>${mBtn('doc.validite')}</div>`;
     if (t === 'avoir') meta += `<div>Facture d'origine : <b>${E('doc.factureRef', etat.doc.factureRef, 'n° de facture', {sansCorrection: true})}</b></div>`;
 
     // Paiement
@@ -1876,11 +1902,12 @@ window.DOCU_AFFICHAGE = (function(){
     if (t === 'recu') paiement += aff('paiement.moyen') ? `<div><b>Payé par :</b> ${S('paiement.moyen', pa.moyen)}</div>` : '';
     else if (t === 'avoir') paiement += `<div><b>Remboursement :</b> ${S('doc.remboursement', etat.doc.remboursement)}</div>`;
     else {
-      if (aff('paiement.conditions')) paiement += `<div><b>Conditions de paiement :</b> ${S('paiement.conditions', pa.conditions)}</div>`;
-      if (aff('paiement.moyen')) paiement += `<div><b>Mode de paiement :</b> ${S('paiement.moyen', pa.moyen)}</div>`;
-      if (pa.moyen === 'Virement' && aff('paiement.moyen') && aff('paiement.iban')) paiement += `<div><b>IBAN :</b> ${E('paiement.iban', pa.iban, 'FR76 0000 0000 0000 (facultatif)', {sansCorrection: true})}</div>`;
+      if (aff('paiement.conditions')) paiement += `<div class="ed-l"><b>Conditions de paiement :</b> ${S('paiement.conditions', pa.conditions)}${mBtn('paiement.conditions')}</div>`;
+      if (aff('paiement.moyen')) paiement += `<div class="ed-l"><b>Mode de paiement :</b> ${S('paiement.moyen', pa.moyen)}${mBtn('paiement.moyen')}</div>`;
+      if (pa.moyen === 'Virement' && aff('paiement.moyen') && aff('paiement.iban')) paiement += `<div class="ed-l"><b>IBAN :</b> ${E('paiement.iban', pa.iban, 'FR76 0000 0000 0000 (facultatif)', {sansCorrection: true})}${mBtn('paiement.iban')}</div>`;
     }
-    if (aff('paiement.notes')) paiement += `<div style="margin-top:10px">${E('paiement.notes', pa.notes, 'Un mot pour le client (facultatif) : « Merci pour votre confiance ! »', {multi: true})}</div>`;
+    paiement += '%%LIBRES_PAIEMENT%%';
+    if (aff('paiement.notes')) paiement += `<div class="ed-l" style="margin-top:10px">${E('paiement.notes', pa.notes, 'Un mot pour le client (facultatif) : « Merci pour votre confiance ! »', {multi: true})}${mBtn('paiement.notes')}</div>`;
 
     // Mentions légales automatiques
     const mentions = [];
@@ -1902,11 +1929,17 @@ window.DOCU_AFFICHAGE = (function(){
       ? `<p class="p-phrase">Avoir émis sur la facture ${etat.doc.factureRef ? `<b>${esc(etat.doc.factureRef)}</b>` : '<span class="ph">n° de facture</span>'} du ${D('doc.factureDate', etat.doc.factureDate)}, pour le motif suivant : ${S('doc.motif', etat.doc.motif)}.</p>`
       : '';
 
-    const ligne = (cle, v, ph, avant, o) => aff(cle) ? `<div>${avant || ''}${E(cle, v, ph, o)}</div>` : '';
-    const blocClient = (aff('cl.nom') ? `<b>${E('cl.nom', cl.nom, 'Nom du client')}</b>` : '')
+    const moins = cle => `<button type="button" class="ed-moins" data-act="masquer" data-k="${cle}" title="Retirer cette ligne" aria-label="Retirer cette ligne">−</button>`;
+    const ligne = (cle, v, ph, avant, o) => aff(cle) ? `<div class="ed-l">${avant || ''}${E(cle, v, ph, o)}${moins(cle)}</div>` : '';
+    const libres = b => ((etat.extra || {})[b] || []).map((x, i) => `<div class="ed-l">${E(`X:${b}:${i}`, x, 'Écrivez votre ligne (ex : Réf. chantier : 24-118)')}<button type="button" class="ed-moins" data-act="libre-moins" data-b="${b}" data-i="${i}" title="Retirer cette ligne" aria-label="Retirer cette ligne">−</button></div>`).join('');
+    const plusBtn = b => `<div class="ed-l"><button type="button" class="ed-plus" data-act="plus" data-b="${b}" title="Ajouter une ligne" aria-label="Ajouter une ligne">＋</button></div>`;
+    meta += libres('meta') + plusBtn('meta');
+    paiement = paiement.replace('%%LIBRES_PAIEMENT%%', () => libres('paiement') + plusBtn('paiement'));
+    const blocClient = (aff('cl.nom') ? `<div class="ed-l"><b>${E('cl.nom', cl.nom, 'Nom du client')}</b>${moins('cl.nom')}</div>` : '')
       + ligne('cl.adresse', cl.adresse, 'Adresse') + ligne('cl.cpville', cl.cpville, 'Code postal, ville')
       + ligne('cl.tel', cl.tel, 'Téléphone (facultatif)', '', {sansCorrection: true}) + ligne('cl.email', cl.email, 'E-mail (facultatif)', '', {sansCorrection: true})
-      + (cl.pro ? ligne('cl.siret', cl.siret, '000 000 000 00000', 'SIRET : ', {sansCorrection: true}) : '');
+      + (cl.pro ? ligne('cl.siret', cl.siret, '000 000 000 00000', 'SIRET : ', {sansCorrection: true}) : '')
+      + libres('cl') + plusBtn('cl');
 
     const logo = em.logo
       ? `<div class="ed-logo"><img class="p-logo" src="${em.logo}" alt="" data-act="logo" title="Changer le logo"><button type="button" class="ed-x" data-act="logo-suppr" title="Retirer le logo" aria-label="Retirer le logo">×</button></div>`
@@ -1916,12 +1949,13 @@ window.DOCU_AFFICHAGE = (function(){
       <div class="p-entete">
         <div class="p-emetteur">
           ${logo}
-          ${aff('em.nom') ? `<b>${E('em.nom', em.nom, 'Votre entreprise')}</b>` : ''}
+          ${aff('em.nom') ? `<div class="ed-l"><b>${E('em.nom', em.nom, 'Votre entreprise')}</b>${moins('em.nom')}</div>` : ''}
           ${ligne('em.adresse', em.adresse, 'Adresse')}
           ${ligne('em.cpville', em.cpville, 'Code postal, ville')}
           ${ligne('em.tel', em.tel, 'Téléphone', '', {sansCorrection: true})}
           ${ligne('em.email', em.email, 'E-mail', '', {sansCorrection: true})}
           ${ligne('em.siret', em.siret, '000 000 000 00000', 'SIRET : ', {sansCorrection: true})}
+          ${libres('em')}${plusBtn('em')}
         </div>
         <div class="p-titre"><div class="p-h1">${met ? `<img class="p-ico" alt="" src="${svgUri(36, 36, `<circle cx="18" cy="18" r="18" fill="${etat.couleur}"/><g transform="translate(6 6)" fill="none" stroke="${texteSur(etat.couleur)}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${met.icone}</g>`)}">` : ''}${T.titre}</div>${meta ? `<div class="p-meta">${meta}</div>` : ''}</div>
       </div>
@@ -1988,6 +2022,8 @@ window.DOCU_AFFICHAGE = (function(){
 
   // ----- Écrire une valeur, comme si on l'avait tapée dans le formulaire -----
   function ecrireValeur(cle, v){
+    const x = cle.match(/^X:(\w+):(\d+)$/);
+    if (x){ if (etat.extra[x[1]]) etat.extra[x[1]][+x[2]] = v; rendreApercu(); sauver(); return; }
     const m = cle.match(/^L:(\d+):(\w+)$/);
     if (m){
       const i = +m[1], champ = m[2]; if (!etat.lignes[i]) return;
@@ -2035,6 +2071,9 @@ window.DOCU_AFFICHAGE = (function(){
     const act = b.dataset.act;
     if (act === 'logo') $('logo-fichier').click();
     else if (act === 'logo-suppr') $('logo-suppr').click();
+    else if (act === 'masquer'){ etat.masques[b.dataset.k] = true; fermerMenuPlus(); majVisibilite(); rendreApercu(); sauver(); }
+    else if (act === 'libre-moins'){ etat.extra[b.dataset.b].splice(+b.dataset.i, 1); rendreApercu(); sauver(); }
+    else if (act === 'plus') menuPlus(b, b.dataset.b);
     else if (act === 'ajout'){
       etat.lignes.push(ligneVide()); rendreLignes(); rendreApercu(); sauver();
       const n = $('page').querySelector(`[data-ed="L:${etat.lignes.length - 1}:des"]`); if (n) placerCurseur(n, null);
@@ -2043,6 +2082,40 @@ window.DOCU_AFFICHAGE = (function(){
       rendreLignes(); rendreApercu(); sauver();
     }
   });
+  // ＋ : remettre une ligne retirée, ou ajouter une ligne libre
+  const NOMS_CHAMPS = {
+    meta: [['doc.numero', 'Numéro'], ['doc.date', 'Date'], ['doc.echeance', 'Échéance', 'facture'], ['doc.validite', "Valable jusqu'au", 'devis']],
+    em: [['em.nom', 'Nom ou entreprise'], ['em.adresse', 'Adresse'], ['em.cpville', 'Code postal, ville'], ['em.tel', 'Téléphone'], ['em.email', 'E-mail'], ['em.siret', 'SIRET']],
+    cl: [['cl.nom', 'Nom du client'], ['cl.adresse', 'Adresse'], ['cl.cpville', 'Code postal, ville'], ['cl.tel', 'Téléphone'], ['cl.email', 'E-mail'], ['cl.siret', 'SIRET', '', true]],
+    paiement: [['paiement.conditions', 'Conditions de paiement', 'devis,facture'], ['paiement.moyen', 'Mode de paiement', 'devis,facture'], ['paiement.iban', 'IBAN', 'devis,facture'], ['paiement.notes', 'Mot pour le client']]
+  };
+  function fermerMenuPlus(){ const m = document.querySelector('.ed-menu'); if (m) m.remove(); }
+  function ajouterLibre(bloc){
+    fermerMenuPlus();
+    etat.extra[bloc].push(''); rendreApercu(); sauver();
+    const n = $('page').querySelector(`[data-ed="X:${bloc}:${etat.extra[bloc].length - 1}"]`); if (n) placerCurseur(n, null);
+  }
+  function menuPlus(bouton, bloc){
+    const deja = document.querySelector('.ed-menu'); fermerMenuPlus(); if (deja && deja.dataset.b === bloc) return;
+    const caches = NOMS_CHAMPS[bloc].filter(([k, , types, pro]) => etat.masques[k] && (!types || types.split(',').includes(etat.type)) && (!pro || etat.cl.pro));
+    if (!caches.length) return ajouterLibre(bloc);
+    const m = document.createElement('div'); m.className = 'ed-menu'; m.dataset.b = bloc;
+    m.innerHTML = '<small>Remettre une ligne</small>' + caches.map(([k, nom]) => `<button type="button" data-remettre="${k}">＋ ${esc(nom)}</button>`).join('')
+      + '<button type="button" data-libre>＋ Nouvelle ligne libre</button>';
+    document.body.appendChild(m);
+    const r = bouton.getBoundingClientRect();
+    m.style.left = Math.max(8, Math.min(window.innerWidth - m.offsetWidth - 8, r.left)) + 'px';
+    m.style.top = (r.bottom + window.scrollY + 6) + 'px';
+    m.addEventListener('click', e => {
+      const a = e.target.closest('[data-remettre]');
+      if (a){ delete etat.masques[a.dataset.remettre]; fermerMenuPlus(); majVisibilite(); rendreApercu(); sauver(); const n = $('page').querySelector(`[data-ed="${a.dataset.remettre}"]`); if (n) placerCurseur(n, null); }
+      else if (e.target.closest('[data-libre]')) ajouterLibre(bloc);
+    });
+  }
+  document.addEventListener('click', e => { if (!e.target.closest('.ed-menu, [data-act="plus"]')) fermerMenuPlus(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') fermerMenuPlus(); });
+  window.addEventListener('resize', fermerMenuPlus);
+
   function allerAuManque(){
     if (!feuille()) return;
     const k = calculer();
