@@ -119,7 +119,21 @@
   .deux{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
   .verrou-compte{display:none;text-align:left}
   body.invite .verrou-compte{display:grid}
-  body.invite .rubrique[data-r="clients"] > :not(.verrou-compte),body.invite .rubrique[data-r="parametres"] > :not(.verrou-compte){display:none!important}
+  body.invite .rubrique[data-r="clients"] > :not(.verrou-compte),body.invite .rubrique[data-r="parametres"] > :not(.verrou-compte),body.invite .rubrique[data-r="factures"] > :not(.verrou-compte),body.invite .rubrique[data-r="devis"] > :not(.verrou-compte){display:none!important}
+  .filtres-docs{display:flex;flex-wrap:wrap;gap:6px}
+  .filtres-docs:empty{display:none}
+  .filtres-docs button{border:1.5px solid var(--bord);background:#fff;border-radius:50px;padding:6px 12px;font:inherit;font-size:.84rem;font-weight:600;color:var(--gris)}
+  .filtres-docs button.on{border-color:var(--bleu);background:var(--bleu-clair);color:var(--bleu-fonce)}
+  .resume-docs{display:flex;flex-wrap:wrap;gap:8px}
+  .resume-docs:empty{display:none}
+  .resume-docs span{flex:1 1 130px;background:var(--fond);border-radius:12px;padding:9px 12px;font-size:.8rem;color:var(--gris)}
+  .resume-docs b{display:block;font-size:1.05rem;color:var(--texte);font-variant-numeric:tabular-nums}
+  .liste-docs{display:grid;gap:8px;max-height:min(68vh,720px);overflow-y:auto;overscroll-behavior:contain;padding-right:2px;margin:0 -2px;padding-left:2px}
+  .mois-docs{position:sticky;top:0;z-index:1;background:var(--blanc);color:var(--bleu-fonce);font-weight:800;font-size:.8rem;padding:8px 2px 4px;text-transform:capitalize;display:flex;justify-content:space-between}
+  .mois-docs span{color:var(--gris);font-weight:600;text-transform:none}
+  .doc-pdf{display:inline-flex;align-items:center;gap:4px;color:#fff!important;background:var(--bleu);text-decoration:none!important;border-radius:50px;padding:5px 11px;font-weight:700}
+  .doc-lignes{font-size:.8rem;color:var(--gris);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  @media (max-width:420px){.rubriques button{font-size:.78rem;padding:9px 1px}.doc-bas{flex-wrap:wrap;gap:6px}.doc-liens{gap:12px}}
   .vc-ico{width:46px;height:46px;border-radius:14px;background:var(--bleu-clair);display:grid;place-items:center;font-size:1.4rem}
   .vc-btn{display:block;text-align:center;text-decoration:none;margin-top:4px}
   .btn{background:var(--bleu);color:#fff;border:0;border-radius:12px;padding:13px 18px;font-weight:700;font-size:1rem;width:100%}
@@ -323,10 +337,10 @@
 
 <main class="wrap">
   <h1>Mon compte</h1>
-  <p class="intro">Vos clients, vos réglages et votre compte, au même endroit.</p>
+  <p class="intro">Vos clients, vos factures, vos devis et vos réglages, au même endroit.</p>
 
   <nav class="rubriques" id="rubriques" aria-label="Rubriques">
-    <button type="button" data-r="clients">Mes clients</button><button type="button" data-r="parametres">Paramètres</button><button type="button" data-r="compte">Compte</button>
+    <button type="button" data-r="clients">Clients</button><button type="button" data-r="factures">Factures</button><button type="button" data-r="devis">Devis</button><button type="button" data-r="parametres">Paramètres</button><button type="button" data-r="compte">Compte</button>
   </nav>
 
   <div class="rubrique" data-r="clients">
@@ -352,6 +366,56 @@
     <p class="note" id="note-stockage">🔒 Sans compte, vos clients sont enregistrés uniquement sur cet appareil.</p>
   </section>
 
+  </div>
+
+  <div class="rubrique" data-r="factures" hidden>
+  <section class="carte verrou-compte">
+    <div class="vc-ico" aria-hidden="true">🔒</div>
+    <div class="titre-carte">Mes factures, avec un compte gratuit</div>
+    <p class="note" style="margin-top:-6px">Chaque facture que vous téléchargez ou envoyez est gardée ici : retrouvez-la et retéléchargez-la en un geste.</p>
+    <ul class="avantages">
+      <li>Toutes vos factures et tous vos devis gardés automatiquement</li>
+      <li>Une recherche par client, numéro ou prestation</li>
+      <li>Chaque document retéléchargeable en PDF quand vous voulez</li>
+      <li>Un devis transformé en facture en un seul clic</li>
+      <li>Tout retrouvé sur votre téléphone et votre ordinateur</li>
+    </ul>
+    <a class="btn vc-btn" href="#compte">Créer mon compte gratuit</a>
+    <p class="note" style="text-align:center">Gratuit, avec une simple adresse e-mail. Déjà un compte ? <a href="#compte" style="color:var(--bleu);font-weight:700">Me connecter</a></p>
+  </section>
+  <h2 style="margin-top:4px">Mes factures <span class="compteur" id="nb-factures">0</span></h2>
+  <section class="carte">
+    <div class="outils-clients"><input type="search" id="cherche-factures" placeholder="Rechercher : client, n°, prestation, montant…" aria-label="Rechercher une facture"><a class="btn" href="facture.html?type=facture">+ Nouvelle</a></div>
+    <div class="filtres-docs" id="filtres-factures"></div>
+    <div class="resume-docs" id="resume-factures"></div>
+    <div class="liste-docs" id="liste-factures"></div>
+    <p class="note">✓ Chaque facture téléchargée ou envoyée est gardée ici automatiquement, sur tous vos appareils.</p>
+  </section>
+  </div>
+
+  <div class="rubrique" data-r="devis" hidden>
+  <section class="carte verrou-compte">
+    <div class="vc-ico" aria-hidden="true">🔒</div>
+    <div class="titre-carte">Mes devis, avec un compte gratuit</div>
+    <p class="note" style="margin-top:-6px">Chaque devis que vous téléchargez ou envoyez est gardé ici : retrouvez-le, retéléchargez-le ou transformez-le en facture.</p>
+    <ul class="avantages">
+      <li>Toutes vos factures et tous vos devis gardés automatiquement</li>
+      <li>Une recherche par client, numéro ou prestation</li>
+      <li>Chaque document retéléchargeable en PDF quand vous voulez</li>
+      <li>Un devis transformé en facture en un seul clic</li>
+      <li>Tout retrouvé sur votre téléphone et votre ordinateur</li>
+    </ul>
+    <a class="btn vc-btn" href="#compte">Créer mon compte gratuit</a>
+    <p class="note" style="text-align:center">Gratuit, avec une simple adresse e-mail. Déjà un compte ? <a href="#compte" style="color:var(--bleu);font-weight:700">Me connecter</a></p>
+  </section>
+  <h2 style="margin-top:4px">Mes devis <span class="compteur" id="nb-devis">0</span></h2>
+  <section class="carte">
+    <div class="outils-clients"><input type="search" id="cherche-devis" placeholder="Rechercher : client, n°, prestation, montant…" aria-label="Rechercher un devis"><a class="btn" href="facture.html?type=devis">+ Nouveau</a></div>
+    <div class="filtres-docs" id="filtres-devis"></div>
+    <div class="resume-docs" id="resume-devis"></div>
+    <div class="liste-docs" id="liste-devis"></div>
+    <p class="note">✓ Chaque devis téléchargé ou envoyé est gardé ici automatiquement, sur tous vos appareils.</p>
+  </section>
   </div>
 
   <div class="rubrique" data-r="parametres" hidden>
@@ -595,10 +659,11 @@
   const eurs = x => (Number(x) || 0).toLocaleString('fr-FR', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' €';
   const dFr = iso => iso ? new Date(iso + 'T12:00').toLocaleDateString('fr-FR') : '';
   const MOT = {devis: 'Devis', facture: 'Facture', recu: 'Reçu', avoir: 'Avoir'};
-  function ligneDoc(d, avecClient){
+  function ligneDoc(d, avecClient, avecLignes){
+    const des = avecLignes && d.snap && Array.isArray(d.snap.lignes) ? d.snap.lignes.map(l => String(l.des || '').split('\n')[0].trim()).filter(Boolean) : [];
     const conv = d.type === 'devis' ? (d.facture ? `<span class="doc-ok">✓ Facturé ${esc(d.facture)}</span>` : `<a class="doc-conv" href="facture.html?depuis=${encodeURIComponent(d.id)}">Transformer en facture →</a>`) : '';
     return `<div class="doc"><div class="doc-haut"><span class="doc-type t-${esc(d.type)}">${MOT[d.type] || 'Document'}</span><b>${esc(d.numero)}</b><span class="doc-total">${eurs(d.total)}</span></div>
-      <div class="doc-bas"><span>${avecClient ? esc(d.clientNom) + ' · ' : ''}${dFr(d.date)}${d.envoye ? ` · <span class="doc-env">✉ envoyé le ${new Date(d.envoye.date).toLocaleDateString('fr-FR')}</span>` : ''}</span><span class="doc-liens"><a class="doc-ouvrir" href="facture.html?ouvrir=${encodeURIComponent(d.id)}">Rouvrir</a><button type="button" class="doc-suppr" data-suppr-doc="${esc(d.id)}">Supprimer</button></span></div>${conv ? `<div class="doc-conv-l">${conv}</div>` : ''}</div>`;
+      <div class="doc-bas"><span>${avecClient ? esc(d.clientNom || 'Sans nom de client') + ' · ' : ''}${dFr(d.date)}${d.envoye ? ` · <span class="doc-env">✉ envoyé le ${new Date(d.envoye.date).toLocaleDateString('fr-FR')}</span>` : ''}</span><span class="doc-liens"><a class="doc-pdf" href="facture.html?ouvrir=${encodeURIComponent(d.id)}&pdf=1" title="Télécharger le PDF">⬇ PDF</a><a class="doc-ouvrir" href="facture.html?ouvrir=${encodeURIComponent(d.id)}">Rouvrir</a><button type="button" class="doc-suppr" data-suppr-doc="${esc(d.id)}">Supprimer</button></span></div>${des.length ? `<div class="doc-lignes">${esc(des.join(' · '))}</div>` : ''}${conv ? `<div class="doc-conv-l">${conv}</div>` : ''}</div>`;
   }
   function supprimerDoc(id, ensuite){
     const d = C.document(id); if (!d) return;
@@ -673,6 +738,70 @@
     document.body.appendChild(f);
     if (!id) form.nom.focus();
   }
+  // ---------- Mes factures / Mes devis ----------
+  const filtreDocs = {factures: 'facture', devis: 'tous'};
+  const OPTIONS = {
+    factures: [['facture', 'Factures'], ['avoir', 'Avoirs'], ['recu', 'Reçus']],
+    devis: [['tous', 'Tous'], ['attente', 'En attente'], ['factures', 'Facturés']]
+  };
+  function texteRecherche(d){
+    const l = d.snap && Array.isArray(d.snap.lignes) ? d.snap.lignes.map(x => x.des).join(' ') : '';
+    return C.norm([d.numero, d.clientNom, dFr(d.date), eurs(d.total), String(d.total || '').replace('.', ','), l, d.facture].join(' '));
+  }
+  function rendreDocs(r){
+    const conn = !!C.utilisateur();
+    const tous = conn ? C.documents() : [];
+    const base = r === 'devis' ? tous.filter(d => d.type === 'devis') : tous.filter(d => d.type !== 'devis');
+    $('nb-' + r).textContent = r === 'devis' ? base.length : base.filter(d => d.type === 'facture').length;
+    // Filtres (avoirs et reçus seulement s'il y en a)
+    const opts = OPTIONS[r].filter(([k]) => r === 'devis' || k === 'facture' || base.some(d => d.type === k));
+    if (!opts.some(([k]) => k === filtreDocs[r])) filtreDocs[r] = opts[0][0];
+    $('filtres-' + r).innerHTML = opts.length > 1 ? opts.map(([k, n]) => {
+      const nb = r === 'devis' ? (k === 'tous' ? base.length : k === 'attente' ? base.filter(d => !d.facture).length : base.filter(d => d.facture).length) : base.filter(d => d.type === k).length;
+      return `<button type="button" data-filtre="${k}" class="${k === filtreDocs[r] ? 'on' : ''}">${n} · ${nb}</button>`;
+    }).join('') : '';
+    const f = filtreDocs[r];
+    let l = r === 'devis' ? base.filter(d => f === 'tous' || (f === 'attente' ? !d.facture : !!d.facture)) : base.filter(d => d.type === f);
+    const q = C.norm($('cherche-' + r).value).trim();
+    if (q) l = l.filter(d => q.split(/\s+/).every(m => texteRecherche(d).includes(m)));
+    // Résumé
+    const somme = x => x.reduce((a, d) => a + (Number(d.total) || 0), 0);
+    const annee = String(new Date().getFullYear());
+    if (r === 'factures' && f === 'facture'){
+      const an = base.filter(d => d.type === 'facture' && String(d.date || '').startsWith(annee));
+      $('resume-' + r).innerHTML = base.length ? `<span>Facturé en ${annee}<b>${eurs(somme(an))}</b></span><span>${q ? 'Résultats' : 'Factures'}<b>${l.length}</b></span>` : '';
+    } else if (r === 'devis'){
+      const att = base.filter(d => !d.facture);
+      $('resume-' + r).innerHTML = base.length ? `<span>En attente<b>${eurs(somme(att))}</b></span><span>${q ? 'Résultats' : 'Devis'}<b>${l.length}</b></span>` : '';
+    } else $('resume-' + r).innerHTML = '';
+    // Liste, par mois
+    const mot = r === 'devis' ? 'devis' : 'facture';
+    if (!l.length){
+      $('liste-' + r).innerHTML = q ? '<p class="vide">Aucun résultat pour cette recherche.</p>'
+        : base.length ? '<p class="vide">Rien dans cette catégorie pour l\'instant.</p>'
+        : `<p class="vide">Aucun${r === 'devis' ? '' : 'e'} ${mot} pour l'instant.<br>Créez ${r === 'devis' ? 'un <a href="facture.html?type=devis">devis</a>' : 'une <a href="facture.html?type=facture">facture</a>'} : dès que vous ${r === 'devis' ? 'le' : 'la'} téléchargez ou ${r === 'devis' ? "l'" : "l'"}envoyez, ${r === 'devis' ? 'il' : 'elle'} apparaît ici.</p>`;
+      return;
+    }
+    let prec = '', html = '';
+    const parMois = {};
+    l.forEach(d => { const m = String(d.date || '').slice(0, 7); parMois[m] = (parMois[m] || 0) + 1; });
+    l.forEach(d => {
+      const m = String(d.date || '').slice(0, 7);
+      if (m !== prec){
+        const nom = m ? new Date(m + '-15T12:00').toLocaleDateString('fr-FR', {month: 'long', year: 'numeric'}) : 'Sans date';
+        html += `<div class="mois-docs">${esc(nom)}<span>${parMois[m]}</span></div>`; prec = m;
+      }
+      html += ligneDoc(d, true, true);
+    });
+    $('liste-' + r).innerHTML = html;
+  }
+  const rendreTousDocs = () => { rendreDocs('factures'); rendreDocs('devis'); };
+  ['factures', 'devis'].forEach(r => {
+    $('cherche-' + r).addEventListener('input', () => rendreDocs(r));
+    $('filtres-' + r).addEventListener('click', e => { const b = e.target.closest('[data-filtre]'); if (b){ filtreDocs[r] = b.dataset.filtre; rendreDocs(r); } });
+    $('liste-' + r).addEventListener('click', e => { const b = e.target.closest('[data-suppr-doc]'); if (b) supprimerDoc(b.dataset.supprDoc, rendreTousDocs); });
+  });
+
   $('cherche').addEventListener('input', rendreClients);
   $('ajouter').addEventListener('click', () => editer());
   $('liste').addEventListener('click', e => { const b = e.target.closest('[data-voir]'); if (b) voir(b.dataset.voir); });
@@ -680,7 +809,7 @@
 
 
   // ---------- Rubriques ----------
-  const RUBS = ['clients', 'parametres', 'compte'];
+  const RUBS = ['clients', 'factures', 'devis', 'parametres', 'compte'];
   function rubrique(){
     let r = location.hash.slice(1);
     if (!RUBS.includes(r)) r = 'clients';
@@ -817,9 +946,9 @@
 
   const majInvite = () => document.body.classList.toggle('invite', !C.connecte());
   majInvite();
-  C.surChangement(() => { majInvite(); rendreCompte(); rendreClients(); majAffichage(); rendreAttente(); majEnvoi(); });
+  C.surChangement(() => { majInvite(); rendreCompte(); rendreClients(); majAffichage(); rendreAttente(); majEnvoi(); rendreTousDocs(); });
   C.surParametres(() => { remplirParam(); remplirNum(); majLogo(); majAffichage(); majEnvoi(); C.toast('Paramètres récupérés depuis votre compte ✓'); });
-  changerMode('creer'); rendreCompte(); rendreClients(); rendreAttente(); remplirParam(); remplirNum(); majLogo(); majAffichage(); majEnvoi(); rubrique();
+  changerMode('creer'); rendreCompte(); rendreClients(); rendreAttente(); rendreTousDocs(); remplirParam(); remplirNum(); majLogo(); majAffichage(); majEnvoi(); rubrique();
 })();
 </script>
 <script>

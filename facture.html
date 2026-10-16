@@ -208,6 +208,9 @@
   .btn:disabled{opacity:.6}
   .btn svg{width:18px;height:18px;stroke:#fff}
 
+  .bandeau-pdf{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 16px;background:#E7F6EC;border:1px solid #BFE6D2;color:#1F6B3A;border-radius:14px;padding:12px 16px;margin:4px 0 14px;font-size:.92rem}
+  .bandeau-pdf .bp-liens{display:flex;flex-wrap:wrap;gap:14px;align-items:center}
+  .bandeau-pdf a,.bandeau-pdf button{color:#1F6B3A;font-weight:700;text-decoration:underline;background:none;border:0;padding:0;font:inherit;cursor:pointer}
   .alerte{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:var(--texte);color:#fff;padding:10px 16px;border-radius:12px;font-size:.9rem;z-index:30;max-width:90vw;text-align:center}
 
   /* FAQ */
@@ -1040,9 +1043,13 @@ window.DOCU_AFFICHAGE = (function(){
     return base;
   }
 
+  // facture.html?ouvrir=ID&pdf=1 : on affiche un document enregistré pour le retélécharger, sans toucher au brouillon en cours
+  const MODE_PDF = (() => { const q = new URLSearchParams(location.search); return q.get('pdf') === '1' && !!q.get('ouvrir'); })();
+  let docPdf = null;
   let etat = charger();
   let minuterie;
   function sauver(){
+    if (MODE_PDF) return;
     clearTimeout(minuterie);
     etat.modifie = new Date().toISOString();
     minuterie = setTimeout(() => { try{ localStorage.setItem(CLE, JSON.stringify(etat)); }catch(e){} }, 300);
@@ -1092,6 +1099,12 @@ window.DOCU_AFFICHAGE = (function(){
       etat.cl = Object.assign(etatDefaut().cl, sn.cl || {});
       etat.lignes = Array.isArray(sn.lignes) && sn.lignes.length ? sn.lignes : [ligneVide()];
       const notes = (sn.paiement && sn.paiement.notes) || '';
+      if (idOuv && MODE_PDF){
+        docPdf = d;
+        if (sn.em) etat.em = Object.assign({}, etat.em, sn.em, {logo: etat.em.logo});
+        if (sn.paiementComplet) etat.paiement = Object.assign({}, etat.paiement, sn.paiementComplet);
+        if (sn.extra) for (const b of ['em', 'paiement']) if (Array.isArray(sn.extra[b])) etat.extra[b] = sn.extra[b];
+      }
       if (idOuv){
         etat.type = TYPES[sn.type] ? sn.type : etat.type;
         etat.doc = Object.assign({}, etat.doc, sn.doc || {});
@@ -1564,10 +1577,11 @@ window.DOCU_AFFICHAGE = (function(){
   });
   // Après un téléchargement ou un envoi : numéro suivant, et document gardé dans la fiche du client
   function apresSortie(k, envoye){
+    if (MODE_PDF) return;
     const m = String(etat.doc.numero).match(/(\d+)\s*$/);
     if (m) etat.compteurs[etat.type] = Math.max(etat.compteurs[etat.type] || 0, parseInt(m[1], 10));
     sauver();
-    const copie = JSON.parse(JSON.stringify({type: etat.type, modele: etat.modele, couleur: etat.couleur, cl: etat.cl, doc: etat.doc, cols: etat.cols, tvaMode: etat.tvaMode, franchise: etat.franchise, tauxDefaut: etat.tauxDefaut, lignes: etat.lignes, paiement: {notes: etat.paiement.notes}, masques: etat.masques, extra: {cl: etat.extra.cl, meta: etat.extra.meta}, depuis: etat.depuis || ''}));
+    const copie = JSON.parse(JSON.stringify({type: etat.type, modele: etat.modele, couleur: etat.couleur, cl: etat.cl, doc: etat.doc, cols: etat.cols, tvaMode: etat.tvaMode, franchise: etat.franchise, tauxDefaut: etat.tauxDefaut, lignes: etat.lignes, paiement: {notes: etat.paiement.notes}, masques: etat.masques, extra: etat.extra, em: Object.assign({}, etat.em, {logo: ''}), paiementComplet: etat.paiement, depuis: etat.depuis || ''}));
     window.dispatchEvent(new CustomEvent('docupret-telecharge', {detail: {type: etat.type, numero: etat.doc.numero, date: etat.doc.date, total: k.totalTTC, depuis: etat.depuis || '', ouvert: etat.ouvert || '', envoye: envoye || null, snap: copie}}));
   }
 
@@ -1812,6 +1826,7 @@ window.DOCU_AFFICHAGE = (function(){
   // On reprend les réglages enregistrés, et le numéro proposé suit la nouvelle numérotation.
   const dateMs = v => { const t = new Date(v || 0).getTime(); return isFinite(t) ? t : 0; };
   function rafraichirReglages(){
+    if (MODE_PDF) return;
     let s; try{ s = JSON.parse(localStorage.getItem(CLE)); }catch(e){}
     if (!s || typeof s !== 'object') return;
     const auto = etat.doc.numero === prochainNumero(etat.type);
@@ -2182,6 +2197,20 @@ window.DOCU_AFFICHAGE = (function(){
 
   // ---------- Démarrage ----------
   rendreGalerie(); remplirChamps(); majLogo(); rendreLignes(); majVisibilite(); appliquerMode();
+  if (MODE_PDF){
+    const b = document.createElement('div'); b.className = 'bandeau-pdf';
+    const mots = {devis: 'Devis', facture: 'Facture', recu: 'Reçu', avoir: 'Avoir'};
+    if (docPdf){
+      const retour = docPdf.type === 'devis' ? 'devis' : 'factures';
+      b.innerHTML = `<span>📄 <b>${esc(mots[docPdf.type] || 'Document')} ${esc(docPdf.numero)}</b> : le PDF se télécharge…</span><span class="bp-liens"><button type="button" id="bp-encore">Télécharger à nouveau</button><a href="facture.html?ouvrir=${encodeURIComponent(docPdf.id)}">Modifier</a><a href="compte.html#${retour}">← Mes ${retour}</a></span>`;
+    } else b.innerHTML = '<span>Ce document est introuvable. Il a peut-être été supprimé.</span><span class="bp-liens"><a href="compte.html#factures">← Mes documents</a></span>';
+    document.querySelector('main').prepend(b);
+    if (docPdf){
+      const bp = document.getElementById('bp-encore'); if (bp) bp.addEventListener('click', () => $('telecharger').click());
+      const lancer = () => setTimeout(() => $('telecharger').click(), 400);
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(lancer); else lancer();
+    }
+  }
   if (brouillonRepris) setTimeout(() => alerte('Votre brouillon en cours est repris. « ＋ Nouveau document » pour repartir de zéro.'), 700);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(ajuster);
 })();
@@ -2479,14 +2508,13 @@ window.DOCU_AFFICHAGE = (function(){
       if (d.type === 'devis') setTimeout(() => Compte.toast('Astuce : avec un compte gratuit, retrouvez vos devis et transformez-les en facture en un clic.'), 1500);
       return;
     }
+    // Chaque document téléchargé ou envoyé est gardé dans « Mon compte » (rubriques Factures et Devis),
+    // et aussi dans la fiche du client quand il est enregistré.
     const c = Compte.clients().find(x => Compte.norm(x.nom) === Compte.norm(d.snap.cl.nom));
-    if (!c){
-      if (d.type === 'devis') setTimeout(() => Compte.toast('Enregistrez ce client pour garder ce devis et le transformer en facture en un clic.'), 1500);
-      return;
-    }
-    Compte.enregistrerDocument({id: d.ouvert || undefined, type: d.type, numero: d.numero, date: d.date, clientId: c.id, clientNom: c.nom, total: d.total, snap: d.snap, envoye: d.envoye});
+    Compte.enregistrerDocument({id: d.ouvert || undefined, type: d.type, numero: d.numero, date: d.date, clientId: c ? c.id : '', clientNom: c ? c.nom : (d.snap.cl.nom || ''), total: d.total, snap: d.snap, envoye: d.envoye});
     if (d.depuis && d.type === 'facture') Compte.majDocument(d.depuis, {facture: d.numero});
-    if (!d.envoye) setTimeout(() => Compte.toast(`${mot} ${d.numero} gardé dans la fiche de ${c.nom} ✓`), 1500);
+    const rub = d.type === 'devis' ? 'Devis' : 'Factures';
+    if (!d.envoye) setTimeout(() => Compte.toast(`${mot} ${d.numero} gardé dans Mon compte › ${rub} ✓`), 1500);
   });
 
   // facture.html?client=… : client choisi depuis « Mon compte »
