@@ -702,8 +702,9 @@
     C.documents(c.id).forEach(d => C.supprimerDocument(d.id));
     C.supprimerClient(c.id); C.toast('Client supprimé'); if (ensuite) ensuite();
   }
+  // Les devis en attente sont dans la rubrique « Devis » (filtre « En attente ») : plus dans la rubrique Clients
   function rendreAttente(){
-    const l = C.utilisateur() ? C.documents().filter(d => d.type === 'devis' && !d.facture) : [];
+    const l = [];
     $('attente').hidden = !l.length;
     $('attente').innerHTML = l.length ? `<div class="attente-tete"><b>Devis en attente</b><span class="compteur">${l.length}</span></div><p class="note">Devis accepté ? Transformez-le en facture en un clic : client et prestations sont repris automatiquement.</p>${l.slice(0, 5).map(d => ligneDoc(d, true)).join('')}${l.length > 5 ? `<p class="note">… et ${l.length - 5} autre${l.length > 6 ? 's' : ''}, dans la fiche de chaque client.</p>` : ''}` : '';
   }
