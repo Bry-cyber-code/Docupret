@@ -3,5 +3,6 @@ Allow: /
 Disallow: /kit.html
 Disallow: /kits.html
 Disallow: /stats.html
+Disallow: /facture-test.html
 
 Sitemap: https://docupret.fr/sitemap.xml
