@@ -1635,6 +1635,27 @@ window.DOCU_AFFICHAGE = (function(){
     ouvrirLoupe(MODELES.find(m => m.k === b.dataset.ex));
   });
 
+  // ---------- Réglages modifiés ailleurs (Mon compte, autre onglet, retour arrière) ----------
+  // On reprend les réglages enregistrés, et le numéro proposé suit la nouvelle numérotation.
+  const dateMs = v => { const t = new Date(v || 0).getTime(); return isFinite(t) ? t : 0; };
+  function rafraichirReglages(){
+    let s; try{ s = JSON.parse(localStorage.getItem(CLE)); }catch(e){}
+    if (!s || typeof s !== 'object') return;
+    const auto = etat.doc.numero === prochainNumero(etat.type);
+    ['numerotation', 'envoiMessage', 'franchise', 'tauxDefaut', 'tvaMode'].forEach(k => { if (k in s) etat[k] = s[k]; });
+    if (s.em) Object.assign(etat.em, s.em);
+    if (s.paiement) ['conditions', 'moyen', 'iban'].forEach(k => { if (k in s.paiement) etat.paiement[k] = s.paiement[k]; });
+    const dist = s.compteurs || {};
+    if (dateMs(s.numMaj) > dateMs(etat.numMaj)){ etat.compteurs = Object.assign({}, etat.compteurs, dist); etat.numMaj = s.numMaj; }
+    else for (const t in dist) etat.compteurs[t] = Math.max(etat.compteurs[t] || 0, dist[t] || 0);
+    if (auto || !etat.doc.numero) etat.doc.numero = prochainNumero(etat.type);
+    remplirChamps(); majLogo(); majVisibilite(); rendreApercu(); sauver();
+  }
+  window.docuRafraichirReglages = rafraichirReglages;
+  window.addEventListener('pageshow', e => { if (e.persisted) rafraichirReglages(); });
+  window.addEventListener('storage', e => { if (e.key === CLE) rafraichirReglages(); });
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') rafraichirReglages(); });
+
   // ---------- Démarrage ----------
   rendreGalerie(); remplirChamps(); majLogo(); rendreLignes(); majVisibilite(); rendreApercu();
   if (brouillonRepris) setTimeout(() => alerte('Votre brouillon en cours est repris. « ＋ Nouveau document » pour repartir de zéro.'), 700);
@@ -1898,8 +1919,8 @@ window.DOCU_AFFICHAGE = (function(){
   $('telecharger').addEventListener('click', () => setTimeout(Compte.parametresModifies, 5000));
   // Paramètres plus récents dans le compte : on recharge la page si rien n'a encore été saisi
   window.addEventListener('docupret-parametres', () => {
-    if (!aSaisi) location.reload();
-    else Compte.toast('Vos paramètres ont été mis à jour depuis votre compte : ils s\'appliqueront au prochain document.');
+    if (window.docuRafraichirReglages) window.docuRafraichirReglages();
+    else if (!aSaisi) location.reload();
   });
 
   // ---------- Devis et factures gardés dans la fiche du client (comptes) ----------
