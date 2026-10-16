@@ -7,7 +7,7 @@
   const COUCHES = [
     {trouver: () => [...document.querySelectorAll('#tiroir.ouvert')], fermer: () => clic(document.getElementById('tiroir-fond'))},
     {trouver: () => [...document.querySelectorAll('.cm.ouvert')], fermer: () => clic(document.querySelector('.cm-fond'))},
-    {trouver: () => [...document.querySelectorAll('body > .env-fond, body > .loupe, body > .fond')], fermer: el => clic(el)}
+    {trouver: () => [...document.querySelectorAll('body > .env-fond, body > .loupe, body > .fond, body > .cp-fond')], fermer: el => clic(el)}
   ];
   let pile = [], aIgnorer = 0, navigation = null;
   const ouvertes = () => { const r = []; COUCHES.forEach(c => c.trouver().forEach(el => { if (!el.hidden) r.push({el, fermer: () => c.fermer(el)}); })); return r; };
@@ -124,17 +124,17 @@
     });
   }
   function remplir(){
-    const qui = lire('docupret_compte', null), email = qui && qui.email;
+    const qui = lire('docupret_compte', null), email = (window.Compte && window.Compte.connecte && !window.Compte.connecte()) ? '' : (qui && qui.email);
     const nb = (lire('docupret_clients', []) || []).filter(c => c && !c.supprime).length;
     menu.innerHTML = `<div class="cm-tete"><b>Mon compte</b><button type="button" class="cm-fermer" aria-label="Fermer">×</button></div>
       <div class="cm-qui">${email
         ? (logoAvatar() ? `<span class="cm-avatar logo"><img src="${logoAvatar()}" alt=""></span>` : `<span class="cm-avatar">${esc(email[0].toUpperCase())}</span>`) + `<div><small>Connecté avec</small><b>${esc(email)}</b></div>`
         : `<span class="cm-avatar vide">${ICO.compte}</span><div><b>Vous n'êtes pas connecté</b><small>Gratuit, avec une simple adresse e-mail</small></div>`}</div>
       ${email ? '' : '<a class="cm-connexion" href="compte.html#compte">Se connecter ou créer un compte</a>'}
-      <a class="cm-lien" href="compte.html#clients"><span class="cm-ico">${ICO.clients}</span><span class="cm-txt"><b>Mes clients</b><span>Coordonnées enregistrées</span></span>${nb ? `<span class="cm-nb">${nb}</span>` : ''}</a>
-      <a class="cm-lien" href="compte.html#parametres"><span class="cm-ico">${ICO.param}</span><span class="cm-txt"><b>Paramètres</b><span>Mon entreprise, préférences</span></span></a>
+      <a class="cm-lien" href="compte.html#clients"><span class="cm-ico">${ICO.clients}</span><span class="cm-txt"><b>Mes clients${email ? '' : ' 🔒'}</b><span>${email ? 'Coordonnées enregistrées' : 'Avec un compte gratuit'}</span></span>${email && nb ? `<span class="cm-nb">${nb}</span>` : ''}</a>
+      <a class="cm-lien" href="compte.html#parametres"><span class="cm-ico">${ICO.param}</span><span class="cm-txt"><b>Paramètres${email ? '' : ' 🔒'}</b><span>${email ? 'Mon entreprise, préférences' : 'Avec un compte gratuit'}</span></span></a>
       <a class="cm-lien" href="compte.html#compte"><span class="cm-ico">${ICO.compte}</span><span class="cm-txt"><b>Compte</b><span>${email ? 'Mot de passe, déconnexion' : 'Connexion, inscription'}</span></span></a>
-      <p class="cm-note">${email ? '☁️ Vos clients sont synchronisés sur tous vos appareils.' : '🔒 Sans compte, vos clients restent uniquement sur cet appareil.'}</p>`;
+      <p class="cm-note">${email ? '☁️ Vos clients et paramètres sont synchronisés sur tous vos appareils.' : '🔒 Clients, paramètres et envoi Gmail sont réservés aux comptes gratuits.'}</p>`;
   }
   function ouvrir(){
     if (!menu) construire();

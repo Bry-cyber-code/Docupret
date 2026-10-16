@@ -395,6 +395,7 @@
   .btn-client svg{width:19px;height:19px;flex-shrink:0}
   .btn-client.sec{background:#fff}
   .btn-client.fait{border-color:#3BA45C;color:#2B8148;background:#E7F6EC}
+  .btn-client.verrouille::after{content:"🔒";font-size:.85em;margin-left:2px}
 
   /* Mon compte (en-tête) */
   .droite{display:flex;align-items:center;gap:4px;justify-self:end}
@@ -1847,7 +1848,8 @@ window.DOCU_AFFICHAGE = (function(){
     liste();
   }
   const fermerBouton = () => { if (history.state && history.state.feuille) history.back(); else fermer(); };
-  window.addEventListener('popstate', () => { if (ouverte) fermer(); });
+  // Retour du téléphone : ferme la fiche, sauf si on revient juste d'une fenêtre ouverte par-dessus (la fiche reste alors à l'écran)
+  window.addEventListener('popstate', () => { if (ouverte && !(history.state && history.state.feuille)) fermer(); });
   $('feuille-ok').addEventListener('click', fermerBouton);
   $('feuille-retour').addEventListener('click', fermerBouton);
   $('liste-fiches').addEventListener('click', e => { const b = e.target.closest('[data-k]'); if (b) ouvrir(b.dataset.k); });
@@ -1872,7 +1874,7 @@ window.DOCU_AFFICHAGE = (function(){
   window.addEventListener('load', () => setTimeout(liste, 300));
 })();
 </script>
-<script src="compte.js?v=10"></script>
+<script src="compte.js?v=11"></script>
 <script src="gmail.js?v=3"></script>
 <script>
 // ===== Clients enregistrés =====
@@ -1892,6 +1894,13 @@ window.DOCU_AFFICHAGE = (function(){
   }
   function etat(){
     const v = lire(), b = $('enreg-client'), t = b.querySelector('span');
+    const ok = Compte.connecte();
+    b.classList.toggle('verrouille', !ok); $('mes-clients').classList.toggle('verrouille', !ok);
+    if (!ok){
+      b.classList.remove('fait'); t.textContent = 'Enregistrer ce client';
+      $('note-client').textContent = 'Avec un compte gratuit, enregistrez vos clients et retrouvez-les en un geste.';
+      return;
+    }
     const deja = v.nom && Compte.clients().find(c => Compte.norm(c.nom) === Compte.norm(v.nom));
     const pareil = deja && Object.keys(LIENS).every(k => k === 'pro' ? !!deja.pro === !!v.pro : (deja[k] || '') === (v[k] || ''));
     b.classList.toggle('fait', !!pareil);
@@ -1900,6 +1909,7 @@ window.DOCU_AFFICHAGE = (function(){
   }
   $('mes-clients').addEventListener('click', () => Compte.choisirClient(c => { remplir(c); Compte.toast(c.nom + ' : coordonnées ajoutées'); }));
   $('enreg-client').addEventListener('click', () => {
+    if (!Compte.connecte()) return Compte.demanderCompte('Enregistrez ce client une fois : la prochaine fois, ses coordonnées se rempliront toutes seules.');
     if ($('enreg-client').classList.contains('fait')) return;
     const r = Compte.enregistrerClient(lire());
     if (r.erreur){ Compte.toast(r.erreur); champ('cl.nom').focus(); return; }
@@ -1948,6 +1958,6 @@ window.DOCU_AFFICHAGE = (function(){
   etat();
 })();
 </script>
-<script src="compte-menu.js?v=3"></script>
+<script src="compte-menu.js?v=4"></script>
 </body>
 </html>

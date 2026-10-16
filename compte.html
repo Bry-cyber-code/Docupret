@@ -108,6 +108,11 @@
   .mdp input{padding-right:84px}
   .mdp button{position:absolute;right:6px;top:50%;transform:translateY(-50%);border:0;background:none;color:var(--bleu);font-size:.82rem;font-weight:650;padding:6px}
   .deux{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+  .verrou-compte{display:none;text-align:left}
+  body.invite .verrou-compte{display:grid}
+  body.invite .rubrique[data-r="clients"] > :not(.verrou-compte),body.invite .rubrique[data-r="parametres"] > :not(.verrou-compte){display:none!important}
+  .vc-ico{width:46px;height:46px;border-radius:14px;background:var(--bleu-clair);display:grid;place-items:center;font-size:1.4rem}
+  .vc-btn{display:block;text-align:center;text-decoration:none;margin-top:4px}
   .btn{background:var(--bleu);color:#fff;border:0;border-radius:12px;padding:13px 18px;font-weight:700;font-size:1rem;width:100%}
   .btn:disabled{opacity:.55}
   .btn-sec{border:1.5px solid var(--bord);background:#fff;border-radius:10px;padding:9px 13px;font-weight:650;font-size:.88rem;color:var(--texte)}
@@ -315,6 +320,20 @@
   </nav>
 
   <div class="rubrique" data-r="clients">
+  <section class="carte verrou-compte">
+    <div class="vc-ico" aria-hidden="true">🔒</div>
+    <div class="titre-carte">Mes clients, avec un compte gratuit</div>
+    <p class="note" style="margin-top:-6px">Enregistrez vos clients une fois, puis choisissez-les en un geste dans tous vos devis et factures.</p>
+    <ul class="avantages">
+      <li>Vos clients enregistrés, à choisir en un geste dans vos devis et factures</li>
+      <li>Vos paramètres : numérotation, logo, conditions de paiement, message d'envoi</li>
+      <li>Un devis transformé en facture en un seul clic</li>
+      <li>L'envoi de vos documents depuis votre propre Gmail</li>
+      <li>Tout retrouvé sur votre téléphone et votre ordinateur</li>
+    </ul>
+    <a class="btn vc-btn" href="#compte">Créer mon compte gratuit</a>
+    <p class="note" style="text-align:center">Gratuit, avec une simple adresse e-mail. Déjà un compte ? <a href="#compte" style="color:var(--bleu);font-weight:700">Me connecter</a></p>
+  </section>
   <section class="attente" id="attente" hidden></section>
   <h2 style="margin-top:4px">Mes clients <span class="compteur" id="nb">0</span></h2>
   <section class="carte">
@@ -326,6 +345,20 @@
   </div>
 
   <div class="rubrique" data-r="parametres" hidden>
+  <section class="carte verrou-compte">
+    <div class="vc-ico" aria-hidden="true">🔒</div>
+    <div class="titre-carte">Paramètres, avec un compte gratuit</div>
+    <p class="note" style="margin-top:-6px">Réglez une fois votre entreprise, votre logo, votre numérotation et votre message d'envoi : ils s'appliquent à tous vos documents.</p>
+    <ul class="avantages">
+      <li>Vos clients enregistrés, à choisir en un geste dans vos devis et factures</li>
+      <li>Vos paramètres : numérotation, logo, conditions de paiement, message d'envoi</li>
+      <li>Un devis transformé en facture en un seul clic</li>
+      <li>L'envoi de vos documents depuis votre propre Gmail</li>
+      <li>Tout retrouvé sur votre téléphone et votre ordinateur</li>
+    </ul>
+    <a class="btn vc-btn" href="#compte">Créer mon compte gratuit</a>
+    <p class="note" style="text-align:center">Gratuit, avec une simple adresse e-mail. Déjà un compte ? <a href="#compte" style="color:var(--bleu);font-weight:700">Me connecter</a></p>
+  </section>
   <section class="carte">
     <div class="titre-carte">Mon entreprise</div>
     <p class="note" style="margin-top:-6px">Ces informations remplissent automatiquement vos devis, factures, reçus et avoirs.</p>
@@ -396,10 +429,12 @@
   <section class="carte" id="bloc-invite">
     <div class="titre-carte">Créez votre compte gratuit</div>
     <ul class="avantages">
-      <li>Enregistrez vos clients : plus besoin de retaper leurs coordonnées</li>
-      <li>Retrouvez-les sur votre téléphone et votre ordinateur</li>
-      <li>Une simple adresse e-mail suffit : ni nom, ni prénom</li>
-      <li>Gratuit et sans engagement</li>
+      <li>Vos clients enregistrés, à choisir en un geste dans vos devis et factures</li>
+      <li>Vos paramètres : numérotation, logo, conditions de paiement, message d'envoi</li>
+      <li>Un devis transformé en facture en un seul clic</li>
+      <li>L'envoi de vos documents depuis votre propre Gmail</li>
+      <li>Tout retrouvé sur votre téléphone et votre ordinateur</li>
+      <li>Une simple adresse e-mail suffit : ni nom, ni prénom. Gratuit et sans engagement</li>
     </ul>
     <div class="bientot" id="bientot" hidden>🚧 L'ouverture des comptes arrive très bientôt. En attendant, <b>vous pouvez déjà enregistrer vos clients</b> : ils restent sur cet appareil et seront ajoutés à votre compte dès sa création.</div>
     <div class="seg" id="onglet"><button type="button" data-v="creer" class="on">Créer un compte</button><button type="button" data-v="connecter">Me connecter</button></div>
@@ -440,7 +475,7 @@
     <details><summary>Mes données sont-elles en sécurité ?</summary>
       <p>Chaque compte ne peut lire que ses propres données. Vos mots de passe sont chiffrés : personne, même pas nous, ne peut les lire. Vous pouvez supprimer votre compte et toutes vos données à tout moment.</p></details>
     <details><summary>Le compte est-il obligatoire ?</summary>
-      <p>Non. Tous les documents restent gratuits et utilisables sans compte. Le compte sert seulement à garder vos clients et à les retrouver sur plusieurs appareils.</p></details>
+      <p>Non. Tous les documents restent gratuits et utilisables sans compte. Le compte gratuit débloque en plus : vos clients enregistrés, vos paramètres (numérotation, logo, message d'envoi…), la transformation d'un devis en facture, l'envoi depuis Gmail et la synchronisation entre vos appareils.</p></details>
   </section>
   </div>
 </main>
@@ -452,9 +487,9 @@
   </div>
 </footer>
 
-<script src="compte.js?v=10"></script>
+<script src="compte.js?v=11"></script>
 <script src="gmail.js?v=3"></script>
-<script src="compte-menu.js?v=3"></script>
+<script src="compte-menu.js?v=4"></script>
 <script>
 (function(){
   'use strict';
@@ -680,6 +715,7 @@
   }
   let minuterie, numTouche = false;
   function enregistrer(){
+    if (!C.connecte()) return;
     const d = lireDoc();
     document.querySelectorAll('[data-p]').forEach(el => {
       const ch = el.dataset.p.split('.'), v = el.type === 'checkbox' ? el.checked : el.value.trim();
@@ -766,7 +802,9 @@
     C.parametresModifies(); remplirParam(); remplirNum(); majLogo(); C.toast('Infos d\'entreprise effacées');
   });
 
-  C.surChangement(() => { rendreCompte(); rendreClients(); majAffichage(); rendreAttente(); majEnvoi(); });
+  const majInvite = () => document.body.classList.toggle('invite', !C.connecte());
+  majInvite();
+  C.surChangement(() => { majInvite(); rendreCompte(); rendreClients(); majAffichage(); rendreAttente(); majEnvoi(); });
   C.surParametres(() => { remplirParam(); remplirNum(); majLogo(); majAffichage(); majEnvoi(); C.toast('Paramètres récupérés depuis votre compte ✓'); });
   changerMode('creer'); rendreCompte(); rendreClients(); rendreAttente(); remplirParam(); remplirNum(); majLogo(); majAffichage(); majEnvoi(); rubrique();
 })();

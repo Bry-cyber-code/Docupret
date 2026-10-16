@@ -223,6 +223,7 @@
   }
   function client(id){ return lireLocal().find(c => c.id === id && !c.supprime) || null; }
   function enregistrerClient(donnees){
+    if (!connecte()) return {erreur: 'Créez votre compte gratuit pour enregistrer vos clients.', compte: true};
     const nom = String(donnees.nom || '').trim();
     if (!nom) return {erreur: 'Indiquez au moins le nom du client.'};
     const liste = lireLocal();
@@ -330,12 +331,45 @@
   .cp-vide a{color:var(--bleu,#4A7BD0);text-decoration:underline}
   .cp-pied{padding:10px 16px 14px;border-top:1px solid var(--bord,#dde);font-size:.82rem;color:var(--gris,#667);text-align:center}
   .cp-pied a{color:var(--bleu,#4A7BD0);font-weight:650}
+  .cp-verrou{padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))}
+  .cp-txt{padding:0 16px;font-size:.92rem;color:var(--texte,#123);line-height:1.5}
+  .cp-av{list-style:none;margin:10px 16px 14px;padding:0;display:grid;gap:7px}
+  .cp-av li{font-size:.88rem;color:#3B4558;padding-left:22px;position:relative;line-height:1.4}
+  .cp-av li::before{content:"✓";position:absolute;left:0;color:var(--bleu,#4A7BD0);font-weight:800}
+  .cp-btn{display:block;margin:0 16px;background:var(--bleu,#4A7BD0);color:#fff;text-align:center;border-radius:12px;padding:13px;font-weight:700;font-size:.98rem;text-decoration:none}
+  .cp-petit{padding:10px 16px 0;font-size:.8rem;color:var(--gris,#667);text-align:center}
+  .cp-petit a{color:var(--bleu,#4A7BD0);font-weight:650}
   .cp-toast{position:fixed;left:50%;top:74px;transform:translateX(-50%);background:var(--texte,#123);color:#fff;padding:10px 16px;border-radius:12px;font-size:.9rem;z-index:70;max-width:90vw;text-align:center}`;
   let cssMis = false;
   const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
   function styler(){ if (cssMis) return; const st = document.createElement('style'); st.textContent = CSS; document.head.appendChild(st); cssMis = true; }
   function toast(t){ styler(); document.querySelectorAll('.cp-toast').forEach(x => x.remove()); const d = document.createElement('div'); d.className = 'cp-toast'; d.textContent = t; document.body.appendChild(d); setTimeout(() => d.remove(), 3200); }
+  // ---------- Avantages réservés aux comptes ----------
+  // Tant que Firebase n'a pas répondu, on se fie au dernier état connu ; ensuite, seule la vraie connexion compte.
+  let resolu = false;
+  function connecte(){
+    if (utilisateur) return true;
+    if (resolu) return false;
+    try{ return !!JSON.parse(localStorage.getItem('docupret_compte')); }catch(e){ return false; }
+  }
+  const AVANTAGES = ['Vos clients enregistrés, à choisir en un geste', 'Vos paramètres : numérotation, logo, message d\'envoi…', 'Un devis transformé en facture en un clic', 'L\'envoi de vos documents depuis votre Gmail', 'Tout retrouvé sur votre téléphone et votre ordinateur'];
+  function demanderCompte(texte){
+    styler();
+    document.querySelectorAll('.cp-fond').forEach(x => x.remove());
+    const fond = document.createElement('div'); fond.className = 'cp-fond';
+    fond.innerHTML = `<div class="cp-boite cp-verrou" role="dialog" aria-modal="true" aria-label="Réservé aux comptes"><div class="cp-tete"><b>🔒 Réservé aux comptes gratuits</b><button type="button" data-fermer aria-label="Fermer">×</button></div>
+      <p class="cp-txt">${esc(texte || 'Cette fonction est réservée aux comptes gratuits.')}</p>
+      <ul class="cp-av">${AVANTAGES.map(a => `<li>${esc(a)}</li>`).join('')}</ul>
+      <a class="cp-btn" href="compte.html#compte">Créer mon compte gratuit</a>
+      <p class="cp-petit">Une simple adresse e-mail suffit. Déjà un compte ? <a href="compte.html#compte">Me connecter</a></p></div>`;
+    const fermer = () => { fond.remove(); document.removeEventListener('keydown', echap); };
+    const echap = e => { if (e.key === 'Escape') fermer(); };
+    fond.addEventListener('click', e => { if (e.target === fond || e.target.closest('[data-fermer]')) fermer(); });
+    document.addEventListener('keydown', echap);
+    document.body.appendChild(fond);
+  }
   function choisirClient(quandChoisi){
+    if (!connecte()) return demanderCompte('Enregistrez vos clients une fois, puis choisissez-les en un geste dans tous vos devis et factures.');
     styler();
     const fond = document.createElement('div'); fond.className = 'cp-fond';
     fond.innerHTML = `<div class="cp-boite" role="dialog" aria-modal="true" aria-label="Mes clients"><div class="cp-tete"><b>Mes clients</b><button type="button" data-fermer aria-label="Fermer">×</button></div>
@@ -361,10 +395,11 @@
     if (clients().length > 6) cherche.focus();
   }
 
-  pret = demarrer();
+  pret = demarrer().finally(() => { resolu = true; prevenir(); });
   window.Compte = {
     actif, pret,
     utilisateur: () => utilisateur && {email: utilisateur.email, id: utilisateur.uid},
+    connecte, demanderCompte, avantages: AVANTAGES,
     clients, client, enregistrerClient, supprimerClient, synchroniser,
     inscrire, connecter, deconnecter, motDePasseOublie, changerMotDePasse, supprimerCompte,
     surChangement: f => ecouteurs.add(f),
