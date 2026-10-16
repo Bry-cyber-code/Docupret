@@ -306,13 +306,14 @@
 
   <section id="documents">
     <div class="filtres" id="filtres">
+      <button class="filtre actif" data-cat="populaires">Populaires</button>
       <button class="filtre" data-cat="pro">Pro</button>
       <button class="filtre" data-cat="travail">Travail</button>
       <button class="filtre" data-cat="vehicule">Véhicule</button>
       <button class="filtre" data-cat="logement">Logement</button>
       <button class="filtre" data-cat="vie">Vie courante</button>
       <button class="filtre" data-cat="outils">Outils</button>
-      <button class="filtre actif" data-cat="tous">Tous</button>
+      <button class="filtre" data-cat="tous">Tous</button>
     </div>
 
     <div class="grille" id="grille"></div>
@@ -494,7 +495,9 @@
   const grille = document.getElementById('grille');
   const vide = document.getElementById('vide');
   const champ = document.getElementById('recherche');
-  let categorie = 'tous';
+  let categorie = 'populaires';
+  // Les 4 plus demandés, affichés par défaut (lettre de motivation et démission : les plus recherchées sur Google)
+  const populaires = ['facture.html','devis.html','lettre-motivation.html','lettre-demission.html'];
 
   // Recherche tolérante : accents, majuscules, ordre des mots, pluriels, petites fautes
   const motsVides = new Set(['de','d','du','des','la','le','les','l','un','une','pour','sur','mon','ma','mes','a','au','aux','en','et']);
@@ -537,7 +540,9 @@
     const motsRecherche = decouper(champ.value);
     const liste = motsRecherche.length
       ? rechercher(motsRecherche)               // la recherche cherche dans tous les documents
-      : documents.filter(d => categorie === 'tous' || d.cat === categorie);
+      : categorie === 'populaires'
+        ? populaires.map(p => documents.find(d => d.page === p))
+        : documents.filter(d => categorie === 'tous' || d.cat === categorie);
     grille.innerHTML = liste.map(d => `
       <a href="${d.page || '#'}" class="carte">
         ${d.badge ? `<span class="badge">${d.badge}</span>` : ''}
