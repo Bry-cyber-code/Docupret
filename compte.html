@@ -119,7 +119,11 @@
   .deux{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
   .verrou-compte{display:none;text-align:left}
   body.invite .verrou-compte{display:grid}
-  body.invite .rubrique[data-r="clients"] > :not(.verrou-compte),body.invite .rubrique[data-r="parametres"] > :not(.verrou-compte),body.invite .rubrique[data-r="factures"] > :not(.verrou-compte),body.invite .rubrique[data-r="devis"] > :not(.verrou-compte){display:none!important}
+  body.invite .rubrique[data-r="clients"] > :not(.verrou-compte),body.invite .rubrique[data-r="parametres"] > :not(.verrou-compte),body.invite .rubrique[data-r="factures"] > :not(.verrou-compte),body.invite .rubrique[data-r="devis"] > :not(.verrou-compte),body.invite .rubrique[data-r="brouillons"] > :not(.verrou-compte){display:none!important}
+  .doc-brouillon{border-style:dashed}
+  .doc-type.t-brouillon{background:#EEF1F6;color:#5A6478}
+  .doc-continuer{display:inline-flex;align-items:center;color:#fff!important;background:var(--bleu);text-decoration:none!important;border-radius:50px;padding:5px 12px;font-weight:700}
+  @media (max-width:520px){.rubriques{overflow-x:auto;scrollbar-width:none}.rubriques::-webkit-scrollbar{display:none}.rubriques button{flex:1 0 auto;padding:9px 9px}}
   .filtres-docs{display:flex;flex-wrap:wrap;gap:6px}
   .filtres-docs:empty{display:none}
   .filtres-docs button{border:1.5px solid var(--bord);background:#fff;border-radius:50px;padding:6px 12px;font:inherit;font-size:.84rem;font-weight:600;color:var(--gris)}
@@ -133,7 +137,7 @@
   .mois-docs span{color:var(--gris);font-weight:600;text-transform:none}
   .doc-pdf{display:inline-flex;align-items:center;gap:4px;color:#fff!important;background:var(--bleu);text-decoration:none!important;border-radius:50px;padding:5px 11px;font-weight:700}
   .doc-lignes{font-size:.8rem;color:var(--gris);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  @media (max-width:420px){.rubriques button{font-size:.78rem;padding:9px 1px}.doc-bas{flex-wrap:wrap;gap:6px}.doc-liens{gap:12px}}
+  @media (max-width:420px){.rubriques button{font-size:.8rem;padding:9px 8px}.doc-bas{flex-wrap:wrap;gap:6px}.doc-liens{gap:12px}}
   .vc-ico{width:46px;height:46px;border-radius:14px;background:var(--bleu-clair);display:grid;place-items:center;font-size:1.4rem}
   .vc-btn{display:block;text-align:center;text-decoration:none;margin-top:4px}
   .btn{background:var(--bleu);color:#fff;border:0;border-radius:12px;padding:13px 18px;font-weight:700;font-size:1rem;width:100%}
@@ -340,7 +344,7 @@
   <p class="intro">Vos clients, vos factures, vos devis et vos réglages, au même endroit.</p>
 
   <nav class="rubriques" id="rubriques" aria-label="Rubriques">
-    <button type="button" data-r="clients">Clients</button><button type="button" data-r="factures">Factures</button><button type="button" data-r="devis">Devis</button><button type="button" data-r="parametres">Paramètres</button><button type="button" data-r="compte">Compte</button>
+    <button type="button" data-r="clients">Clients</button><button type="button" data-r="factures">Factures</button><button type="button" data-r="devis">Devis</button><button type="button" data-r="brouillons">Brouillons</button><button type="button" data-r="parametres">Paramètres</button><button type="button" data-r="compte">Compte</button>
   </nav>
 
   <div class="rubrique" data-r="clients">
@@ -415,6 +419,28 @@
     <div class="resume-docs" id="resume-devis"></div>
     <div class="liste-docs" id="liste-devis"></div>
     <p class="note">✓ Chaque devis téléchargé ou envoyé est gardé ici automatiquement, sur tous vos appareils.</p>
+  </section>
+  </div>
+
+  <div class="rubrique" data-r="brouillons" hidden>
+  <section class="carte verrou-compte">
+    <div class="vc-ico" aria-hidden="true">🔒</div>
+    <div class="titre-carte">Mes brouillons, avec un compte gratuit</div>
+    <p class="note" style="margin-top:-6px">Pas le temps de finir un devis ou une facture ? Enregistrez-le en brouillon et finissez-le plus tard, sur votre téléphone ou votre ordinateur.</p>
+    <ul class="avantages">
+      <li>Vos brouillons gardés dans votre compte, sur tous vos appareils</li>
+      <li>Repris en un geste, exactement là où vous vous étiez arrêté</li>
+      <li>Mis à jour tout seuls pendant que vous les complétez</li>
+      <li>Toutes vos factures et tous vos devis terminés gardés aussi</li>
+    </ul>
+    <a class="btn vc-btn" href="#compte">Créer mon compte gratuit</a>
+    <p class="note" style="text-align:center">Gratuit, avec une simple adresse e-mail. Déjà un compte ? <a href="#compte" style="color:var(--bleu);font-weight:700">Me connecter</a></p>
+  </section>
+  <h2 style="margin-top:4px">Mes brouillons <span class="compteur" id="nb-brouillons">0</span></h2>
+  <section class="carte">
+    <div class="outils-clients"><input type="search" id="cherche-brouillons" placeholder="Rechercher : client, n°, prestation…" aria-label="Rechercher un brouillon"></div>
+    <div class="liste-docs" id="liste-brouillons"></div>
+    <p class="note">💾 Dans un devis ou une facture, touchez « Enregistrer en brouillon » pour le retrouver ici. Il disparaît d'ici tout seul une fois le document téléchargé ou envoyé.</p>
   </section>
   </div>
 
@@ -562,7 +588,7 @@
   </div>
 </footer>
 
-<script src="compte.js?v=14"></script>
+<script src="compte.js?v=15"></script>
 <script src="gmail.js?v=3"></script>
 <script src="stats.js?v=2" defer></script>
 <script src="compte-menu.js?v=7"></script>
@@ -795,7 +821,28 @@
     });
     $('liste-' + r).innerHTML = html;
   }
-  const rendreTousDocs = () => { rendreDocs('factures'); rendreDocs('devis'); };
+  // Brouillons (comptes)
+  function rendreBrouillons(){
+    const tous = C.utilisateur() ? C.brouillons() : [];
+    $('nb-brouillons').textContent = tous.length;
+    const q = C.norm($('cherche-brouillons').value).trim();
+    const l = q ? tous.filter(d => q.split(/\s+/).every(m => texteRecherche(d).includes(m))) : tous;
+    const quand = iso => { const t = new Date(iso || 0); if (!isFinite(t)) return ''; const j = t.toLocaleDateString('fr-FR'), h = t.toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'}); return j === new Date().toLocaleDateString('fr-FR') ? "aujourd'hui à " + h : 'le ' + j + ' à ' + h; };
+    $('liste-brouillons').innerHTML = l.length ? l.map(d => {
+      const des = d.snap && Array.isArray(d.snap.lignes) ? d.snap.lignes.map(x => String(x.des || '').split('\n')[0].trim()).filter(Boolean) : [];
+      return `<div class="doc doc-brouillon"><div class="doc-haut"><span class="doc-type t-brouillon">Brouillon</span><span class="doc-type t-${esc(d.type)}">${MOT[d.type] || 'Document'}</span><b>${esc(d.clientNom || 'Sans nom de client')}</b><span class="doc-total">${eurs(d.total)}</span></div>
+        <div class="doc-bas"><span>${esc(d.numero || '')} · modifié ${quand(d.maj)}</span><span class="doc-liens"><a class="doc-continuer" href="facture.html?brouillon=${encodeURIComponent(d.id)}">Continuer →</a><button type="button" class="doc-suppr" data-suppr-brouillon="${esc(d.id)}">Supprimer</button></span></div>${des.length ? `<div class="doc-lignes">${esc(des.join(' · '))}</div>` : ''}</div>`;
+    }).join('') : q ? '<p class="vide">Aucun brouillon ne correspond à votre recherche.</p>'
+      : '<p class="vide">Aucun brouillon pour l\'instant.<br>Dans un <a href="facture.html?type=devis">devis</a> ou une <a href="facture.html?type=facture">facture</a>, touchez « 💾 Enregistrer en brouillon » pour le finir plus tard.</p>';
+  }
+  $('cherche-brouillons').addEventListener('input', rendreBrouillons);
+  $('liste-brouillons').addEventListener('click', e => {
+    const b = e.target.closest('[data-suppr-brouillon]'); if (!b) return;
+    const d = C.document(b.dataset.supprBrouillon); if (!d) return;
+    if (!confirm(`Supprimer ce brouillon de ${(MOT[d.type] || 'document').toLowerCase()}${d.clientNom ? ' pour ' + d.clientNom : ''} ?`)) return;
+    C.supprimerDocument(d.id); C.toast('Brouillon supprimé'); rendreBrouillons();
+  });
+  const rendreTousDocs = () => { rendreDocs('factures'); rendreDocs('devis'); rendreBrouillons(); };
   ['factures', 'devis'].forEach(r => {
     $('cherche-' + r).addEventListener('input', () => rendreDocs(r));
     $('filtres-' + r).addEventListener('click', e => { const b = e.target.closest('[data-filtre]'); if (b){ filtreDocs[r] = b.dataset.filtre; rendreDocs(r); } });
@@ -809,13 +856,14 @@
 
 
   // ---------- Rubriques ----------
-  const RUBS = ['clients', 'factures', 'devis', 'parametres', 'compte'];
+  const RUBS = ['clients', 'factures', 'devis', 'brouillons', 'parametres', 'compte'];
   function rubrique(){
     let r = location.hash.slice(1);
     if (!RUBS.includes(r)) r = 'clients';
     document.querySelectorAll('.fond').forEach(x => x.remove());
     document.querySelectorAll('.rubrique').forEach(d => d.hidden = d.dataset.r !== r);
     document.querySelectorAll('#rubriques button').forEach(b => b.classList.toggle('on', b.dataset.r === r));
+    const actif = document.querySelector('#rubriques button.on'); if (actif && actif.scrollIntoView) try{ actif.scrollIntoView({block: 'nearest', inline: 'center'}); }catch(e){}
     window.scrollTo(0, 0);
   }
   $('rubriques').addEventListener('click', e => { const b = e.target.closest('[data-r]'); if (b) location.hash = b.dataset.r; });

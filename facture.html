@@ -208,6 +208,11 @@
   .btn:disabled{opacity:.6}
   .btn svg{width:18px;height:18px;stroke:#fff}
 
+  .btn-brouillon{margin-bottom:8px}
+  .btn-brouillon.verrouille::before{content:"🔒 "}
+  body.mode-fiches #p-form .btn-brouillon{display:none}
+  .fiches .btn-brouillon{display:none}
+  body.mode-fiches .fiches .btn-brouillon{display:block;width:100%}
   .bandeau-pdf{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 16px;background:#E7F6EC;border:1px solid #BFE6D2;color:#1F6B3A;border-radius:14px;padding:12px 16px;margin:4px 0 14px;font-size:.92rem}
   .bandeau-pdf .bp-liens{display:flex;flex-wrap:wrap;gap:14px;align-items:center}
   .bandeau-pdf a,.bandeau-pdf button{color:#1F6B3A;font-weight:700;text-decoration:underline;background:none;border:0;padding:0;font:inherit;cursor:pointer}
@@ -509,6 +514,10 @@ window.DOCU_AFFICHAGE = (function(){
   .page .ed-logo .ed-x{position:absolute;right:-10px;top:-10px;width:22px;height:22px;border-radius:50%;border:1px solid #E2E8F2;background:#fff;color:#C0392B;cursor:pointer;font:14px/1 Arial,sans-serif;opacity:0}
   .page .ed-logo:hover .ed-x{opacity:1}
   .page .ed-l{position:relative}
+  .page .ed-signature .ed{display:block;min-height:3em}
+  .page .ed-signature .ed::first-line{font-weight:700;color:#23272f}
+  .page .p-mentions .ed{display:inline}
+  .page .ed-reinit{font-size:12px}
   .page .p-emetteur .ed-l > b{display:inline-block;margin-bottom:2px}
   .page .ed-moins,.page .ed-plus{display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;margin-left:5px;vertical-align:middle;border-radius:50%;border:1px solid #D5DCE8;background:#fff;color:#8A94A6;font:600 13px/1 Arial,sans-serif;cursor:pointer;padding:0;opacity:.45;transition:opacity .12s,color .12s,border-color .12s}
   .page .ed-l:hover > .ed-moins,.page .ed-moins:focus{opacity:1}
@@ -628,6 +637,7 @@ window.DOCU_AFFICHAGE = (function(){
     </button>
     <p class="progres" id="progres"></p>
     <div id="liste-fiches" style="display:grid;gap:8px"></div>
+    <button type="button" class="nouveau btn-brouillon" data-brouillon style="margin-top:10px">💾 Enregistrer en brouillon</button>
   </div>
 
   <nav class="etapes" id="etapes" aria-label="Étapes">
@@ -669,6 +679,7 @@ window.DOCU_AFFICHAGE = (function(){
         <button type="button" class="o-btn" id="o-enreg">Enregistrer ce client</button>
       </div>
       <div class="o-bloc">
+        <button type="button" class="o-btn" id="o-brouillon" data-brouillon>💾 Enregistrer en brouillon</button>
         <button type="button" class="o-btn" id="o-nouveau">＋ Nouveau document</button>
         <button type="button" class="o-btn" id="o-restaurer" hidden>Réafficher les champs retirés</button>
         <button type="button" class="o-lien" id="o-formulaire">Remplir plutôt avec le formulaire</button>
@@ -814,6 +825,7 @@ window.DOCU_AFFICHAGE = (function(){
         </div>
       </details>
 
+      <button type="button" class="nouveau btn-brouillon" data-brouillon data-e="1">💾 Enregistrer en brouillon</button>
       <button type="button" class="nouveau" id="nouveau" data-e="1">＋ Nouveau document</button>
 
       <!-- PUB : remplacer ce bloc par le code Google AdSense -->
@@ -1020,6 +1032,8 @@ window.DOCU_AFFICHAGE = (function(){
       compteurs:{devis:0, facture:0, recu:0, avoir:0},
       masques:{},
       extra:{em:[], cl:[], meta:[], paiement:[]},
+      textes:{signature:'', franchise:'', validite:'', penalites:''},
+      brouillonId:'', fini:'',
       numerotation:{annee:true}, numMaj:'',
       envoiMessage:'', modifie:''
     };
@@ -1043,6 +1057,18 @@ window.DOCU_AFFICHAGE = (function(){
     return base;
   }
 
+  // ---------- Textes modifiables (case signature, mentions) ----------
+  // Vide = texte par défaut. {date} est remplacé par la date de validité du devis.
+  const TEXTES_DEF = {
+    signature: 'Bon pour accord\nDate et signature du client, précédées de la mention « Bon pour accord »',
+    franchise: 'TVA non applicable, art. 293 B du CGI.',
+    validite: "Devis valable jusqu'au {date}.",
+    penalites: "En cas de retard de paiement : pénalités au taux de 3 fois le taux d'intérêt légal et indemnité forfaitaire pour frais de recouvrement de 40\u00a0€. Pas d'escompte pour paiement anticipé."
+  };
+  const avecDate = t => String(t).split('{date}').join(etat.doc.validite ? dateFr(etat.doc.validite) : '…');
+  const texteDoc = k => avecDate(String(((etat.textes || {})[k]) || '').trim() ? etat.textes[k] : TEXTES_DEF[k]);
+  const signatureHtml = () => { const l = texteDoc('signature').split('\n'); return `<b>${esc(l[0])}</b>${l.length > 1 ? '<br>' + l.slice(1).map(esc).join('<br>') : ''}`; };
+
   // facture.html?ouvrir=ID&pdf=1 : on affiche un document enregistré pour le retélécharger, sans toucher au brouillon en cours
   const MODE_PDF = (() => { const q = new URLSearchParams(location.search); return q.get('pdf') === '1' && !!q.get('ouvrir'); })();
   let docPdf = null;
@@ -1053,6 +1079,7 @@ window.DOCU_AFFICHAGE = (function(){
     clearTimeout(minuterie);
     etat.modifie = new Date().toISOString();
     minuterie = setTimeout(() => { try{ localStorage.setItem(CLE, JSON.stringify(etat)); }catch(e){} }, 300);
+    garderBrouillon();
   }
 
   // Numérotation : réglable dans Mon compte → Paramètres (préfixe, année, prochain numéro)
@@ -1062,25 +1089,81 @@ window.DOCU_AFFICHAGE = (function(){
   };
   const prochainNumero = t => { const b = baseNumero(t), num = String((etat.compteurs[t] || 0) + 1).padStart(3,'0'); return b ? b + '-' + num : num; };
 
-  // Chaque visite commence un document neuf : seuls vos réglages (entreprise, paiement, TVA, style…) sont repris.
-  // Exception : un brouillon pas encore téléchargé ni envoyé, modifié il y a moins de 12 h, est repris.
-  let brouillonRepris = false;
+  // ---------- Brouillons ----------
+  // Un document commencé mais pas terminé (ni téléchargé ni envoyé) reste en brouillon sur l'appareil,
+  // un par type (devis, facture…), jusqu'à ce qu'on revienne le finir ou qu'on touche « Nouveau document ».
+  // Avec un compte, on peut aussi l'enregistrer dans « Mon compte › Brouillons » pour le finir sur un autre appareil.
+  const CLE_AUTO = 'docupret_brouillon_auto';
+  const lireAuto = () => { try{ const v = JSON.parse(localStorage.getItem(CLE_AUTO)); return v && typeof v === 'object' ? v : {}; }catch(e){ return {}; } };
+  const ecrireAuto = o => { try{ localStorage.setItem(CLE_AUTO, JSON.stringify(o)); }catch(e){} };
+  const aContenu = () => !!(String(etat.cl.nom || '').trim() || etat.lignes.some(l => String(l.des || '').trim() || num(l.pu)));
+  const termine = () => !!etat.fini && etat.fini === etat.doc.numero;
+  function instantane(){
+    return JSON.parse(JSON.stringify({type: etat.type, modele: etat.modele, couleur: etat.couleur, cl: etat.cl, doc: etat.doc, cols: etat.cols, tvaMode: etat.tvaMode, franchise: etat.franchise, tauxDefaut: etat.tauxDefaut,
+      lignes: etat.lignes, paiement: {notes: etat.paiement.notes}, masques: etat.masques, extra: {cl: etat.extra.cl, meta: etat.extra.meta}, textes: etat.textes,
+      depuis: etat.depuis || '', ouvert: etat.ouvert || '', brouillonId: etat.brouillonId || '', modifie: etat.modifie || new Date().toISOString()}));
+  }
+  function viderDocument(){
+    const d = aujourdhui();
+    etat.cl = etatDefaut().cl;
+    etat.lignes = [ligneVide()];
+    etat.paiement.notes = ''; etat.depuis = ''; etat.ouvert = ''; etat.brouillonId = ''; etat.fini = '';
+    etat.extra.cl = []; etat.extra.meta = [];
+    etat.doc = Object.assign(etatDefaut().doc, {numero: '', date: d, echeance: plusJours(d, DELAIS[etat.paiement.conditions] ?? 30), validite: plusJours(d, 30)});
+  }
+  function appliquerBrouillon(b){
+    if (!b) return;
+    for (const k of ['modele', 'couleur', 'cols', 'tvaMode', 'franchise', 'tauxDefaut', 'masques', 'textes']) if (b[k] != null) etat[k] = JSON.parse(JSON.stringify(b[k]));
+    etat.type = TYPES[b.type] ? b.type : etat.type;
+    etat.cl = Object.assign(etatDefaut().cl, b.cl || {});
+    etat.lignes = Array.isArray(b.lignes) && b.lignes.length ? b.lignes.map(l => ({...ligneVide(), ...l})) : [ligneVide()];
+    etat.doc = Object.assign({}, etatDefaut().doc, b.doc || {});
+    etat.paiement.notes = (b.paiement && b.paiement.notes) || '';
+    etat.extra.cl = (b.extra && Array.isArray(b.extra.cl)) ? b.extra.cl : [];
+    etat.extra.meta = (b.extra && Array.isArray(b.extra.meta)) ? b.extra.meta : [];
+    etat.depuis = b.depuis || ''; etat.ouvert = b.ouvert || ''; etat.brouillonId = b.brouillonId || ''; etat.fini = '';
+  }
+  let minAuto, minCompte;
+  function garderBrouillon(){
+    if (MODE_PDF) return;
+    clearTimeout(minAuto);
+    minAuto = setTimeout(() => {
+      const a = lireAuto();
+      if (aContenu() && !termine()) a[etat.type] = instantane(); else delete a[etat.type];
+      ecrireAuto(a);
+      // Brouillon déjà enregistré dans le compte : il se met à jour tout seul
+      const C = window.Compte;
+      if (etat.brouillonId && !termine() && C && C.connecte()){
+        clearTimeout(minCompte);
+        minCompte = setTimeout(() => { if (!etat.brouillonId || termine()) return; const k = calculer(); C.enregistrerDocument({id: etat.brouillonId, brouillon: true, type: etat.type, numero: etat.doc.numero, date: etat.doc.date, clientId: '', clientNom: etat.cl.nom, total: k.totalTTC, snap: instantane()}); }, 2500);
+      }
+    }, 400);
+  }
+  const oublierBrouillon = t => { const a = lireAuto(); delete a[t]; ecrireAuto(a); };
+
+  let brouillonRepris = false, brouillonCompte = null;
   (function(){
     const q = new URLSearchParams(location.search);
     if (q.get('depuis') || q.get('ouvrir')) return;
-    const tUrl = q.get('type'), m = String(etat.doc.numero || '').match(/(\d+)\s*$/);
-    const termine = !m || parseInt(m[1], 10) <= (etat.compteurs[etat.type] || 0);
-    const recent = etat.modifie && (Date.now() - new Date(etat.modifie).getTime()) < 12 * 3600 * 1000;
-    const autreType = tUrl && TYPES[tUrl] && tUrl !== etat.type;
-    const contenu = !!(etat.cl.nom || etat.lignes.some(l => String(l.des || '').trim() || num(l.pu)));
-    if (termine || autreType || !recent || !contenu){
-      const d = aujourdhui();
-      etat.cl = etatDefaut().cl;
-      etat.lignes = [ligneVide()];
-      etat.paiement.notes = ''; etat.depuis = ''; etat.ouvert = '';
-      etat.extra.cl = []; etat.extra.meta = [];
-      etat.doc = Object.assign(etatDefaut().doc, {numero: '', date: d, echeance: plusJours(d, DELAIS[etat.paiement.conditions] ?? 30), validite: plusJours(d, 30)});
-    } else brouillonRepris = true;
+    const tUrl = TYPES[q.get('type')] ? q.get('type') : etat.type;
+    const auto = lireAuto();
+    // Ancien brouillon (enregistré avant cette version) : on le garde aussi
+    const m = String(etat.doc.numero || '').match(/(\d+)\s*$/);
+    const ancienFini = etat.fini ? etat.fini === etat.doc.numero : (!m || parseInt(m[1], 10) <= (etat.compteurs[etat.type] || 0));
+    if (!auto[etat.type] && aContenu() && !ancienFini){ auto[etat.type] = instantane(); ecrireAuto(auto); }
+    // Brouillon du compte : facture.html?brouillon=ID
+    const idB = q.get('brouillon');
+    if (idB){
+      let docs = []; try{ docs = JSON.parse(localStorage.getItem('docupret_documents')) || []; }catch(e){}
+      const d = docs.find(x => x && x.id === idB && x.brouillon && !x.supprime);
+      viderDocument();
+      if (d && d.snap){ appliquerBrouillon(d.snap); etat.brouillonId = d.id; brouillonCompte = d; brouillonRepris = true; }
+      try{ history.replaceState(null, '', '?type=' + etat.type); }catch(e){}
+      return;
+    }
+    viderDocument();
+    etat.type = tUrl;
+    if (auto[tUrl]){ appliquerBrouillon(auto[tUrl]); brouillonRepris = true; }
   })();
 
   // Reprendre un document enregistré dans Mon compte :
@@ -1091,6 +1174,7 @@ window.DOCU_AFFICHAGE = (function(){
     if (!idDep && !idOuv) return;
     let docs = []; try{ docs = JSON.parse(localStorage.getItem('docupret_documents')) || []; }catch(e){}
     const d = docs.find(x => x && x.id === (idDep || idOuv) && !x.supprime);
+    etat.brouillonId = '';
     if (d && d.snap){
       const sn = JSON.parse(JSON.stringify(d.snap));
       for (const k of ['modele', 'couleur', 'cols', 'tvaMode', 'franchise', 'tauxDefaut', 'masques']) if (sn[k] != null) etat[k] = sn[k];
@@ -1123,6 +1207,7 @@ window.DOCU_AFFICHAGE = (function(){
   const typeUrl = new URLSearchParams(location.search).get('type');
   if (typeUrl && TYPES[typeUrl] && typeUrl !== etat.type){ etat.type = typeUrl; etat.doc.numero = ''; }
   if (!etat.doc.numero || !etat.doc.numero.startsWith(baseNumero(etat.type))) etat.doc.numero = prochainNumero(etat.type);
+  if (brouillonRepris){ const m = String(etat.doc.numero).match(/(\d+)\s*$/); if (m && parseInt(m[1], 10) <= (etat.compteurs[etat.type] || 0)) etat.doc.numero = prochainNumero(etat.type); }
 
   // ---------- Couleurs ----------
   function rgb(hex){ const h = hex.replace('#',''); return [0,2,4].map(i => parseInt(h.substr(i,2),16)); }
@@ -1229,9 +1314,9 @@ window.DOCU_AFFICHAGE = (function(){
 
     // Mentions
     const mentions = [];
-    if (fr) mentions.push('TVA non applicable, art. 293 B du CGI.');
-    if (t === 'facture' && cl.pro) mentions.push("En cas de retard de paiement : pénalités au taux de 3 fois le taux d'intérêt légal et indemnité forfaitaire pour frais de recouvrement de 40\u00a0€. Pas d'escompte pour paiement anticipé.");
-    if (t === 'devis' && aff('doc.validite') && etat.doc.validite) mentions.push(`Devis valable jusqu'au ${dateFr(etat.doc.validite)}.`);
+    if (fr) mentions.push(esc(texteDoc('franchise')));
+    if (t === 'facture' && cl.pro) mentions.push(esc(texteDoc('penalites')));
+    if (t === 'devis' && aff('doc.validite') && etat.doc.validite) mentions.push(esc(texteDoc('validite')));
 
     const pied = [aff('em.nom') && em.nom, aff('em.siret') && em.siret && 'SIRET ' + em.siret, aff('em.tvaintra') && em.tvaintra && 'TVA ' + em.tvaintra, aff('em.mentions') && em.mentions].filter(Boolean).map(esc).join(' · ');
 
@@ -1277,7 +1362,7 @@ window.DOCU_AFFICHAGE = (function(){
         <div class="p-paiement">${paiement}</div>
         <table class="p-totaux">${totaux}</table>
       </div>
-      ${t === 'devis' ? `<div class="p-signature"><b>Bon pour accord</b><br>Date et signature du client, précédées de la mention « Bon pour accord »</div>` : ''}
+      ${t === 'devis' ? `<div class="p-signature">${signatureHtml()}</div>` : ''}
       ${mentions.length ? `<div class="p-mentions">${mentions.map(m => `<div>${m}</div>`).join('')}</div>` : ''}
       ${t === 'recu' ? '<div class="p-paye">PAYÉ</div>' : ''}
       ${pied ? `<div class="p-pied">${pied}</div>` : ''}
@@ -1376,7 +1461,9 @@ window.DOCU_AFFICHAGE = (function(){
   // Type de document
   $('types').addEventListener('click', e => {
     const b = e.target.closest('button'); if (!b) return;
-    etat.type = b.dataset.t;
+    if (b.dataset.t === etat.type) return;
+    oublierBrouillon(etat.type);
+    etat.type = b.dataset.t; etat.fini = '';
     etat.doc.numero = prochainNumero(etat.type);
     rendreGalerie();
     try{ history.replaceState(null, '', '?type=' + etat.type); }catch(err){}
@@ -1518,6 +1605,7 @@ window.DOCU_AFFICHAGE = (function(){
     demander('Commencer un nouveau document ? Le client et les prestations seront vidés.', 'Nouveau document', nouveauDocument);
   });
   function nouveauDocument(){
+    oublierBrouillon(etat.type); etat.brouillonId = ''; etat.fini = '';
     const d = aujourdhui();
     etat.cl = etatDefaut().cl;
     etat.lignes = [ligneVide()];
@@ -1578,6 +1666,10 @@ window.DOCU_AFFICHAGE = (function(){
   // Après un téléchargement ou un envoi : numéro suivant, et document gardé dans la fiche du client
   function apresSortie(k, envoye){
     if (MODE_PDF) return;
+    // Document terminé : ce n'est plus un brouillon
+    etat.fini = etat.doc.numero; oublierBrouillon(etat.type);
+    if (etat.brouillonId && window.Compte && Compte.connecte()) Compte.supprimerDocument(etat.brouillonId);
+    etat.brouillonId = ''; clearTimeout(minCompte);
     const m = String(etat.doc.numero).match(/(\d+)\s*$/);
     if (m) etat.compteurs[etat.type] = Math.max(etat.compteurs[etat.type] || 0, parseInt(m[1], 10));
     sauver();
@@ -1925,10 +2017,14 @@ window.DOCU_AFFICHAGE = (function(){
     if (aff('paiement.notes')) paiement += `<div class="ed-l" style="margin-top:10px">${E('paiement.notes', pa.notes, 'Un mot pour le client (facultatif) : « Merci pour votre confiance ! »', {multi: true})}${mBtn('paiement.notes')}</div>`;
 
     // Mentions légales automatiques
+    // Mentions automatiques : modifiables en cliquant dessus (↺ remet le texte d'origine)
+    const txt = k2 => { const cle = 'T:' + k2, perso = String(etat.textes[k2] || '').trim();
+      const v = enCours === cle ? avecDate(etat.textes[k2] || '') : texteDoc(k2);
+      return `<div class="ed-l">${E(cle, v, avecDate(TEXTES_DEF[k2]), {multi: k2 === 'signature'})}${perso ? `<button type="button" class="ed-moins ed-reinit" data-act="texte-defaut" data-k="${k2}" title="Remettre le texte d'origine" aria-label="Remettre le texte d'origine">↺</button>` : ''}</div>`; };
     const mentions = [];
-    if (fr) mentions.push('TVA non applicable, art. 293 B du CGI.');
-    if (t === 'facture' && cl.pro) mentions.push("En cas de retard de paiement : pénalités au taux de 3 fois le taux d'intérêt légal et indemnité forfaitaire pour frais de recouvrement de 40 €. Pas d'escompte pour paiement anticipé.");
-    if (t === 'devis' && aff('doc.validite') && etat.doc.validite) mentions.push(`Devis valable jusqu'au ${dateFr(etat.doc.validite)}.`);
+    if (fr) mentions.push(txt('franchise'));
+    if (t === 'facture' && cl.pro) mentions.push(txt('penalites'));
+    if (t === 'devis' && aff('doc.validite') && etat.doc.validite) mentions.push(txt('validite'));
 
     // Pied de page
     const pied = [aff('em.nom') && em.nom && esc(em.nom), aff('em.siret') && em.siret && 'SIRET ' + esc(em.siret),
@@ -1985,7 +2081,7 @@ window.DOCU_AFFICHAGE = (function(){
         <div class="p-paiement">${paiement}</div>
         <table class="p-totaux">${totaux}</table>
       </div>
-      ${t === 'devis' ? `<div class="p-signature"><b>Bon pour accord</b><br>Date et signature du client, précédées de la mention « Bon pour accord »</div>` : ''}
+      ${t === 'devis' ? `<div class="p-signature ed-signature">${txt('signature')}</div>` : ''}
       ${mentions.length ? `<div class="p-mentions">${mentions.map(m => `<div>${m}</div>`).join('')}</div>` : ''}
       ${t === 'recu' ? '<div class="p-paye">PAYÉ</div>' : ''}
       ${pied ? `<div class="p-pied">${pied}</div>` : ''}
@@ -2037,6 +2133,12 @@ window.DOCU_AFFICHAGE = (function(){
 
   // ----- Écrire une valeur, comme si on l'avait tapée dans le formulaire -----
   function ecrireValeur(cle, v){
+    const tx = cle.match(/^T:(\w+)$/);
+    if (tx){
+      const dv = etat.doc.validite ? dateFr(etat.doc.validite) : '';
+      etat.textes[tx[1]] = tx[1] === 'validite' && dv ? v.split(dv).join('{date}') : v;
+      rendreApercu(); sauver(); return;
+    }
     const x = cle.match(/^X:(\w+):(\d+)$/);
     if (x){ if (etat.extra[x[1]]) etat.extra[x[1]][+x[2]] = v; rendreApercu(); sauver(); return; }
     const m = cle.match(/^L:(\d+):(\w+)$/);
@@ -2066,7 +2168,7 @@ window.DOCU_AFFICHAGE = (function(){
   });
   // Les montants s'affichent « 1 200,00 € » ; pendant la saisie, on voit le chiffre tapé
   pageEl.addEventListener('focusin', e => { const el = e.target; if (!redessin && el.dataset && el.dataset.fmt){ enCours = el.dataset.ed; rendreApercu(); const n = $('page').querySelector(`[data-ed="${el.dataset.ed}"]`); if (n) placerCurseur(n, null); } });
-  pageEl.addEventListener('focusout', e => { if (!redessin && e.target.dataset && e.target.dataset.fmt) setTimeout(() => { if (feuille()) rendreApercu(); }, 0); });
+  pageEl.addEventListener('focusout', e => { if (!redessin && e.target.dataset && (e.target.dataset.fmt || /^T:/.test(e.target.dataset.ed || ''))) setTimeout(() => { if (feuille()) rendreApercu(); }, 0); });
   pageEl.addEventListener('keydown', e => {
     const el = e.target.closest && e.target.closest('.ed'); if (!el) return;
     if (e.key === 'Enter' && !el.dataset.multi){
@@ -2087,6 +2189,7 @@ window.DOCU_AFFICHAGE = (function(){
     if (act === 'logo') $('logo-fichier').click();
     else if (act === 'logo-suppr') $('logo-suppr').click();
     else if (act === 'masquer'){ etat.masques[b.dataset.k] = true; fermerMenuPlus(); majVisibilite(); rendreApercu(); sauver(); }
+    else if (act === 'texte-defaut'){ etat.textes[b.dataset.k] = ''; rendreApercu(); sauver(); }
     else if (act === 'libre-moins'){ etat.extra[b.dataset.b].splice(+b.dataset.i, 1); rendreApercu(); sauver(); }
     else if (act === 'plus') menuPlus(b, b.dataset.b);
     else if (act === 'ajout'){
@@ -2130,6 +2233,24 @@ window.DOCU_AFFICHAGE = (function(){
   document.addEventListener('click', e => { if (!e.target.closest('.ed-menu, [data-act="plus"]')) fermerMenuPlus(); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') fermerMenuPlus(); });
   window.addEventListener('resize', fermerMenuPlus);
+
+  // Enregistrer le document en cours dans « Mon compte › Brouillons »
+  function enregistrerBrouillonCompte(){
+    const C = window.Compte;
+    if (!C || !C.connecte()){ if (C) C.demanderCompte("Enregistrez vos devis et factures en brouillon dans votre compte, et finissez-les plus tard, sur n'importe quel appareil."); return; }
+    if (!aContenu()) return alerte("Commencez à remplir le document avant de l'enregistrer en brouillon.");
+    if (termine()) return alerte('Ce document est déjà terminé : il est dans Mon compte, rubrique ' + (etat.type === 'devis' ? 'Devis.' : 'Factures.'));
+    const k = calculer();
+    const d = C.enregistrerDocument({id: etat.brouillonId || undefined, brouillon: true, type: etat.type, numero: etat.doc.numero, date: etat.doc.date, clientId: '', clientNom: etat.cl.nom, total: k.totalTTC, snap: instantane()});
+    if (!d) return;
+    etat.brouillonId = d.id; sauver();
+    alerte('Brouillon enregistré dans Mon compte › Brouillons ✓');
+  }
+  document.addEventListener('click', e => { if (e.target.closest('[data-brouillon]')) enregistrerBrouillonCompte(); });
+  window.docuMajBrouillon = () => {
+    const ok = !!(window.Compte && Compte.connecte());
+    document.querySelectorAll('[data-brouillon]').forEach(b => b.classList.toggle('verrouille', !ok));
+  };
 
   function allerAuManque(){
     if (!feuille()) return;
@@ -2211,7 +2332,7 @@ window.DOCU_AFFICHAGE = (function(){
       if (document.fonts && document.fonts.ready) document.fonts.ready.then(lancer); else lancer();
     }
   }
-  if (brouillonRepris) setTimeout(() => alerte('Votre brouillon en cours est repris. « ＋ Nouveau document » pour repartir de zéro.'), 700);
+  if (brouillonRepris) setTimeout(() => alerte(brouillonCompte ? 'Brouillon repris depuis Mon compte : finissez-le quand vous voulez.' : `Votre brouillon de ${({devis: 'devis', facture: 'facture', recu: 'reçu', avoir: 'avoir'})[etat.type]} est repris. « ＋ Nouveau document » pour repartir de zéro.`), 700);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(ajuster);
 })();
 </script>
@@ -2425,7 +2546,7 @@ window.DOCU_AFFICHAGE = (function(){
   window.addEventListener('load', () => setTimeout(liste, 300));
 })();
 </script>
-<script src="compte.js?v=14"></script>
+<script src="compte.js?v=15"></script>
 <script src="gmail.js?v=3"></script>
 <script>
 // ===== Clients enregistrés =====
@@ -2469,6 +2590,8 @@ window.DOCU_AFFICHAGE = (function(){
   });
   document.addEventListener('input', e => { if (e.target.dataset && /^cl\./.test(e.target.dataset.b || '')) etat(); });
   Compte.surChangement(etat);
+  Compte.surChangement(() => window.docuMajBrouillon && window.docuMajBrouillon());
+  if (window.docuMajBrouillon) window.docuMajBrouillon();
   // Sans compte : les réglages réservés aux comptes (numérotation personnalisée, message d'envoi) ne s'appliquent pas
   Promise.resolve(Compte.pret).then(() => {
     if (Compte.connecte() || !Compte.verifie()) return;

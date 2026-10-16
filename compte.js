@@ -110,7 +110,7 @@
       em: d.em || {}, franchise: !!d.franchise,
       paiement: {conditions: p.conditions, moyen: p.moyen, iban: p.iban},
       numerotation: d.numerotation || {annee: true}, compteurs: d.compteurs || {}, numMaj: d.numMaj || '',
-      tauxDefaut: d.tauxDefaut, tvaMode: d.tvaMode, envoiMessage: d.envoiMessage || '',
+      tauxDefaut: d.tauxDefaut, tvaMode: d.tvaMode, envoiMessage: d.envoiMessage || '', textes: d.textes || {},
       affichage: localStorage.getItem('docupret_affichage') || '', avatar: localStorage.getItem('docupret_avatar') || '', envoiGmail: localStorage.getItem('docupret_envoi_gmail') || ''
     });
   }
@@ -126,6 +126,7 @@
     if (p.tauxDefaut != null) d.tauxDefaut = p.tauxDefaut;
     if (p.tvaMode) d.tvaMode = p.tvaMode;
     if (typeof p.envoiMessage === 'string') d.envoiMessage = p.envoiMessage;
+    if (p.textes && typeof p.textes === 'object') d.textes = Object.assign({}, d.textes || {}, p.textes);
     if (d.doc) d.doc.numero = '';
     try{
       localStorage.setItem(CLE_DOC, JSON.stringify(d));
@@ -195,17 +196,22 @@
       await lot.commit();
     }catch(e){ console.warn('Envoi des documents impossible', e); }
   }
+  // Documents terminés (les brouillons sont à part, voir brouillons())
   function documents(clientId){
-    return lireDocs().filter(d => !d.supprime && (!clientId || d.clientId === clientId))
+    return lireDocs().filter(d => !d.supprime && !d.brouillon && (!clientId || d.clientId === clientId))
       .sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')) || date(b.maj) - date(a.maj));
   }
+  const brouillons = () => lireDocs().filter(d => !d.supprime && d.brouillon).sort((a, b) => date(b.maj) - date(a.maj));
   const documentId = id => lireDocs().find(d => d.id === id && !d.supprime) || null;
+  // Réservé aux comptes : sans compte, rien n'est gardé
   function enregistrerDocument(o){
-    const liste = lireDocs();
+    if (!connecte()) return null;
+    const liste = lireDocs(), brouillon = !!o.brouillon;
     let d = o.id ? liste.find(x => x.id === o.id) : null;
-    if (!d) d = liste.find(x => !x.supprime && x.type === o.type && x.numero === o.numero && x.clientId === o.clientId);
+    if (d && !!d.brouillon !== brouillon && !brouillon) d = null;
+    if (!d && !brouillon) d = liste.find(x => !x.supprime && !x.brouillon && x.type === o.type && x.numero === o.numero && x.clientId === o.clientId);
     if (!d){ d = {id: nouvelId()}; liste.push(d); }
-    Object.assign(d, propre({type: o.type, numero: o.numero, date: o.date, clientId: o.clientId, clientNom: o.clientNom, total: o.total, snap: o.snap, envoye: o.envoye || d.envoye || null}));
+    Object.assign(d, propre({type: o.type, numero: o.numero, date: o.date, clientId: o.clientId, clientNom: o.clientNom, total: o.total, snap: o.snap, envoye: o.envoye || d.envoye || null, brouillon}));
     d.supprime = false; d.maj = new Date().toISOString();
     ecrireDocs(liste); envoyerDocs([d]); prevenir();
     return d;
@@ -285,7 +291,7 @@
     try{ if (window.Gmail) window.Gmail.deconnecter(); }catch(e){}
     if (auth) await auth.signOut();
     utilisateur = null;
-    try{ ['docufacile_v1', CLE_CLIENTS, CLE_DOCS, CLE_MAJ, 'docupret_affichage', 'docupret_avatar', 'docupret_envoi_gmail'].forEach(k => localStorage.removeItem(k)); }catch(e){}
+    try{ ['docufacile_v1', CLE_CLIENTS, CLE_DOCS, CLE_MAJ, 'docupret_affichage', 'docupret_avatar', 'docupret_envoi_gmail', 'docupret_brouillon_auto'].forEach(k => localStorage.removeItem(k)); }catch(e){}
     prevenir();
   }
   async function motDePasseOublie(email){
@@ -407,7 +413,7 @@
     inscrire, connecter, deconnecter, motDePasseOublie, changerMotDePasse, supprimerCompte,
     surChangement: f => ecouteurs.add(f),
     parametresModifies, surParametres: f => ecouteursParam.add(f),
-    documents, document: documentId, enregistrerDocument, majDocument, supprimerDocument,
+    documents, brouillons, document: documentId, enregistrerDocument, majDocument, supprimerDocument,
     choisirClient, toast, esc, norm
   };
 })();
