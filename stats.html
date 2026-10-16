@@ -125,6 +125,7 @@
   @media (max-width:640px){.tuiles{grid-template-columns:repeat(2,1fr)}}
   .tuile{background:var(--blanc);border:1px solid var(--bord);border-radius:var(--rayon);padding:14px 14px 12px;display:grid;gap:2px;min-width:0}
   .tuile small{font-size:.78rem;color:var(--gris);font-weight:650}
+  .tuile-large{grid-column:1 / -1;background:var(--bleu-clair);border-color:#CFDDF6}
   .tuile b{font-size:1.7rem;font-weight:800;line-height:1.15;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
   .tuile span{font-size:.76rem;color:var(--gris)}
   .tuile span.hausse{color:#2B8148} .tuile span.baisse{color:#B4432F}
@@ -323,12 +324,13 @@
   });
 })();
 </script>
-<script src="compte.js?v=13"></script>
+<script src="compte.js?v=14"></script>
 <script src="compte-menu.js?v=7"></script>
 <script>
 (function(){
   'use strict';
   const ADMIN = 'QOC6tTqjsKTdO9zR5NfQkhJqkup2';
+  const COMPTES_AVANT = 3;   // comptes déjà créés avant la mise en place des statistiques (16/10/2026)
   const $ = id => document.getElementById(id), C = window.Compte, esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
   const nf = new Intl.NumberFormat('fr-FR');
   const n = v => nf.format(Math.round(v || 0)).replace(/[  ]/g, ' ');
@@ -389,13 +391,20 @@
   const fusion = (docs, champ, filtre) => { const o = {}; docs.forEach(d => Object.entries(d[champ] || {}).forEach(([k, v]) => { if (!filtre || filtre(k)) o[k] = (o[k] || 0) + (v || 0); })); return o; };
   const docsCrees = d => Object.entries(d.ev || {}).reduce((t, [k, v]) => t + (/^pdf_/.test(k) ? v : 0), 0);
 
+  let total = null;
+  async function totalComptes(){
+    if (total !== null) return total;
+    const snap = await db.collection('stats').get();
+    let t = COMPTES_AVANT; snap.forEach(d => { const e = d.data().ev || {}; t += (e.compte_cree || 0) - (e.compte_supprime || 0); });
+    return (total = Math.max(0, t));
+  }
   async function charger(){
     $('st-maj').textContent = 'Mise à jour…';
     try{
       const actuels = jours(periode, 0), avant = jours(periode, periode);
       const m = await lire(cleJour(avant[0]), cleJour(actuels[actuels.length - 1]));
       const docs = actuels.map(d => m.get(cleJour(d)) || {}), docsAvant = avant.map(d => m.get(cleJour(d)) || {});
-      rendre(actuels, docs, docsAvant);
+      rendre(actuels, docs, docsAvant, await totalComptes());
       $('st-maj').textContent = 'À jour : ' + new Date().toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'});
     }catch(e){
       console.warn(e);
@@ -419,14 +428,15 @@
     const haut = l[0][1];
     $(id).innerHTML = l.map(([k, v]) => `<div class="ligne-st"><span class="lib">${esc(nommer(k))}</span><span class="val">${n(v)}</span><span class="piste"><i style="width:${Math.max(2, v / haut * 100)}%"></i></span></div>`).join('');
   }
-  function rendre(jrs, docs, docsAvant){
+  function rendre(jrs, docs, docsAvant, comptes){
     const ev = (d, k) => (d.ev || {})[k] || 0;
     $('tuiles').innerHTML =
+      `<div class="tuile tuile-large"><small>Comptes au total</small><b>${n(comptes)}</b><span>Toutes périodes confondues · ${n(somme(docs, d => ev(d, 'compte_cree')))} créé${somme(docs, d => ev(d, 'compte_cree')) > 1 ? 's' : ''} sur la période choisie</span></div>` +
       tuile('Visiteurs', somme(docs, d => d.vis), somme(docsAvant, d => d.vis)) +
       tuile('Pages vues', somme(docs, d => d.v), somme(docsAvant, d => d.v)) +
       tuile('Nouveaux visiteurs', somme(docs, d => d.nv), somme(docsAvant, d => d.nv)) +
       tuile('Documents créés', somme(docs, docsCrees), somme(docsAvant, docsCrees)) +
-      tuile('Comptes créés', somme(docs, d => ev(d, 'compte_cree')), somme(docsAvant, d => ev(d, 'compte_cree'))) +
+      tuile('Nouveaux comptes', somme(docs, d => ev(d, 'compte_cree')), somme(docsAvant, d => ev(d, 'compte_cree'))) +
       tuile('Envois depuis Gmail', somme(docs, d => ev(d, 'envoi_gmail')), somme(docsAvant, d => ev(d, 'envoi_gmail')));
     graphe(jrs, docs.map(d => d.vis || 0), docs.map(d => d.v || 0));
     $('tab-jours').innerHTML = '<tr><th>Jour</th><th>Visiteurs</th><th>Pages vues</th><th>Documents</th></tr>' +
@@ -435,7 +445,7 @@
     liste('l-docs', fusion(docs, 'ev', k => /^pdf_/.test(k)), nomDoc);
     liste('l-src', fusion(docs, 'src'), k => SOURCES[k] || k);
     const app = fusion(docs, 'app'), e = fusion(docs, 'ev', k => !/^pdf_/.test(k));
-    const LIB = {telephone: '📱 Sur téléphone', ordinateur: '💻 Sur ordinateur', connexion: 'Connexions à un compte', compte_cree: 'Comptes créés', envoi_gmail: 'Envois depuis Gmail', envoi_autre_appli: 'Envois avec une autre application', appli_installee: 'Applications installées'};
+    const LIB = {telephone: '📱 Sur téléphone', ordinateur: '💻 Sur ordinateur', connexion: 'Connexions à un compte', compte_cree: 'Comptes créés', compte_supprime: 'Comptes supprimés', envoi_gmail: 'Envois depuis Gmail', envoi_autre_appli: 'Envois avec une autre application', appli_installee: 'Applications installées'};
     liste('l-app', Object.assign({}, app, e), k => LIB[k] || k.replace(/_/g, ' '), 12);
   }
 

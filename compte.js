@@ -308,6 +308,7 @@
       try{ await db.collection('utilisateurs').doc(u.uid).delete(); }catch(e){}
       try{ localStorage.removeItem(CLE_DOCS); }catch(e){}
       await u.delete();
+      try{ window.DocuStats && window.DocuStats.evenement('compte_supprime'); }catch(e){}
     }catch(e){ throw traduire(e); }
     utilisateur = null; prevenir();
   }
