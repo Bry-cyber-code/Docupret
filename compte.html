@@ -123,11 +123,30 @@
   .deux{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
   .verrou-compte{display:none;text-align:left}
   body.invite .verrou-compte{display:grid}
-  body.invite .rubrique[data-r="clients"] > :not(.verrou-compte),body.invite .rubrique[data-r="parametres"] > :not(.verrou-compte),body.invite .rubrique[data-r="factures"] > :not(.verrou-compte),body.invite .rubrique[data-r="devis"] > :not(.verrou-compte),body.invite .rubrique[data-r="brouillons"] > :not(.verrou-compte){display:none!important}
+  body.invite .rubrique[data-r="clients"] > :not(.verrou-compte),body.invite .rubrique[data-r="parametres"] > :not(.verrou-compte),body.invite .rubrique[data-r="factures"] > :not(.verrou-compte),body.invite .rubrique[data-r="impayees"] > :not(.verrou-compte),body.invite .rubrique[data-r="devis"] > :not(.verrou-compte),body.invite .rubrique[data-r="brouillons"] > :not(.verrou-compte){display:none!important}
   .doc-brouillon{border-style:dashed}
   .doc-type.t-brouillon{background:#EEF1F6;color:#5A6478}
   .doc-continuer{display:inline-flex;align-items:center;color:#fff!important;background:var(--bleu);text-decoration:none!important;border-radius:50px;padding:5px 12px;font-weight:700}
   @media (max-width:520px){.rubriques{overflow-x:auto;scrollbar-width:none}.rubriques::-webkit-scrollbar{display:none}.rubriques button{flex:1 0 auto;padding:9px 9px}}
+  .pastille{display:inline-block;min-width:18px;margin-left:5px;padding:1px 5px;border-radius:50px;background:#C23B36;color:#fff;font-size:.7rem;font-weight:800;line-height:1.4;vertical-align:1px}
+  .doc-type.t-impayee{background:#FDECEA;color:#A8322D}
+  .doc-type.t-payee{background:#E7F6EC;color:#1F6B3A}
+  .doc-paye{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;border-top:1px dashed var(--bord);padding-top:8px;margin-top:2px}
+  .ech{font-size:.8rem;font-weight:700;color:var(--gris)}
+  .ech.e-retard{color:#C23B36}
+  .ech.e-bientot{color:#8A5A00}
+  .ech.e-ok{color:#1F6B3A}
+  .btn-payee{border:0;border-radius:50px;background:#2B8148;color:#fff;font:inherit;font-weight:800;font-size:.86rem;padding:8px 14px;cursor:pointer}
+  .btn-payee:hover{background:#236B3B}
+  .annuler-paye{border:0;background:none;padding:0;font:inherit;font-size:.78rem;color:var(--gris);text-decoration:underline;cursor:pointer}
+  .resume-docs span.rouge b{color:#C23B36}
+  .resume-docs span.vert b{color:#1F6B3A}
+  .choix-moyen{display:flex;flex-wrap:wrap;gap:6px}
+  .choix-moyen label{display:inline-flex}
+  .choix-moyen input{position:absolute;opacity:0;pointer-events:none}
+  .choix-moyen span{border:1.5px solid var(--bord);border-radius:50px;padding:7px 13px;font-size:.88rem;font-weight:600;cursor:pointer;background:#fff}
+  .choix-moyen input:checked + span{border-color:#2B8148;background:#E7F6EC;color:#1F6B3A}
+  .choix-moyen input:focus-visible + span{outline:2px solid var(--bleu);outline-offset:2px}
   .filtres-docs{display:flex;flex-wrap:wrap;gap:6px}
   .filtres-docs:empty{display:none}
   .filtres-docs button{border:1.5px solid var(--bord);background:#fff;border-radius:50px;padding:6px 12px;font:inherit;font-size:.84rem;font-weight:600;color:var(--gris)}
@@ -350,7 +369,7 @@
   <p class="intro">Vos clients, vos factures, vos devis et vos réglages, au même endroit.</p>
 
   <nav class="rubriques" id="rubriques" aria-label="Rubriques">
-    <button type="button" data-r="clients">Clients</button><button type="button" data-r="factures">Factures</button><button type="button" data-r="devis">Devis</button><button type="button" data-r="brouillons">Brouillons</button><button type="button" data-r="parametres">Paramètres</button><button type="button" data-r="compte">Compte</button>
+    <button type="button" data-r="clients">Clients</button><button type="button" data-r="factures">Factures</button><button type="button" data-r="impayees">Impayées<span class="pastille" id="pastille-impayees" hidden></span></button><button type="button" data-r="devis">Devis</button><button type="button" data-r="brouillons">Brouillons</button><button type="button" data-r="parametres">Paramètres</button><button type="button" data-r="compte">Compte</button>
   </nav>
 
   <div class="rubrique" data-r="clients">
@@ -400,6 +419,29 @@
     <div class="resume-docs" id="resume-factures"></div>
     <div class="liste-docs" id="liste-factures"></div>
     <p class="note">✓ Chaque facture téléchargée ou envoyée est gardée ici automatiquement, sur tous vos appareils.</p>
+  </section>
+  </div>
+
+  <div class="rubrique" data-r="impayees" hidden>
+  <section class="carte verrou-compte">
+    <div class="vc-ico" aria-hidden="true">🔒</div>
+    <div class="titre-carte">Le suivi de vos factures impayées, avec un compte gratuit</div>
+    <p class="note" style="margin-top:-6px">Voyez d'un coup d'œil qui vous doit de l'argent, depuis combien de temps, et marquez chaque facture payée d'un geste.</p>
+    <ul class="avantages">
+      <li>Toutes vos factures non payées au même endroit</li>
+      <li>Le montant total qu'il vous reste à encaisser</li>
+      <li>Les factures en retard signalées en rouge</li>
+      <li>Un bouton « Payée » : la facture passe dans vos factures payées</li>
+    </ul>
+    <a class="btn vc-btn" href="#compte">Créer mon compte gratuit</a>
+    <p class="note" style="text-align:center">Gratuit, avec une simple adresse e-mail. Déjà un compte ? <a href="#compte" style="color:var(--bleu);font-weight:700">Me connecter</a></p>
+  </section>
+  <h2 style="margin-top:4px">Factures impayées <span class="compteur" id="nb-impayees">0</span></h2>
+  <section class="carte">
+    <div class="outils-clients"><input type="search" id="cherche-impayees" placeholder="Rechercher : client, n°, prestation, montant…" aria-label="Rechercher une facture impayée"><a class="btn" href="facture.html">+ Nouvelle</a></div>
+    <div class="resume-docs" id="resume-impayees"></div>
+    <div class="liste-docs" id="liste-impayees"></div>
+    <p class="note">Chaque nouvelle facture arrive ici. Dès que votre client vous a payé, touchez « ✓ Payée » : elle passe dans la rubrique Factures, avec la date du paiement.</p>
   </section>
   </div>
 
@@ -695,8 +737,75 @@
   function ligneDoc(d, avecClient, avecLignes){
     const des = avecLignes && d.snap && Array.isArray(d.snap.lignes) ? d.snap.lignes.map(l => String(l.des || '').split('\n')[0].trim()).filter(Boolean) : [];
     const conv = d.type === 'devis' ? (d.facture ? `<span class="doc-ok">✓ Facturé ${esc(d.facture)}</span>` : `<a class="doc-conv" href="facture.html?depuis=${encodeURIComponent(d.id)}">Transformer en facture →</a>`) : '';
-    return `<div class="doc"><div class="doc-haut"><span class="doc-type t-${esc(d.type)}">${MOT[d.type] || 'Document'}</span><b>${esc(d.numero)}</b><span class="doc-total">${eurs(d.total)}</span></div>
-      <div class="doc-bas"><span>${avecClient ? esc(d.clientNom || 'Sans nom de client') + ' · ' : ''}${dFr(d.date)}${d.envoye ? ` · <span class="doc-env">✉ envoyé le ${new Date(d.envoye.date).toLocaleDateString('fr-FR')}</span>` : ''}</span><span class="doc-liens"><a class="doc-pdf" href="facture.html?ouvrir=${encodeURIComponent(d.id)}&pdf=1" title="Télécharger le PDF">⬇ PDF</a><a class="doc-ouvrir" href="facture.html?ouvrir=${encodeURIComponent(d.id)}">Rouvrir</a><button type="button" class="doc-suppr" data-suppr-doc="${esc(d.id)}">Supprimer</button></span></div>${des.length ? `<div class="doc-lignes">${esc(des.join(' · '))}</div>` : ''}${conv ? `<div class="doc-conv-l">${conv}</div>` : ''}</div>`;
+    const pay = d.type === 'facture' ? blocPaiement(d) : '';
+    return `<div class="doc"><div class="doc-haut">${d.type === 'facture' ? (d.paye ? '<span class="doc-type t-payee">✓ Payée</span>' : '<span class="doc-type t-impayee">Impayée</span>') : `<span class="doc-type t-${esc(d.type)}">${MOT[d.type] || 'Document'}</span>`}<b>${esc(d.numero)}</b><span class="doc-total">${eurs(d.total)}</span></div>
+      <div class="doc-bas"><span>${avecClient ? esc(d.clientNom || 'Sans nom de client') + ' · ' : ''}${dFr(d.date)}${d.envoye ? ` · <span class="doc-env">✉ envoyé le ${new Date(d.envoye.date).toLocaleDateString('fr-FR')}</span>` : ''}</span><span class="doc-liens"><a class="doc-pdf" href="facture.html?ouvrir=${encodeURIComponent(d.id)}&pdf=1" title="Télécharger le PDF">⬇ PDF</a><a class="doc-ouvrir" href="facture.html?ouvrir=${encodeURIComponent(d.id)}">Rouvrir</a><button type="button" class="doc-suppr" data-suppr-doc="${esc(d.id)}">Supprimer</button></span></div>${des.length ? `<div class="doc-lignes">${esc(des.join(' · '))}</div>` : ''}${conv ? `<div class="doc-conv-l">${conv}</div>` : ''}${pay}</div>`;
+  }
+  // ---------- Paiement des factures ----------
+  const jourISO = (t = new Date()) => `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`;
+  const echeance = d => (d.snap && d.snap.doc && d.snap.doc.echeance) || '';
+  function etatEcheance(d){
+    const e = echeance(d); if (!e) return null;
+    const j = Math.round((new Date(e + 'T12:00') - new Date(jourISO() + 'T12:00')) / 864e5);
+    if (j < 0) return {cls: 'e-retard', txt: `⚠ En retard de ${-j} jour${j < -1 ? 's' : ''} (échéance ${dFr(e)})`, retard: true};
+    if (j === 0) return {cls: 'e-bientot', txt: "À payer aujourd'hui"};
+    if (j <= 7) return {cls: 'e-bientot', txt: `À payer dans ${j} jour${j > 1 ? 's' : ''} (${dFr(e)})`};
+    return {cls: 'e-ok', txt: `Échéance le ${dFr(e)}`};
+  }
+  function blocPaiement(d){
+    if (d.paye) return `<div class="doc-paye"><span class="ech e-ok">✓ Payée le ${dFr(d.paye.date)}${d.paye.moyen ? ' · ' + esc(d.paye.moyen) : ''}</span><button type="button" class="annuler-paye" data-impayee="${esc(d.id)}">Remettre en impayée</button></div>`;
+    const e = etatEcheance(d);
+    return `<div class="doc-paye"><span class="ech ${e ? e.cls : ''}">${e ? e.txt : 'Pas encore payée'}</span><button type="button" class="btn-payee" data-payee="${esc(d.id)}">✓ Payée</button></div>`;
+  }
+  const MOYENS = ['Virement', 'Espèces', 'Chèque', 'Carte bancaire', 'Autre'];
+  function marquerPayee(id){
+    const d = C.document(id); if (!d) return;
+    const prevu = (d.snap && d.snap.paiementComplet && d.snap.paiementComplet.moyen) || 'Virement';
+    const f = document.createElement('div'); f.className = 'fond';
+    f.innerHTML = `<div class="boite" role="dialog" aria-modal="true" aria-label="Facture payée"><div class="boite-tete"><b>Facture ${esc(d.numero)} payée</b><button type="button" data-fermer aria-label="Fermer">×</button></div>
+      <p class="note" style="margin:0">${esc(d.clientNom || 'Sans nom de client')} · <b>${eurs(d.total)}</b></p>
+      <form class="form-client" style="display:grid;gap:12px">
+        <label class="ch">Date du paiement<input type="date" name="date" value="${jourISO()}" max="${jourISO()}" required></label>
+        <div class="ch">Moyen de paiement<div class="choix-moyen">${MOYENS.map(m => `<label><input type="radio" name="moyen" value="${esc(m)}" ${m === prevu || (!MOYENS.includes(prevu) && m === 'Autre') ? 'checked' : ''}><span>${esc(m)}</span></label>`).join('')}</div></div>
+        <button type="submit" class="btn btn-payee" style="border-radius:12px;padding:13px">✓ Confirmer le paiement</button>
+      </form></div>`;
+    const fermer = () => f.remove();
+    f.addEventListener('click', e => { if (e.target === f || e.target.closest('[data-fermer]')) fermer(); });
+    f.querySelector('form').addEventListener('submit', e => {
+      e.preventDefault();
+      const fo = e.target, date = fo.date.value || jourISO(), moyen = (fo.moyen.value || '');
+      C.majDocument(id, {paye: {date, moyen}});
+      try{ window.DocuStats && window.DocuStats.evenement('facture_payee'); }catch(err){}
+      fermer(); rendreTousDocs();
+      C.toast(`Facture ${d.numero} payée ✓ Elle est maintenant dans vos factures payées.`);
+    });
+    document.body.appendChild(f);
+  }
+  function remettreImpayee(id){
+    const d = C.document(id); if (!d) return;
+    if (!confirm(`Remettre la facture ${d.numero} en impayée ?`)) return;
+    C.majDocument(id, {paye: null}); rendreTousDocs(); C.toast(`Facture ${d.numero} remise dans les impayées`);
+  }
+  document.addEventListener('click', e => {
+    const a = e.target.closest('[data-payee]'); if (a){ marquerPayee(a.dataset.payee); return; }
+    const b = e.target.closest('[data-impayee]'); if (b) remettreImpayee(b.dataset.impayee);
+  });
+  function rendreImpayees(){
+    const tous = C.utilisateur() ? C.documents().filter(d => d.type === 'facture' && !d.paye) : [];
+    const pas = $('pastille-impayees'); pas.hidden = !tous.length; pas.textContent = tous.length;
+    $('nb-impayees').textContent = tous.length;
+    const q = C.norm($('cherche-impayees').value).trim();
+    // Les plus anciennes échéances d'abord
+    const cleTri = d => echeance(d) || d.date || '';
+    let l = tous.slice().sort((a, b) => String(cleTri(a)).localeCompare(String(cleTri(b))));
+    if (q) l = l.filter(d => q.split(/\s+/).every(m => texteRecherche(d).includes(m)));
+    const somme = x => x.reduce((a, d) => a + (Number(d.total) || 0), 0);
+    const retard = tous.filter(d => { const e = etatEcheance(d); return e && e.retard; });
+    $('resume-impayees').innerHTML = tous.length ? `<span class="rouge">À encaisser<b>${eurs(somme(tous))}</b></span><span${retard.length ? ' class="rouge"' : ''}>En retard${retard.length ? ` (${retard.length})` : ''}<b>${eurs(somme(retard))}</b></span>` : '';
+    $('liste-impayees').innerHTML = l.length ? l.map(d => ligneDoc(d, true, true)).join('')
+      : q ? '<p class="vide">Aucune facture impayée ne correspond à votre recherche.</p>'
+      : C.documents().some(d => d.type === 'facture') ? '<p class="vide">🎉 Toutes vos factures sont payées.</p>'
+      : '<p class="vide">Aucune facture pour l\'instant.<br>Créez une <a href="facture.html">facture</a> : dès que vous la téléchargez ou l\'envoyez, elle apparaît ici jusqu\'à ce qu\'elle soit payée.</p>';
   }
   function supprimerDoc(id, ensuite){
     const d = C.document(id); if (!d) return;
@@ -773,9 +882,9 @@
     if (!id) form.nom.focus();
   }
   // ---------- Mes factures / Mes devis ----------
-  const filtreDocs = {factures: 'facture', devis: 'tous'};
+  const filtreDocs = {factures: 'payee', devis: 'tous'};
   const OPTIONS = {
-    factures: [['facture', 'Factures'], ['avoir', 'Avoirs'], ['recu', 'Reçus']],
+    factures: [['payee', 'Payées'], ['facture', 'Toutes'], ['avoir', 'Avoirs'], ['recu', 'Reçus']],
     devis: [['tous', 'Tous'], ['attente', 'En attente'], ['factures', 'Facturés']]
   };
   function texteRecherche(d){
@@ -788,20 +897,23 @@
     const base = r === 'devis' ? tous.filter(d => d.type === 'devis') : tous.filter(d => d.type !== 'devis');
     $('nb-' + r).textContent = r === 'devis' ? base.length : base.filter(d => d.type === 'facture').length;
     // Filtres (avoirs et reçus seulement s'il y en a)
-    const opts = OPTIONS[r].filter(([k]) => r === 'devis' || k === 'facture' || base.some(d => d.type === k));
+    const opts = OPTIONS[r].filter(([k]) => r === 'devis' || k === 'facture' || k === 'payee' || base.some(d => d.type === k));
     if (!opts.some(([k]) => k === filtreDocs[r])) filtreDocs[r] = opts[0][0];
     $('filtres-' + r).innerHTML = opts.length > 1 ? opts.map(([k, n]) => {
-      const nb = r === 'devis' ? (k === 'tous' ? base.length : k === 'attente' ? base.filter(d => !d.facture).length : base.filter(d => d.facture).length) : base.filter(d => d.type === k).length;
+      const nb = r === 'devis' ? (k === 'tous' ? base.length : k === 'attente' ? base.filter(d => !d.facture).length : base.filter(d => d.facture).length) : k === 'payee' ? base.filter(d => d.type === 'facture' && d.paye).length : base.filter(d => d.type === k).length;
       return `<button type="button" data-filtre="${k}" class="${k === filtreDocs[r] ? 'on' : ''}">${n} · ${nb}</button>`;
     }).join('') : '';
     const f = filtreDocs[r];
-    let l = r === 'devis' ? base.filter(d => f === 'tous' || (f === 'attente' ? !d.facture : !!d.facture)) : base.filter(d => d.type === f);
+    let l = r === 'devis' ? base.filter(d => f === 'tous' || (f === 'attente' ? !d.facture : !!d.facture)) : f === 'payee' ? base.filter(d => d.type === 'facture' && d.paye) : base.filter(d => d.type === f);
     const q = C.norm($('cherche-' + r).value).trim();
     if (q) l = l.filter(d => q.split(/\s+/).every(m => texteRecherche(d).includes(m)));
     // Résumé
     const somme = x => x.reduce((a, d) => a + (Number(d.total) || 0), 0);
     const annee = String(new Date().getFullYear());
-    if (r === 'factures' && f === 'facture'){
+    if (r === 'factures' && f === 'payee'){
+      const an = base.filter(d => d.type === 'facture' && d.paye && String(d.paye.date || d.date || '').startsWith(annee));
+      $('resume-' + r).innerHTML = base.length ? `<span class="vert">Encaissé en ${annee}<b>${eurs(somme(an))}</b></span><span>${q ? 'Résultats' : 'Factures payées'}<b>${l.length}</b></span>` : '';
+    } else if (r === 'factures' && f === 'facture'){
       const an = base.filter(d => d.type === 'facture' && String(d.date || '').startsWith(annee));
       $('resume-' + r).innerHTML = base.length ? `<span>Facturé en ${annee}<b>${eurs(somme(an))}</b></span><span>${q ? 'Résultats' : 'Factures'}<b>${l.length}</b></span>` : '';
     } else if (r === 'devis'){
@@ -812,6 +924,7 @@
     const mot = r === 'devis' ? 'devis' : 'facture';
     if (!l.length){
       $('liste-' + r).innerHTML = q ? '<p class="vide">Aucun résultat pour cette recherche.</p>'
+        : r === 'factures' && f === 'payee' && base.some(d => d.type === 'facture') ? '<p class="vide">Aucune facture payée pour l\'instant.<br>Quand un client vous paie, touchez « ✓ Payée » dans la rubrique <a href="#impayees">Impayées</a> : la facture arrive ici.</p>'
         : base.length ? '<p class="vide">Rien dans cette catégorie pour l\'instant.</p>'
         : `<p class="vide">Aucun${r === 'devis' ? '' : 'e'} ${mot} pour l'instant.<br>Créez ${r === 'devis' ? 'un <a href="devis.html">devis</a>' : 'une <a href="facture.html">facture</a>'} : dès que vous ${r === 'devis' ? 'le' : 'la'} téléchargez ou ${r === 'devis' ? "l'" : "l'"}envoyez, ${r === 'devis' ? 'il' : 'elle'} apparaît ici.</p>`;
       return;
@@ -850,7 +963,9 @@
     if (!confirm(`Supprimer ce brouillon de ${(MOT[d.type] || 'document').toLowerCase()}${d.clientNom ? ' pour ' + d.clientNom : ''} ?`)) return;
     C.supprimerDocument(d.id); C.toast('Brouillon supprimé'); rendreBrouillons();
   });
-  const rendreTousDocs = () => { rendreDocs('factures'); rendreDocs('devis'); rendreBrouillons(); };
+  const rendreTousDocs = () => { rendreDocs('factures'); rendreDocs('devis'); rendreBrouillons(); rendreImpayees(); };
+  $('cherche-impayees').addEventListener('input', rendreImpayees);
+  $('liste-impayees').addEventListener('click', e => { const b = e.target.closest('[data-suppr-doc]'); if (b) supprimerDoc(b.dataset.supprDoc, rendreTousDocs); });
   ['factures', 'devis'].forEach(r => {
     $('cherche-' + r).addEventListener('input', () => rendreDocs(r));
     $('filtres-' + r).addEventListener('click', e => { const b = e.target.closest('[data-filtre]'); if (b){ filtreDocs[r] = b.dataset.filtre; rendreDocs(r); } });
@@ -864,7 +979,7 @@
 
 
   // ---------- Rubriques ----------
-  const RUBS = ['clients', 'factures', 'devis', 'brouillons', 'parametres', 'compte'];
+  const RUBS = ['clients', 'factures', 'impayees', 'devis', 'brouillons', 'parametres', 'compte'];
   function rubrique(){
     let r = location.hash.slice(1);
     if (!RUBS.includes(r)) r = 'clients';
