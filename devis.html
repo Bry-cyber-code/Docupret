@@ -519,9 +519,15 @@ window.DOCU_AFFICHAGE = (function(){
     body.feuille-tel .echelle{position:static;transform:none!important}
     body.feuille-tel .tete{margin-bottom:10px}
     /* barre d'outils */
-    body.feuille-tel .tel-barre{display:flex;gap:8px;position:sticky;top:62px;z-index:6;background:var(--fond);padding:6px 0 8px}
+    body.feuille-tel .tel-barre{display:grid;grid-template-columns:1fr 1fr;gap:8px;position:sticky;top:62px;z-index:6;background:var(--fond);padding:6px 0 8px}
     .tel-barre button{flex:1;display:flex;align-items:center;justify-content:center;gap:7px;border:1.5px solid var(--bord);background:#fff;border-radius:12px;padding:11px 8px;font:inherit;font-size:.9rem;font-weight:650;color:var(--texte);box-shadow:0 1px 4px rgba(30,42,66,.06)}
-    .tel-barre button:first-child{flex:1.6;border-color:#C5D6F2;color:var(--bleu-fonce)}
+    .tel-barre button{min-width:0;line-height:1.2;text-align:center;padding:9px 8px;font-size:.86rem}
+    .tel-barre button[data-grp]{border-color:#C5D6F2;color:var(--bleu-fonce)}
+    .tel-barre .tel-nouveau{background:var(--bleu);border-color:var(--bleu);color:#fff}
+    /* le panneau ne montre que le groupe choisi */
+    body.feuille-tel[data-grp="style"] .outils [data-grp]:not([data-grp="style"]),
+    body.feuille-tel[data-grp="reglages"] .outils [data-grp]:not([data-grp="reglages"]){display:none}
+    body.feuille-tel #o-nouveau{display:none}
     body.feuille-tel .tel-aide{display:block;font-size:.8rem;color:var(--gris);margin:0 2px 10px;line-height:1.45}
     /* panneau de réglages qui monte du bas */
     body.feuille-tel .outils{display:none!important}
@@ -772,11 +778,11 @@ window.DOCU_AFFICHAGE = (function(){
 
     <!-- ===== OUTILS (ordinateur, mode feuille) ===== -->
     <aside class="outils" id="outils" hidden aria-label="Réglages du document">
-      <div class="o-tete-tel"><b>Réglages du document</b><button type="button" id="o-fermer" aria-label="Fermer">×</button></div>
+      <div class="o-tete-tel"><b id="o-titre-tel">Réglages du document</b><button type="button" id="o-fermer" aria-label="Fermer">×</button></div>
       <div class="o-bloc o-aide-pc"><p class="o-aide">✍️ Cliquez sur la feuille pour écrire directement dessus.</p></div>
-      <div class="o-bloc"><b class="o-titre">Modèle</b><div class="o-modeles" id="o-modeles"></div></div>
-      <div class="o-bloc"><b class="o-titre">Couleur</b><div class="o-couleurs" id="o-couleurs"></div></div>
-      <div class="o-bloc"><b class="o-titre">TVA</b>
+      <div class="o-bloc" data-grp="style"><b class="o-titre">Modèle</b><div class="o-modeles" id="o-modeles"></div></div>
+      <div class="o-bloc" data-grp="style"><b class="o-titre">Couleur</b><div class="o-couleurs" id="o-couleurs"></div></div>
+      <div class="o-bloc" data-grp="reglages"><b class="o-titre">TVA</b>
         <label class="o-switch"><input type="checkbox" id="o-tva"><span></span>Facturer la TVA</label>
         <p class="o-note" id="o-tva-note">Désactivée : la mention « TVA non applicable, art. 293 B du CGI » est ajoutée (auto-entrepreneur).</p>
         <div id="o-tva-reglages">
@@ -785,15 +791,15 @@ window.DOCU_AFFICHAGE = (function(){
           <label class="o-coche"><input type="checkbox" id="o-col-tva"> Taux différent par ligne</label>
         </div>
       </div>
-      <div class="o-bloc"><b class="o-titre">Colonnes</b>
+      <div class="o-bloc" data-grp="reglages"><b class="o-titre">Colonnes</b>
         <div class="o-puces" id="o-colonnes"><button type="button" data-col="ref">Réf.</button><button type="button" data-col="date">Date</button><button type="button" data-col="qte">Quantité</button><button type="button" data-col="unite">Unité</button><button type="button" data-col="remise">Remise</button></div>
       </div>
-      <div class="o-bloc"><b class="o-titre">Client</b>
+      <div class="o-bloc" data-grp="reglages"><b class="o-titre">Client</b>
         <label class="o-coche" style="margin-top:0"><input type="checkbox" id="o-pro"> Client professionnel</label>
         <button type="button" class="o-btn" id="o-mes-clients">Choisir parmi mes clients</button>
         <button type="button" class="o-btn" id="o-enreg">Enregistrer ce client</button>
       </div>
-      <div class="o-bloc">
+      <div class="o-bloc" data-grp="reglages">
         <button type="button" class="o-btn" id="o-brouillon" data-brouillon>💾 Enregistrer en brouillon</button>
         <button type="button" class="o-btn" id="o-nouveau">＋ Nouveau document</button>
         <button type="button" class="o-btn" id="o-restaurer" hidden>Réafficher les champs retirés</button>
@@ -950,7 +956,9 @@ window.DOCU_AFFICHAGE = (function(){
     <!-- ===== APERÇU ===== -->
     <div class="panneau" id="p-apercu">
       <div class="tel-barre" id="tel-barre">
-        <button type="button" id="tel-reglages"><span>🎨</span>Modèle, couleur, TVA</button>
+        <button type="button" id="tel-reglages" data-grp="style"><span>🎨</span>Modèle, couleur</button>
+        <button type="button" id="tel-options" data-grp="reglages"><span>⚙️</span>TVA, colonnes, client</button>
+        <button type="button" id="tel-nouveau" class="tel-nouveau"><span>＋</span>Nouveau document</button>
         <button type="button" id="tel-apercu"><span>👁</span>Aperçu</button>
       </div>
       <p class="tel-aide" id="tel-aide">✍️ Touchez la feuille pour écrire dessus · <b>−</b> retire une ligne · <b>＋</b> en ajoute une</p>
@@ -1730,6 +1738,8 @@ window.DOCU_AFFICHAGE = (function(){
 
   // Nouveau document
   $('nouveau').addEventListener('click', () => {
+    const vide = !String(etat.cl.nom || '').trim() && !etat.lignes.some(l => String(l.des || '').trim() || num(l.pu));
+    if (vide || (etat.fini && etat.fini === etat.doc.numero)){ nouveauDocument(); alerte(`Nouveau document : ${etat.doc.numero} ✓`); return; }
     demander('Commencer un nouveau document ? Le client et les prestations seront vidés.', 'Nouveau document', nouveauDocument);
   });
   function nouveauDocument(){
@@ -2540,7 +2550,11 @@ window.DOCU_AFFICHAGE = (function(){
 
   // ----- Téléphone : panneau de réglages et aperçu du PDF -----
   const fondR = document.createElement('div'); fondR.className = 'o-fond'; fondR.hidden = true; document.body.appendChild(fondR);
-  function ouvrirReglages(){
+  function ouvrirReglages(grp){
+    grp = typeof grp === 'string' ? grp : 'style';
+    document.body.dataset.grp = grp;
+    $('o-titre-tel').textContent = grp === 'style' ? 'Modèle et couleur' : 'TVA, colonnes et client';
+    $('outils').scrollTop = 0;
     $('outils').classList.add('ouvert'); fondR.hidden = false; document.body.classList.add('reglages-ouverts');
     try{ history.pushState({reglages: 1}, ''); }catch(e){}
   }
@@ -2550,7 +2564,9 @@ window.DOCU_AFFICHAGE = (function(){
     if (!sansHisto && history.state && history.state.reglages) try{ history.back(); }catch(e){}
   }
   window.addEventListener('popstate', () => { if ($('outils').classList.contains('ouvert') && !(history.state && history.state.reglages)) fermerReglages(true); });
-  $('tel-reglages').addEventListener('click', ouvrirReglages);
+  $('tel-reglages').addEventListener('click', () => ouvrirReglages('style'));
+  $('tel-options').addEventListener('click', () => ouvrirReglages('reglages'));
+  $('tel-nouveau').addEventListener('click', () => $('nouveau').click());
   $('o-fermer').addEventListener('click', () => fermerReglages());
   fondR.addEventListener('click', () => fermerReglages());
   $('tel-apercu').addEventListener('click', () => {
