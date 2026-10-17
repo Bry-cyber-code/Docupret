@@ -2,13 +2,14 @@
 """DocuPrêt — fabrique une vraie page par document, à partir des deux pages modèles.
 
   facture.html  → facture.html, devis.html, recu.html, avoir.html
-  lettre.html   → lettre-demission.html, attestation-hebergement.html, …
+  lettre-demission.html → lettre-demission.html, attestation-hebergement.html, …
+  (lettre.html n'est plus qu'une redirection : ne pas la modifier)
 
 Chaque page a son propre titre, sa description pour Google, son grand titre et un court texte
 de présentation : Google peut ainsi référencer chaque document séparément.
 Le fonctionnement reste le même ; les anciennes adresses (facture.html?type=devis…) marchent toujours.
 
-À relancer après chaque modification de facture.html ou de lettre.html :
+À relancer après chaque modification de facture.html ou de lettre-demission.html :
     python3 outils/pages-documents.py
 """
 import os, re, json
@@ -91,7 +92,8 @@ LETTRES = {
    'Quittance de loyer', 'La quittance de loyer pour votre locataire',
    "Le propriétaire remet une quittance au locataire qui a payé son loyer : elle détaille le loyer, les charges et la période concernée. Remplissez-la une fois, puis changez seulement le mois : elle est prête à imprimer ou à envoyer en PDF."),
 }
-FAMILLES = [('facture.html', FACTURES, 'facture', 'facture'), ('lettre.html', LETTRES, 'lettre', 'demission')]
+# Les lettres partent de lettre-demission.html (lettre.html n'est plus qu'une redirection vers les vraies pages)
+FAMILLES = [('facture.html', FACTURES, 'facture', 'facture'), ('lettre-demission.html', LETTRES, 'lettre', 'demission')]
 
 def bloc(type_, fichier, carte, prefixe_stats):
     u = {t: v[0] for t, v in carte.items()}

@@ -186,6 +186,14 @@
   @media (max-width:520px){.barre-in .btn{padding:12px 14px;font-size:.95rem}.lib-long{display:none}.lib-court{display:inline}.barre-in{gap:8px}}
   .env-fond{position:fixed;inset:0;z-index:60;background:rgba(20,28,45,.5);display:flex;align-items:flex-end;justify-content:center}
   @media (min-width:640px){.env-fond{align-items:center}}
+  .paye-info{font-size:.88rem;color:var(--gris);margin:-2px 0 2px}
+  .paye-choix{display:grid;gap:3px;text-align:left;width:100%;border:1.5px solid var(--bord);background:#fff;border-radius:14px;padding:14px 16px;font:inherit;color:var(--texte);cursor:pointer}
+  .paye-choix b{font-size:1rem}
+  .paye-choix span{font-size:.82rem;color:var(--gris)}
+  .paye-choix:hover{border-color:var(--bleu)}
+  .paye-choix.oui{border-color:#9FD3B0;background:#F1FAF4}
+  .paye-choix.oui b{color:#1F6B3A}
+  .paye-choix.oui:hover{border-color:#2B8148}
   .env-boite{background:var(--blanc);width:100%;max-width:520px;max-height:92vh;overflow-y:auto;border-radius:18px 18px 0 0;padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px));display:grid;gap:10px}
   @media (min-width:640px){.env-boite{border-radius:18px}}
   .env-tete{display:flex;justify-content:space-between;align-items:center}
@@ -1804,7 +1812,41 @@ window.DOCU_AFFICHAGE = (function(){
     if (m) etat.compteurs[etat.type] = Math.max(etat.compteurs[etat.type] || 0, parseInt(m[1], 10));
     sauver();
     const copie = JSON.parse(JSON.stringify({type: etat.type, modele: etat.modele, couleur: etat.couleur, cl: etat.cl, doc: etat.doc, cols: etat.cols, tvaMode: etat.tvaMode, franchise: etat.franchise, tauxDefaut: etat.tauxDefaut, lignes: etat.lignes, paiement: {notes: etat.paiement.notes}, masques: etat.masques, extra: etat.extra, em: Object.assign({}, etat.em, {logo: ''}), paiementComplet: etat.paiement, depuis: etat.depuis || ''}));
-    window.dispatchEvent(new CustomEvent('docupret-telecharge', {detail: {type: etat.type, numero: etat.doc.numero, date: etat.doc.date, total: k.totalTTC, depuis: etat.depuis || '', ouvert: etat.ouvert || '', envoye: envoye || null, snap: copie}}));
+    window.dispatchEvent(new CustomEvent('docupret-telecharge', {detail: {type: etat.type, numero: etat.doc.numero, date: etat.doc.date, total: k.totalTTC, depuis: etat.depuis || '', ouvert: etat.ouvert || '', envoye: envoye || null, snap: copie, paye: reponsePaye && reponsePaye.numero === etat.doc.numero ? reponsePaye.paye : undefined}}));
+  }
+
+  // ---------- Facture déjà payée ou pas ? (comptes) ----------
+  // Avant de télécharger ou d'envoyer une facture, on demande si elle est déjà payée :
+  // elle part ensuite dans « Mon compte › Factures » (payée) ou « Mon compte › Impayées ».
+  let reponsePaye = null;   // {numero, paye: true/false}
+  const ilYAQuestion = () => !MODE_PDF && etat.type === 'facture' && window.Compte && Compte.utilisateur();
+  document.addEventListener('click', e => {
+    const b = e.target.closest && e.target.closest('#telecharger, #envoyer');
+    if (!b || !ilYAQuestion() || manqueDoc(calculer())) return;
+    if (reponsePaye && reponsePaye.numero === etat.doc.numero) return;
+    e.preventDefault(); e.stopImmediatePropagation();
+    demanderPaye(b.id);
+  }, true);
+  function demanderPaye(bouton){
+    const k = calculer();
+    const f = document.createElement('div'); f.className = 'env-fond';
+    f.innerHTML = `<div class="env-boite paye-boite" role="dialog" aria-modal="true" aria-label="Facture déjà payée ?">
+      <div class="env-tete"><b>Cette facture est-elle déjà payée ?</b><button type="button" data-fermer aria-label="Fermer">×</button></div>
+      <p class="paye-info">${esc(etat.doc.numero)}${etat.cl.nom ? ' · ' + esc(etat.cl.nom) : ''} · <b>${esc(eur(k.totalTTC))}</b></p>
+      <button type="button" class="paye-choix" data-paye="non"><b>Pas encore payée</b><span>Elle ira dans Mon compte › Impayées, pour suivre le paiement.</span></button>
+      <button type="button" class="paye-choix oui" data-paye="oui"><b>✓ Déjà payée</b><span>Elle ira dans vos factures payées, avec la date d'aujourd'hui.</span></button>
+    </div>`;
+    const fermer = () => { f.remove(); document.removeEventListener('keydown', echap); };
+    const echap = ev => { if (ev.key === 'Escape') fermer(); };
+    f.addEventListener('click', ev => {
+      if (ev.target === f || ev.target.closest('[data-fermer]')) return fermer();
+      const c = ev.target.closest('[data-paye]'); if (!c) return;
+      reponsePaye = {numero: etat.doc.numero, paye: c.dataset.paye === 'oui'};
+      fermer();
+      $(bouton).click();   // on reprend le téléchargement ou l'envoi
+    });
+    document.addEventListener('keydown', echap);
+    document.body.appendChild(f);
   }
 
   $('telecharger').addEventListener('click', async () => {
@@ -2857,10 +2899,19 @@ window.DOCU_AFFICHAGE = (function(){
     // Chaque document téléchargé ou envoyé est gardé dans « Mon compte » (rubriques Factures et Devis),
     // et aussi dans la fiche du client quand il est enregistré.
     const c = Compte.clients().find(x => Compte.norm(x.nom) === Compte.norm(d.snap.cl.nom));
-    Compte.enregistrerDocument({id: d.ouvert || undefined, type: d.type, numero: d.numero, date: d.date, clientId: c ? c.id : '', clientNom: c ? c.nom : (d.snap.cl.nom || ''), total: d.total, snap: d.snap, envoye: d.envoye});
+    const enr = Compte.enregistrerDocument({id: d.ouvert || undefined, type: d.type, numero: d.numero, date: d.date, clientId: c ? c.id : '', clientNom: c ? c.nom : (d.snap.cl.nom || ''), total: d.total, snap: d.snap, envoye: d.envoye});
+    // Réponse à « Cette facture est-elle déjà payée ? »
+    if (enr && d.type === 'facture' && d.paye !== undefined){
+      const t = new Date(), auj = `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`;
+      const deja = enr.paye;
+      if (d.paye && !deja) Compte.majDocument(enr.id, {paye: {date: auj, moyen: (d.snap.paiementComplet && d.snap.paiementComplet.moyen) || ''}});
+      else if (!d.paye && deja) Compte.majDocument(enr.id, {paye: null});
+    }
     if (d.depuis && d.type === 'facture') Compte.majDocument(d.depuis, {facture: d.numero});
-    const rub = d.type === 'devis' ? 'Devis' : 'Factures';
-    if (!d.envoye) setTimeout(() => Compte.toast(`${mot} ${d.numero} gardé dans Mon compte › ${rub} ✓`), 1500);
+    const rub = d.type === 'devis' ? 'Devis' : d.type === 'facture' && !(enr && enr.paye) ? 'Impayées' : 'Factures';
+    const fem = d.type === 'facture' ? 'e' : '';
+    const msg = d.type === 'facture' ? (enr && enr.paye ? `Facture ${d.numero} payée ✓ Rangée dans Mon compte › Factures` : `Facture ${d.numero} rangée dans Mon compte › Impayées ✓`) : `${mot} ${d.numero} gardé${fem} dans Mon compte › ${rub} ✓`;
+    if (!d.envoye) setTimeout(() => Compte.toast(msg), 1500);
   });
 
   // facture.html?client=… : client choisi depuis « Mon compte »
