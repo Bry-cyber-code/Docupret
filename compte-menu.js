@@ -84,7 +84,7 @@
   .cm-txt{flex:1;min-width:0;display:grid;gap:1px}
   .cm-txt b{font-size:1rem;font-weight:700}
   .cm-txt span{font-size:.78rem;color:var(--gris,#667)}
-  .cm-raccourcis{background:var(--fond,#F6F9FD);border-bottom:1px solid var(--bord,#e2e8f0)}
+  .cm-raccourcis{border-bottom:1px solid var(--bord,#e2e8f0)}
   .cm-lien.cm-sous{padding:10px 16px 10px 28px;border-bottom:1px solid var(--bord,#e2e8f0)}
   .cm-raccourcis .cm-lien.cm-sous:last-child{border-bottom:0}
   .cm-sous .cm-ico{width:30px;height:30px}
@@ -140,13 +140,19 @@
     });
   }
   // Raccourcis vers les rubriques de « Mes clients » (comptes connectés)
+  // Réglages (Mon compte › Paramètres) : nombres sur les cases (non par défaut), pastilles rouges (oui par défaut)
+  const nombres = () => { try{ return localStorage.getItem('docupret_menu_nombres') === '1'; }catch(e){ return false; } };
+  const alertes = () => { try{ return localStorage.getItem('docupret_menu_alertes') !== '0'; }catch(e){ return true; } };
   function raccourcis(){
     const d = (lire('docupret_documents', []) || []).filter(x => x && !x.supprime);
     const fin = d.filter(x => !x.brouillon);
     const n = {factures: fin.filter(x => x.type !== 'devis').length, devis: fin.filter(x => x.type === 'devis').length,
       impayees: fin.filter(x => x.type === 'facture' && !x.paye).length, brouillons: d.filter(x => x.brouillon).length};
+    // Pastilles rouges (activées par défaut) : factures impayées et devis en attente
+    const rouge = {impayees: n.impayees, devis: fin.filter(x => x.type === 'devis' && !x.facture && !x.accepte).length};
+    const pastille = k => alertes() && rouge[k] ? `<span class="cm-nb rouge">${rouge[k]}</span>` : nombres() && n[k] ? `<span class="cm-nb">${n[k]}</span>` : '';
     const L = [['factures', 'Factures', 'Payées, reçus et avoirs'], ['devis', 'Devis', 'En attente, acceptés, facturés'], ['impayees', 'Impayées', 'Factures à encaisser'], ['brouillons', 'Brouillons', 'Documents à finir']];
-    return `<div class="cm-raccourcis">${L.map(([k, t, st]) => `<a class="cm-lien cm-sous" href="compte.html#${k}"><span class="cm-ico">${ICO2[k]}</span><span class="cm-txt"><b>${t}</b><span>${st}</span></span>${n[k] ? `<span class="cm-nb${k === 'impayees' ? ' rouge' : ''}">${n[k]}</span>` : ''}</a>`).join('')}</div>`;
+    return `<div class="cm-raccourcis">${L.map(([k, t, st]) => `<a class="cm-lien cm-sous" href="compte.html#${k}"><span class="cm-ico">${ICO2[k]}</span><span class="cm-txt"><b>${t}</b><span>${st}</span></span>${pastille(k)}</a>`).join('')}</div>`;
   }
   function remplir(){
     const qui = lire('docupret_compte', null), email = (window.Compte && window.Compte.connecte && !window.Compte.connecte()) ? '' : (qui && qui.email);
@@ -156,7 +162,7 @@
         ? (logoAvatar() ? `<span class="cm-avatar logo"><img src="${logoAvatar()}" alt=""></span>` : `<span class="cm-avatar">${esc(email[0].toUpperCase())}</span>`) + `<div><small>Connecté avec</small><b>${esc(email)}</b></div>`
         : `<span class="cm-avatar vide">${ICO.compte}</span><div><b>Vous n'êtes pas connecté</b><small>Gratuit, avec une simple adresse e-mail</small></div>`}</div>
       ${email ? '' : '<a class="cm-connexion" href="compte.html#compte">Se connecter ou créer un compte</a>'}
-      <a class="cm-lien" href="compte.html#clients"><span class="cm-ico">${ICO.clients}</span><span class="cm-txt"><b>Mes clients${email ? '' : ' 🔒'}</b><span>${email ? 'Coordonnées enregistrées' : 'Avec un compte gratuit'}</span></span>${email && nb ? `<span class="cm-nb">${nb}</span>` : ''}</a>
+      <a class="cm-lien" href="compte.html#clients"><span class="cm-ico">${ICO.clients}</span><span class="cm-txt"><b>Mes clients${email ? '' : ' 🔒'}</b><span>${email ? 'Coordonnées enregistrées' : 'Avec un compte gratuit'}</span></span>${email && nb && nombres() ? `<span class="cm-nb">${nb}</span>` : ''}</a>
       ${email ? raccourcis() : ''}
       <a class="cm-lien" href="compte.html#parametres"><span class="cm-ico">${ICO.param}</span><span class="cm-txt"><b>Paramètres${email ? '' : ' 🔒'}</b><span>${email ? 'Mon entreprise, préférences' : 'Avec un compte gratuit'}</span></span></a>
       <a class="cm-lien" href="compte.html#compte"><span class="cm-ico">${ICO.compte}</span><span class="cm-txt"><b>Compte</b><span>${email ? 'Mot de passe, déconnexion' : 'Connexion, inscription'}</span></span></a>

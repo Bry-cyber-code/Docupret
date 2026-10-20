@@ -111,7 +111,8 @@
       paiement: {conditions: p.conditions, moyen: p.moyen, iban: p.iban},
       numerotation: d.numerotation || {annee: true}, compteurs: d.compteurs || {}, numMaj: d.numMaj || '',
       tauxDefaut: d.tauxDefaut, tvaMode: d.tvaMode, envoiMessage: d.envoiMessage || '', textes: d.textes || {},
-      affichage: localStorage.getItem('docupret_affichage') || '', avatar: localStorage.getItem('docupret_avatar') || '', envoiGmail: localStorage.getItem('docupret_envoi_gmail') || ''
+      affichage: localStorage.getItem('docupret_affichage') || '', avatar: localStorage.getItem('docupret_avatar') || '', envoiGmail: localStorage.getItem('docupret_envoi_gmail') || '',
+      menuNombres: localStorage.getItem('docupret_menu_nombres') || '', menuAlertes: localStorage.getItem('docupret_menu_alertes') || ''
     });
   }
   function appliquer(p){
@@ -133,6 +134,8 @@
       if (p.affichage) localStorage.setItem('docupret_affichage', p.affichage);
       if (p.avatar) localStorage.setItem('docupret_avatar', p.avatar);
       if (p.envoiGmail) localStorage.setItem('docupret_envoi_gmail', p.envoiGmail);
+      if (p.menuNombres) localStorage.setItem('docupret_menu_nombres', p.menuNombres);
+      if (p.menuAlertes) localStorage.setItem('docupret_menu_alertes', p.menuAlertes);
     }catch(e){}
   }
   async function synchroniserParametres(){
@@ -291,7 +294,7 @@
     try{ if (window.Gmail) window.Gmail.deconnecter(); }catch(e){}
     if (auth) await auth.signOut();
     utilisateur = null;
-    try{ ['docufacile_v1', CLE_CLIENTS, CLE_DOCS, CLE_MAJ, 'docupret_affichage', 'docupret_avatar', 'docupret_envoi_gmail', 'docupret_brouillon_auto'].forEach(k => localStorage.removeItem(k)); }catch(e){}
+    try{ ['docufacile_v1', CLE_CLIENTS, CLE_DOCS, CLE_MAJ, 'docupret_affichage', 'docupret_avatar', 'docupret_envoi_gmail', 'docupret_brouillon_auto', 'docupret_menu_nombres', 'docupret_menu_alertes'].forEach(k => localStorage.removeItem(k)); }catch(e){}
     prevenir();
   }
   async function motDePasseOublie(email){

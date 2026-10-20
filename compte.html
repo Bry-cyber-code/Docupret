@@ -587,6 +587,12 @@
     <p class="note">Autre messagerie (Orange, Free, Outlook…) ? Le bouton « Envoyer avec une autre application » ouvre votre messagerie avec le document déjà joint.</p>
   </section>
   <section class="carte">
+    <div class="titre-carte">Menu « Mon compte »</div>
+    <label class="case"><input type="checkbox" id="menu-alertes"> Afficher en rouge le nombre de factures impayées et de devis en attente</label>
+    <label class="case"><input type="checkbox" id="menu-nombres"> Afficher le nombre de clients, factures, devis et brouillons sur les cases</label>
+    <p class="note" style="margin-top:-4px">Les nombres restent toujours visibles dans chaque rubrique, à côté de son titre.</p>
+  </section>
+  <section class="carte">
     <div class="titre-carte">Affichage sur téléphone</div>
     <p class="note" style="margin-top:-6px">Choisissez comment remplir vos devis et factures sur téléphone. Sur ordinateur, on écrit toujours sur la feuille.</p>
     <div class="choix-aff" id="choix-aff">
@@ -668,10 +674,10 @@
   </div>
 </footer>
 
-<script src="compte.js?v=16"></script>
+<script src="compte.js?v=17"></script>
 <script src="gmail.js?v=7"></script>
 <script src="stats.js?v=4" defer></script>
-<script src="compte-menu.js?v=13"></script>
+<script src="compte-menu.js?v=14"></script>
 <script>
 (function(){
   'use strict';
@@ -1132,6 +1138,14 @@
       : '<p class="note" style="margin:0">Aucune boîte connectée pour l\'instant : Google vous la demandera lors de votre premier envoi.</p>';
     const d = $('gmail-deco'); if (d) d.addEventListener('click', () => { G.deconnecter(); C.toast('Boîte Gmail déconnectée'); majEnvoi(); });
   }
+  // Menu « Mon compte » : nombres sur les cases (non par défaut) et pastilles rouges (oui par défaut)
+  const lireLS = (k, def) => { try{ const v = localStorage.getItem(k); return v === null ? def : v === '1'; }catch(e){ return def; } };
+  $('menu-alertes').checked = lireLS('docupret_menu_alertes', true);
+  $('menu-nombres').checked = lireLS('docupret_menu_nombres', false);
+  [['menu-alertes', 'docupret_menu_alertes'], ['menu-nombres', 'docupret_menu_nombres']].forEach(([id, cle]) => $(id).addEventListener('change', e => {
+    try{ localStorage.setItem(cle, e.target.checked ? '1' : '0'); }catch(err){}
+    C.parametresModifies(); C.toast('Réglage du menu enregistré ✓');
+  }));
   $('envoi-gmail').addEventListener('change', e => { if (window.Gmail) Gmail.regler(e.target.checked); C.parametresModifies(); C.toast(e.target.checked ? 'Envoi depuis Gmail activé' : 'Envoi depuis Gmail désactivé'); });
 
   // ---------- Affichage sur téléphone (réservé aux comptes) ----------
@@ -1161,7 +1175,7 @@
   const majInvite = () => document.body.classList.toggle('invite', !C.connecte());
   majInvite();
   C.surChangement(() => { majInvite(); rendreCompte(); rendreClients(); majAffichage(); rendreAttente(); majEnvoi(); rendreTousDocs(); });
-  C.surParametres(() => { remplirParam(); remplirNum(); majLogo(); majAffichage(); majEnvoi(); C.toast('Paramètres récupérés depuis votre compte ✓'); });
+  C.surParametres(() => { remplirParam(); remplirNum(); majLogo(); majAffichage(); majEnvoi(); $('menu-alertes').checked = lireLS('docupret_menu_alertes', true); $('menu-nombres').checked = lireLS('docupret_menu_nombres', false); C.toast('Paramètres récupérés depuis votre compte ✓'); });
   changerMode('creer'); rendreCompte(); rendreClients(); rendreAttente(); rendreTousDocs(); remplirParam(); remplirNum(); majLogo(); majAffichage(); majEnvoi(); rubrique();
   // Lien depuis la recherche de l'accueil : compte.html?client=ID#clients ouvre la fiche du client
   (function(){ const id = new URLSearchParams(location.search).get('client'); if (!id) return;
