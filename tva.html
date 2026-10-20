@@ -159,6 +159,14 @@
   .compte-lien svg{width:24px;height:24px;color:var(--bleu)}
   .compte-lien:hover{color:var(--bleu)}
   @media (min-width:561px){.compte-lien{flex-direction:row;gap:7px;font-size:.88rem;border:1.5px solid var(--bord);padding:7px 13px 7px 10px;border-radius:50px;background:#fff}.compte-lien svg{width:20px;height:20px}.droite{gap:14px}}
+  /* Guide sous le document */
+  .guide-doc{margin:22px 0 6px;background:var(--blanc);border:1px solid var(--bord);border-radius:var(--rayon);padding:20px 18px}
+  .guide-doc h2{font-size:1.2rem;line-height:1.3;margin:0 0 6px}
+  .guide-doc h3{font-size:1rem;margin:16px 0 6px;color:var(--texte)}
+  .guide-doc p,.guide-doc li{font-size:.95rem;line-height:1.65;color:#3A4558}
+  .guide-doc ul{margin:6px 0 4px 20px;display:grid;gap:5px;list-style:disc}
+  .guide-doc a{color:var(--bleu);text-decoration:underline;text-underline-offset:2px}
+  .guide-doc a.lien-guide{display:inline-block;margin-top:14px;font-weight:700;text-decoration:none}
 </style>
 <script>(function(){try{var q=new URLSearchParams(location.search).get('type'),l=document.createElement('link');l.rel='canonical';l.href='https://docupret.fr'+location.pathname.replace(/index\.html$/,'')+(q&&/^[a-z]+$/.test(q)?'?type='+q:'');document.head.appendChild(l);}catch(e){}})();</script>
 <!-- Google AdSense -->
@@ -241,7 +249,8 @@
   <a href="logo.html" class="tiroir-lien">Créer votre logo</a>
   <a href="carte.html" class="tiroir-lien">Créer votre carte de visite</a>
   <a href="flyer.html" class="tiroir-lien">Créer votre flyer</a>
-  <a href="apropos.html" class="tiroir-lien sep apropos">À propos</a>
+  <a href="guides.html" class="tiroir-lien sep">Guides pratiques</a>
+  <a href="apropos.html" class="tiroir-lien apropos">À propos</a>
 </nav>
 
 
@@ -311,6 +320,7 @@
     </ul>
   </section>
 
+  <section class="guide-doc"><h2>Comprendre la TVA en 2 minutes</h2><h3>HT, TVA, TTC</h3><p>Le prix <b>hors taxe (HT)</b> est ce que vous gardez ; la <b>TVA</b> est collectée pour l'État ; le <b>toutes taxes comprises (TTC)</b> est ce que paie le client. Pour passer du HT au TTC, on multiplie par 1 + le taux (× 1,20 pour 20 %). Pour retrouver le HT à partir du TTC, on divise (÷ 1,20) : on ne retire surtout pas 20 % du TTC.</p><h3>Les taux en France</h3><ul><li><b>20 %</b> : taux normal, la majorité des biens et services.</li><li><b>10 %</b> : notamment la restauration, les transports de voyageurs, certains travaux de rénovation dans les logements de plus de 2 ans.</li><li><b>5,5 %</b> : produits alimentaires de base, travaux de rénovation énergétique, livres…</li><li><b>2,1 %</b> : médicaments remboursables, presse.</li></ul><h3>Et en micro-entreprise ?</h3><p>Sous les seuils de la franchise (37 500 € pour les services, 85 000 € pour la vente en 2026), vous ne facturez pas de TVA et indiquez « TVA non applicable, art. L. 223 et s. du CIBS ». Au-delà, vous devenez redevable de la TVA.</p><a class="lien-guide" href="guide-facture-auto-entrepreneur.html">TVA et facturation en micro-entreprise →</a></section>
   <section class="faq">
     <h2>Questions fréquentes</h2>
     <details><summary>Comment passer d'un prix HT à TTC ?</summary>
@@ -318,7 +328,7 @@
     <details><summary>Comment retrouver le prix HT à partir du TTC ?</summary>
       <p>On divise le prix TTC par (1 + taux). Avec une TVA à 20 % : 120 € TTC ÷ 1,20 = 100 € HT. Attention, enlever 20 % du TTC ne donne pas le bon résultat.</p></details>
     <details><summary>Je suis auto-entrepreneur, dois-je facturer la TVA ?</summary>
-      <p>Pas si vous êtes en franchise de TVA : vous facturez sans TVA et indiquez « TVA non applicable, art. 293 B du CGI ». Au-delà des seuils de chiffre d'affaires, la TVA devient obligatoire.</p></details>
+      <p>Pas si vous êtes en franchise de TVA : vous facturez sans TVA et indiquez « TVA non applicable, art. L. 223 et s. du code des impositions sur les biens et services (CIBS) » (l'ancienne mention « art. 293 B du CGI » reste tolérée jusqu'au 31 décembre 2027). Au-delà des seuils de chiffre d'affaires, la TVA devient obligatoire.</p></details>
     <details><summary>Les taux de TVA peuvent-ils changer ?</summary>
       <p>Oui, ils sont fixés par la loi. En cas de doute sur votre activité, vérifiez sur impots.gouv.fr ou auprès de votre comptable.</p></details>
   </section>
@@ -328,7 +338,7 @@
 <footer>
   <div class="wrap pied">
     <span>© 2026 DocuPrêt</span>
-    <nav><a href="apropos.html">À propos</a><a href="mentions-legales.html">Mentions légales</a><a href="cgu.html">Conditions d'utilisation</a><a href="mentions-legales.html#confidentialite">Confidentialité</a><a href="mentions-legales.html#cookies">Cookies</a><a href="mentions-legales.html#contact">Contact</a></nav>
+    <nav><a href="guides.html">Guides</a><a href="apropos.html">À propos</a><a href="mentions-legales.html">Mentions légales</a><a href="cgu.html">Conditions d'utilisation</a><a href="mentions-legales.html#confidentialite">Confidentialité</a><a href="mentions-legales.html#cookies">Cookies</a><a href="mentions-legales.html#contact">Contact</a></nav>
   </div>
 </footer>
 

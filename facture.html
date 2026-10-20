@@ -444,6 +444,14 @@
   .presentation-doc{margin:28px 0 6px;background:var(--blanc);border:1px solid var(--bord);border-radius:var(--rayon);padding:18px 18px 16px}
   .presentation-doc h2{font-size:1.08rem;margin-bottom:6px}
   .presentation-doc p{color:var(--gris);font-size:.93rem;line-height:1.6}
+  /* Guide sous le document */
+  .guide-doc{margin:22px 0 6px;background:var(--blanc);border:1px solid var(--bord);border-radius:var(--rayon);padding:20px 18px}
+  .guide-doc h2{font-size:1.2rem;line-height:1.3;margin:0 0 6px}
+  .guide-doc h3{font-size:1rem;margin:16px 0 6px;color:var(--texte)}
+  .guide-doc p,.guide-doc li{font-size:.95rem;line-height:1.65;color:#3A4558}
+  .guide-doc ul{margin:6px 0 4px 20px;display:grid;gap:5px;list-style:disc}
+  .guide-doc a{color:var(--bleu);text-decoration:underline;text-underline-offset:2px}
+  .guide-doc a.lien-guide{display:inline-block;margin-top:14px;font-weight:700;text-decoration:none}
 </style>
 <script>
 // Affichage sur téléphone choisi dans Mon compte → Paramètres
@@ -743,7 +751,8 @@ window.DOCU_AFFICHAGE = (function(){
   <a href="logo.html" class="tiroir-lien">Créer votre logo</a>
   <a href="carte.html" class="tiroir-lien">Créer votre carte de visite</a>
   <a href="flyer.html" class="tiroir-lien">Créer votre flyer</a>
-  <a href="apropos.html" class="tiroir-lien sep apropos">À propos</a>
+  <a href="guides.html" class="tiroir-lien sep">Guides pratiques</a>
+  <a href="apropos.html" class="tiroir-lien apropos">À propos</a>
 </nav>
 
 <main class="wrap">
@@ -797,7 +806,7 @@ window.DOCU_AFFICHAGE = (function(){
       <div class="o-bloc" data-grp="style"><b class="o-titre">Couleur</b><div class="o-couleurs" id="o-couleurs"></div></div>
       <div class="o-bloc" data-grp="reglages"><b class="o-titre">TVA</b>
         <label class="o-switch"><input type="checkbox" id="o-tva"><span></span>Facturer la TVA</label>
-        <p class="o-note" id="o-tva-note">Désactivée : la mention « TVA non applicable, art. 293 B du CGI » est ajoutée (auto-entrepreneur).</p>
+        <p class="o-note" id="o-tva-note">Désactivée : la mention « TVA non applicable, art. L. 223 et s. du CIBS » est ajoutée (auto-entrepreneur).</p>
         <div id="o-tva-reglages">
           <div class="o-seg" id="o-tvamode"><button type="button" data-m="HT">Prix en HT</button><button type="button" data-m="TTC">Prix en TTC</button></div>
           <label class="o-ligne">Taux<select id="o-taux"><option value="20">20 %</option><option value="10">10 %</option><option value="5,5">5,5 %</option><option value="2,1">2,1 %</option><option value="0">0 %</option></select></label>
@@ -1007,13 +1016,14 @@ window.DOCU_AFFICHAGE = (function(){
   <div class="partenaire" data-partenaire="indy" data-quand="telechargement" hidden></div>
 
   <!--PRESENTATION--><section class="presentation-doc"><h2>Une facture gratuite, conforme et prête à envoyer</h2><p>Remplissez votre facture directement sur la page : vos coordonnées, celles de votre client et vos prestations. Les totaux, la TVA (ou la mention « TVA non applicable » des auto-entrepreneurs) et les mentions obligatoires sont calculés pour vous. Téléchargez ensuite le PDF ou envoyez-le par e-mail, gratuitement et sans inscription.</p></section><!--/PRESENTATION-->
+  <!--GUIDE--><section class="guide-doc"><h2>Comment faire une facture conforme</h2><h3>1. Vos informations et celles du client</h3><p>Commencez par vos coordonnées : nom ou dénomination, adresse, numéro SIREN et, si vous êtes entrepreneur individuel ou micro-entrepreneur, la mention <b>« EI »</b> après votre nom. Ajoutez ensuite le client : nom de l'entreprise (et bientôt son SIREN) pour un professionnel, nom et adresse pour un particulier. Avec un compte gratuit, vos informations et vos clients sont mémorisés pour les prochaines factures.</p><h3>2. Le numéro et les dates</h3><p>Chaque facture porte un <b>numéro unique et continu</b> : DocuPrêt le calcule tout seul (F-2026-001, puis F-2026-002…). Indiquez la date de la facture, la date de la prestation ou de la livraison, et l'<b>échéance</b> de paiement, calculée automatiquement selon vos conditions (à réception, 30 jours…).</p><h3>3. Les lignes et la TVA</h3><p>Détaillez chaque produit ou prestation avec une désignation précise, la quantité et le prix unitaire hors taxe. Choisissez le taux de TVA (20 %, 10 %, 5,5 %) ou désactivez la TVA si vous êtes en franchise : la mention <b>« TVA non applicable, art. L. 223 et s. du CIBS »</b>, obligatoire depuis le 1<sup>er</sup> septembre 2026, est alors ajoutée automatiquement.</p><h3>4. Le paiement</h3><p>Indiquez le mode de paiement, votre IBAN pour un virement, ainsi que les pénalités de retard et l'indemnité forfaitaire de 40 € (pour les clients professionnels) : ces mentions sont prévues par défaut en bas de la facture.</p><h3>Les erreurs les plus fréquentes</h3><ul><li>Oublier la mention « EI » ou le numéro SIREN.</li><li>Sauter un numéro ou réutiliser un ancien numéro.</li><li>Modifier une facture déjà envoyée : il faut faire un <a href="avoir.html">avoir</a>.</li><li>Facturer de la TVA alors qu'on est en franchise (ou l'inverse).</li></ul><p>Conservez chaque facture pendant 10 ans : avec un compte, elles sont gardées automatiquement dans « Mon compte ».</p><a class="lien-guide" href="guide-mentions-obligatoires-facture.html">Lire le guide complet des mentions obligatoires →</a></section><!--/GUIDE-->
 
   <section class="faq">
     <h2>Questions fréquentes</h2>
     <details><summary>Quelles mentions doivent figurer sur une facture ?</summary>
       <p>Un numéro unique, la date, vos nom, adresse et SIRET, les coordonnées du client, le détail des prestations, les montants HT, la TVA et le total TTC, ainsi que la date d'échéance. Entre professionnels, il faut aussi indiquer les pénalités de retard et l'indemnité de 40 €. Le générateur les ajoute automatiquement.</p></details>
     <details><summary>Je suis auto-entrepreneur, comment gérer la TVA ?</summary>
-      <p>Si vous êtes en franchise de TVA, cochez « TVA non applicable » : les montants s'affichent sans TVA et la mention « TVA non applicable, art. 293 B du CGI » est ajoutée.</p></details>
+      <p>Si vous êtes en franchise de TVA, cochez « TVA non applicable » : les montants s'affichent sans TVA et la mention « TVA non applicable, art. L. 223 et s. du code des impositions sur les biens et services (CIBS) » est ajoutée. Elle remplace depuis le 1er septembre 2026 l'ancienne référence à l'article 293 B du CGI, encore tolérée jusqu'au 31 décembre 2027.</p></details>
     <details><summary>Quelle différence entre un devis et une facture ?</summary>
       <p>Le devis est une proposition de prix avant la prestation : le client le signe avec la mention « Bon pour accord ». La facture est émise après la vente ou la prestation et demande le paiement.</p></details>
     <details><summary>Qu'est-ce qu'un avoir ?</summary>
@@ -1032,7 +1042,7 @@ window.DOCU_AFFICHAGE = (function(){
 <footer>
   <div class="wrap pied">
     <span>© 2026 DocuPrêt</span>
-    <nav><a href="apropos.html">À propos</a><a href="mentions-legales.html">Mentions légales</a><a href="cgu.html">Conditions d'utilisation</a><a href="mentions-legales.html#confidentialite">Confidentialité</a><a href="mentions-legales.html#cookies">Cookies</a><a href="mentions-legales.html#contact">Contact</a></nav>
+    <nav><a href="guides.html">Guides</a><a href="apropos.html">À propos</a><a href="mentions-legales.html">Mentions légales</a><a href="cgu.html">Conditions d'utilisation</a><a href="mentions-legales.html#confidentialite">Confidentialité</a><a href="mentions-legales.html#cookies">Cookies</a><a href="mentions-legales.html#contact">Contact</a></nav>
   </div>
 </footer>
 
@@ -1208,7 +1218,7 @@ window.DOCU_AFFICHAGE = (function(){
   // Vide = texte par défaut. {date} est remplacé par la date de validité du devis.
   const TEXTES_DEF = {
     signature: 'Bon pour accord\nDate et signature du client, précédées de la mention « Bon pour accord »',
-    franchise: 'TVA non applicable, art. 293 B du CGI.',
+    franchise: 'TVA non applicable, art. L. 223 et s. du code des impositions sur les biens et services (CIBS).',
     validite: "Devis valable jusqu'au {date}.",
     penalites: "En cas de retard de paiement : pénalités au taux de 3 fois le taux d'intérêt légal et indemnité forfaitaire pour frais de recouvrement de 40\u00a0€. Pas d'escompte pour paiement anticipé."
   };

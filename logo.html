@@ -191,8 +191,14 @@
   .compte-lien svg{width:24px;height:24px;color:var(--bleu)}
   .compte-lien:hover{color:var(--bleu)}
   @media (min-width:561px){.compte-lien{flex-direction:row;gap:7px;font-size:.88rem;border:1.5px solid var(--bord);padding:7px 13px 7px 10px;border-radius:50px;background:#fff}.compte-lien svg{width:20px;height:20px}.droite{gap:14px}}
-  /* KITS_MASQUES : encart des kits caché tant que la vente n'est pas ouverte (supprimer cette ligne pour le réafficher) */
-  .pro-encart{display:none!important}
+  /* Guide sous le document */
+  .guide-doc{margin:22px 0 6px;background:var(--blanc);border:1px solid var(--bord);border-radius:var(--rayon);padding:20px 18px}
+  .guide-doc h2{font-size:1.2rem;line-height:1.3;margin:0 0 6px}
+  .guide-doc h3{font-size:1rem;margin:16px 0 6px;color:var(--texte)}
+  .guide-doc p,.guide-doc li{font-size:.95rem;line-height:1.65;color:#3A4558}
+  .guide-doc ul{margin:6px 0 4px 20px;display:grid;gap:5px;list-style:disc}
+  .guide-doc a{color:var(--bleu);text-decoration:underline;text-underline-offset:2px}
+  .guide-doc a.lien-guide{display:inline-block;margin-top:14px;font-weight:700;text-decoration:none}
 </style>
 <script>(function(){try{var q=new URLSearchParams(location.search).get('type'),l=document.createElement('link');l.rel='canonical';l.href='https://docupret.fr'+location.pathname.replace(/index\.html$/,'')+(q&&/^[a-z]+$/.test(q)?'?type='+q:'');document.head.appendChild(l);}catch(e){}})();</script>
 <!-- Google AdSense -->
@@ -275,7 +281,8 @@
   <a href="logo.html" class="tiroir-lien">Créer votre logo</a>
   <a href="carte.html" class="tiroir-lien">Créer votre carte de visite</a>
   <a href="flyer.html" class="tiroir-lien">Créer votre flyer</a>
-  <a href="apropos.html" class="tiroir-lien sep apropos">À propos</a>
+  <a href="guides.html" class="tiroir-lien sep">Guides pratiques</a>
+  <a href="apropos.html" class="tiroir-lien apropos">À propos</a>
 </nav>
 
 
@@ -370,12 +377,6 @@
         <label class="coche"><input type="checkbox" id="sloganCouleur"> Slogan en couleur</label>
         <label class="coche"><input type="checkbox" id="trait-slogan"> Petits traits autour du slogan</label>
       </section>
-
-      <a href="kits.html" class="pro-encart" aria-label="Voir les kits Pro">
-        <span class="pro-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 4.2L18 9l-4.2 1.8L12 15l-1.8-4.2L6 9l4.2-1.8z"/><path d="M19 15l.8 1.7 1.7.8-1.7.8L19 20l-.8-1.7-1.7-.8 1.7-.8z"/></svg></span>
-        <span class="pro-txt"><b>Passez votre logo en qualité Pro</b><span>Haute définition et format vectoriel : net à toutes les tailles, sur un camion, une enseigne ou un vêtement.</span><span class="pro-points"><i>✓ SVG et PDF</i><i>✓ Fond clair et sombre</i><i>✓ Prêt pour l'imprimeur</i></span></span>
-        <span class="pro-prix">dès<b>4,99 €</b><em>Voir les kits</em></span>
-      </a>
       <!-- PUB : remplacer ce bloc par le code Google AdSense -->
       <div class="pub" style="margin-top:16px">Publicité</div>
     </div>
@@ -383,6 +384,7 @@
 
   <div class="partenaire" data-partenaire="vistaprint" data-quand="telechargement" data-titre="Votre logo sur vos supports" data-texte="Cartes de visite, flyers, autocollants, vêtements… Vistaprint imprime votre logo et vous livre chez vous." data-bouton="Voir Vistaprint" hidden></div>
 
+  <section class="guide-doc"><h2>Créer un bon logo pour son entreprise</h2><h3>Simple et lisible</h3><p>Un bon logo se reconnaît en un coup d'œil, même en petit (sur une facture, un tampon, un avatar) ou en noir et blanc. Évitez les détails trop fins et les polices difficiles à lire. Un pictogramme simple + le nom de l'entreprise suffit dans la plupart des cas.</p><h3>Couleurs et cohérence</h3><p>Choisissez une ou deux couleurs principales et gardez-les partout : factures, cartes de visite, flyers, véhicule, réseaux sociaux. Le bleu inspire confiance, le vert évoque la nature et l'environnement, l'orange l'énergie et la créativité. Vérifiez que le logo reste lisible sur fond clair comme sur fond foncé.</p><h3>Où l'utiliser</h3><ul><li>Sur vos <a href="facture.html">factures</a> et <a href="devis.html">devis</a> DocuPrêt.</li><li>Sur votre <a href="carte.html">carte de visite</a> et vos <a href="flyer.html">flyers</a>.</li><li>Comme photo de profil sur vos pages professionnelles.</li></ul></section>
   <section class="faq">
     <h2>Questions fréquentes</h2>
     <details><summary>Le logo est-il vraiment gratuit ?</summary>
@@ -400,7 +402,7 @@
 <footer>
   <div class="wrap pied">
     <span>© 2026 DocuPrêt</span>
-    <nav><a href="apropos.html">À propos</a><a href="mentions-legales.html">Mentions légales</a><a href="cgu.html">Conditions d'utilisation</a><a href="mentions-legales.html#confidentialite">Confidentialité</a><a href="mentions-legales.html#cookies">Cookies</a><a href="mentions-legales.html#contact">Contact</a></nav>
+    <nav><a href="guides.html">Guides</a><a href="apropos.html">À propos</a><a href="mentions-legales.html">Mentions légales</a><a href="cgu.html">Conditions d'utilisation</a><a href="mentions-legales.html#confidentialite">Confidentialité</a><a href="mentions-legales.html#cookies">Cookies</a><a href="mentions-legales.html#contact">Contact</a></nav>
   </div>
 </footer>
 

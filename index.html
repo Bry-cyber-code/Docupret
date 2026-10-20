@@ -205,6 +205,19 @@
   .compte-lien svg{width:24px;height:24px;color:var(--bleu)}
   .compte-lien:hover{color:var(--bleu)}
   @media (min-width:561px){.compte-lien{flex-direction:row;gap:7px;font-size:.88rem;border:1.5px solid var(--bord);padding:7px 13px 7px 10px;border-radius:50px;background:#fff}.compte-lien svg{width:20px;height:20px}.droite{gap:14px}}
+  .guides-accueil,.pourquoi{margin-top:30px}
+  .guides-accueil h2,.pourquoi h2{font-size:1.25rem;margin-bottom:6px}
+  .guides-intro,.pourquoi p{color:#3A4558;font-size:.95rem;line-height:1.6}
+  .pourquoi p + p{margin-top:10px}
+  .guides-grille{display:grid;gap:10px;margin-top:12px}
+  @media (min-width:700px){.guides-grille{grid-template-columns:repeat(3,1fr)}}
+  .guides-grille a{display:block;background:var(--blanc);border:1px solid var(--bord);border-radius:var(--rayon);padding:14px 16px;transition:border-color .15s,box-shadow .15s}
+  .guides-grille a:hover{border-color:#C5D6F2;box-shadow:0 6px 18px rgba(74,123,208,.12)}
+  .guides-grille small{display:inline-block;font-size:.7rem;font-weight:800;color:var(--bleu-fonce);background:var(--bleu-clair);border-radius:50px;padding:2px 9px;margin-bottom:6px}
+  .guides-grille b{display:block;font-size:.98rem;line-height:1.35}
+  .guides-grille span{display:block;font-size:.85rem;color:var(--gris);margin-top:4px;line-height:1.45}
+  .guides-tous{margin-top:10px;font-weight:700}
+  .guides-tous a{color:var(--bleu)}
 </style>
 <script>(function(){try{var q=new URLSearchParams(location.search).get('type'),l=document.createElement('link');l.rel='canonical';l.href='https://docupret.fr'+location.pathname.replace(/index\.html$/,'')+(q&&/^[a-z]+$/.test(q)?'?type='+q:'');document.head.appendChild(l);}catch(e){}})();</script>
 <!-- Google AdSense -->
@@ -294,7 +307,8 @@
   <a href="logo.html" class="tiroir-lien">Créer votre logo</a>
   <a href="carte.html" class="tiroir-lien">Créer votre carte de visite</a>
   <a href="flyer.html" class="tiroir-lien">Créer votre flyer</a>
-  <a href="apropos.html" class="tiroir-lien sep apropos">À propos</a>
+  <a href="guides.html" class="tiroir-lien sep">Guides pratiques</a>
+  <a href="apropos.html" class="tiroir-lien apropos">À propos</a>
 </nav>
 
 <main class="wrap">
@@ -435,12 +449,33 @@
     <p><a href="compte.html#compte">Créer mon compte</a> · <a href="mentions-legales.html#confidentialite">Comment vos données sont protégées</a></p>
   </section>
 
+  <section class="guides-accueil" aria-label="Guides pratiques">
+    <h2>Guides pratiques</h2>
+    <p class="guides-intro">Avant de remplir un document, prenez deux minutes pour connaître les règles. Nos guides sont rédigés à partir des sources officielles et mis à jour régulièrement.</p>
+    <div class="guides-grille">
+      <a href="guide-mentions-obligatoires-facture.html"><small>Pro</small><b>Les mentions obligatoires d'une facture en 2026</b><span>Numéro, SIREN, TVA, pénalités, facture électronique : la liste complète.</span></a>
+      <a href="guide-facture-auto-entrepreneur.html"><small>Pro</small><b>Facture d'auto-entrepreneur : la nouvelle mention de TVA</b><span>Depuis septembre 2026, la mention « TVA non applicable » change.</span></a>
+      <a href="guide-devis.html"><small>Pro</small><b>Faire un devis : mentions, validité, signature</b><span>Quand il est obligatoire et comment éviter les litiges.</span></a>
+      <a href="guide-lettre-demission.html"><small>Travail</small><b>Démissionner d'un CDI</b><span>La lettre, le préavis, la dispense et vos droits au chômage.</span></a>
+      <a href="guide-preavis-locataire.html"><small>Logement</small><b>Préavis du locataire : 1 ou 3 mois ?</b><span>Les cas de préavis réduit et la bonne façon d'envoyer sa lettre.</span></a>
+      <a href="guide-vendre-voiture.html"><small>Véhicule</small><b>Vendre sa voiture à un particulier</b><span>Les documents à remettre et la déclaration de cession sous 15 jours.</span></a>
+    </div>
+    <p class="guides-tous"><a href="guides.html">Voir tous les guides →</a></p>
+  </section>
+
+  <section class="pourquoi">
+    <h2>Pourquoi DocuPrêt ?</h2>
+    <p>DocuPrêt est né d'un constat simple : faire une facture, un devis ou une lettre administrative ne devrait pas demander un logiciel payant ni une heure de recherche. Sur DocuPrêt, chaque document est prêt à remplir : les mentions obligatoires sont déjà prévues, les calculs (TVA, totaux, préavis) se font tout seuls et le PDF se télécharge immédiatement, sans inscription.</p>
+    <p>Le site s'adresse aux artisans, aux auto-entrepreneurs et aux indépendants qui facturent leurs clients, mais aussi à tous ceux qui ont une démarche à faire : démissionner, quitter un logement, vendre une voiture, résilier un abonnement ou préparer un CV. Les documents restent gratuits ; un compte gratuit permet en plus d'enregistrer ses clients, de retrouver ses factures sur tous ses appareils et de suivre les factures impayées.</p>
+  </section>
+
 </main>
 
 <footer id="contact">
   <div class="wrap pied">
     <span>© 2026 DocuPrêt</span>
     <nav>
+      <a href="guides.html">Guides</a>
       <a href="apropos.html">À propos</a>
       <a href="mentions-legales.html">Mentions légales</a><a href="cgu.html">Conditions d'utilisation</a>
       <a href="mentions-legales.html#confidentialite">Confidentialité</a>

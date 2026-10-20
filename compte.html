@@ -369,7 +369,8 @@
   <a href="logo.html" class="tiroir-lien">Créer votre logo</a>
   <a href="carte.html" class="tiroir-lien">Créer votre carte de visite</a>
   <a href="flyer.html" class="tiroir-lien">Créer votre flyer</a>
-  <a href="apropos.html" class="tiroir-lien sep apropos">À propos</a>
+  <a href="guides.html" class="tiroir-lien sep">Guides pratiques</a>
+  <a href="apropos.html" class="tiroir-lien apropos">À propos</a>
 </nav>
 
 <main class="wrap">
@@ -593,7 +594,6 @@
       <li>Tout retrouvé sur votre téléphone et votre ordinateur</li>
       <li>Une simple adresse e-mail suffit : ni nom, ni prénom. Gratuit et sans engagement</li>
     </ul>
-    <div class="bientot" id="bientot" hidden>🚧 L'ouverture des comptes arrive très bientôt. En attendant, <b>vous pouvez déjà enregistrer vos clients</b> : ils restent sur cet appareil et seront ajoutés à votre compte dès sa création.</div>
     <div class="seg" id="onglet"><button type="button" data-v="creer" class="on">Créer un compte</button><button type="button" data-v="connecter">Me connecter</button></div>
     <form id="form-compte" novalidate style="display:grid;gap:10px">
       <label class="ch">Adresse e-mail<input type="email" id="email" autocomplete="email" inputmode="email" placeholder="vous@exemple.fr" required></label>
@@ -641,7 +641,7 @@
 <footer>
   <div class="wrap pied">
     <span>© 2026 DocuPrêt</span>
-    <nav><a href="apropos.html">À propos</a><a href="mentions-legales.html">Mentions légales</a><a href="cgu.html">Conditions d'utilisation</a><a href="mentions-legales.html#confidentialite">Confidentialité</a><a href="mentions-legales.html#cookies">Cookies</a><a href="mentions-legales.html#contact">Contact</a></nav>
+    <nav><a href="guides.html">Guides</a><a href="apropos.html">À propos</a><a href="mentions-legales.html">Mentions légales</a><a href="cgu.html">Conditions d'utilisation</a><a href="mentions-legales.html#confidentialite">Confidentialité</a><a href="mentions-legales.html#cookies">Cookies</a><a href="mentions-legales.html#contact">Contact</a></nav>
   </div>
 </footer>
 
@@ -664,9 +664,7 @@
     $('bloc-nouveau').hidden = !nouveau;
     if (u){ $('mon-email').textContent = u.email; $('avatar').textContent = (u.email || '@')[0].toUpperCase(); }
     $('note-stockage').textContent = u ? '☁️ Vos clients sont synchronisés avec votre compte.' : '🔒 Sans compte, vos clients sont enregistrés uniquement sur cet appareil.';
-    $('bientot').hidden = C.actif;
     $('valider').disabled = !C.actif;
-    if (!C.actif) $('valider').textContent = 'Bientôt disponible';
   }
   function changerMode(m){
     mode = m;

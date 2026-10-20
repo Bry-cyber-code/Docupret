@@ -12,7 +12,9 @@ Le fonctionnement reste le même ; les anciennes adresses (facture.html?type=dev
 À relancer après chaque modification de facture.html ou de lettre-demission.html :
     python3 outils/pages-documents.py
 """
-import os, re, json
+import os, re, json, sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from guides_documents import GUIDES
 ICI = os.path.dirname(os.path.abspath(__file__)); SITE = os.path.dirname(ICI)
 URL = 'https://docupret.fr/'
 
@@ -108,6 +110,16 @@ def remplacer_attr(s, motif, valeur):
     v = valeur.replace('&', '&amp;').replace('"', '&quot;')
     return re.sub(motif, lambda m: m.group(1) + v + m.group(2), s, count=1)
 
+def faq_statique(modele_txt):
+    """Questions fréquentes des lettres : déjà écrites dans la page (et non plus seulement ajoutées par le script)."""
+    try:
+        import subprocess
+        i = modele_txt.index('const FAQ = {'); j = modele_txt.index('\n  };', i) + 4
+        code = modele_txt[i:j] + '\nprocess.stdout.write(JSON.stringify(FAQ));'
+        return json.loads(subprocess.run(['node', '-e', code], capture_output=True, text=True, check=True).stdout)
+    except Exception:
+        return {}
+
 def fabriquer(modele_txt, type_, infos, carte, prefixe):
     fichier, titre, desc, h1, h2, texte = infos
     s = modele_txt
@@ -121,13 +133,19 @@ def fabriquer(modele_txt, type_, infos, carte, prefixe):
     s = re.sub(r'(<h1 id="titre">)[^<]*(</h1>)', lambda m: m.group(1) + h1 + m.group(2), s, count=1)
     presentation = f'<!--PRESENTATION--><section class="presentation-doc"><h2>{h2}</h2><p>{texte}</p></section><!--/PRESENTATION-->'
     s = re.sub(r'<!--PRESENTATION-->.*?<!--/PRESENTATION-->', lambda m: presentation, s, count=1, flags=re.S)
+    faq = faq_statique(modele_txt).get(type_)
+    if faq:
+        s = re.sub(r'<section class="faq" id="faq">.*?</section>', lambda m: '<section class="faq" id="faq"><h2>Questions fréquentes</h2>' + ''.join(f'<details><summary>{q}</summary><p>{r}</p></details>' for q, r in faq) + '</section>', s, count=1, flags=re.S)
+    # Guide détaillé sous le document (texte utile pour les visiteurs et pour Google)
+    g = GUIDES.get(type_ if prefixe == 'facture' else prefixe + '_' + type_, '')
+    s = re.sub(r'<!--GUIDE-->.*?<!--/GUIDE-->', lambda m: '<!--GUIDE-->' + (f'<section class="guide-doc">{g}</section>' if g else '') + '<!--/GUIDE-->', s, count=1, flags=re.S)
     return s
 
 def main():
     for modele, carte, prefixe, type_modele in FAMILLES:
         chemin = os.path.join(SITE, modele)
         base = open(chemin, encoding='utf-8').read()
-        assert '<!--PAGE-TYPE-->' in base and '<!--PRESENTATION-->' in base, modele + ' : repères manquants'
+        assert '<!--PAGE-TYPE-->' in base and '<!--PRESENTATION-->' in base and '<!--GUIDE-->' in base, modele + ' : repères manquants'
         for type_, infos in carte.items():
             page = fabriquer(base, type_, infos, carte, prefixe)
             open(os.path.join(SITE, infos[0]), 'w', encoding='utf-8').write(page)

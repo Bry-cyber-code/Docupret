@@ -147,6 +147,14 @@
   .compte-lien svg{width:24px;height:24px;color:var(--bleu)}
   .compte-lien:hover{color:var(--bleu)}
   @media (min-width:561px){.compte-lien{flex-direction:row;gap:7px;font-size:.88rem;border:1.5px solid var(--bord);padding:7px 13px 7px 10px;border-radius:50px;background:#fff}.compte-lien svg{width:20px;height:20px}.droite{gap:14px}}
+  /* Guide sous le document */
+  .guide-doc{margin:22px 0 6px;background:var(--blanc);border:1px solid var(--bord);border-radius:var(--rayon);padding:20px 18px}
+  .guide-doc h2{font-size:1.2rem;line-height:1.3;margin:0 0 6px}
+  .guide-doc h3{font-size:1rem;margin:16px 0 6px;color:var(--texte)}
+  .guide-doc p,.guide-doc li{font-size:.95rem;line-height:1.65;color:#3A4558}
+  .guide-doc ul{margin:6px 0 4px 20px;display:grid;gap:5px;list-style:disc}
+  .guide-doc a{color:var(--bleu);text-decoration:underline;text-underline-offset:2px}
+  .guide-doc a.lien-guide{display:inline-block;margin-top:14px;font-weight:700;text-decoration:none}
 </style>
 <script>(function(){try{var q=new URLSearchParams(location.search).get('type'),l=document.createElement('link');l.rel='canonical';l.href='https://docupret.fr'+location.pathname.replace(/index\.html$/,'')+(q&&/^[a-z]+$/.test(q)?'?type='+q:'');document.head.appendChild(l);}catch(e){}})();</script>
 <!-- Google AdSense -->
@@ -229,7 +237,8 @@
   <a href="logo.html" class="tiroir-lien">Créer votre logo</a>
   <a href="carte.html" class="tiroir-lien">Créer votre carte de visite</a>
   <a href="flyer.html" class="tiroir-lien">Créer votre flyer</a>
-  <a href="apropos.html" class="tiroir-lien sep apropos">À propos</a>
+  <a href="guides.html" class="tiroir-lien sep">Guides pratiques</a>
+  <a href="apropos.html" class="tiroir-lien apropos">À propos</a>
 </nav>
 
 <main class="wrap">
@@ -333,6 +342,7 @@
   <!-- PUB : remplacer ce bloc par le code Google AdSense -->
   <div class="pub">Publicité</div>
 
+  <section class="guide-doc"><h2>Bien remplir le certificat de cession (cerfa 15776)</h2><h3>Un document en deux exemplaires</h3><p>Le certificat de cession est le formulaire officiel qui prouve la vente (ou le don) d'un véhicule. Il se remplit en <b>deux exemplaires</b>, signés par le vendeur et par l'acheteur : chacun garde le sien. DocuPrêt remplit directement le formulaire officiel en PDF : il ne reste qu'à l'imprimer et à le signer.</p><h3>Les informations à ne pas oublier</h3><ul><li>Le véhicule : numéro d'immatriculation, numéro d'identification (VIN, case E de la carte grise), marque, type, date de première immatriculation.</li><li>Le <b>kilométrage</b> au compteur.</li><li>La <b>date et l'heure</b> exactes de la vente : elles déterminent qui est responsable des amendes.</li><li>Les identités et adresses complètes du vendeur et de l'acheteur.</li></ul><h3>Après la signature</h3><p>Remettez aussi la carte grise barrée (« Vendu le … à … heures » et signature), le certificat de situation administrative de moins de 15 jours et, pour une voiture de plus de 4 ans, le contrôle technique de moins de 6 mois. Puis <b>déclarez la cession en ligne sur le site de l'ANTS dans les 15 jours</b> et transmettez le code de cession à l'acheteur.</p><a class="lien-guide" href="guide-vendre-voiture.html">Lire le guide complet pour vendre sa voiture →</a></section>
   <section class="faq">
     <h2>Questions fréquentes</h2>
     <details><summary>Ce formulaire est-il officiel ?</summary>
@@ -361,7 +371,7 @@
 <footer>
   <div class="wrap pied">
     <span>© 2026 DocuPrêt</span>
-    <nav><a href="apropos.html">À propos</a><a href="mentions-legales.html">Mentions légales</a><a href="cgu.html">Conditions d'utilisation</a><a href="mentions-legales.html#confidentialite">Confidentialité</a><a href="mentions-legales.html#cookies">Cookies</a><a href="mentions-legales.html#contact">Contact</a></nav>
+    <nav><a href="guides.html">Guides</a><a href="apropos.html">À propos</a><a href="mentions-legales.html">Mentions légales</a><a href="cgu.html">Conditions d'utilisation</a><a href="mentions-legales.html#confidentialite">Confidentialité</a><a href="mentions-legales.html#cookies">Cookies</a><a href="mentions-legales.html#contact">Contact</a></nav>
   </div>
 </footer>
 <script>
