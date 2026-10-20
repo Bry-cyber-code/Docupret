@@ -1374,8 +1374,9 @@ window.DOCU_AFFICHAGE = (function(){
   // Reprendre un document enregistré dans Mon compte :
   //   facture.html?depuis=ID → transforme un devis en facture (mêmes client et prestations, nouveau numéro)
   //   facture.html?ouvrir=ID → rouvre le document tel quel
-  (function(){
-    const q = new URLSearchParams(location.search), idDep = q.get('depuis'), idOuv = q.get('ouvrir');
+  const etatAvantDoc = MODE_APERCU ? JSON.stringify(etat) : '';
+  function reprendre(q){
+    const idDep = q.get('depuis'), idOuv = q.get('ouvrir');
     if (!idDep && !idOuv) return;
     let docs = []; try{ docs = JSON.parse(localStorage.getItem('docupret_documents')) || []; }catch(e){}
     const d = docs.find(x => x && x.id === (idDep || idOuv) && !x.supprime);
@@ -1407,7 +1408,8 @@ window.DOCU_AFFICHAGE = (function(){
       }
     }
     try{ history.replaceState(null, '', (window.DOCU_URL_TYPE && window.DOCU_URL_TYPE[etat.type]) || ('?type=' + etat.type)); }catch(e){}
-  })();
+  }
+  reprendre(new URLSearchParams(location.search));
 
   // Type depuis l'adresse (devis.html)
   const typeUrl = new URLSearchParams(location.search).get('type') || window.DOCU_TYPE_PAGE;
@@ -2968,15 +2970,28 @@ window.DOCU_AFFICHAGE = (function(){
   // ---------- Démarrage ----------
   rendreGalerie(); remplirChamps(); majLogo(); rendreLignes(); majVisibilite(); appliquerMode();
   if (MODE_APERCU){
+    // La fenêtre « Aperçu » de Mon compte garde cette page ouverte en arrière-plan :
+    // pour montrer un autre document, elle appelle docuApercu(id) au lieu de tout recharger.
     document.body.classList.add('mode-apercu');
-    const v = document.createElement('div'); v.id = 'vue-apercu';
-    if (docPdf){
-      const e = document.createElement('div'); e.className = 'va-echelle';
-      e.appendChild(window.docuPagePropre()); v.appendChild(e);
-      const regler = () => { const k = Math.min(1, (window.innerWidth - 16) / 794); e.style.transform = `scale(${k})`; v.style.height = (e.offsetHeight * k + 16) + 'px'; };
-      window.addEventListener('resize', regler); regler(); if (document.fonts && document.fonts.ready) document.fonts.ready.then(regler); setTimeout(regler, 600);
-    } else v.innerHTML = '<p class="va-vide">Ce document est introuvable. Il a peut-être été supprimé.</p>';
-    document.body.appendChild(v);
+    const v = document.createElement('div'); v.id = 'vue-apercu'; document.body.appendChild(v);
+    let e = null;
+    const regler = () => { if (!e || window.innerWidth < 50) return; const k = Math.min(1, (window.innerWidth - 16) / 794); e.style.transform = `scale(${k})`; v.style.height = (e.offsetHeight * k + 16) + 'px'; };
+    const montrer = () => {
+      if (docPdf){ e = document.createElement('div'); e.className = 'va-echelle'; e.appendChild(window.docuPagePropre()); v.replaceChildren(e); regler(); requestAnimationFrame(regler); }
+      else { e = null; v.style.height = ''; v.innerHTML = '<p class="va-vide">Ce document est introuvable. Il a peut-être été supprimé.</p>'; }
+      window.scrollTo(0, 0);
+    };
+    window.docuApercu = id => {
+      const base = JSON.parse(etatAvantDoc);
+      for (const k of Object.keys(etat)) if (!(k in base)) delete etat[k];
+      Object.assign(etat, base);
+      docPdf = null;
+      reprendre(new URLSearchParams('ouvrir=' + encodeURIComponent(id) + '&pdf=1'));
+      montrer();
+      return !!docPdf;
+    };
+    window.addEventListener('resize', regler);
+    montrer(); if (document.fonts && document.fonts.ready) document.fonts.ready.then(regler); setTimeout(regler, 600);
   }
   else if (MODE_PDF){
     const b = document.createElement('div'); b.className = 'bandeau-pdf';
