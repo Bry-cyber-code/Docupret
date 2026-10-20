@@ -213,3 +213,22 @@
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', ajouter); else ajouter();
 })();
+
+// Correcteur d'orthographe du navigateur sur tous les champs où l'on écrit du texte (ordinateur compris)
+(function(){
+  const SANS = /email|tel|url|number|date|time|password|search|color|file|range|checkbox|radio|hidden/;
+  function activer(racine){
+    (racine.querySelectorAll ? racine : document).querySelectorAll('textarea, input, [contenteditable]').forEach(el => {
+      if (el.getAttribute('spellcheck') === 'false') return;          // IBAN, SIRET, e-mail… : laissés sans correction
+      if (el.tagName === 'INPUT' && SANS.test(el.type || '')) return;
+      if (el.isContentEditable === false && el.hasAttribute('contenteditable') && el.getAttribute('contenteditable') === 'false') return;
+      el.spellcheck = true; if (!el.lang) el.lang = 'fr';
+    });
+  }
+  function demarrer(){
+    document.documentElement.lang = document.documentElement.lang || 'fr';
+    activer(document);
+    try{ new MutationObserver(l => l.forEach(m => m.addedNodes.forEach(n => { if (n.nodeType === 1) activer(n.parentNode || n); }))).observe(document.body, {childList: true, subtree: true}); }catch(e){}
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', demarrer); else demarrer();
+})();

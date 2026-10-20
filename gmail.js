@@ -110,6 +110,8 @@
     ].join('\r\n');
   }
 
+  const b64url = s => btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+
   async function envoyer(t, o){
     const corps = await mime(o);
     if (corps.length > 34 * 1024 * 1024) throw new Error('Les pièces jointes sont trop lourdes : Gmail accepte 25 Mo au total. Retirez une photo et réessayez.');
@@ -118,13 +120,14 @@
       method: 'POST', headers: {Authorization: 'Bearer ' + t, 'Content-Type': 'application/json'}, body: JSON.stringify({raw: b64url(corps)})
     });
     let r;
-    try{
-      r = await fetch('https://gmail.googleapis.com/upload/gmail/v1/users/me/messages/send?uploadType=media', {
-        method: 'POST', headers: {Authorization: 'Bearer ' + t, 'Content-Type': 'message/rfc822'}, body: corps
-      });
-      if (r.status === 404 && corps.length < 4.5 * 1024 * 1024) r = await simple();
-    }catch(e){
-      if (corps.length < 4.5 * 1024 * 1024) r = await simple(); else throw new Error('L\'envoi a échoué. Vérifiez votre connexion internet et réessayez.');
+    // Message léger (cas habituel) : envoi simple ; message lourd (photos) : envoi « upload », jusqu'à 25 Mo
+    if (corps.length < 4.5 * 1024 * 1024) r = await simple();
+    else{
+      try{
+        r = await fetch('https://gmail.googleapis.com/upload/gmail/v1/users/me/messages/send?uploadType=media', {
+          method: 'POST', headers: {Authorization: 'Bearer ' + t, 'Content-Type': 'message/rfc822'}, body: corps
+        });
+      }catch(e){ throw new Error('Les pièces jointes sont trop lourdes pour être envoyées. Retirez une photo et réessayez.'); }
     }
     if (r.status === 401){ try{ sessionStorage.removeItem(CLE_JETON); }catch(e){} const e = new Error('Votre connexion Gmail a expiré. Touchez à nouveau « Envoyer ».'); e.expire = true; throw e; }
     if (r.status === 403 || r.status === 400){
