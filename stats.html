@@ -152,6 +152,7 @@
   .dd-jour b::first-letter{text-transform:uppercase}
   .dd-jour span{color:var(--texte);line-height:1.45}
   .dd-note{margin-top:16px;font-size:.78rem;color:var(--gris);line-height:1.45}
+  .tuile b.txt{font-size:1.15rem;line-height:1.3}
   .tuile-large{grid-column:1 / -1;background:var(--bleu-clair);border-color:#CFDDF6}
   .tuile b{font-size:1.7rem;font-weight:800;line-height:1.15;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
   .tuile span{font-size:.76rem;color:var(--gris)}
@@ -204,6 +205,25 @@
   details.tab-st table{width:100%;border-collapse:collapse;margin-top:8px;font-variant-numeric:tabular-nums}
   details.tab-st th,details.tab-st td{padding:5px 6px;border-bottom:1px solid var(--bord);text-align:right}
   details.tab-st th:first-child,details.tab-st td:first-child{text-align:left}
+  /* Tableaux par catégorie */
+  .tb-defil{overflow-x:auto;margin-top:12px;max-height:340px;overflow-y:auto;border:1px solid var(--bord);border-radius:10px}
+  .tb{width:100%;border-collapse:collapse;font-size:.86rem;font-variant-numeric:tabular-nums}
+  .tb th{position:sticky;top:0;background:#F3F6FB;font-size:.72rem;letter-spacing:.02em;text-transform:uppercase;color:var(--gris);font-weight:800;text-align:right;padding:8px 8px;border-bottom:1px solid var(--bord);white-space:nowrap}
+  .tb th:first-child,.tb th.g{text-align:left}
+  .tb td{padding:8px 8px;border-bottom:1px solid #EEF2F8;text-align:right;vertical-align:top;white-space:nowrap}
+  .tb tr:last-child td{border-bottom:0}
+  .tb tbody tr:nth-child(even) td{background:#FAFBFE}
+  .tb td.g{text-align:left;font-weight:600;white-space:normal;min-width:130px;overflow-wrap:break-word}
+  .tb td.rg{text-align:left;color:var(--gris);font-weight:800;width:26px}
+  .tb td.fort{font-weight:800;color:var(--texte)}
+  .tb td.pc{color:var(--gris)}
+  .tb td.evo{font-size:.78rem;white-space:nowrap;color:var(--gris)}
+  .tb td.hausse{color:#2B8148}.tb td.baisse{color:#B4432F}
+  .tb td small{display:block;font-size:.74rem;color:var(--gris);font-weight:500;margin-top:2px}
+  .tb tfoot td{font-weight:800;background:#F3F6FB;border-top:1px solid var(--bord)}
+  .tb .med{font-size:1rem}
+  .bloc-st > .tb{border:1px solid var(--bord);border-radius:10px;overflow:hidden;display:table}
+  @media (max-width:420px){.tb{font-size:.8rem}.tb td,.tb th{padding:7px 5px}.tb td.evo{font-size:.72rem}}
   .st-pied{font-size:.8rem;color:var(--gris);margin:14px 0 4px;display:grid;gap:8px}
   .st-pied label{display:flex;gap:8px;align-items:flex-start;color:var(--texte);font-size:.86rem}
   .st-pied input{width:18px;height:18px;margin-top:2px;accent-color:var(--bleu);flex-shrink:0}
@@ -303,62 +323,74 @@
       <button type="button" data-j="7" class="on">7 jours</button>
       <button type="button" data-j="30">30 jours</button>
       <button type="button" data-j="90">90 jours</button>
+      <button type="button" data-j="0">Depuis le début</button>
       <span class="st-maj" id="st-maj"></span>
     </div>
 
     <div class="tuiles" id="tuiles"></div>
 
+    <h2 class="grp-st">Taux et moyennes</h2>
+    <div class="tuiles" id="tuiles-taux"></div>
+
+    <h2 class="grp-st">Depuis le lancement du site</h2>
+    <div class="tuiles" id="tuiles-total"></div>
+
     <section class="bloc-st">
       <h2>Visiteurs par jour</h2>
       <p class="sous" id="sous-graphe">Une personne qui revient le même jour n'est comptée qu'une fois.</p>
       <div class="graphe" id="graphe"></div>
-      <details class="tab-st"><summary>Voir les chiffres jour par jour</summary><table id="tab-jours"></table></details>
+      <div class="tb-defil"><table class="tb" id="tab-jours"></table></div>
     </section>
 
     <h2 class="grp-st">Documents</h2>
-    <div class="deux-st">
-      <section class="bloc-st"><h2>Pages les plus vues</h2><p class="sous">Nombre d'affichages de chaque page</p><div class="liste-st" id="l-pages"></div></section>
-      <section class="bloc-st"><h2>Documents créés</h2><p class="sous">PDF téléchargés ou envoyés, par type</p><div class="liste-st" id="l-docs"></div></section>
-      <section class="bloc-st large-st"><h2>Documents commencés et terminés</h2><p class="sous">Sur 100 personnes qui commencent à remplir un document, combien vont jusqu'au téléchargement</p><div class="fin-st" id="l-fin"></div></section>
-    </div>
+    <section class="bloc-st"><h2>Documents créés</h2><p class="sous">PDF téléchargés, imprimés ou envoyés, par type</p><div id="l-docs"></div></section>
+    <section class="bloc-st"><h2>Documents commencés et terminés</h2><p class="sous">Combien de personnes vont jusqu'au téléchargement après avoir commencé à remplir</p><div id="l-fin"></div></section>
+    <section class="bloc-st"><h2>Pages les plus vues</h2><p class="sous">Affichages de chaque page et temps moyen passé dessus</p><div id="l-pages"></div></section>
+
+    <h2 class="grp-st">Fonctions utilisées</h2>
+    <section class="bloc-st"><h2>Fonctions du site les plus utilisées</h2><p class="sous">Aperçu, brouillons, clients, envois, modèles… (comptées depuis le 20 octobre 2026)</p><div id="l-fn"></div></section>
+    <section class="bloc-st"><h2>Comptes et actions</h2><p class="sous">Connexions, comptes, envois, factures payées, applications installées</p><div id="l-app"></div></section>
 
     <h2 class="grp-st">Comportement des visiteurs</h2>
     <div class="deux-st">
-      <section class="bloc-st"><h2>Pages d'arrivée</h2><p class="sous">La première page vue en arrivant sur le site</p><div class="liste-st" id="l-ent"></div></section>
-      <section class="bloc-st"><h2>Pages de sortie</h2><p class="sous">La dernière page vue avant de partir</p><div class="liste-st" id="l-sort"></div></section>
-      <section class="bloc-st"><h2>Temps passé sur le site</h2><p class="sous">Durée de chaque visite, page à l’écran</p><div class="liste-st" id="l-dur"></div></section>
-      <section class="bloc-st"><h2>Pages vues par visite</h2><p class="sous">Nombre de pages ouvertes pendant une visite</p><div class="liste-st" id="l-ppv"></div></section>
+      <section class="bloc-st"><h2>Pages d'arrivée</h2><p class="sous">Première page vue en arrivant</p><div id="l-ent"></div></section>
+      <section class="bloc-st"><h2>Pages de sortie</h2><p class="sous">Dernière page vue avant de partir</p><div id="l-sort"></div></section>
+      <section class="bloc-st"><h2>Durée des visites</h2><p class="sous">Temps passé sur le site, page à l’écran</p><div id="l-dur"></div></section>
+      <section class="bloc-st"><h2>Pages vues par visite</h2><p class="sous">Nombre de pages ouvertes pendant une visite</p><div id="l-ppv"></div></section>
     </div>
 
     <h2 class="grp-st">Recherches</h2>
     <div class="deux-st">
-      <section class="bloc-st"><h2>Ce que les gens cherchent</h2><p class="sous">Mots tapés dans la barre de recherche de l’accueil</p><div class="liste-st" id="l-rech"></div></section>
-      <section class="bloc-st"><h2>Recherches sans résultat</h2><p class="sous">Documents demandés que le site ne propose pas encore</p><div class="liste-st" id="l-rech0"></div></section>
+      <section class="bloc-st"><h2>Ce que les gens cherchent</h2><p class="sous">Mots tapés dans la recherche de l’accueil</p><div id="l-rech"></div></section>
+      <section class="bloc-st"><h2>Recherches sans résultat</h2><p class="sous">Documents demandés que le site ne propose pas</p><div id="l-rech0"></div></section>
     </div>
 
-    <h2 class="grp-st">Horaires</h2>
+    <h2 class="grp-st">Moments de visite</h2>
     <div class="deux-st">
-      <section class="bloc-st large-st"><h2>Heures de visite</h2><p class="sous">Nombre de visites selon l'heure de la journée (heure du visiteur)</p><div id="g-heures"></div></section>
-      <section class="bloc-st"><h2>Jours de la semaine</h2><p class="sous">Visiteurs selon le jour</p><div class="liste-st" id="l-jours"></div></section>
-      <section class="bloc-st"><h2>Pays et territoires</h2><p class="sous">D’après le fuseau horaire de l’appareil, jamais l’adresse IP</p><div class="liste-st" id="l-pays"></div></section>
+      <section class="bloc-st"><h2>Moments de la journée</h2><p class="sous">Heure du visiteur</p><div id="l-moments"></div></section>
+      <section class="bloc-st"><h2>Heures les plus fréquentées</h2><p class="sous">Les 8 heures avec le plus de visites</p><div id="l-heures"></div></section>
+      <section class="bloc-st"><h2>Jours de la semaine</h2><p class="sous">Visiteurs selon le jour</p><div id="l-jours"></div></section>
+      <section class="bloc-st"><h2>Pays et territoires</h2><p class="sous">D’après le fuseau horaire, jamais l’adresse IP</p><div id="l-pays"></div></section>
     </div>
 
     <h2 class="grp-st">Provenance et appareils</h2>
     <div class="deux-st">
-      <section class="bloc-st"><h2>D'où viennent les visiteurs</h2><p class="sous">Site ou application d’où ils arrivent</p><div class="liste-st" id="l-src"></div></section>
-      <section class="bloc-st"><h2>Téléphones et ordinateurs</h2><p class="sous">iPhone, Android, Windows, Mac…</p><div class="liste-st" id="l-os"></div></section>
-      <section class="bloc-st"><h2>Navigateurs</h2><p class="sous">Chrome, Safari, Samsung, appli Facebook…</p><div class="liste-st" id="l-nav"></div></section>
-      <section class="bloc-st"><h2>Tailles d'écran</h2><p class="sous">Pour vérifier que le site s’affiche bien partout</p><div class="liste-st" id="l-ecr"></div></section>
-      <section class="bloc-st"><h2>Comptes et actions</h2><p class="sous">Connexions, comptes, envois, applications installées</p><div class="liste-st" id="l-app"></div></section>
-      <section class="bloc-st"><h2>Clics vers les partenaires</h2><p class="sous">Personnes envoyées vers Qonto, Indy, SumUp ou Vistaprint</p><div class="liste-st" id="l-part"></div></section>
+      <section class="bloc-st"><h2>D'où viennent les visiteurs</h2><p class="sous">Site ou application d’où ils arrivent</p><div id="l-src"></div></section>
+      <section class="bloc-st"><h2>Téléphone ou ordinateur</h2><p class="sous">Type d’appareil</p><div id="l-type"></div></section>
+      <section class="bloc-st"><h2>Systèmes</h2><p class="sous">iPhone, Android, Windows, Mac…</p><div id="l-os"></div></section>
+      <section class="bloc-st"><h2>Navigateurs</h2><p class="sous">Chrome, Safari, Samsung, appli Facebook…</p><div id="l-nav"></div></section>
+      <section class="bloc-st"><h2>Tailles d'écran</h2><p class="sous">Pour vérifier que le site s’affiche bien partout</p><div id="l-ecr"></div></section>
+      <section class="bloc-st"><h2>Clics vers les partenaires</h2><p class="sous">Qonto, Indy, SumUp, Vistaprint</p><div id="l-part"></div></section>
     </div>
 
-    <h2 class="grp-st">Classement des comptes</h2>
-    <section class="bloc-st"><h2>Les 20 comptes qui téléchargent le plus</h2><p class="sous">Tous documents confondus, depuis le début du classement (17 octobre 2026). Visible uniquement par vous.</p><div id="l-classement"></div></section>
+    <h2 class="grp-st">Classements des comptes</h2>
+    <section class="bloc-st"><h2>🏆 Ceux qui téléchargent le plus</h2><p class="sous">Documents téléchargés, depuis le 17 octobre 2026</p><div id="l-classement"></div></section>
+    <section class="bloc-st"><h2>⏱️ Ceux qui passent le plus de temps sur le site</h2><p class="sous">Temps passé connecté, page à l’écran, depuis le 20 octobre 2026</p><div id="l-cl-temps"></div></section>
+    <section class="bloc-st"><h2>⚙️ Ceux qui utilisent le plus de fonctions</h2><p class="sous">Toutes fonctions confondues, depuis le 20 octobre 2026</p><div id="l-cl-fn"></div></section>
 
     <div class="st-pied">
       <label><input type="checkbox" id="moi" checked> Ne pas compter mes propres visites sur cet appareil</label>
-      <p>Les chiffres des visiteurs sont anonymes : aucune adresse IP, aucun cookie, aucune donnée personnelle n'est enregistrée. Seul le classement est rattaché aux comptes : il ne contient que l'adresse e-mail du compte et le nombre de documents téléchargés par type, jamais leur contenu. Les nouveaux détails (comportement, recherches, horaires, appareils, lieu) sont comptés depuis le 17 octobre 2026.</p>
+      <p>Les chiffres des visiteurs sont anonymes : aucune adresse IP, aucun cookie, aucune donnée personnelle n'est enregistrée. Seuls les classements sont rattachés aux comptes : adresse e-mail, nombre de documents téléchargés par type, temps passé et nom des fonctions utilisées, jamais le contenu des documents. Les détails (comportement, recherches, horaires, appareils, lieu) sont comptés depuis le 17 octobre 2026 ; les fonctions utilisées, le temps par page et les classements « temps » et « fonctions » depuis le 20 octobre 2026. Les robots (Google…) ne sont plus comptés depuis le 20 octobre 2026 au soir.</p>
     </div>
   </div>
 </main>
@@ -498,21 +530,30 @@
   const fusion = (docs, champ, filtre) => { const o = {}; docs.forEach(d => Object.entries(d[champ] || {}).forEach(([k, v]) => { if (!filtre || filtre(k)) o[k] = (o[k] || 0) + (v || 0); })); return o; };
   const docsCrees = d => Object.entries(d.ev || {}).reduce((t, [k, v]) => t + (/^pdf_/.test(k) ? v : 0), 0);
 
-  let total = null;
-  async function totalComptes(){
-    if (total !== null) return total;
+  // Tous les jours depuis le lancement (lus une fois) : total des comptes et chiffres « depuis le lancement »
+  let tousLesJours = null;
+  async function lireTout(){
+    if (tousLesJours) return tousLesJours;
     const snap = await db.collection('stats').get();
-    let t = COMPTES_AVANT; snap.forEach(d => { const e = d.data().ev || {}; t += (e.compte_cree || 0) - (e.compte_supprime || 0); });
-    return (total = Math.max(0, t));
+    const m = new Map(); snap.forEach(d => m.set(d.id, d.data()));
+    return (tousLesJours = m);
   }
+  function totalComptes(tout){
+    let t = COMPTES_AVANT; tout.forEach(d => { const e = d.ev || {}; t += (e.compte_cree || 0) - (e.compte_supprime || 0); });
+    return Math.max(0, t);
+  }
+  const LANCEMENT = new Date(2026, 9, 16, 12);
+  const joursDepuisLancement = () => Math.max(1, Math.round((new Date().setHours(12, 0, 0, 0) - LANCEMENT) / 864e5) + 1);
   async function charger(){
     $('st-maj').textContent = 'Mise à jour…';
     try{
-      const actuels = jours(periode, 0), avant = jours(periode, periode);
-      const m = await lire(cleJour(avant[0]), cleJour(actuels[actuels.length - 1]));
+      const nb = periode || joursDepuisLancement();
+      const actuels = jours(nb, 0), avant = periode ? jours(nb, nb) : [];
+      const tout = await lireTout();
+      const m = await lire(cleJour(avant.length ? avant[0] : actuels[0]), cleJour(actuels[actuels.length - 1]));
       const docs = actuels.map(d => m.get(cleJour(d)) || {}), docsAvant = avant.map(d => m.get(cleJour(d)) || {});
-      rendre(actuels, docs, docsAvant, await totalComptes());
-      chargerClassement();
+      rendre(actuels, docs, docsAvant, totalComptes(tout), tout);
+      chargerClassements();
       $('st-maj').textContent = 'À jour : ' + new Date().toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'});
     }catch(e){
       console.warn(e);
@@ -522,43 +563,56 @@
   }
 
   // ---------- Affichage ----------
+  const pct = (v, t) => t ? Math.round(v / t * 100) : 0;
+  function evolution(val, av, inverse){
+    if (!periode || !av && !val) return '';
+    if (!av) return '<span class="hausse">nouveau</span>';
+    const pc = Math.round((val - av) / av * 100), bien = inverse ? pc < 0 : pc > 0;
+    return pc === 0 ? '<span>stable</span>' : `<span class="${bien ? 'hausse' : 'baisse'}">${pc > 0 ? '▲ +' : '▼ '}${pc} %</span>`;
+  }
   function tuile(lib, val, avant, action){
-    let ev = '';
-    if (periode > 1 && (val || avant)){
-      if (!avant) ev = '<span class="hausse">nouveau sur la période</span>';
-      else { const pc = Math.round((val - avant) / avant * 100); ev = pc === 0 ? '<span>stable</span>' : `<span class="${pc > 0 ? 'hausse' : 'baisse'}">${pc > 0 ? '▲ +' : '▼ '}${pc} % vs période d'avant</span>`; }
-    }
+    const ev = periode > 1 ? evolution(val, avant).replace('</span>', " vs période d'avant</span>").replace('nouveau vs période d\'avant', 'nouveau sur la période') : '';
     if (action) return `<button type="button" class="tuile tuile-clic" data-action="${action}" title="Voir le détail"><small>${lib} <em>Voir le détail ›</em></small><b>${n(val)}</b>${ev || '<span>&nbsp;</span>'}</button>`;
     return `<div class="tuile"><small>${lib}</small><b>${n(val)}</b>${ev || '<span>&nbsp;</span>'}</div>`;
   }
-  function liste(id, obj, nommer, max, ordre){
-    let l = Object.entries(obj).filter(([, v]) => v > 0);
-    l = ordre ? ordre.filter(k => (obj[k] || 0) > 0).map(k => [k, obj[k]]) : l.sort((a, b) => b[1] - a[1]).slice(0, max || 10);
-    if (!l.length){ $(id).innerHTML = '<p class="vide-st">Pas encore de données sur cette période.</p>'; return; }
-    const haut = l[0][1];
-    $(id).innerHTML = l.map(([k, v]) => `<div class="ligne-st"><span class="lib">${esc(nommer(k))}</span><span class="val">${n(v)}</span><span class="piste"><i style="width:${Math.max(2, v / haut * 100)}%"></i></span></div>`).join('');
+  function tuileTexte(lib, texte, val, avant, inverse, petit){
+    const ev = periode > 1 && val !== null && avant ? evolution(val, avant, inverse).replace('</span>', " vs période d'avant</span>") : '';
+    return `<div class="tuile"><small>${lib}</small><b${petit ? ' class="txt"' : ''}>${texte}</b>${ev || '<span>&nbsp;</span>'}</div>`;
   }
+  const vide = '<p class="vide-st">Pas encore de données sur cette période.</p>';
+
+  // Tableau d'une catégorie : rang, nom, nombre, part du total, évolution par rapport à la période d'avant
+  function tableau(id, obj, nommer, o = {}){
+    const av = o.avant || {}, fmt = o.format || n;
+    let l = Object.entries(obj).filter(([, v]) => v > 0);
+    l = o.ordre ? o.ordre.filter(k => (obj[k] || 0) > 0).map(k => [k, obj[k]]) : l.sort((x, y) => y[1] - x[1]);
+    const total = l.reduce((t, [, v]) => t + v, 0);
+    if (o.max && !o.ordre) l = l.slice(0, o.max);
+    if (!l.length){ $(id).innerHTML = vide; return; }
+    const avecEvo = periode > 1 && !o.sansEvo, avecPart = !o.sansPart;
+    const tete = `<tr>${o.ordre ? '' : '<th>#</th>'}<th class="g">${o.col || 'Nom'}</th><th>${o.colVal || 'Nombre'}</th>${avecPart ? '<th>Part</th>' : ''}${o.extra ? `<th>${o.extra[0]}</th>` : ''}${avecEvo ? '<th>Évolution</th>' : ''}</tr>`;
+    const lignes = l.map(([k, v], i) => {
+      const e = avecEvo ? evolution(v, av[k] || 0, o.inverse) : '';
+      const cls = /hausse/.test(e) ? 'hausse' : /baisse/.test(e) ? 'baisse' : '';
+      return `<tr>${o.ordre ? '' : `<td class="rg">${i + 1}</td>`}<td class="g">${esc(nommer(k))}</td><td class="fort">${fmt(v)}</td>${avecPart ? `<td class="pc">${pct(v, total)} %</td>` : ''}${o.extra ? `<td>${o.extra[1](k, v)}</td>` : ''}${avecEvo ? `<td class="evo ${cls}">${e.replace(/<[^>]+>/g, '')}</td>` : ''}</tr>`;
+    }).join('');
+    const pied = o.total === false ? '' : `<tfoot><tr>${o.ordre ? '' : '<td></td>'}<td class="g">Total</td><td>${fmt(total)}</td>${avecPart ? '<td class="pc">100 %</td>' : ''}${o.extra ? '<td></td>' : ''}${avecEvo ? '<td></td>' : ''}</tr></tfoot>`;
+    $(id).innerHTML = `<div class="tb-defil" style="margin-top:0;max-height:${o.haut || 420}px"><table class="tb"><thead>${tete}</thead><tbody>${lignes}</tbody>${pied}</table></div>`;
+  }
+
   // ---------- Détail des documents créés (seulement le type : aucune donnée personnelle n'est enregistrée) ----------
   let dernier = null;
   function detailDocs(){
     if (!dernier) return;
-    const {jrs, docs, docsAvant} = dernier;
-    const types = fusion(docs, 'ev', k => /^pdf_/.test(k)), avant = fusion(docsAvant, 'ev', k => /^pdf_/.test(k));
-    const l = Object.entries(types).filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]);
-    const total = l.reduce((a, [, v]) => a + v, 0), haut = l.length ? l[0][1] : 1;
-    const periodeTxt = periode === 1 ? "aujourd'hui" : `sur les ${periode} derniers jours`;
-    const lignes = l.map(([k, v]) => {
-      const av = avant[k] || 0, pc = av ? Math.round((v - av) / av * 100) : null;
-      const evo = periode > 1 ? (av ? (pc === 0 ? '<span class="dd-evo">stable</span>' : `<span class="dd-evo ${pc > 0 ? 'hausse' : 'baisse'}">${pc > 0 ? '▲ +' : '▼ '}${pc} %</span>`) : '<span class="dd-evo hausse">nouveau</span>') : '';
-      return `<div class="dd-ligne"><span class="dd-nom">${esc(nomDoc(k))}</span><span class="dd-val">${n(v)}<small>${Math.round(v / total * 100)} %</small></span>${evo}<span class="piste"><i style="width:${Math.max(2, v / haut * 100)}%"></i></span></div>`;
-    }).join('');
-    // Jour par jour
+    const {jrs, docs} = dernier;
+    const types = fusion(docs, 'ev', k => /^pdf_/.test(k));
+    const total = Object.values(types).reduce((a, v) => a + Math.max(0, v), 0);
+    const periodeTxt = periode === 1 ? "aujourd'hui" : periode ? `sur les ${periode} derniers jours` : 'depuis le lancement';
     const parJour = jrs.map((j, i) => [j, Object.entries(docs[i].ev || {}).filter(([k, v]) => /^pdf_/.test(k) && v > 0).sort((a, b) => b[1] - a[1])]).filter(([, x]) => x.length).reverse();
-    const jours = parJour.map(([j, x]) => `<div class="dd-jour"><b>${esc(jourLong(j))}</b><span>${x.map(([k, v]) => `${n(v)} ${esc(nomDoc(k))}`).join(' · ')}</span></div>`).join('');
     const f = document.createElement('div'); f.className = 'dd-fond';
     f.innerHTML = `<div class="dd-boite" role="dialog" aria-modal="true" aria-label="Documents créés">
       <div class="dd-tete"><div><b>Documents créés</b><small>${n(total)} document${total > 1 ? 's' : ''} ${periodeTxt}</small></div><button type="button" data-fermer aria-label="Fermer">×</button></div>
-      ${l.length ? `<div class="dd-liste">${lignes}</div>${jours ? `<h3>Jour par jour</h3><div class="dd-jours">${jours}</div>` : ''}` : '<p class="vide-st">Aucun document créé sur cette période.</p>'}
+      ${parJour.length ? `<table class="tb"><thead><tr><th class="g">Jour</th><th class="g">Documents</th><th>Total</th></tr></thead><tbody>${parJour.map(([j, x]) => `<tr><td class="g">${esc(jourLong(j))}</td><td class="g" style="font-weight:500">${x.map(([k, v]) => `${n(v)} ${esc(nomDoc(k))}`).join('<br>')}</td><td class="fort">${n(x.reduce((a, [, v]) => a + v, 0))}</td></tr>`).join('')}</tbody></table>` : '<p class="vide-st">Aucun document créé sur cette période.</p>'}
       <p class="dd-note">🔒 Seul le <b>type</b> de document est compté, au moment où il est téléchargé, imprimé ou envoyé. Aucun nom, aucune adresse, aucun montant ni aucun contenu n'est enregistré.</p>
     </div>`;
     const fermer = () => { f.remove(); document.removeEventListener('keydown', echap); };
@@ -570,98 +624,143 @@
   }
   document.addEventListener('click', e => { const t = e.target.closest('[data-action="docs"]'); if (t) detailDocs(); });
 
-  function rendre(jrs, docs, docsAvant, comptes){
-    dernier = {jrs, docs, docsAvant};
-    const ev = (d, k) => (d.ev || {})[k] || 0;
-    $('tuiles').innerHTML =
-      `<div class="tuile tuile-large"><small>Comptes au total</small><b>${n(comptes)}</b><span>Toutes périodes confondues · ${n(somme(docs, d => ev(d, 'compte_cree')))} créé${somme(docs, d => ev(d, 'compte_cree')) > 1 ? 's' : ''} sur la période choisie</span></div>` +
-      tuile('Visiteurs', somme(docs, d => d.vis), somme(docsAvant, d => d.vis)) +
-      tuile('Pages vues', somme(docs, d => d.v), somme(docsAvant, d => d.v)) +
-      tuile('Nouveaux visiteurs', somme(docs, d => d.nv), somme(docsAvant, d => d.nv)) +
-      tuile('Documents créés', somme(docs, docsCrees), somme(docsAvant, docsCrees), 'docs') +
-      tuile('Nouveaux comptes', somme(docs, d => ev(d, 'compte_cree')), somme(docsAvant, d => ev(d, 'compte_cree'))) +
-      tuile('Envois depuis Gmail', somme(docs, d => ev(d, 'envoi_gmail')), somme(docsAvant, d => ev(d, 'envoi_gmail'))) +
-      tuileTexte('Temps moyen par visite', duree(tempsMoyen(docs)), tempsMoyen(docs), tempsMoyen(docsAvant)) +
-      tuileTexte('Pages par visite', pagesParVisite(docs) ? pagesParVisite(docs).toFixed(1).replace('.', ',') : '–', pagesParVisite(docs), pagesParVisite(docsAvant)) +
-      tuileTexte('Partis après 1 page', rebond(docs) === null ? '–' : rebond(docs) + ' %', rebond(docs), rebond(docsAvant), true) +
-      tuile('Visites de retour', somme(docs, d => Math.max(0, (d.vis || 0) - (d.nv || 0))), somme(docsAvant, d => Math.max(0, (d.vis || 0) - (d.nv || 0))));
-    detailsEnPlus(jrs, docs);
-    graphe(jrs, docs.map(d => d.vis || 0), docs.map(d => d.v || 0));
-    $('tab-jours').innerHTML = '<tr><th>Jour</th><th>Visiteurs</th><th>Pages vues</th><th>Documents</th></tr>' +
-      jrs.map((j, i) => `<tr><td>${esc(jourCourt(j))}</td><td>${n(docs[i].vis)}</td><td>${n(docs[i].v)}</td><td>${n(docsCrees(docs[i]))}</td></tr>`).reverse().join('');
-    liste('l-pages', fusion(docs, 'p'), nomPage);
-    liste('l-docs', fusion(docs, 'ev', k => /^pdf_/.test(k)), nomDoc);
-    liste('l-src', fusion(docs, 'src'), k => SOURCES[k] || k);
-    const app = fusion(docs, 'app'), e = fusion(docs, 'ev', k => !/^pdf_|^clic_/.test(k));
-    const PART = {clic_qonto: 'Qonto', clic_indy: 'Indy', clic_sumup: 'SumUp', clic_vistaprint: 'Vistaprint'};
-    liste('l-part', fusion(docs, 'ev', k => /^clic_/.test(k)), k => PART[k] || k.replace(/^clic_/, ''));
-    const LIB = {telephone: '📱 Sur téléphone', ordinateur: '💻 Sur ordinateur', connexion: 'Connexions à un compte', compte_cree: 'Comptes créés', compte_supprime: 'Comptes supprimés', envoi_gmail: 'Envois depuis Gmail', envoi_autre_appli: 'Envois avec une autre application', appli_installee: 'Applications installées'};
-    liste('l-app', Object.assign({}, app, e), k => LIB[k] || k.replace(/_/g, ' '), 12);
-  }
-
-  // ---------- Mesures détaillées (comptées depuis le 17/10/2026) ----------
   const sommeMap = (docs, champ) => Object.values(fusion(docs, champ)).reduce((a, v) => a + Math.max(0, v), 0);
   function tempsMoyen(docs){ const nb = sommeMap(docs, 'dur'); return nb ? somme(docs, d => d.t) / nb : null; }
   function pagesParVisite(docs){ const vis = somme(docs, d => d.vis); return vis ? somme(docs, d => d.v) / vis : null; }
   function rebond(docs){ const nb = sommeMap(docs, 'ppv'); return nb ? Math.round(Math.max(0, fusion(docs, 'ppv').p1 || 0) / nb * 100) : null; }
-  function duree(s){ if (s === null) return '–'; s = Math.round(s); return s < 60 ? s + ' s' : Math.floor(s / 60) + ' min ' + String(s % 60).padStart(2, '0'); }
-  function tuileTexte(lib, texte, val, avant, inverse){
-    let ev = '';
-    if (periode > 1 && val !== null && avant){
-      const pc = Math.round((val - avant) / avant * 100), bien = inverse ? pc < 0 : pc > 0;
-      ev = pc === 0 ? '<span>stable</span>' : `<span class="${bien ? 'hausse' : 'baisse'}">${pc > 0 ? '▲ +' : '▼ '}${pc} % vs période d'avant</span>`;
-    }
-    return `<div class="tuile"><small>${lib}</small><b>${texte}</b>${ev || '<span>&nbsp;</span>'}</div>`;
-  }
-  function detailsEnPlus(jrs, docs){
-    // Documents commencés et terminés
-    const deb = fusion(docs, 'deb'), fin = fusion(docs, 'fin');
-    const l = Object.keys(Object.assign({}, deb, fin)).map(k => [k, Math.max(deb[k] || 0, fin[k] || 0), Math.max(0, fin[k] || 0)]).filter(x => x[1] > 0).sort((a, b) => b[1] - a[1]).slice(0, 15);
-    $('l-fin').innerHTML = l.length ? l.map(([k, d, f]) => {
-      const pc = Math.round(f / d * 100);
-      return `<div class="fin-ligne"><span class="lib">${esc(nomDoc('pdf_' + k))}</span><span class="pc">${pc} %</span><span class="det">${n(d)} commencé${d > 1 ? 's' : ''} · ${n(f)} terminé${f > 1 ? 's' : ''} · ${n(d - f)} abandonné${d - f > 1 ? 's' : ''}</span><span class="piste"><i style="width:${Math.max(2, pc)}%"></i></span></div>`;
-    }).join('') : '<p class="vide-st">Pas encore de données sur cette période.</p>';
+  function duree(s){ if (s === null || s === undefined) return '–'; s = Math.round(s); if (s < 60) return s + ' s'; if (s < 3600) return Math.floor(s / 60) + ' min ' + String(s % 60).padStart(2, '0'); return Math.floor(s / 3600) + ' h ' + String(Math.floor(s % 3600 / 60)).padStart(2, '0'); }
+  const taux = (a, b) => b ? (a / b * 100) : null;
+  const txPc = v => v === null ? '–' : (v < 10 ? v.toFixed(1).replace('.', ',') : Math.round(v)) + ' %';
+
+  function rendre(jrs, docs, docsAvant, comptes, tout){
+    dernier = {jrs, docs, docsAvant};
+    const ev = (d, k) => (d.ev || {})[k] || 0;
+    const S = (l, f) => somme(l, f);
+    const vis = S(docs, d => d.vis), visA = S(docsAvant, d => d.vis);
+    const dc = S(docs, docsCrees), dcA = S(docsAvant, docsCrees);
+    const cc = S(docs, d => ev(d, 'compte_cree')), ccA = S(docsAvant, d => ev(d, 'compte_cree'));
+    $('tuiles').innerHTML =
+      `<div class="tuile tuile-large"><small>Comptes au total</small><b>${n(comptes)}</b><span>Toutes périodes confondues · ${n(cc)} créé${cc > 1 ? 's' : ''} sur la période choisie</span></div>` +
+      tuile('Visiteurs', vis, visA) +
+      tuile('Pages vues', S(docs, d => d.v), S(docsAvant, d => d.v)) +
+      tuile('Nouveaux visiteurs', S(docs, d => d.nv), S(docsAvant, d => d.nv)) +
+      tuile('Documents créés', dc, dcA, 'docs') +
+      tuile('Nouveaux comptes', cc, ccA) +
+      tuile('Envois depuis Gmail', S(docs, d => ev(d, 'envoi_gmail')), S(docsAvant, d => ev(d, 'envoi_gmail'))) +
+      tuileTexte('Temps moyen par visite', duree(tempsMoyen(docs)), tempsMoyen(docs), tempsMoyen(docsAvant)) +
+      tuileTexte('Pages par visite', pagesParVisite(docs) ? pagesParVisite(docs).toFixed(1).replace('.', ',') : '–', pagesParVisite(docs), pagesParVisite(docsAvant)) +
+      tuileTexte('Partis après 1 page', rebond(docs) === null ? '–' : rebond(docs) + ' %', rebond(docs), rebond(docsAvant), true) +
+      tuile('Visites de retour', S(docs, d => Math.max(0, (d.vis || 0) - (d.nv || 0))), S(docsAvant, d => Math.max(0, (d.vis || 0) - (d.nv || 0))));
+
+    // Taux et moyennes
+    const nbJours = jrs.length, tel = sommeMap(docs, 'app') ? Math.max(0, fusion(docs, 'app').telephone || 0) : 0, appTot = sommeMap(docs, 'app');
+    const deb = sommeMap(docs, 'deb'), fin = sommeMap(docs, 'fin'), fnTot = sommeMap(docs, 'fn');
+    const meilleur = jrs.map((j, i) => [j, docs[i].vis || 0]).sort((a, b) => b[1] - a[1])[0];
+    $('tuiles-taux').innerHTML =
+      tuileTexte('Visiteurs qui créent un document', txPc(taux(dc, vis)), taux(dc, vis), taux(dcA, visA)) +
+      tuileTexte('Visiteurs qui créent un compte', txPc(taux(cc, vis)), taux(cc, vis), taux(ccA, visA)) +
+      tuileTexte('Documents terminés une fois commencés', txPc(taux(fin, deb)), taux(fin, deb), taux(sommeMap(docsAvant, 'fin'), sommeMap(docsAvant, 'deb'))) +
+      tuileTexte('Visiteurs par jour (moyenne)', (vis / nbJours).toFixed(1).replace('.', ','), vis / nbJours, visA / Math.max(1, docsAvant.length)) +
+      tuileTexte('Documents par jour (moyenne)', (dc / nbJours).toFixed(1).replace('.', ','), dc / nbJours, dcA / Math.max(1, docsAvant.length)) +
+      tuileTexte('Visiteurs sur téléphone', txPc(taux(tel, appTot)), null, null) +
+      tuileTexte('Nouveaux visiteurs', txPc(taux(S(docs, d => d.nv), vis)), null, null) +
+      tuileTexte('Fonctions utilisées par visiteur', vis ? (fnTot / vis).toFixed(1).replace('.', ',') : '–', vis ? fnTot / vis : null, null) +
+      tuileTexte('Meilleur jour de la période', meilleur && meilleur[1] ? `${esc(jourCourt(meilleur[0]))} · ${n(meilleur[1])} vis.` : '–', null, null, false, true);
+
+    // Depuis le lancement
+    const T = [...tout.entries()].filter(([k]) => /^j-/.test(k)).sort((a, b) => a[0] < b[0] ? -1 : 1);
+    const tv = T.map(([, d]) => d), rec = T.reduce((best, [k, d]) => (d.vis || 0) > best[1] ? [k, d.vis || 0] : best, ['', 0]);
+    const recJour = rec[0] ? new Date(rec[0].slice(2) + 'T12:00') : null;
+    $('tuiles-total').innerHTML =
+      `<div class="tuile"><small>Visiteurs</small><b>${n(S(tv, d => d.vis))}</b><span>depuis le 16 octobre 2026</span></div>` +
+      `<div class="tuile"><small>Pages vues</small><b>${n(S(tv, d => d.v))}</b><span>&nbsp;</span></div>` +
+      `<div class="tuile"><small>Documents créés</small><b>${n(S(tv, docsCrees))}</b><span>&nbsp;</span></div>` +
+      `<div class="tuile"><small>Envois depuis Gmail</small><b>${n(S(tv, d => ev(d, 'envoi_gmail')))}</b><span>&nbsp;</span></div>` +
+      `<div class="tuile"><small>Record de visiteurs en un jour</small><b>${n(rec[1])}</b><span>${recJour ? esc(jourLong(recJour)) : '&nbsp;'}</span></div>` +
+      `<div class="tuile"><small>Âge du site</small><b>${n(joursDepuisLancement())} j</b><span>en ligne depuis le 16/10/2026</span></div>`;
+
+    // Visiteurs par jour
+    graphe(jrs, docs.map(d => d.vis || 0), docs.map(d => d.v || 0));
+    $('tab-jours').innerHTML = '<thead><tr><th class="g">Jour</th><th>Visiteurs</th><th>Nouveaux</th><th>Pages vues</th><th>Documents</th><th>Comptes</th></tr></thead><tbody>' +
+      jrs.map((j, i) => `<tr><td class="g" style="min-width:96px">${esc(j.toLocaleDateString('fr-FR', {weekday: 'short', day: 'numeric', month: 'short'}))}</td><td class="fort">${n(docs[i].vis)}</td><td>${n(docs[i].nv)}</td><td>${n(docs[i].v)}</td><td>${n(docsCrees(docs[i]))}</td><td>${n(ev(docs[i], 'compte_cree'))}</td></tr>`).reverse().join('') +
+      `</tbody><tfoot><tr><td class="g">Total</td><td>${n(vis)}</td><td>${n(S(docs, d => d.nv))}</td><td>${n(S(docs, d => d.v))}</td><td>${n(dc)}</td><td>${n(cc)}</td></tr></tfoot>`;
+
+    const F = (champ, filtre) => fusion(docs, champ, filtre), FA = (champ, filtre) => fusion(docsAvant, champ, filtre);
+    // Documents
+    tableau('l-docs', F('ev', k => /^pdf_/.test(k)), nomDoc, {avant: FA('ev', k => /^pdf_/.test(k)), col: 'Document'});
+    const d0 = F('deb'), f0 = F('fin');
+    const lf = Object.keys(Object.assign({}, d0, f0)).map(k => [k, Math.max(d0[k] || 0, f0[k] || 0), Math.max(0, f0[k] || 0)]).filter(x => x[1] > 0).sort((a, b) => b[1] - a[1]);
+    $('l-fin').innerHTML = lf.length ? `<div class="tb-defil" style="margin-top:0"><table class="tb"><thead><tr><th class="g">Document</th><th>Commencés</th><th>Terminés</th><th>Abandonnés</th><th>Réussite</th></tr></thead><tbody>${lf.map(([k, d, f]) => {
+      const t = pct(f, d);
+      return `<tr><td class="g">${esc(nomDoc('pdf_' + k))}</td><td>${n(d)}</td><td class="fort">${n(f)}</td><td>${n(d - f)}</td><td class="fort ${t >= 50 ? 'hausse' : 'baisse'}">${t} %</td></tr>`;
+    }).join('')}</tbody></table></div>` : vide;
+    const vues = F('p'), tp = F('tp');
+    tableau('l-pages', vues, nomPage, {avant: FA('p'), col: 'Page', colVal: 'Vues', extra: ['Temps moyen', k => tp[k] ? duree(tp[k] / Math.max(1, vues[k])) : '–']});
+    // Fonctions
+    const NOMS_FN = {apercu_document: 'Aperçu du document', enregistrer_client: 'Enregistrer un client', choisir_un_client: 'Choisir un client enregistré', ajouter_un_client: 'Ajouter un client (Mon compte)',
+      brouillon: 'Enregistrer en brouillon', nouveau_document: 'Nouveau document', ajouter_une_ligne: 'Ajouter une ligne', ajouter_un_logo: 'Ajouter un logo', plusieurs_factures: 'Plusieurs factures à la suite',
+      envoi_par_email: 'Ouvrir l’envoi par e-mail', piece_jointe: 'Ajouter une pièce jointe', joindre_des_documents: 'Joindre d’autres factures/devis', apercu_mon_compte: 'Aperçu dans Mon compte',
+      facture_marquee_payee: 'Facture marquée payée', devis_accepte: 'Devis accepté', devis_transforme_en_facture: 'Devis transformé en facture', modifier_un_document: 'Modifier un document',
+      retelecharger_un_pdf: 'Retélécharger un PDF', supprimer_un_document: 'Supprimer un document', changer_de_modele: 'Changer de modèle', changer_de_couleur: 'Changer de couleur',
+      changer_de_police: 'Changer de police / taille (CV)', photo_cv: 'Photo du CV', recherche_dans_le_compte: 'Recherche dans son compte', menu_mon_compte: 'Menu « Mon compte »', guide_lu: 'Ouvrir un guide'};
+    tableau('l-fn', F('fn'), k => NOMS_FN[k] || k.replace(/_/g, ' '), {avant: FA('fn'), col: 'Fonction', colVal: 'Utilisations'});
+    const LIB = {telephone: 'Visites sur téléphone', ordinateur: 'Visites sur ordinateur', connexion: 'Connexions à un compte', compte_cree: 'Comptes créés', compte_supprime: 'Comptes supprimés', envoi_gmail: 'Envois depuis Gmail', envoi_autre_appli: 'Envois avec une autre application', appli_installee: 'Applications installées', facture_payee: 'Factures marquées payées'};
+    tableau('l-app', F('ev', k => !/^pdf_|^clic_/.test(k)), k => LIB[k] || k.replace(/_/g, ' '), {avant: FA('ev', k => !/^pdf_|^clic_/.test(k)), col: 'Action', sansPart: true, total: false});
     // Comportement
-    liste('l-ent', fusion(docs, 'ent'), nomPage);
-    liste('l-sort', fusion(docs, 'sort'), nomPage);
-    liste('l-dur', fusion(docs, 'dur'), k => DUR[k] || k, 0, Object.keys(DUR));
-    liste('l-ppv', fusion(docs, 'ppv'), k => PPV[k] || k, 0, Object.keys(PPV));
+    tableau('l-ent', F('ent'), nomPage, {avant: FA('ent'), col: 'Page', colVal: 'Visites', max: 15});
+    tableau('l-sort', F('sort'), nomPage, {avant: FA('sort'), col: 'Page', colVal: 'Visites', max: 15});
+    tableau('l-dur', F('dur'), k => DUR[k] || k, {ordre: Object.keys(DUR), col: 'Durée', colVal: 'Visites', sansEvo: true});
+    tableau('l-ppv', F('ppv'), k => PPV[k] || k, {ordre: Object.keys(PPV), col: 'Pages', colVal: 'Visites', sansEvo: true});
     // Recherches
     const lisible = k => k.replace(/^x/, '').replace(/_/g, ' ');
-    liste('l-rech', fusion(docs, 'rech'), lisible, 15);
-    liste('l-rech0', fusion(docs, 'rech0'), lisible, 15);
-    // Heures
-    const h = fusion(docs, 'h'), vals = Array.from({length: 24}, (_, i) => Math.max(0, h['h' + String(i).padStart(2, '0')] || 0)), haut = Math.max(...vals);
-    $('g-heures').innerHTML = haut ? `<div class="heures">${vals.map((v, i) => `<div title="${i} h – ${i + 1} h : ${n(v)} visite${v > 1 ? 's' : ''}"><i class="${v ? '' : 'zero'}" style="height:${v ? Math.max(4, v / haut * 100) : 2}%"></i></div>`).join('')}</div>
-      <div class="heures-lib">${vals.map((v, i) => `<span>${i % 3 === 0 ? i + 'h' : ''}</span>`).join('')}</div>
-      <p class="note-st">Heure la plus fréquentée : <b>${vals.indexOf(haut)} h – ${vals.indexOf(haut) + 1} h</b> (${n(haut)} visite${haut > 1 ? 's' : ''}).</p>` : '<p class="vide-st">Pas encore de données sur cette période.</p>';
-    // Jours de la semaine (d'après les dates)
-    const js = {}; jrs.forEach((j, i) => { const k = JOURS[(j.getDay() + 6) % 7]; js[k] = (js[k] || 0) + (docs[i].vis || 0); });
-    liste('l-jours', js, k => k, 0, JOURS);
-    // Lieu et appareils
-    liste('l-pays', fusion(docs, 'pays'), k => PAYS[k] || k.replace(/_/g, ' '), 15);
-    liste('l-os', fusion(docs, 'os'), k => OS[k] || k);
-    liste('l-nav', fusion(docs, 'nav'), k => NAV[k] || k);
-    liste('l-ecr', fusion(docs, 'ecr'), k => ECR[k] || k, 0, Object.keys(ECR));
+    tableau('l-rech', F('rech'), lisible, {col: 'Recherche', max: 30, sansEvo: true});
+    tableau('l-rech0', F('rech0'), lisible, {col: 'Recherche', max: 30, sansEvo: true});
+    // Moments
+    const h = F('h'), hv = i => Math.max(0, h['h' + String(i).padStart(2, '0')] || 0);
+    const tr = (a, b) => { let t = 0; for (let i = a; i < b; i++) t += hv(i); return t; };
+    tableau('l-moments', {nuit: tr(0, 6), matin: tr(6, 12), midi: tr(12, 14), apres: tr(14, 18), soir: tr(18, 24)}, k => ({nuit: '🌙 Nuit (0 h – 6 h)', matin: '🌅 Matin (6 h – 12 h)', midi: '🍽️ Midi (12 h – 14 h)', apres: '☀️ Après-midi (14 h – 18 h)', soir: '🌆 Soir (18 h – 24 h)'})[k], {ordre: ['nuit', 'matin', 'midi', 'apres', 'soir'], col: 'Moment', colVal: 'Visites', sansEvo: true});
+    const hs = {}; for (let i = 0; i < 24; i++) if (hv(i)) hs[i] = hv(i);
+    tableau('l-heures', hs, k => `${k} h – ${+k + 1} h`, {col: 'Heure', colVal: 'Visites', max: 8, sansEvo: true, total: false});
+    const js = {}, jsA = {}; jrs.forEach((j, i) => { const k = JOURS[(j.getDay() + 6) % 7]; js[k] = (js[k] || 0) + (docs[i].vis || 0); });
+    tableau('l-jours', js, k => k, {ordre: JOURS, col: 'Jour', colVal: 'Visiteurs', sansEvo: true});
+    tableau('l-pays', F('pays'), k => PAYS[k] || k.replace(/_/g, ' '), {avant: FA('pays'), col: 'Pays', colVal: 'Visites', max: 20});
+    // Provenance et appareils
+    tableau('l-src', F('src'), k => SOURCES[k] || k, {avant: FA('src'), col: 'Provenance', colVal: 'Visites'});
+    tableau('l-type', F('app'), k => ({telephone: '📱 Téléphone', ordinateur: '💻 Ordinateur'})[k] || k, {avant: FA('app'), col: 'Appareil', colVal: 'Visites'});
+    tableau('l-os', F('os'), k => OS[k] || k, {avant: FA('os'), col: 'Système', colVal: 'Visites'});
+    tableau('l-nav', F('nav'), k => NAV[k] || k, {avant: FA('nav'), col: 'Navigateur', colVal: 'Visites'});
+    tableau('l-ecr', F('ecr'), k => ECR[k] || k, {ordre: Object.keys(ECR), col: 'Écran', colVal: 'Visites', sansEvo: true});
+    const PART = {clic_qonto: 'Qonto', clic_indy: 'Indy', clic_sumup: 'SumUp', clic_vistaprint: 'Vistaprint'};
+    tableau('l-part', F('ev', k => /^clic_/.test(k)), k => PART[k] || k.replace(/^clic_/, ''), {avant: FA('ev', k => /^clic_/.test(k)), col: 'Partenaire', colVal: 'Clics'});
   }
 
-  // ---------- Classement des 20 comptes qui téléchargent le plus ----------
-  async function chargerClassement(){
-    const z = $('l-classement');
+  // ---------- Les 3 classements des comptes (20 premiers) ----------
+  const NOMS_FN_COURTS = {apercu_document: 'aperçu', enregistrer_client: 'client enregistré', choisir_un_client: 'client choisi', brouillon: 'brouillon', nouveau_document: 'nouveau doc.', ajouter_une_ligne: 'ligne ajoutée', plusieurs_factures: 'factures à la suite', envoi_par_email: 'envoi e-mail', piece_jointe: 'pièce jointe', facture_marquee_payee: 'facture payée', devis_accepte: 'devis accepté', devis_transforme_en_facture: 'devis → facture', changer_de_modele: 'modèle', changer_de_couleur: 'couleur', apercu_mon_compte: 'aperçu compte', modifier_un_document: 'modification', retelecharger_un_pdf: 'PDF', guide_lu: 'guide'};
+  const dateCourte = t => t && t.toDate ? t.toDate().toLocaleDateString('fr-FR', {day: 'numeric', month: 'short', year: 'numeric'}) : '';
+  async function unClassement(id, champ, valeur, detail, videTxt){
+    const z = $(id);
     try{
-      const snap = await db.collection('classement').orderBy('n', 'desc').limit(20).get();
-      if (snap.empty){ z.innerHTML = '<p class="vide-st">Aucun téléchargement fait avec un compte pour l’instant. Le classement se remplira dès qu’une personne connectée téléchargera un document.</p>'; return; }
-      let r = 0;
-      z.innerHTML = `<table class="classement"><tr><th>#</th><th>Compte</th><th style="text-align:right">Documents</th></tr>` + snap.docs.map(d => {
-        const x = d.data(), types = Object.entries(x.types || {}).sort((a, b) => b[1] - a[1]);
-        const quand = x.maj && x.maj.toDate ? x.maj.toDate().toLocaleDateString('fr-FR', {day: 'numeric', month: 'short', year: 'numeric'}) : '';
-        r++;
-        return `<tr><td class="rg">${r}</td><td><span class="mail">${esc(x.email || 'Compte sans e-mail')}</span><span class="types">${types.slice(0, 3).map(([k, v]) => `${n(v)} ${esc(nomDoc('pdf_' + k))}`).join(' · ')}${types.length > 3 ? ' · …' : ''}${quand ? ` — dernier le ${esc(quand)}` : ''}</span></td><td class="nb">${n(x.n)}</td></tr>`;
-      }).join('') + '</table>';
+      const snap = await db.collection('classement').orderBy(champ, 'desc').limit(20).get();
+      const l = snap.docs.map(d => d.data()).filter(x => (x[champ] || 0) > 0);
+      if (!l.length){ z.innerHTML = `<p class="vide-st">${videTxt}</p>`; return; }
+      z.innerHTML = `<div class="tb-defil" style="margin-top:0;max-height:none"><table class="tb"><thead><tr><th>#</th><th class="g">Compte</th><th>${valeur[0]}</th></tr></thead><tbody>` + l.map((x, i) =>
+        `<tr><td class="rg">${i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : i + 1}</td><td class="g">${esc(x.email || 'Compte sans e-mail')}<small>${detail(x)}</small></td><td class="fort med">${valeur[1](x[champ])}</td></tr>`).join('') + '</tbody></table></div>';
     }catch(e){
       console.warn(e);
-      z.innerHTML = '<p class="vide-st"><b>Le classement n’est pas encore accessible.</b> Il faut publier les nouvelles règles Firebase.</p>';
+      z.innerHTML = '<p class="vide-st"><b>Ce classement n’est pas encore accessible.</b> Il faut publier les nouvelles règles Firebase.</p>';
     }
+  }
+  function chargerClassements(){
+    unClassement('l-classement', 'n', ['Documents', n], x => {
+      const types = Object.entries(x.types || {}).sort((a, b) => b[1] - a[1]);
+      return `${types.slice(0, 3).map(([k, v]) => `${n(v)} ${esc(nomDoc('pdf_' + k))}`).join(' · ')}${types.length > 3 ? ' · …' : ''}${x.maj ? ` — dernier le ${esc(dateCourte(x.maj))}` : ''}`;
+    }, 'Aucun téléchargement fait avec un compte pour l’instant.');
+    unClassement('l-cl-temps', 't', ['Temps', duree], x => [x.n ? n(x.n) + ' document' + (x.n > 1 ? 's' : '') : '', x.vu ? 'vu le ' + esc(dateCourte(x.vu)) : ''].filter(Boolean).join(' · '),
+      'Pas encore de données : le temps passé par les comptes est compté depuis le 20 octobre 2026.');
+    unClassement('l-cl-fn', 'a', ['Fonctions', n], x => {
+      const f = Object.entries(x.f || {}).sort((a, b) => b[1] - a[1]);
+      return `${f.length} fonction${f.length > 1 ? 's' : ''} différente${f.length > 1 ? 's' : ''} · ${f.slice(0, 3).map(([k, v]) => `${n(v)} ${esc(NOMS_FN_COURTS[k] || k.replace(/_/g, ' '))}`).join(' · ')}`;
+    }, 'Pas encore de données : les fonctions utilisées par les comptes sont comptées depuis le 20 octobre 2026.');
   }
 
   // Courbe des visiteurs par jour (une seule série), avec infobulle au survol / au doigt
