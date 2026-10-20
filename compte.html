@@ -213,6 +213,18 @@
   .doc-env{color:#1F6B3A;font-weight:650}
   .gmail-ok{font-size:.88rem;background:#E7F6EC;color:#1F6B3A;border-radius:10px;padding:9px 11px;word-break:break-all}
   .doc-ouvrir{color:var(--bleu);font-weight:650;text-decoration:underline}
+  .doc-voir{border:0;background:none;padding:0;font:inherit;font-size:inherit;color:var(--bleu);font-weight:650;text-decoration:underline;cursor:pointer}
+  .va-fond{position:fixed;inset:0;z-index:90;background:rgba(20,28,45,.6);display:flex;align-items:center;justify-content:center;padding:0}
+  .va-boite{background:#E9EEF6;width:100%;max-width:860px;height:100%;height:100dvh;display:flex;flex-direction:column;overflow:hidden}
+  @media (min-width:900px){.va-fond{padding:24px}.va-boite{height:calc(100dvh - 48px);border-radius:16px}}
+  .va-tete{display:flex;align-items:center;gap:8px;background:#fff;padding:10px 12px;border-bottom:1px solid var(--bord)}
+  .va-tete b{flex:1;min-width:0;font-size:1rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .va-tete a{font-size:.85rem;font-weight:700;text-decoration:none;border-radius:50px;padding:7px 12px;white-space:nowrap}
+  .va-pdf{background:var(--bleu);color:#fff!important}
+  .va-mod{border:1.5px solid var(--bord);color:var(--texte)!important}
+  .va-x{border:0;background:none;font-size:1.7rem;line-height:1;color:var(--gris);width:38px;height:38px;flex-shrink:0;cursor:pointer}
+  .va-boite iframe{flex:1;width:100%;border:0;background:#E9EEF6}
+  body:has(.va-fond){overflow:hidden}
   .doc-liens{display:flex;gap:14px;align-items:center}
   .doc-suppr{border:0;background:none;padding:0;font:inherit;font-size:.8rem;color:#C23B36;text-decoration:underline}
   .fiche-gestion{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}
@@ -778,8 +790,24 @@
     const pay = d.type === 'facture' ? blocPaiement(d) : '';
     const statut = d.type === 'facture' ? (d.paye ? 's-payee' : (etatEcheance(d) || {}).retard ? 's-retard' : 's-impayee') : d.type === 'devis' ? (d.facture ? 's-facture' : d.accepte ? 's-accepte' : 's-attente') : 's-' + d.type;
     return `<div class="doc ${statut}"><div class="doc-haut">${d.type === 'facture' ? (d.paye ? '<span class="doc-type t-payee">✓ Payée</span>' : '<span class="doc-type t-impayee">Impayée</span>') : `<span class="doc-type t-${esc(d.type)}">${MOT[d.type] || 'Document'}</span>`}<b>${esc(d.numero)}</b><span class="doc-total">${eurs(d.total)}</span></div>
-      <div class="doc-bas"><span>${avecClient ? esc(d.clientNom || 'Sans nom de client') + ' · ' : ''}${dFr(d.date)}${d.envoye ? ` · <span class="doc-env">✉ envoyé le ${new Date(d.envoye.date).toLocaleDateString('fr-FR')}</span>` : ''}</span><span class="doc-liens"><a class="doc-pdf" href="facture.html?ouvrir=${encodeURIComponent(d.id)}&pdf=1" title="Télécharger le PDF">⬇ PDF</a><a class="doc-ouvrir" href="facture.html?ouvrir=${encodeURIComponent(d.id)}">Rouvrir</a><button type="button" class="doc-suppr" data-suppr-doc="${esc(d.id)}">Supprimer</button></span></div>${des.length ? `<div class="doc-lignes">${esc(des.join(' · '))}</div>` : ''}${conv ? `<div class="doc-conv-l">${conv}</div>` : ''}${pay}</div>`;
+      <div class="doc-bas"><span>${avecClient ? esc(d.clientNom || 'Sans nom de client') + ' · ' : ''}${dFr(d.date)}${d.envoye ? ` · <span class="doc-env">✉ envoyé le ${new Date(d.envoye.date).toLocaleDateString('fr-FR')}</span>` : ''}</span><span class="doc-liens"><a class="doc-pdf" href="facture.html?ouvrir=${encodeURIComponent(d.id)}&pdf=1" title="Télécharger le PDF">⬇ PDF</a><a class="doc-ouvrir" href="facture.html?ouvrir=${encodeURIComponent(d.id)}">Modifier</a><button type="button" class="doc-voir" data-apercu="${esc(d.id)}">Aperçu</button><button type="button" class="doc-suppr" data-suppr-doc="${esc(d.id)}">Supprimer</button></span></div>${des.length ? `<div class="doc-lignes">${esc(des.join(' · '))}</div>` : ''}${conv ? `<div class="doc-conv-l">${conv}</div>` : ''}${pay}</div>`;
   }
+
+  // ---------- Aperçu d'un document sans le rouvrir ----------
+  function apercu(id){
+    const d = (C.documents() || []).find(x => x.id === id) || {};
+    const u = encodeURIComponent(id);
+    const f = document.createElement('div'); f.className = 'va-fond';
+    f.innerHTML = `<div class="va-boite" role="dialog" aria-modal="true" aria-label="Aperçu du document">
+      <div class="va-tete"><b>${esc(MOT[d.type] || 'Document')} ${esc(d.numero || '')}</b><a class="va-mod" href="facture.html?ouvrir=${u}">Modifier</a><a class="va-pdf" href="facture.html?ouvrir=${u}&pdf=1">⬇ PDF</a><button type="button" class="va-x" data-fermer aria-label="Fermer">×</button></div>
+      <iframe src="facture.html?ouvrir=${u}&pdf=1&apercu=1" title="Aperçu"></iframe></div>`;
+    const fermer = () => { f.remove(); document.removeEventListener('keydown', echap); };
+    const echap = e => { if (e.key === 'Escape') fermer(); };
+    f.addEventListener('click', e => { if (e.target === f || e.target.closest('[data-fermer]')) fermer(); });
+    document.addEventListener('keydown', echap);
+    document.body.appendChild(f);
+  }
+  document.addEventListener('click', e => { const b = e.target.closest('[data-apercu]'); if (b){ e.preventDefault(); apercu(b.dataset.apercu); } });
   // ---------- Paiement des factures ----------
   const jourISO = (t = new Date()) => `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`;
   const echeance = d => (d.snap && d.snap.doc && d.snap.doc.echeance) || '';
