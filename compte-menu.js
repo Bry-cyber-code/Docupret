@@ -84,6 +84,12 @@
   .cm-txt{flex:1;min-width:0;display:grid;gap:1px}
   .cm-txt b{font-size:1rem;font-weight:700}
   .cm-txt span{font-size:.78rem;color:var(--gris,#667)}
+  .cm-raccourcis{background:var(--fond,#F6F9FD);border-bottom:1px solid var(--bord,#e2e8f0)}
+  .cm-lien.cm-sous{padding:10px 16px 10px 28px;border-bottom:1px solid var(--bord,#e2e8f0)}
+  .cm-raccourcis .cm-lien.cm-sous:last-child{border-bottom:0}
+  .cm-sous .cm-ico{width:30px;height:30px}
+  .cm-sous .cm-txt b{font-size:.92rem}
+  .cm-nb.rouge{background:#C23B36}
   .cm-nb{font-size:.74rem;font-weight:700;background:var(--bleu,#4A7BD0);color:#fff;border-radius:50px;padding:2px 8px;flex-shrink:0}
   .cm-note{font-size:.76rem;color:var(--gris,#667);padding:14px 16px;line-height:1.45;margin-top:auto}
   .cm-avatar.logo{background:#fff;border:1px solid var(--bord,#e2e8f0);overflow:hidden}
@@ -92,6 +98,13 @@
   @media (min-width:561px){.compte-lien img.compte-logo{width:22px;height:22px}}
   @media (prefers-reduced-motion:reduce){.cm{transition:none}}`;
 
+  const sv = d => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
+  const ICO2 = {
+    factures: sv('<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/>'),
+    devis: sv('<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M9 10h6M9 14h4"/>'),
+    impayees: sv('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'),
+    brouillons: sv('<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>')
+  };
   const ICO = {
     clients: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
     param: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1.08-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>',
@@ -126,6 +139,15 @@
       }
     });
   }
+  // Raccourcis vers les rubriques de « Mes clients » (comptes connectés)
+  function raccourcis(){
+    const d = (lire('docupret_documents', []) || []).filter(x => x && !x.supprime);
+    const fin = d.filter(x => !x.brouillon);
+    const n = {factures: fin.filter(x => x.type !== 'devis').length, devis: fin.filter(x => x.type === 'devis').length,
+      impayees: fin.filter(x => x.type === 'facture' && !x.paye).length, brouillons: d.filter(x => x.brouillon).length};
+    const L = [['factures', 'Factures', 'Payées, reçus et avoirs'], ['devis', 'Devis', 'En attente, acceptés, facturés'], ['impayees', 'Impayées', 'Factures à encaisser'], ['brouillons', 'Brouillons', 'Documents à finir']];
+    return `<div class="cm-raccourcis">${L.map(([k, t, st]) => `<a class="cm-lien cm-sous" href="compte.html#${k}"><span class="cm-ico">${ICO2[k]}</span><span class="cm-txt"><b>${t}</b><span>${st}</span></span>${n[k] ? `<span class="cm-nb${k === 'impayees' ? ' rouge' : ''}">${n[k]}</span>` : ''}</a>`).join('')}</div>`;
+  }
   function remplir(){
     const qui = lire('docupret_compte', null), email = (window.Compte && window.Compte.connecte && !window.Compte.connecte()) ? '' : (qui && qui.email);
     const nb = (lire('docupret_clients', []) || []).filter(c => c && !c.supprime).length;
@@ -135,6 +157,7 @@
         : `<span class="cm-avatar vide">${ICO.compte}</span><div><b>Vous n'êtes pas connecté</b><small>Gratuit, avec une simple adresse e-mail</small></div>`}</div>
       ${email ? '' : '<a class="cm-connexion" href="compte.html#compte">Se connecter ou créer un compte</a>'}
       <a class="cm-lien" href="compte.html#clients"><span class="cm-ico">${ICO.clients}</span><span class="cm-txt"><b>Mes clients${email ? '' : ' 🔒'}</b><span>${email ? 'Coordonnées enregistrées' : 'Avec un compte gratuit'}</span></span>${email && nb ? `<span class="cm-nb">${nb}</span>` : ''}</a>
+      ${email ? raccourcis() : ''}
       <a class="cm-lien" href="compte.html#parametres"><span class="cm-ico">${ICO.param}</span><span class="cm-txt"><b>Paramètres${email ? '' : ' 🔒'}</b><span>${email ? 'Mon entreprise, préférences' : 'Avec un compte gratuit'}</span></span></a>
       <a class="cm-lien" href="compte.html#compte"><span class="cm-ico">${ICO.compte}</span><span class="cm-txt"><b>Compte</b><span>${email ? 'Mot de passe, déconnexion' : 'Connexion, inscription'}</span></span></a>
       ${email && lire('docupret_admin', null) !== null ? `<a class="cm-lien" href="stats.html"><span class="cm-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></span><span class="cm-txt"><b>Statistiques</b><span>Visites et documents du site</span></span></a>` : ''}
