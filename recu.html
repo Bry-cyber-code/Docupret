@@ -210,6 +210,26 @@
   .env-ajout-pj svg{width:19px;height:19px}
   .env-ajout-pj span{font-weight:500;color:var(--gris);font-size:.82rem}
   .env-ajout-pj input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+  .lot-barre{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:0 0 10px}
+  .lot-barre:empty{display:none}
+  .lot-onglet{position:relative;display:grid;text-align:left;border:1.5px solid var(--bord);background:#fff;border-radius:12px;padding:7px 30px 7px 11px;font:inherit;font-size:.85rem;font-weight:700;color:var(--texte);cursor:pointer;min-width:0}
+  .lot-onglet small{font-weight:500;font-size:.72rem;color:var(--gris);white-space:nowrap}
+  .lot-onglet.on{border-color:var(--bleu);background:var(--bleu-clair);color:var(--bleu-fonce)}
+  .lot-onglet .lot-x{position:absolute;top:50%;right:6px;transform:translateY(-50%);width:20px;height:20px;border-radius:50%;display:grid;place-items:center;color:#C23B36;font-size:1rem;line-height:1}
+  .lot-onglet .lot-x:hover{background:#FDECEA}
+  .lot-ajout{border:1.5px dashed #9FB9E6;background:#F5F8FE;color:var(--bleu-fonce);border-radius:12px;padding:9px 13px;font:inherit;font-size:.86rem;font-weight:800;cursor:pointer}
+  .lot-ajout:hover{border-color:var(--bleu)}
+  .lot-aide{flex-basis:100%;font-size:.76rem;color:var(--gris);margin:0 2px}
+  .lot-paye{display:grid;gap:8px;max-height:52vh;overflow-y:auto}
+  .lot-paye-l{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px solid var(--bord);border-radius:12px;padding:10px 12px;background:#fff}
+  .lot-paye-l b{display:block;font-size:.92rem}
+  .lot-paye-l small{color:var(--gris);font-size:.8rem}
+  .lot-seg{display:flex;background:var(--fond);border:1px solid var(--bord);border-radius:10px;padding:3px;gap:3px;flex-shrink:0}
+  .lot-seg button{border:0;background:none;border-radius:8px;padding:7px 9px;font:inherit;font-size:.8rem;font-weight:700;color:var(--gris);cursor:pointer}
+  .lot-seg button.on[data-v="non"]{background:#fff;color:#A8322D;box-shadow:0 1px 3px rgba(30,42,66,.12)}
+  .lot-seg button.on[data-v="oui"]{background:#fff;color:#1F6B3A;box-shadow:0 1px 3px rgba(30,42,66,.12)}
+  .lot-tout{display:flex;gap:8px}
+  .lot-tout button{flex:1;border:1.5px solid var(--bord);background:#fff;border-radius:10px;padding:9px;font:inherit;font-size:.84rem;font-weight:700;cursor:pointer}
   .env-docs{width:100%;font:inherit;font-weight:700;font-size:.92rem}
   .env-choix{border:1.5px solid var(--bord);border-radius:12px;padding:10px;display:grid;gap:8px;background:#FBFCFE}
   .env-choix-q{font:inherit;font-size:16px;padding:9px 11px;border:1.5px solid var(--bord);border-radius:10px;width:100%}
@@ -990,6 +1010,7 @@ window.DOCU_AFFICHAGE = (function(){
 
     <!-- ===== APERÇU ===== -->
     <div class="panneau" id="p-apercu">
+      <div class="lot-barre" id="lot-barre"></div>
       <div class="tel-barre" id="tel-barre">
         <button type="button" id="tel-reglages" data-grp="style"><span>🎨</span>Modèle, couleur</button>
         <button type="button" id="tel-apercu"><span>👁</span>Aperçu</button>
@@ -1641,7 +1662,8 @@ window.DOCU_AFFICHAGE = (function(){
     if (b.dataset.t === etat.type) return;
     oublierBrouillon(etat.type);
     etat.type = b.dataset.t; etat.fini = '';
-    etat.doc.numero = prochainNumero(etat.type);
+    etat.doc.numero = lotActif() ? numeroLibre(etat.type) : prochainNumero(etat.type);
+    if (lotActif()) setTimeout(rendreLot, 0);
     rendreGalerie();
     try{ history.replaceState(null, '', (window.DOCU_URL_TYPE && window.DOCU_URL_TYPE[etat.type]) || ('?type=' + etat.type)); }catch(err){}
     remplirChamps(); majVisibilite(); rendreApercu(); sauver();
@@ -1779,6 +1801,7 @@ window.DOCU_AFFICHAGE = (function(){
 
   // Nouveau document
   $('nouveau').addEventListener('click', () => {
+    if (lotActif()) return demander(`Abandonner les ${lot.docs.length} documents en cours et repartir de zéro ? Ceux qui ne sont ni téléchargés ni envoyés seront effacés.`, 'Repartir de zéro', () => { lot = null; payeLot = null; sauverLot(); nouveauDocument(); rendreLot(); });
     const vide = !String(etat.cl.nom || '').trim() && !etat.lignes.some(l => String(l.des || '').trim() || num(l.pu));
     if (vide || (etat.fini && etat.fini === etat.doc.numero)){ nouveauDocument(); alerte(`Nouveau document : ${etat.doc.numero} ✓`); return; }
     demander('Commencer un nouveau document ? Le client et les prestations seront vidés.', 'Nouveau document', nouveauDocument);
@@ -1896,8 +1919,141 @@ window.DOCU_AFFICHAGE = (function(){
     if (m) etat.compteurs[etat.type] = Math.max(etat.compteurs[etat.type] || 0, parseInt(m[1], 10));
     sauver();
     const copie = JSON.parse(JSON.stringify({type: etat.type, modele: etat.modele, couleur: etat.couleur, cl: etat.cl, doc: etat.doc, cols: etat.cols, tvaMode: etat.tvaMode, franchise: etat.franchise, tauxDefaut: etat.tauxDefaut, lignes: etat.lignes, paiement: {notes: etat.paiement.notes}, masques: etat.masques, extra: etat.extra, em: Object.assign({}, etat.em, {logo: ''}), paiementComplet: etat.paiement, depuis: etat.depuis || ''}));
-    window.dispatchEvent(new CustomEvent('docupret-telecharge', {detail: {type: etat.type, numero: etat.doc.numero, date: etat.doc.date, total: k.totalTTC, depuis: etat.depuis || '', ouvert: etat.ouvert || '', envoye: envoye || null, snap: copie, paye: reponsePaye && reponsePaye.numero === etat.doc.numero ? reponsePaye.paye : undefined}}));
+    window.dispatchEvent(new CustomEvent('docupret-telecharge', {detail: {type: etat.type, numero: etat.doc.numero, date: etat.doc.date, total: k.totalTTC, depuis: etat.depuis || '', ouvert: etat.ouvert || '', envoye: envoye || null, snap: copie, paye: payeLot && etat.doc.numero in payeLot ? payeLot[etat.doc.numero] : reponsePaye && reponsePaye.numero === etat.doc.numero ? reponsePaye.paye : undefined}}));
   }
+
+  // ---------- Plusieurs documents d'affilée (lot) ----------
+  // On remplit le 1er document, « ＋ 2e facture » le met de côté et en ouvre un nouveau (même client, numéro suivant)…
+  // Télécharger ou Envoyer traite ensuite tous les documents du lot d'un coup (un seul e-mail).
+  const CLE_LOT = 'docupret_lot';
+  let lot = null, payeLot = null;
+  try{ const l = JSON.parse(localStorage.getItem(CLE_LOT)); if (!MODE_PDF && l && Array.isArray(l.docs) && l.docs.length > 1 && l.docs[l.i] && l.docs[l.i].doc && l.docs[l.i].doc.numero === etat.doc.numero) lot = l; }catch(e){}
+  const lotActif = () => !!(lot && lot.docs.length > 1);
+  const motType = t => ({facture: 'Facture', devis: 'Devis', recu: 'Reçu', avoir: 'Avoir'})[t] || 'Document';
+  const motsType = t => ({facture: 'factures', devis: 'devis', recu: 'reçus', avoir: 'avoirs'})[t] || 'documents';
+  const ordinal = n => n === 1 ? '1re' : n + 'e';
+  function sauverLot(){ try{ if (lotActif()) localStorage.setItem(CLE_LOT, JSON.stringify(lot)); else localStorage.removeItem(CLE_LOT); }catch(e){} }
+  function capturer(){ const d = instantane(); d._total = calculer().totalTTC; return d; }
+  // Exécute fn avec un autre document du lot à la place du document affiché, puis remet tout en place
+  async function avecDoc(snap, fn){
+    const garde = etat; etat = JSON.parse(JSON.stringify(etat)); enAutreDoc = true;
+    try{ appliquerBrouillon(snap); return await fn(); }
+    finally{ const c = etat.compteurs; etat = garde; enAutreDoc = false; for (const t in c) etat.compteurs[t] = Math.max(etat.compteurs[t] || 0, c[t] || 0); }
+  }
+  function numeroLibre(t){
+    const pris = (lot ? lot.docs : []).map(d => d.doc && d.doc.numero).concat(etat.doc.numero);
+    let n = prochainNumero(t);
+    const plus = x => x.replace(/(\d+)(\D*)$/, (m, c, f) => String(parseInt(c, 10) + 1).padStart(c.length, '0') + f);
+    for (let i = 0; i < 500 && pris.includes(n); i++) n = plus(n);
+    return n;
+  }
+  function afficherDoc(i){
+    lot.i = i; appliquerBrouillon(lot.docs[i]); delete etat._total;
+    rendreGalerie(); remplirChamps(); rendreLignes(); majVisibilite(); rendreApercu(); if (feuille()) majOutils();
+    try{ history.replaceState(null, '', (window.DOCU_URL_TYPE && window.DOCU_URL_TYPE[etat.type]) || ('?type=' + etat.type)); }catch(e){}
+    sauver(); sauverLot(); rendreLot();
+  }
+  function ajouterAuLot(){
+    if (!lot) lot = {docs: [capturer()], i: 0}; else lot.docs[lot.i] = capturer();
+    payeLot = null;
+    const t = etat.type, d = aujourdhui(), n = JSON.parse(JSON.stringify(lot.docs[lot.i]));
+    n.lignes = [ligneVide()]; n.paiement = {notes: ''}; n.extra = {cl: n.extra ? n.extra.cl : [], meta: []};
+    n.depuis = ''; n.ouvert = ''; n.brouillonId = ''; n._total = 0;
+    n.doc = Object.assign({}, etatDefaut().doc, {numero: numeroLibre(t), date: d, echeance: plusJours(d, DELAIS[etat.paiement.conditions] ?? 30), validite: plusJours(d, 30)});
+    lot.docs.push(n);
+    afficherDoc(lot.docs.length - 1);
+    window.scrollTo({top: 0, behavior: 'smooth'});
+    alerte(`${motType(t)} ${lot.docs.length} : n° ${n.doc.numero} ✓ Le client est déjà rempli.`);
+  }
+  function retirerDuLot(i){
+    const d = lot.docs[i];
+    demander(`Retirer ${motType(d.type).toLowerCase()} ${i + 1} (n° ${d.doc.numero}) de cet envoi groupé ? Son contenu sera effacé.`, 'Retirer', () => {
+      if (lot.i !== i) lot.docs[lot.i] = capturer();
+      lot.docs.splice(i, 1); payeLot = null;
+      const j = Math.min(lot.i > i ? lot.i - 1 : lot.i === i ? Math.max(0, i - 1) : lot.i, lot.docs.length - 1);
+      if (lot.docs.length < 2){ const reste = lot.docs[0]; lot.i = 0; if (reste.doc.numero !== etat.doc.numero) afficherDoc(0); lot = null; sauverLot(); rendreLot(); return; }
+      afficherDoc(j);
+    });
+  }
+  function rendreLot(){
+    const z = $('lot-barre'); if (!z) return;
+    if (MODE_PDF){ z.innerHTML = ''; return; }
+    const t = etat.type;
+    if (!lotActif()){
+      z.innerHTML = `<button type="button" class="lot-ajout" data-lot-ajout>＋ ${ordinal(2)} ${motType(t).toLowerCase()}</button><span class="lot-aide">Plusieurs ${motsType(t)} pour le même client ? Ajoutez-les ici, puis envoyez-les dans un seul e-mail.</span>`;
+      return;
+    }
+    lot.docs[lot.i] = capturer();
+    z.innerHTML = lot.docs.map((d, i) => `<button type="button" class="lot-onglet${i === lot.i ? ' on' : ''}" data-lot-i="${i}">${motType(d.type)} ${i + 1}<small>${esc(d.doc.numero)} · ${esc(eur(d._total || 0))}</small><span class="lot-x" data-lot-x="${i}" role="button" aria-label="Retirer ce document">×</span></button>`).join('')
+      + `<button type="button" class="lot-ajout" data-lot-ajout>＋ ${ordinal(lot.docs.length + 1)} ${motType(t).toLowerCase()}</button>`
+      + `<span class="lot-aide">« Télécharger » et « Envoyer » traitent les ${lot.docs.length} documents d'un coup.</span>`;
+  }
+  $('lot-barre').addEventListener('click', e => {
+    if (e.target.closest('[data-lot-ajout]')) return ajouterAuLot();
+    const x = e.target.closest('[data-lot-x]'); if (x){ e.stopPropagation(); return retirerDuLot(+x.dataset.lotX); }
+    const o = e.target.closest('[data-lot-i]'); if (o && +o.dataset.lotI !== lot.i){ lot.docs[lot.i] = capturer(); afficherDoc(+o.dataset.lotI); }
+  });
+  // Tenir à jour les montants des onglets pendant la saisie
+  let minLot; document.addEventListener('input', () => { if (!lotActif()) return; clearTimeout(minLot); minLot = setTimeout(() => { rendreLot(); sauverLot(); }, 400); });
+  // Vérifie tous les documents du lot ; ouvre celui qui est incomplet
+  async function lotIncomplet(){
+    lot.docs[lot.i] = capturer();
+    for (let i = 0; i < lot.docs.length; i++){
+      const m = await avecDoc(lot.docs[i], () => manqueDoc(calculer()));
+      if (m){ if (i !== lot.i) afficherDoc(i); alerte(`${motType(lot.docs[i].type)} ${i + 1} : ${m}`); return true; }
+    }
+    return false;
+  }
+  // Fin du lot : chaque document est enregistré (Mon compte, numéros) comme s'il avait été fait seul
+  async function terminerLot(envoye){
+    lot.docs[lot.i] = capturer();
+    for (let i = 0; i < lot.docs.length; i++){
+      if (i === lot.i) continue;
+      await avecDoc(lot.docs[i], () => apresSortie(calculer(), envoye));
+    }
+    apresSortie(calculer(), envoye);
+    const n = lot.docs.length; lot = null; payeLot = null; sauverLot(); rendreLot();
+    return n;
+  }
+  async function telechargerLot(){
+    if (await lotIncomplet()) return;
+    const bouton = $('telecharger'), lib = bouton.querySelector('.lib'), avantTxt = lib.innerHTML;
+    bouton.disabled = true;
+    try{
+      for (let i = 0; i < lot.docs.length; i++){
+        lib.textContent = `PDF ${i + 1} / ${lot.docs.length}…`;
+        if (i === lot.i){ if (window.html2pdf) await pdfDepuisPage(optionsPdf(false)); }
+        else await avecDoc(lot.docs[i], () => window.html2pdf ? pdfDepuisPage(optionsPdf(false)) : null);
+      }
+      const n = await terminerLot();
+      alerte(`${n} documents téléchargés ✓`);
+    }catch(err){ alerte('Oups, un PDF n\'a pas pu être créé. Réessayez.'); }
+    finally{ bouton.disabled = false; lib.innerHTML = avantTxt; }
+  }
+  // Payée ou pas : une ligne par facture du lot
+  function demanderPayeLot(bouton){
+    lot.docs[lot.i] = capturer();
+    const fac = lot.docs.map((d, i) => ({d, i})).filter(x => x.d.type === 'facture');
+    const choix = {}; fac.forEach(x => { choix[x.d.doc.numero] = payeLot && x.d.doc.numero in payeLot ? payeLot[x.d.doc.numero] : false; });
+    const f = document.createElement('div'); f.className = 'env-fond';
+    const lignes = () => fac.map(x => `<div class="lot-paye-l"><div><b>Facture ${x.i + 1} · ${esc(x.d.doc.numero)}</b><small>${esc(x.d.cl && x.d.cl.nom || 'Sans client')} · ${esc(eur(x.d._total || 0))}</small></div><div class="lot-seg" data-n="${esc(x.d.doc.numero)}"><button type="button" data-v="non" class="${choix[x.d.doc.numero] ? '' : 'on'}">Impayée</button><button type="button" data-v="oui" class="${choix[x.d.doc.numero] ? 'on' : ''}">✓ Payée</button></div></div>`).join('');
+    f.innerHTML = `<div class="env-boite paye-boite" role="dialog" aria-modal="true" aria-label="Factures déjà payées ?">
+      <div class="env-tete"><b>Ces factures sont-elles déjà payées ?</b><button type="button" data-fermer aria-label="Fermer">×</button></div>
+      <p class="paye-info">Les factures payées iront dans Mon compte › Factures, les autres dans Impayées.</p>
+      <div class="lot-tout"><button type="button" data-tout="non">Toutes impayées</button><button type="button" data-tout="oui">Toutes payées</button></div>
+      <div class="lot-paye">${lignes()}</div>
+      <button type="button" class="env-gmail" data-continuer>Continuer</button>
+    </div>`;
+    const fermer = () => f.remove();
+    f.addEventListener('click', ev => {
+      if (ev.target === f || ev.target.closest('[data-fermer]')) return fermer();
+      const tt = ev.target.closest('[data-tout]'); if (tt){ fac.forEach(x => { choix[x.d.doc.numero] = tt.dataset.tout === 'oui'; }); f.querySelector('.lot-paye').innerHTML = lignes(); return; }
+      const b = ev.target.closest('.lot-seg button'); if (b){ choix[b.parentElement.dataset.n] = b.dataset.v === 'oui'; b.parentElement.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); return; }
+      if (ev.target.closest('[data-continuer]')){ payeLot = Object.assign({}, choix); fermer(); $(bouton).click(); }
+    });
+    document.body.appendChild(f);
+  }
+  rendreLot();
 
   // ---------- Facture déjà payée ou pas ? (comptes) ----------
   // Avant de télécharger ou d'envoyer une facture, on demande si elle est déjà payée :
@@ -1906,6 +2062,13 @@ window.DOCU_AFFICHAGE = (function(){
   const ilYAQuestion = () => !MODE_PDF && etat.type === 'facture' && window.Compte && Compte.utilisateur();
   document.addEventListener('click', e => {
     const b = e.target.closest && e.target.closest('#telecharger, #envoyer');
+    if (b && lotActif()){
+      if (MODE_PDF || !(window.Compte && Compte.utilisateur())) return;
+      lot.docs[lot.i] = capturer();
+      const fac = lot.docs.filter(d => d.type === 'facture');
+      if (!fac.length || (payeLot && fac.every(d => d.doc.numero in payeLot))) return;
+      e.preventDefault(); e.stopImmediatePropagation(); demanderPayeLot(b.id); return;
+    }
     if (!b || !ilYAQuestion() || manqueDoc(calculer())) return;
     if (reponsePaye && reponsePaye.numero === etat.doc.numero) return;
     e.preventDefault(); e.stopImmediatePropagation();
@@ -1934,6 +2097,7 @@ window.DOCU_AFFICHAGE = (function(){
   }
 
   $('telecharger').addEventListener('click', async () => {
+    if (lotActif()) return telechargerLot();
     const k = calculer(), manque = manqueDoc(k);
     if (manque){ alerte(manque); if (window.innerWidth < 960) montrer('p-form'); else allerAuManque(); return; }
     const bouton = $('telecharger'), lib = bouton.querySelector('.lib'), avantTxt = lib.innerHTML;
@@ -1971,7 +2135,8 @@ window.DOCU_AFFICHAGE = (function(){
   }
   const emailOk = v => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(String(v).trim());
 
-  $('envoyer').addEventListener('click', () => {
+  $('envoyer').addEventListener('click', async () => {
+    if (lotActif() && await lotIncomplet()) return;
     const k = calculer(), manque = manqueDoc(k);
     if (manque){ alerte(manque); if (window.innerWidth < 960) montrer('p-form'); else allerAuManque(); return; }
     const G = window.Gmail, C = window.Compte;
@@ -2003,7 +2168,7 @@ window.DOCU_AFFICHAGE = (function(){
     const taille = o => o < 1048576 ? Math.max(1, Math.round(o / 1024)) + ' Ko' : (o / 1048576).toFixed(1).replace('.', ',') + ' Mo';
     function rendrePJ(){
       $f('#env-pjs').innerHTML = `<span class="env-pj">📄 ${esc(nomFichier())} <em>joint automatiquement</em></span>` +
-        autres.map((x, i) => `<span class="env-pj">📄 ${esc(MOTS[x.d.type] ? MOTS[x.d.type][1] : 'Document')} ${esc(x.d.numero)} <em>${esc(eur(x.d.total))}${x.file ? '' : ' · préparation…'}</em><button type="button" data-retirer-doc="${i}" aria-label="Retirer ${esc(x.d.numero)}">×</button></span>`).join('') +
+        autres.map((x, i) => `<span class="env-pj">📄 ${esc(MOTS[x.d.type] ? MOTS[x.d.type][1] : 'Document')} ${esc(x.d.numero)} <em>${esc(eur(x.d.total))}${x.file ? '' : ' · préparation…'}</em>${x.lotDoc ? '' : `<button type="button" data-retirer-doc="${i}" aria-label="Retirer ${esc(x.d.numero)}">×</button>`}</span>`).join('') +
         pieces.map((p, i) => `<span class="env-pj">📎 ${esc(p.name)} <em>${taille(p.size)}</em><button type="button" data-retirer-pj="${i}" aria-label="Retirer ${esc(p.name)}">×</button></span>`).join('');
     }
     // Les photos sont réduites (2000 px, JPEG) : l'e-mail reste léger et part plus vite
@@ -2050,7 +2215,10 @@ window.DOCU_AFFICHAGE = (function(){
     function preparerAutres(){
       chaine = chaine.then(async () => {
         try{ await preparer(); }catch(e){}
-        for (const x of autres) if (!x.file){ try{ x.file = await pdfAutreDocument(x.d); }catch(e){ x.erreur = true; } if (f.isConnected) rendrePJ(); }
+        for (const x of autres) if (!x.file){
+          try{ x.file = x.lotDoc ? await avecDoc(x.lotDoc, async () => { const nom = nomFichier(); return new File([await pdfDepuisPage(optionsPdf(true))], nom, {type: 'application/pdf'}); }) : await pdfAutreDocument(x.d); }catch(e){ x.erreur = true; }
+          if (f.isConnected) rendrePJ();
+        }
       });
       return chaine.then(() => { const ko = autres.find(x => !x.file); if (ko) throw new Error(`Le PDF de ${leDoc(ko.d.type)} ${ko.d.numero} n'a pas pu être créé. Retirez-le ou réessayez.`); return autres.map(x => x.file); });
     }
@@ -2071,6 +2239,12 @@ window.DOCU_AFFICHAGE = (function(){
       });
     });
     f.addEventListener('click', e => { const b = e.target.closest('[data-retirer-doc]'); if (b){ autres.splice(+b.dataset.retirerDoc, 1); erreur(''); rendrePJ(); majMessage(); } });
+    // Lot en cours : les autres documents du lot partent automatiquement dans le même e-mail
+    if (lotActif()){
+      lot.docs[lot.i] = capturer();
+      autres = lot.docs.filter((d, i) => i !== lot.i).map(d => ({d: {id: '', type: d.type, numero: d.doc.numero, total: d._total || 0}, lotDoc: d, file: null}));
+      majMessage(); preparerAutres().catch(() => {});
+    }
     rendrePJ();
     const fermer = () => f.remove();
     f.addEventListener('click', e => { if (e.target === f || e.target.closest('[data-fermer]')) fermer(); });
@@ -2117,9 +2291,10 @@ window.DOCU_AFFICHAGE = (function(){
         bouton.lastChild.textContent = 'Envoi…';
         await G.envoyer(jeton, {a, sujet: $f('#env-sujet').value.trim() || nomFichier(), texte: $f('#env-msg').value, fichier: nomFichier(), pdf: blob, nom: etat.em.nom, pieces: [...pdfAutres, ...pieces]});
         const quand = new Date().toISOString();
-        autres.forEach(x => { try{ C.majDocument(x.d.id, {envoye: {date: quand, a}}); }catch(e){} });
+        autres.forEach(x => { if (!x.lotDoc && x.d.id) try{ C.majDocument(x.d.id, {envoye: {date: quand, a}}); }catch(e){} });
         if (etat.cl.email !== a){ etat.cl.email = a; remplirChamps(); }
-        apresSortie(k, {date: new Date().toISOString(), a});
+        if (lotActif()){ lot.docs.forEach(d => { if (d.cl && !d.cl.email) d.cl.email = a; }); await terminerLot({date: quand, a}); }
+        else apresSortie(k, {date: new Date().toISOString(), a});
         try{ window.DocuStats && window.DocuStats.evenement('envoi_gmail'); }catch(e){}
         fermer();
         alerte(autres.length ? `${autres.length + 1} documents envoyés à ${a} ✓` : `${Mot} envoyé${etat.type === 'facture' ? 'e' : ''} à ${a} ✓`);
@@ -2152,7 +2327,8 @@ window.DOCU_AFFICHAGE = (function(){
         if (navigator.canShare && navigator.canShare({files: tous})){
           await navigator.share({files: tous, title: sujet, text: texte});
           try{ window.DocuStats && window.DocuStats.evenement('envoi_autre_appli'); }catch(e){}
-          apresSortie(k); fermer(); return;
+          if (lotActif()) await terminerLot(); else apresSortie(k);
+          fermer(); return;
         }
       }catch(e){ if (e && e.name === 'AbortError') return; }
       // Ordinateur : on télécharge le PDF et on ouvre la messagerie avec le message prêt
@@ -2161,7 +2337,7 @@ window.DOCU_AFFICHAGE = (function(){
       setTimeout(() => URL.revokeObjectURL(url), 30000);
       pdfAutres.forEach((fi, i) => setTimeout(() => { const u = URL.createObjectURL(fi), l2 = document.createElement('a'); l2.href = u; l2.download = fi.name; document.body.appendChild(l2); l2.click(); l2.remove(); setTimeout(() => URL.revokeObjectURL(u), 30000); }, 400 * (i + 1)));
       location.href = `mailto:${encodeURIComponent(a)}?subject=${encodeURIComponent(sujet)}&body=${encodeURIComponent(texte + '\n\n(Pièce jointe : ' + nomFichier() + ')')}`;
-      apresSortie(k);
+      if (lotActif()) await terminerLot(); else apresSortie(k);
       alerte(pieces.length ? 'Le PDF est téléchargé : joignez-le à votre e-mail, avec vos pièces jointes.' : 'Le PDF est téléchargé : joignez-le à votre e-mail.');
     });
   });
