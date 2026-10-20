@@ -153,13 +153,34 @@
   .etape-num{width:34px;height:34px;border-radius:50%;background:var(--bleu);color:#fff;font-weight:700;display:grid;place-items:center;margin:0 auto 8px}
   .etape b{display:block;font-size:.95rem}
   .etape span{color:var(--gris);font-size:.8rem}
-  .avantages{background:var(--blanc);border:1px solid var(--bord);border-radius:var(--rayon);padding:18px 18px 16px;margin:16px 0 10px}
-  .avantages h2{font-size:1.05rem;margin-bottom:8px}
-  .avantages ul{list-style:none;padding:0;display:grid;gap:8px}
-  .avantages li{font-size:.9rem;color:#3B4558;padding-left:22px;position:relative;line-height:1.45}
-  .avantages li::before{content:"✓";position:absolute;left:0;color:var(--bleu);font-weight:800}
-  .avantages p{margin-top:12px;font-size:.86rem}
-  .avantages a{color:var(--bleu);font-weight:600}
+  .compar{margin:18px 0 10px;scroll-margin-top:80px}
+  .compar h2{font-size:1.2rem;line-height:1.3}
+  .compar h2 span{color:var(--bleu)}
+  .compar-intro{font-size:.9rem;color:var(--gris);margin:4px 0 12px;line-height:1.5}
+  .compar-grille{display:grid;gap:12px}
+  @media (min-width:700px){.compar-grille{grid-template-columns:1fr 1.15fr;align-items:start}}
+  .cp-carte{position:relative;background:var(--blanc);border:1px solid var(--bord);border-radius:var(--rayon);padding:16px 16px 14px}
+  .cp-top{border:2px solid var(--bleu);background:linear-gradient(180deg,#F1F6FE 0%,#fff 55%);box-shadow:0 10px 28px rgba(74,123,208,.16)}
+  .cp-badge{position:absolute;top:-11px;right:14px;background:var(--bleu);color:#fff;font-size:.72rem;font-weight:800;border-radius:50px;padding:3px 10px;letter-spacing:.02em}
+  .cp-tete{margin-bottom:10px}
+  .cp-tete b{display:block;font-size:1.08rem}
+  .cp-top .cp-tete b{color:var(--bleu-fonce)}
+  .cp-tete span{font-size:.82rem;color:var(--gris)}
+  .compar ul{list-style:none;padding:0;margin:0;display:grid;gap:7px}
+  .compar li{display:flex;align-items:flex-start;gap:9px;font-size:.88rem;line-height:1.4;color:#2C3547}
+  .compar li i{font-style:normal;flex-shrink:0;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:.72rem;font-weight:900;margin-top:1px}
+  .cp-oui{background:#DDF3E7;color:#1E8A55}
+  .cp-non{background:#F1F3F7;color:#A0A8B8}
+  .compar li.cp-off{color:#9AA3B2}
+  .compar li.cp-off b{font-weight:600}
+  .cp-btn{display:block;text-align:center;margin-top:14px;background:var(--bleu);color:#fff!important;font-weight:800;border-radius:50px;padding:12px 16px;text-decoration:none;box-shadow:0 6px 16px rgba(74,123,208,.3)}
+  .cp-btn:hover{background:var(--bleu-fonce)}
+  .cp-note{display:block;margin-top:10px;font-size:.74rem;color:var(--gris);line-height:1.45}
+  .cp-note a{color:var(--bleu);font-weight:600}
+  .atout-compte{display:inline-flex;align-items:center;gap:6px;margin:8px auto 0;background:linear-gradient(135deg,#4A7BD0,#2F5DAE);color:#fff!important;border-radius:50px;padding:6px 14px;font-size:.82rem;font-weight:700;text-decoration:none;box-shadow:0 4px 12px rgba(74,123,208,.25);max-width:100%}
+  .atout-compte svg{width:15px;height:15px;flex-shrink:0}
+  .atout-ligne{display:flex;justify-content:center}
+  @media (max-width:400px){.atout-compte{font-size:.74rem;padding:5px 11px}}
 
   /* Pied de page */
   footer{background:var(--blanc);border-top:1px solid var(--bord);margin-top:32px;padding:22px 0;font-size:.85rem;color:var(--gris)}
@@ -330,6 +351,7 @@
       <div class="atout"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>Sans inscription</div>
       <div class="atout"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>PDF immédiat</div>
     </div>
+    <div class="atout-ligne"><a class="atout-compte" href="#compar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.4 6.7 19.4l1.2-6L3.4 9.3l6-.7z"/></svg>Compte gratuit = clients et factures suivis →</a></div>
   </section>
 
   <section id="documents">
@@ -439,14 +461,22 @@
     <div class="etape"><div class="etape-num">3</div><b>Téléchargez</b><span>en PDF</span></div>
   </section>
 
-  <section class="avantages" aria-label="Avec un compte gratuit">
-    <h2>Avec un compte gratuit</h2>
-    <ul>
-      <li><b>Vos clients enregistrés</b>, retrouvés en un geste sur tous vos appareils.</li>
-      <li><b>Devis transformé en facture</b> en un seul clic.</li>
-      <li><b>Envoi par e-mail depuis votre Gmail</b> : le devis ou la facture part de votre propre adresse, avec le PDF en pièce jointe. DocuPrêt demande seulement l'autorisation d'<i>envoyer</i> les documents que vous choisissez : il ne lit jamais vos e-mails.</li>
-    </ul>
-    <p><a href="compte.html#compte">Créer mon compte</a> · <a href="mentions-legales.html#confidentialite">Comment vos données sont protégées</a></p>
+  <section id="compar" class="compar" aria-label="Sans compte ou avec un compte gratuit">
+    <h2>Gratuit pour tous. <span>Encore mieux avec un compte.</span></h2>
+    <p class="compar-intro">Tout le site reste gratuit, sans inscription. Le compte gratuit, lui, vous fait gagner du temps à chaque facture.</p>
+    <div class="compar-grille">
+      <div class="cp-carte">
+        <div class="cp-tete"><b>Sans compte</b><span>Pour un document de temps en temps</span></div>
+        <ul><li class=""><i class="cp-oui" aria-label="Inclus">✓</i><span>Tous les documents, PDF immédiat</span></li><li class=""><i class="cp-oui" aria-label="Inclus">✓</i><span>Créateur de CV (20 modèles)</span></li><li class=""><i class="cp-oui" aria-label="Inclus">✓</i><span>Plusieurs factures à la suite</span></li><li class="cp-off"><i class="cp-non" aria-label="Non inclus">✕</i><span><b>Vos clients enregistrés</b>, remplis tout seuls</span></li><li class="cp-off"><i class="cp-non" aria-label="Non inclus">✕</i><span><b>Vos infos d'entreprise</b> déjà remplies</span></li><li class="cp-off"><i class="cp-non" aria-label="Non inclus">✕</i><span><b>Historique</b> de vos factures et devis</span></li><li class="cp-off"><i class="cp-non" aria-label="Non inclus">✕</i><span><b>Suivi des impayés</b> + alerte en rouge</span></li><li class="cp-off"><i class="cp-non" aria-label="Non inclus">✕</i><span><b>Devis accepté → facture</b> en 1 clic</span></li><li class="cp-off"><i class="cp-non" aria-label="Non inclus">✕</i><span><b>Brouillons</b> à finir plus tard</span></li><li class="cp-off"><i class="cp-non" aria-label="Non inclus">✕</i><span><b>Envoi depuis votre Gmail</b>, avec pièces jointes</span></li><li class="cp-off"><i class="cp-non" aria-label="Non inclus">✕</i><span><b>Sur tous vos appareils</b> : téléphone, PC</span></li></ul>
+      </div>
+      <div class="cp-carte cp-top">
+        <span class="cp-badge">Recommandé · 0 €</span>
+        <div class="cp-tete"><b>Compte gratuit</b><span>Pour facturer comme un pro, sans effort</span></div>
+        <ul><li class=""><i class="cp-oui" aria-label="Inclus">✓</i><span>Tous les documents, PDF immédiat</span></li><li class=""><i class="cp-oui" aria-label="Inclus">✓</i><span>Créateur de CV (20 modèles)</span></li><li class=""><i class="cp-oui" aria-label="Inclus">✓</i><span>Plusieurs factures à la suite</span></li><li class=""><i class="cp-oui" aria-label="Inclus">✓</i><span><b>Vos clients enregistrés</b>, remplis tout seuls</span></li><li class=""><i class="cp-oui" aria-label="Inclus">✓</i><span><b>Vos infos d'entreprise</b> déjà remplies</span></li><li class=""><i class="cp-oui" aria-label="Inclus">✓</i><span><b>Historique</b> de vos factures et devis</span></li><li class=""><i class="cp-oui" aria-label="Inclus">✓</i><span><b>Suivi des impayés</b> + alerte en rouge</span></li><li class=""><i class="cp-oui" aria-label="Inclus">✓</i><span><b>Devis accepté → facture</b> en 1 clic</span></li><li class=""><i class="cp-oui" aria-label="Inclus">✓</i><span><b>Brouillons</b> à finir plus tard</span></li><li class=""><i class="cp-oui" aria-label="Inclus">✓</i><span><b>Envoi depuis votre Gmail</b>, avec pièces jointes</span></li><li class=""><i class="cp-oui" aria-label="Inclus">✓</i><span><b>Sur tous vos appareils</b> : téléphone, PC</span></li></ul>
+        <a class="cp-btn" href="compte.html#compte">Créer mon compte gratuit →</a>
+        <small class="cp-note">Sans carte bancaire. Gmail : DocuPrêt peut seulement <i>envoyer</i> les documents que vous choisissez, il ne lit jamais vos e-mails. <a href="mentions-legales.html#confidentialite">Vos données</a></small>
+      </div>
+    </div>
   </section>
 
   <section class="guides-accueil" aria-label="Guides pratiques">
