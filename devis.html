@@ -582,6 +582,7 @@ window.DOCU_AFFICHAGE = (function(){
     .tel-barre .tel-sec{font-size:.8rem;padding:8px 6px;color:var(--gris);box-shadow:none}
     .tel-barre .tel-sec.verrouille::before{content:"🔒";font-size:.75rem}
     .tel-barre .tel-sec.fait{color:#2FA36B;border-color:#BFE6D2}
+    .tel-barre button:disabled{opacity:.45;cursor:default}
     body.feuille-tel #o-enreg,body.feuille-tel #o-brouillon{display:none}
     .tel-barre button[data-grp]{border-color:#C5D6F2;color:var(--bleu-fonce)}
     .tel-barre .tel-nouveau{background:var(--bleu);border-color:var(--bleu);color:#fff}
@@ -865,9 +866,9 @@ window.DOCU_AFFICHAGE = (function(){
         <button type="button" class="o-btn" id="o-enreg">Enregistrer ce client</button>
       </div>
       <div class="o-bloc" data-grp="reglages">
+        <button type="button" class="o-btn" id="o-restaurer" hidden>Réafficher les champs retirés</button>
         <button type="button" class="o-btn" id="o-brouillon" data-brouillon>💾 Enregistrer en brouillon</button>
         <button type="button" class="o-btn" id="o-nouveau">＋ Nouveau document</button>
-        <button type="button" class="o-btn" id="o-restaurer" hidden>Réafficher les champs retirés</button>
         <button type="button" class="o-lien" id="o-formulaire">Remplir plutôt avec le formulaire</button>
       </div>
     </aside>
@@ -1024,6 +1025,8 @@ window.DOCU_AFFICHAGE = (function(){
       <div class="tel-barre" id="tel-barre">
         <button type="button" id="tel-reglages" data-grp="style"><span>🎨</span>Modèle, couleur</button>
         <button type="button" id="tel-apercu"><span>👁</span>Aperçu</button>
+        <button type="button" id="tel-mes-clients" class="tel-sec"><span>👥</span>Choisir parmi mes clients</button>
+        <button type="button" id="tel-restaurer" class="tel-sec" disabled><span>↺</span>Réafficher les champs retirés</button>
         <button type="button" id="tel-enreg" class="tel-sec"><span>👤</span>Enregistrer ce client</button>
         <button type="button" id="tel-brouillon" class="tel-sec" data-brouillon><span>💾</span>Enregistrer en brouillon</button>
         <button type="button" id="tel-nouveau" class="tel-nouveau"><span>＋</span>Nouveau document</button>
@@ -2894,6 +2897,7 @@ window.DOCU_AFFICHAGE = (function(){
     document.querySelectorAll('#o-colonnes button').forEach(b => { b.classList.toggle('on', !!etat.cols[b.dataset.col]); b.disabled = b.dataset.col === 'unite' && !etat.cols.qte; });
     $('o-pro').checked = !!etat.cl.pro;
     $('o-restaurer').hidden = !Object.keys(etat.masques || {}).length;
+    if ($('tel-restaurer')) $('tel-restaurer').disabled = $('o-restaurer').hidden;
     setTimeout(() => {
       const src = $('enreg-client'), b = $('o-enreg'), mc = $('mes-clients');
       b.textContent = (src.querySelector('span') || src).textContent;
@@ -2901,6 +2905,7 @@ window.DOCU_AFFICHAGE = (function(){
       const tb = $('tel-enreg');
       if (tb){ tb.lastChild.textContent = src.classList.contains('fait') ? 'Client enregistré' : 'Enregistrer ce client'; tb.classList.toggle('verrouille', src.classList.contains('verrouille')); tb.classList.toggle('fait', src.classList.contains('fait')); }
       $('o-mes-clients').classList.toggle('verrouille', mc.classList.contains('verrouille'));
+      if ($('tel-mes-clients')) $('tel-mes-clients').classList.toggle('verrouille', mc.classList.contains('verrouille'));
     }, 0);
   }
   $('o-modeles').addEventListener('click', e => { const b = e.target.closest('[data-mod]'); if (b){ const m = $('modeles').querySelector(`[data-mod="${b.dataset.mod}"]`); if (m) m.click(); } });
@@ -2936,6 +2941,8 @@ window.DOCU_AFFICHAGE = (function(){
   $('tel-reglages').addEventListener('click', () => ouvrirReglages('style'));
   $('tel-options').addEventListener('click', () => ouvrirReglages('reglages'));
   $('tel-nouveau').addEventListener('click', () => $('nouveau').click());
+  $('tel-mes-clients').addEventListener('click', () => $('mes-clients').click());
+  $('tel-restaurer').addEventListener('click', () => { $('o-restaurer').click(); majOutils(); });
   $('tel-enreg').addEventListener('click', () => { $('enreg-client').click(); setTimeout(majOutils, 50); });
   $('o-fermer').addEventListener('click', () => fermerReglages());
   fondR.addEventListener('click', () => fermerReglages());
