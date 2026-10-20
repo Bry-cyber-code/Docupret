@@ -87,7 +87,6 @@
   .cm-raccourcis{border-bottom:1px solid var(--bord,#e2e8f0)}
   .cm-lien.cm-sous{padding:10px 16px 10px 28px;border-bottom:1px solid var(--bord,#e2e8f0)}
   .cm-raccourcis .cm-lien.cm-sous:last-child{border-bottom:0}
-  .cm-sous .cm-ico{width:30px;height:30px}
   .cm-sous .cm-txt b{font-size:.92rem}
   .cm-nb.rouge{background:#C23B36}
   .cm-nb{font-size:.74rem;font-weight:700;background:var(--bleu,#4A7BD0);color:#fff;border-radius:50px;padding:2px 8px;flex-shrink:0}
