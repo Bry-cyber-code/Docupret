@@ -210,6 +210,19 @@
   .env-ajout-pj svg{width:19px;height:19px}
   .env-ajout-pj span{font-weight:500;color:var(--gris);font-size:.82rem}
   .env-ajout-pj input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+  .env-docs{width:100%;font:inherit;font-weight:700;font-size:.92rem}
+  .env-choix{border:1.5px solid var(--bord);border-radius:12px;padding:10px;display:grid;gap:8px;background:#FBFCFE}
+  .env-choix-q{font:inherit;font-size:16px;padding:9px 11px;border:1.5px solid var(--bord);border-radius:10px;width:100%}
+  .env-choix-l{display:grid;gap:6px;max-height:260px;overflow-y:auto;overscroll-behavior:contain}
+  .env-choix-l label{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--bord);border-radius:10px;padding:9px 10px;cursor:pointer}
+  .env-choix-l label[hidden]{display:none}
+  .env-choix-l input{width:20px;height:20px;accent-color:var(--bleu);flex-shrink:0}
+  .env-choix-l span{flex:1;min-width:0;display:grid;font-size:.88rem}
+  .env-choix-l span b{font-size:.92rem}
+  .env-choix-l span i{font-style:normal;font-size:.7rem;font-weight:800;color:#1F6B3A;background:#E7F6EC;border-radius:50px;padding:1px 7px;justify-self:start;margin-top:2px}
+  .env-choix-l small{color:var(--gris);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .env-choix-l em{font-style:normal;font-weight:800;font-size:.88rem;white-space:nowrap}
+  .env-choix-ok{border:0;border-radius:10px;background:var(--bleu);color:#fff;font:inherit;font-weight:700;padding:11px}
   .env-ajout-pj:focus-within{outline:2px solid var(--bleu);outline-offset:2px}
   .env-err{background:#FDECEC;color:#9B2C28;border-radius:10px;padding:9px 11px;font-size:.86rem}
   .env-gmail{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;background:var(--bleu);color:#fff;border:0;border-radius:12px;padding:14px;font-weight:700;font-size:1rem}
@@ -1231,8 +1244,9 @@ window.DOCU_AFFICHAGE = (function(){
   let docPdf = null;
   let etat = charger();
   let minuterie;
+  let enAutreDoc = false;   // vrai pendant qu'on fabrique le PDF d'un autre document enregistré
   function sauver(){
-    if (MODE_PDF) return;
+    if (MODE_PDF || enAutreDoc) return;
     clearTimeout(minuterie);
     etat.modifie = new Date().toISOString();
     minuterie = setTimeout(() => { try{ localStorage.setItem(CLE, JSON.stringify(etat)); }catch(e){} }, 300);
@@ -1809,6 +1823,26 @@ window.DOCU_AFFICHAGE = (function(){
 
   // PDF : on photographie une copie de la page posée en haut à gauche, à taille réelle,
   // pour éviter les pages coupées ou décalées sur téléphone (zoom de l'aperçu, défilement).
+  // PDF d'un autre devis ou d'une autre facture de « Mon compte », pour l'envoyer dans le même e-mail
+  async function pdfAutreDocument(d){
+    const garde = etat, e = JSON.parse(JSON.stringify(etat)), sn = JSON.parse(JSON.stringify(d.snap || {}));
+    for (const k of ['modele', 'couleur', 'cols', 'tvaMode', 'franchise', 'tauxDefaut', 'masques', 'textes']) if (sn[k] != null) e[k] = sn[k];
+    e.extra = Object.assign({}, e.extra, {cl: (sn.extra && sn.extra.cl) || [], meta: (sn.extra && sn.extra.meta) || []});
+    if (sn.extra) for (const b of ['em', 'paiement']) if (Array.isArray(sn.extra[b])) e.extra[b] = sn.extra[b];
+    e.cl = Object.assign(etatDefaut().cl, sn.cl || {});
+    e.lignes = Array.isArray(sn.lignes) && sn.lignes.length ? sn.lignes : [ligneVide()];
+    if (sn.em) e.em = Object.assign({}, e.em, sn.em, {logo: garde.em.logo});
+    if (sn.paiementComplet) e.paiement = Object.assign({}, e.paiement, sn.paiementComplet);
+    e.paiement.notes = (sn.paiement && sn.paiement.notes) || '';
+    e.type = TYPES[sn.type] ? sn.type : TYPES[d.type] ? d.type : e.type;
+    e.doc = Object.assign({}, e.doc, sn.doc || {}, d.numero ? {numero: d.numero} : {});
+    etat = e; enAutreDoc = true;
+    try{
+      const nom = nomFichier();
+      const blob = await pdfDepuisPage(optionsPdf(true));
+      return new File([blob], nom, {type: 'application/pdf'});
+    } finally { etat = garde; enAutreDoc = false; }
+  }
   async function pdfDepuisPage(opts, avant){
     // Toujours la version « propre » de la page (sans les zones à remplir de l'écran)
     const copie = document.createElement('div'); remplirPage(copie);
@@ -1952,6 +1986,8 @@ window.DOCU_AFFICHAGE = (function(){
       <label class="env-ch">Message<textarea id="env-msg" rows="7"></textarea></label>
       <div class="env-pjs" id="env-pjs"></div>
       <label class="env-ajout-pj"><input type="file" id="env-fichiers" multiple accept="image/*,application/pdf,.doc,.docx,.xls,.xlsx,.odt,.txt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>Pièce jointe <span>photos, documents…</span></label>
+      <button type="button" class="env-ajout-pj env-docs" id="env-docs" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M12 11v6M9 14h6"/></svg>Joindre d'autres factures ou devis</button>
+      <div class="env-choix" id="env-choix" hidden></div>
       <div class="env-err" id="env-err" hidden></div>
       <div id="env-gmail"></div>
       <button type="button" class="env-autre" id="env-autre">Envoyer avec une autre application</button>
@@ -1967,6 +2003,7 @@ window.DOCU_AFFICHAGE = (function(){
     const taille = o => o < 1048576 ? Math.max(1, Math.round(o / 1024)) + ' Ko' : (o / 1048576).toFixed(1).replace('.', ',') + ' Mo';
     function rendrePJ(){
       $f('#env-pjs').innerHTML = `<span class="env-pj">📄 ${esc(nomFichier())} <em>joint automatiquement</em></span>` +
+        autres.map((x, i) => `<span class="env-pj">📄 ${esc(MOTS[x.d.type] ? MOTS[x.d.type][1] : 'Document')} ${esc(x.d.numero)} <em>${esc(eur(x.d.total))}${x.file ? '' : ' · préparation…'}</em><button type="button" data-retirer-doc="${i}" aria-label="Retirer ${esc(x.d.numero)}">×</button></span>`).join('') +
         pieces.map((p, i) => `<span class="env-pj">📎 ${esc(p.name)} <em>${taille(p.size)}</em><button type="button" data-retirer-pj="${i}" aria-label="Retirer ${esc(p.name)}">×</button></span>`).join('');
     }
     // Les photos sont réduites (2000 px, JPEG) : l'e-mail reste léger et part plus vite
@@ -1989,6 +2026,51 @@ window.DOCU_AFFICHAGE = (function(){
       rendrePJ();
     });
     f.addEventListener('click', e => { const b = e.target.closest('[data-retirer-pj]'); if (b){ pieces.splice(+b.dataset.retirerPj, 1); erreur(''); rendrePJ(); } });
+
+    // ----- Plusieurs factures ou devis dans le même e-mail (comptes) -----
+    let autres = [], chaine = Promise.resolve();
+    const motDoc = t => (MOTS[t] ? MOTS[t][1] : 'Document');
+    const leDoc = t => ({facture: 'la facture', devis: 'le devis', recu: 'le reçu', avoir: "l'avoir"})[t] || 'le document';
+    const listeDocs = () => (connecte && C.documents ? C.documents() : []).filter(d => d.snap && d.id !== etat.ouvert && !(d.type === etat.type && d.numero === etat.doc.numero));
+    $f('#env-docs').hidden = !listeDocs().length;
+    const sujetDefaut = `${Mot} ${etat.doc.numero}${etat.em.nom ? ' – ' + etat.em.nom : ''}`;
+    function majMessage(){
+      // Une phrase qui liste les autres documents joints, juste après le paragraphe principal
+      const m = $f('#env-msg'), par = m.value.split('\n\n').filter(p => !/^Vous trouverez également ci-joint/.test(p));
+      if (autres.length){
+        const el = autres.map(x => `${leDoc(x.d.type)} n° ${x.d.numero} (${eur(x.d.total)})`);
+        const ph = 'Vous trouverez également ci-joint ' + (el.length > 1 ? el.slice(0, -1).join(', ') + ' et ' + el[el.length - 1] : el[0]) + '.';
+        par.splice(Math.min(2, par.length), 0, ph);
+      }
+      m.value = par.join('\n\n');
+      const sj = $f('#env-sujet');
+      if (sj.value === sujetDefaut || /et \d+ autres? documents?/.test(sj.value)) sj.value = autres.length ? `${Mot} ${etat.doc.numero} et ${autres.length} autre${autres.length > 1 ? 's' : ''} document${autres.length > 1 ? 's' : ''}${etat.em.nom ? ' – ' + etat.em.nom : ''}` : sujetDefaut;
+    }
+    // Les PDF se préparent un par un, après celui du document en cours
+    function preparerAutres(){
+      chaine = chaine.then(async () => {
+        try{ await preparer(); }catch(e){}
+        for (const x of autres) if (!x.file){ try{ x.file = await pdfAutreDocument(x.d); }catch(e){ x.erreur = true; } if (f.isConnected) rendrePJ(); }
+      });
+      return chaine.then(() => { const ko = autres.find(x => !x.file); if (ko) throw new Error(`Le PDF de ${leDoc(ko.d.type)} ${ko.d.numero} n'a pas pu être créé. Retirez-le ou réessayez.`); return autres.map(x => x.file); });
+    }
+    $f('#env-docs').addEventListener('click', () => {
+      const z = $f('#env-choix');
+      if (!z.hidden){ z.hidden = true; return; }
+      const nomCl = C.norm(etat.cl.nom || ''), deja = new Set(autres.map(x => x.d.id));
+      const l = listeDocs().sort((a, b) => (C.norm(b.clientNom || '') === nomCl) - (C.norm(a.clientNom || '') === nomCl) || String(b.date || '').localeCompare(String(a.date || '')));
+      z.innerHTML = `<input type="search" class="env-choix-q" placeholder="Rechercher : client, n°, montant…" aria-label="Rechercher un document">
+        <div class="env-choix-l">${l.map(d => `<label data-txt="${esc(C.norm([d.numero, d.clientNom, d.total, motDoc(d.type)].join(' ')))}"><input type="checkbox" value="${esc(d.id)}" ${deja.has(d.id) ? 'checked' : ''}><span><b>${esc(motDoc(d.type))} ${esc(d.numero)}</b>${nomCl && C.norm(d.clientNom || '') === nomCl ? '<i>même client</i>' : ''}<small>${esc(d.clientNom || 'Sans client')} · ${esc(dateFr(d.date))}${d.type === 'facture' ? (d.paye ? ' · payée' : ' · impayée') : ''}</small></span><em>${esc(eur(d.total))}</em></label>`).join('')}</div>
+        <button type="button" class="env-choix-ok">Joindre la sélection</button>`;
+      z.hidden = false;
+      z.querySelector('.env-choix-q').addEventListener('input', e => { const q = C.norm(e.target.value).trim(); z.querySelectorAll('.env-choix-l label').forEach(x => { x.hidden = !!q && !q.split(/\s+/).every(m => x.dataset.txt.includes(m)); }); });
+      z.querySelector('.env-choix-ok').addEventListener('click', () => {
+        const ids = [...z.querySelectorAll('input[type=checkbox]:checked')].map(x => x.value), docs = C.documents();
+        autres = ids.map(id => autres.find(x => x.d.id === id) || {d: docs.find(d => d.id === id), file: null}).filter(x => x.d);
+        z.hidden = true; erreur(''); rendrePJ(); majMessage(); preparerAutres().catch(() => {});
+      });
+    });
+    f.addEventListener('click', e => { const b = e.target.closest('[data-retirer-doc]'); if (b){ autres.splice(+b.dataset.retirerDoc, 1); erreur(''); rendrePJ(); majMessage(); } });
     rendrePJ();
     const fermer = () => f.remove();
     f.addEventListener('click', e => { if (e.target === f || e.target.closest('[data-fermer]')) fermer(); });
@@ -2031,12 +2113,16 @@ window.DOCU_AFFICHAGE = (function(){
       autorisation.then(async jeton => {
         bouton.lastChild.textContent = 'Envoi…';
         const blob = await preparer();
-        await G.envoyer(jeton, {a, sujet: $f('#env-sujet').value.trim() || nomFichier(), texte: $f('#env-msg').value, fichier: nomFichier(), pdf: blob, nom: etat.em.nom, pieces});
+        const pdfAutres = autres.length ? (bouton.lastChild.textContent = 'Préparation des PDF…', await preparerAutres()) : [];
+        bouton.lastChild.textContent = 'Envoi…';
+        await G.envoyer(jeton, {a, sujet: $f('#env-sujet').value.trim() || nomFichier(), texte: $f('#env-msg').value, fichier: nomFichier(), pdf: blob, nom: etat.em.nom, pieces: [...pdfAutres, ...pieces]});
+        const quand = new Date().toISOString();
+        autres.forEach(x => { try{ C.majDocument(x.d.id, {envoye: {date: quand, a}}); }catch(e){} });
         if (etat.cl.email !== a){ etat.cl.email = a; remplirChamps(); }
         apresSortie(k, {date: new Date().toISOString(), a});
         try{ window.DocuStats && window.DocuStats.evenement('envoi_gmail'); }catch(e){}
         fermer();
-        alerte(`${Mot} envoyé${etat.type === 'facture' ? 'e' : ''} à ${a} ✓`);
+        alerte(autres.length ? `${autres.length + 1} documents envoyés à ${a} ✓` : `${Mot} envoyé${etat.type === 'facture' ? 'e' : ''} à ${a} ✓`);
       }).catch(err => {
         erreur(err && err.message === 'pdf' ? 'Le PDF n\'a pas pu être créé. Réessayez.' : (err && err.message) || 'L\'envoi a échoué. Réessayez.');
         bouton.disabled = false; bouton.lastChild.textContent = 'Envoyer depuis Gmail';
@@ -2059,8 +2145,10 @@ window.DOCU_AFFICHAGE = (function(){
       let blob;
       try{ blob = await preparer(); }catch(e){ erreur('Le PDF n\'a pas pu être créé. Réessayez.'); return; }
       const fichier = new File([blob], nomFichier(), {type: 'application/pdf'});
+      let pdfAutres = [];
+      try{ pdfAutres = autres.length ? await preparerAutres() : []; }catch(e){ erreur(e.message); return; }
       try{
-        const tous = [fichier, ...pieces];
+        const tous = [fichier, ...pdfAutres, ...pieces];
         if (navigator.canShare && navigator.canShare({files: tous})){
           await navigator.share({files: tous, title: sujet, text: texte});
           try{ window.DocuStats && window.DocuStats.evenement('envoi_autre_appli'); }catch(e){}
@@ -2071,6 +2159,7 @@ window.DOCU_AFFICHAGE = (function(){
       const url = URL.createObjectURL(blob), lien = document.createElement('a');
       lien.href = url; lien.download = nomFichier(); document.body.appendChild(lien); lien.click(); lien.remove();
       setTimeout(() => URL.revokeObjectURL(url), 30000);
+      pdfAutres.forEach((fi, i) => setTimeout(() => { const u = URL.createObjectURL(fi), l2 = document.createElement('a'); l2.href = u; l2.download = fi.name; document.body.appendChild(l2); l2.click(); l2.remove(); setTimeout(() => URL.revokeObjectURL(u), 30000); }, 400 * (i + 1)));
       location.href = `mailto:${encodeURIComponent(a)}?subject=${encodeURIComponent(sujet)}&body=${encodeURIComponent(texte + '\n\n(Pièce jointe : ' + nomFichier() + ')')}`;
       apresSortie(k);
       alerte(pieces.length ? 'Le PDF est téléchargé : joignez-le à votre e-mail, avec vos pièces jointes.' : 'Le PDF est téléchargé : joignez-le à votre e-mail.');
