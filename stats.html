@@ -224,6 +224,34 @@
   .tb .med{font-size:1rem}
   .bloc-st > .tb{border:1px solid var(--bord);border-radius:10px;overflow:hidden;display:table}
   @media (max-width:420px){.tb{font-size:.8rem}.tb td,.tb th{padding:7px 5px}.tb td.evo{font-size:.72rem}}
+  /* Listes par catégorie (sans défilement) */
+  .lns{display:grid;border-top:1px solid #EEF2F8}
+  .ln{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:start;padding:9px 2px;border-bottom:1px solid #EEF2F8}
+  .ln-rg{min-width:20px;font-weight:800;color:#9AA4B5;font-size:.84rem;font-variant-numeric:tabular-nums;padding-top:1px}
+  .ln-nom{font-weight:650;font-size:.92rem;line-height:1.35;min-width:0;overflow-wrap:break-word}
+  .ln-nom small{display:block;font-weight:500;font-size:.78rem;color:var(--gris);margin-top:2px;line-height:1.4}
+  .ln-val{text-align:right;font-weight:800;font-size:1rem;font-variant-numeric:tabular-nums;white-space:nowrap;line-height:1.25}
+  .ln-val small{display:block;font-size:.74rem;font-weight:600;color:var(--gris)}
+  .ln-val .u{font-size:.74rem;font-weight:600;color:var(--gris)}
+  .ln-tot{border-bottom:0;background:#F6F8FC;border-radius:8px;margin-top:4px}
+  .ln-tot .ln-nom{font-weight:800}
+  .lns .hausse{color:#2B8148;font-weight:700}.lns .baisse{color:#B4432F;font-weight:700}.lns .stable{color:var(--gris)}
+  .lns:not(:has(.ln-rg)) .ln{grid-template-columns:minmax(0,1fr) auto}
+  .ln-plus summary{cursor:pointer;color:var(--bleu);font-weight:700;font-size:.85rem;padding:9px 2px;list-style:none;border-bottom:1px solid #EEF2F8}
+  .ln-plus summary::-webkit-details-marker{display:none}
+  .ln-plus[open] summary{color:var(--gris)}
+  .mail{word-break:break-all}
+  .st-lib{font-size:.86rem;color:var(--gris);margin:2px 2px 6px}
+  .st-lib b{color:var(--texte)}
+  .sec-lib{font-size:.78rem;color:var(--gris);margin:-6px 0 8px}
+  .sec-lib b{color:var(--texte);font-weight:700}
+  .sec-lib .perso{background:#FFF4E0;color:#9A6512;border-radius:50px;padding:1px 8px;font-weight:700;font-size:.7rem;margin-left:4px}
+  .sec-per{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:12px;padding-top:10px;border-top:1px dashed var(--bord)}
+  .sec-per button{border:1.5px solid var(--bord);background:var(--blanc);border-radius:50px;padding:5px 11px;font-size:.78rem;font-weight:650;color:var(--texte)}
+  .sec-per button.on{background:var(--bleu-clair);border-color:var(--bleu);color:var(--bleu-fonce)}
+  .choix-in{font:inherit;font-size:16px;border:1.5px solid var(--bleu);border-radius:10px;padding:5px 8px;background:#fff;color:var(--texte);max-width:100%}
+  .sec-per .choix-in{font-size:16px;padding:4px 8px}
+  .graphe{margin-bottom:10px}
   .st-pied{font-size:.8rem;color:var(--gris);margin:14px 0 4px;display:grid;gap:8px}
   .st-pied label{display:flex;gap:8px;align-items:flex-start;color:var(--texte);font-size:.86rem}
   .st-pied input{width:18px;height:18px;margin-top:2px;accent-color:var(--bleu);flex-shrink:0}
@@ -318,14 +346,8 @@
   <section class="st-etat" id="st-attente"><p>Chargement…</p></section>
 
   <div id="st-contenu" hidden>
-    <div class="st-barre" id="periodes" role="group" aria-label="Période">
-      <button type="button" data-j="1">Aujourd'hui</button>
-      <button type="button" data-j="7" class="on">7 jours</button>
-      <button type="button" data-j="30">30 jours</button>
-      <button type="button" data-j="90">90 jours</button>
-      <button type="button" data-j="0">Depuis le début</button>
-      <span class="st-maj" id="st-maj"></span>
-    </div>
+    <div class="st-barre" id="periodes" role="group" aria-label="Période"></div>
+    <p class="st-lib">Période : <b id="st-lib"></b> <span class="st-maj" id="st-maj"></span></p>
 
     <div class="tuiles" id="tuiles"></div>
 
@@ -335,53 +357,7 @@
     <h2 class="grp-st">Depuis le lancement du site</h2>
     <div class="tuiles" id="tuiles-total"></div>
 
-    <section class="bloc-st">
-      <h2>Visiteurs par jour</h2>
-      <p class="sous" id="sous-graphe">Une personne qui revient le même jour n'est comptée qu'une fois.</p>
-      <div class="graphe" id="graphe"></div>
-      <div class="tb-defil"><table class="tb" id="tab-jours"></table></div>
-    </section>
-
-    <h2 class="grp-st">Documents</h2>
-    <section class="bloc-st"><h2>Documents créés</h2><p class="sous">PDF téléchargés, imprimés ou envoyés, par type</p><div id="l-docs"></div></section>
-    <section class="bloc-st"><h2>Documents commencés et terminés</h2><p class="sous">Combien de personnes vont jusqu'au téléchargement après avoir commencé à remplir</p><div id="l-fin"></div></section>
-    <section class="bloc-st"><h2>Pages les plus vues</h2><p class="sous">Affichages de chaque page et temps moyen passé dessus</p><div id="l-pages"></div></section>
-
-    <h2 class="grp-st">Fonctions utilisées</h2>
-    <section class="bloc-st"><h2>Fonctions du site les plus utilisées</h2><p class="sous">Aperçu, brouillons, clients, envois, modèles… (comptées depuis le 20 octobre 2026)</p><div id="l-fn"></div></section>
-    <section class="bloc-st"><h2>Comptes et actions</h2><p class="sous">Connexions, comptes, envois, factures payées, applications installées</p><div id="l-app"></div></section>
-
-    <h2 class="grp-st">Comportement des visiteurs</h2>
-    <div class="deux-st">
-      <section class="bloc-st"><h2>Pages d'arrivée</h2><p class="sous">Première page vue en arrivant</p><div id="l-ent"></div></section>
-      <section class="bloc-st"><h2>Pages de sortie</h2><p class="sous">Dernière page vue avant de partir</p><div id="l-sort"></div></section>
-      <section class="bloc-st"><h2>Durée des visites</h2><p class="sous">Temps passé sur le site, page à l’écran</p><div id="l-dur"></div></section>
-      <section class="bloc-st"><h2>Pages vues par visite</h2><p class="sous">Nombre de pages ouvertes pendant une visite</p><div id="l-ppv"></div></section>
-    </div>
-
-    <h2 class="grp-st">Recherches</h2>
-    <div class="deux-st">
-      <section class="bloc-st"><h2>Ce que les gens cherchent</h2><p class="sous">Mots tapés dans la recherche de l’accueil</p><div id="l-rech"></div></section>
-      <section class="bloc-st"><h2>Recherches sans résultat</h2><p class="sous">Documents demandés que le site ne propose pas</p><div id="l-rech0"></div></section>
-    </div>
-
-    <h2 class="grp-st">Moments de visite</h2>
-    <div class="deux-st">
-      <section class="bloc-st"><h2>Moments de la journée</h2><p class="sous">Heure du visiteur</p><div id="l-moments"></div></section>
-      <section class="bloc-st"><h2>Heures les plus fréquentées</h2><p class="sous">Les 8 heures avec le plus de visites</p><div id="l-heures"></div></section>
-      <section class="bloc-st"><h2>Jours de la semaine</h2><p class="sous">Visiteurs selon le jour</p><div id="l-jours"></div></section>
-      <section class="bloc-st"><h2>Pays et territoires</h2><p class="sous">D’après le fuseau horaire, jamais l’adresse IP</p><div id="l-pays"></div></section>
-    </div>
-
-    <h2 class="grp-st">Provenance et appareils</h2>
-    <div class="deux-st">
-      <section class="bloc-st"><h2>D'où viennent les visiteurs</h2><p class="sous">Site ou application d’où ils arrivent</p><div id="l-src"></div></section>
-      <section class="bloc-st"><h2>Téléphone ou ordinateur</h2><p class="sous">Type d’appareil</p><div id="l-type"></div></section>
-      <section class="bloc-st"><h2>Systèmes</h2><p class="sous">iPhone, Android, Windows, Mac…</p><div id="l-os"></div></section>
-      <section class="bloc-st"><h2>Navigateurs</h2><p class="sous">Chrome, Safari, Samsung, appli Facebook…</p><div id="l-nav"></div></section>
-      <section class="bloc-st"><h2>Tailles d'écran</h2><p class="sous">Pour vérifier que le site s’affiche bien partout</p><div id="l-ecr"></div></section>
-      <section class="bloc-st"><h2>Clics vers les partenaires</h2><p class="sous">Qonto, Indy, SumUp, Vistaprint</p><div id="l-part"></div></section>
-    </div>
+    <div id="sections"></div>
 
     <h2 class="grp-st">Classements des comptes</h2>
     <section class="bloc-st"><h2>🏆 Ceux qui téléchargent le plus</h2><p class="sous">Documents téléchargés, depuis le 17 octobre 2026</p><div id="l-classement"></div></section>
@@ -489,7 +465,7 @@
   function etat(html){ $('st-attente').hidden = false; $('st-attente').innerHTML = html; $('st-contenu').hidden = true; }
 
   // ---------- Accès ----------
-  let periode = 7, cache = new Map(), db = null;
+  let db = null;
   const reessayer = '<button type="button" class="btn" onclick="location.reload()">Réessayer</button>';
   const lent = setTimeout(() => { if ($('st-contenu').hidden && /Chargement/.test($('st-attente').textContent)) etat('<p>Le chargement prend plus de temps que prévu (connexion internet lente ?).</p>' + reessayer); }, 12000);
   async function demarrer(){
@@ -502,59 +478,99 @@
     try{ localStorage.setItem('docupret_admin', $('moi').checked ? '1' : '0'); }catch(e){}
     db = firebase.firestore();
     $('st-attente').hidden = true; $('st-contenu').hidden = false;
+    construire();
     charger();
   }
   $('moi').addEventListener('change', e => { try{ localStorage.setItem('docupret_admin', e.target.checked ? '1' : '0'); }catch(err){} });
   try{ if (localStorage.getItem('docupret_admin') === '0') $('moi').checked = false; }catch(e){}
 
+  // ---------- Périodes ----------
+  // {t: 'n', n: 7} · {t: 'tout'} · {t: 'jour', v: 'AAAA-MM-JJ'} · {t: 'mois', v: 'AAAA-MM'} · {t: 'annee', v: 'AAAA'}
+  const LANCEMENT = new Date(2026, 9, 16, 12);
+  const isoJour = d => `${d.getFullYear()}-${p2(d.getMonth() + 1)}-${p2(d.getDate())}`;
+  const aujourdhui = () => { const d = new Date(); d.setHours(12, 0, 0, 0); return d; };
+  const decaler = (d, k) => { const x = new Date(d); x.setDate(x.getDate() + k); return x; };
+  const serie = (a, b) => { const l = []; for (let d = new Date(a); d <= b; d.setDate(d.getDate() + 1)) l.push(new Date(d)); return l; };
+  const joursDepuisLancement = () => Math.max(1, Math.round((aujourdhui() - LANCEMENT) / 864e5) + 1);
+  function plage(p){
+    const auj = aujourdhui(), max = (a, b) => a > b ? a : b, min = (a, b) => a < b ? a : b;
+    let jrs, avant, lib;
+    if (p.t === 'n'){ const a = decaler(auj, -(p.n - 1)); jrs = serie(a, auj); avant = serie(decaler(a, -p.n), decaler(a, -1)); lib = p.n === 1 ? "Aujourd'hui" : `${p.n} derniers jours`; }
+    else if (p.t === 'tout'){ jrs = serie(LANCEMENT, auj); avant = []; lib = 'Depuis le lancement (16 octobre 2026)'; }
+    else if (p.t === 'jour'){ const d = new Date(p.v + 'T12:00'); jrs = [d]; avant = [decaler(d, -1)]; lib = d.toLocaleDateString('fr-FR', {weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'}); }
+    else if (p.t === 'mois'){
+      const [y, m] = p.v.split('-').map(Number), a = new Date(y, m - 1, 1, 12), f = new Date(y, m, 0, 12);
+      jrs = serie(max(a, LANCEMENT), min(f, auj)); avant = serie(new Date(y, m - 2, 1, 12), new Date(y, m - 1, 0, 12));
+      lib = a.toLocaleDateString('fr-FR', {month: 'long', year: 'numeric'});
+    } else {
+      const y = +p.v; jrs = serie(max(new Date(y, 0, 1, 12), LANCEMENT), min(new Date(y, 11, 31, 12), auj)); avant = serie(new Date(y - 1, 0, 1, 12), new Date(y - 1, 11, 31, 12));
+      lib = 'Année ' + y;
+    }
+    // On ne compare qu'avec une période où le site existait déjà
+    const compare = avant.length > 0 && avant[avant.length - 1] >= LANCEMENT;
+    return {jrs, avant: compare ? avant : [], compare, lib: lib.charAt(0).toUpperCase() + lib.slice(1)};
+  }
+  let perHaut = {t: 'n', n: 7};
+  const perSec = {};   // période choisie dans une catégorie (sinon celle du haut)
+
+  // Boutons « Jour / Mois / Année » avec leur choix (une date, un mois ou une année)
+  function moisDispo(){ const l = [], auj = aujourdhui(); for (let d = new Date(LANCEMENT.getFullYear(), LANCEMENT.getMonth(), 1, 12); d <= auj; d.setMonth(d.getMonth() + 1)) l.push(`${d.getFullYear()}-${p2(d.getMonth() + 1)}`); return l.reverse(); }
+  function anneesDispo(){ const l = []; for (let y = aujourdhui().getFullYear(); y >= LANCEMENT.getFullYear(); y--) l.push(String(y)); return l; }
+  const nomMois = v => { const [y, m] = v.split('-').map(Number); const t = new Date(y, m - 1, 1).toLocaleDateString('fr-FR', {month: 'long', year: 'numeric'}); return t.charAt(0).toUpperCase() + t.slice(1); };
+  function champChoix(t, v){
+    if (t === 'jour') return `<input type="date" class="choix-in" data-in="jour" min="${isoJour(LANCEMENT)}" max="${isoJour(aujourdhui())}" value="${v || isoJour(aujourdhui())}" aria-label="Choisir un jour">`;
+    if (t === 'mois') return `<select class="choix-in" data-in="mois" aria-label="Choisir un mois">${moisDispo().map(m => `<option value="${m}"${m === v ? ' selected' : ''}>${nomMois(m)}</option>`).join('')}</select>`;
+    if (t === 'annee') return `<select class="choix-in" data-in="annee" aria-label="Choisir une année">${anneesDispo().map(y => `<option value="${y}"${y === v ? ' selected' : ''}>${y}</option>`).join('')}</select>`;
+    return '';
+  }
+  function boutonsPeriode(p, avecHaut){
+    const on = c => c ? ' class="on"' : '';
+    const fixes = avecHaut ? `<button type="button" data-p="haut"${on(!p)}>Comme en haut</button>`
+      : [['n:1', "Aujourd'hui"], ['n:7', '7 jours'], ['n:30', '30 jours'], ['n:90', '90 jours'], ['tout', 'Depuis le début']].map(([k, l]) => `<button type="button" data-p="${k}"${on(p && (k === 'tout' ? p.t === 'tout' : p.t === 'n' && 'n:' + p.n === k))}>${l}</button>`).join('');
+    const choix = [['jour', '📅 Jour'], ['mois', '🗓️ Mois'], ['annee', '📆 Année']].map(([k, l]) => `<button type="button" data-choix="${k}"${on(p && p.t === k)}>${l}</button>`).join('');
+    return fixes + choix + (p && /jour|mois|annee/.test(p.t) ? champChoix(p.t, p.v) : '');
+  }
+  function periodeDepuis(cible){
+    if (cible.dataset.p === 'haut') return null;
+    if (cible.dataset.p === 'tout') return {t: 'tout'};
+    if (cible.dataset.p) return {t: 'n', n: +cible.dataset.p.slice(2)};
+    const t = cible.dataset.choix || cible.dataset.in;
+    const v = cible.dataset.in ? cible.value : t === 'jour' ? isoJour(aujourdhui()) : t === 'mois' ? moisDispo()[0] : anneesDispo()[0];
+    return v ? {t, v} : undefined;
+  }
   $('periodes').addEventListener('click', e => {
-    const b = e.target.closest('[data-j]'); if (!b) return;
-    document.querySelectorAll('#periodes button').forEach(x => x.classList.toggle('on', x === b));
-    periode = +b.dataset.j; charger();
+    const b = e.target.closest('button'); if (!b) return;
+    const p = periodeDepuis(b); if (!p) return;
+    perHaut = p; rendreTout();
   });
+  $('periodes').addEventListener('change', e => { const p = periodeDepuis(e.target); if (p){ perHaut = p; rendreTout(); } });
 
   // ---------- Données ----------
-  function jours(nb, decalage){
-    const l = [], d = new Date(); d.setHours(12, 0, 0, 0); d.setDate(d.getDate() - decalage);
-    for (let i = nb - 1; i >= 0; i--){ const x = new Date(d); x.setDate(d.getDate() - i); l.push(x); }
-    return l;
-  }
-  async function lire(debut, fin){
-    const k = debut + '|' + fin; if (cache.has(k)) return cache.get(k);
-    const FP = firebase.firestore.FieldPath.documentId();
-    const snap = await db.collection('stats').where(FP, '>=', debut).where(FP, '<=', fin).get();
+  let tout = null;
+  async function lireTout(){
+    const snap = await db.collection('stats').get();
     const m = new Map(); snap.forEach(d => m.set(d.id, d.data()));
-    cache.set(k, m); return m;
+    return m;
   }
   const somme = (docs, f) => docs.reduce((t, d) => t + (f(d) || 0), 0);
   const fusion = (docs, champ, filtre) => { const o = {}; docs.forEach(d => Object.entries(d[champ] || {}).forEach(([k, v]) => { if (!filtre || filtre(k)) o[k] = (o[k] || 0) + (v || 0); })); return o; };
   const docsCrees = d => Object.entries(d.ev || {}).reduce((t, [k, v]) => t + (/^pdf_/.test(k) ? v : 0), 0);
-
-  // Tous les jours depuis le lancement (lus une fois) : total des comptes et chiffres « depuis le lancement »
-  let tousLesJours = null;
-  async function lireTout(){
-    if (tousLesJours) return tousLesJours;
-    const snap = await db.collection('stats').get();
-    const m = new Map(); snap.forEach(d => m.set(d.id, d.data()));
-    return (tousLesJours = m);
+  function contexte(p){
+    const r = plage(p), lire = l => l.map(d => tout.get(cleJour(d)) || {});
+    const docs = lire(r.jrs), docsAvant = lire(r.avant);
+    return Object.assign(r, {docs, docsAvant, F: (c, f) => fusion(docs, c, f), FA: (c, f) => fusion(docsAvant, c, f)});
   }
-  function totalComptes(tout){
+  function totalComptes(){
     let t = COMPTES_AVANT; tout.forEach(d => { const e = d.ev || {}; t += (e.compte_cree || 0) - (e.compte_supprime || 0); });
     return Math.max(0, t);
   }
-  const LANCEMENT = new Date(2026, 9, 16, 12);
-  const joursDepuisLancement = () => Math.max(1, Math.round((new Date().setHours(12, 0, 0, 0) - LANCEMENT) / 864e5) + 1);
   async function charger(){
     $('st-maj').textContent = 'Mise à jour…';
     try{
-      const nb = periode || joursDepuisLancement();
-      const actuels = jours(nb, 0), avant = periode ? jours(nb, nb) : [];
-      const tout = await lireTout();
-      const m = await lire(cleJour(avant.length ? avant[0] : actuels[0]), cleJour(actuels[actuels.length - 1]));
-      const docs = actuels.map(d => m.get(cleJour(d)) || {}), docsAvant = avant.map(d => m.get(cleJour(d)) || {});
-      rendre(actuels, docs, docsAvant, totalComptes(tout), tout);
+      tout = await lireTout();
+      rendreTout();
       chargerClassements();
-      $('st-maj').textContent = 'À jour : ' + new Date().toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'});
+      $('st-maj').textContent = '· à jour à ' + new Date().toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'});
     }catch(e){
       console.warn(e);
       $('st-maj').textContent = '';
@@ -562,57 +578,199 @@
     }
   }
 
-  // ---------- Affichage ----------
+  // ---------- Listes (sans tableau à faire glisser) ----------
   const pct = (v, t) => t ? Math.round(v / t * 100) : 0;
-  function evolution(val, av, inverse){
-    if (!periode || !av && !val) return '';
+  function evolution(val, av, compare, inverse){
+    if (!compare || (!av && !val)) return '';
     if (!av) return '<span class="hausse">nouveau</span>';
     const pc = Math.round((val - av) / av * 100), bien = inverse ? pc < 0 : pc > 0;
-    return pc === 0 ? '<span>stable</span>' : `<span class="${bien ? 'hausse' : 'baisse'}">${pc > 0 ? '▲ +' : '▼ '}${pc} %</span>`;
-  }
-  function tuile(lib, val, avant, action){
-    const ev = periode > 1 ? evolution(val, avant).replace('</span>', " vs période d'avant</span>").replace('nouveau vs période d\'avant', 'nouveau sur la période') : '';
-    if (action) return `<button type="button" class="tuile tuile-clic" data-action="${action}" title="Voir le détail"><small>${lib} <em>Voir le détail ›</em></small><b>${n(val)}</b>${ev || '<span>&nbsp;</span>'}</button>`;
-    return `<div class="tuile"><small>${lib}</small><b>${n(val)}</b>${ev || '<span>&nbsp;</span>'}</div>`;
-  }
-  function tuileTexte(lib, texte, val, avant, inverse, petit){
-    const ev = periode > 1 && val !== null && avant ? evolution(val, avant, inverse).replace('</span>', " vs période d'avant</span>") : '';
-    return `<div class="tuile"><small>${lib}</small><b${petit ? ' class="txt"' : ''}>${texte}</b>${ev || '<span>&nbsp;</span>'}</div>`;
+    return pc === 0 ? '<span class="stable">stable</span>' : `<span class="${bien ? 'hausse' : 'baisse'}">${pc > 0 ? '▲ +' : '▼ '}${pc} %</span>`;
   }
   const vide = '<p class="vide-st">Pas encore de données sur cette période.</p>';
-
-  // Tableau d'une catégorie : rang, nom, nombre, part du total, évolution par rapport à la période d'avant
-  function tableau(id, obj, nommer, o = {}){
-    const av = o.avant || {}, fmt = o.format || n;
+  // lignes : [{nom, val, txt (valeur affichée), det (détail sous le nom), cle}]
+  function liste(lignes, o = {}){
+    if (!lignes.length) return vide;
+    const total = lignes.reduce((t, l) => t + (l.val || 0), 0), max = o.max || 12, fmt = o.format || n;
+    const ligne = (l, i) => {
+      const part = o.part === false ? '' : `<small>${pct(l.val, total)} %</small>`;
+      return `<div class="ln${l.cls ? ' ' + l.cls : ''}">${o.rang === false ? '' : `<span class="ln-rg">${o.medailles && i < 3 ? ['🥇', '🥈', '🥉'][i] : i + 1}</span>`}<span class="ln-nom">${l.nom}${l.det ? `<small>${l.det}</small>` : ''}</span><span class="ln-val">${l.txt !== undefined ? l.txt : fmt(l.val)}${part}</span></div>`;
+    };
+    const debut = lignes.slice(0, max).map(ligne).join(''), reste = lignes.slice(max);
+    const plus = reste.length ? `<details class="ln-plus"><summary>Voir ${reste.length === 1 ? 'la ligne suivante' : `les ${reste.length} autres`}</summary>${reste.map((l, i) => ligne(l, i + max)).join('')}</details>` : '';
+    const tot = o.total === false ? '' : `<div class="ln ln-tot">${o.rang === false ? '' : '<span class="ln-rg"></span>'}<span class="ln-nom">Total</span><span class="ln-val">${fmt(total)}</span></div>`;
+    return `<div class="lns">${debut}${plus}${tot}</div>`;
+  }
+  // Une catégorie classique : nom → nombre, avec part et évolution
+  function lignesDe(ctx, obj, nommer, o = {}){
+    const av = o.avant || {};
     let l = Object.entries(obj).filter(([, v]) => v > 0);
-    l = o.ordre ? o.ordre.filter(k => (obj[k] || 0) > 0).map(k => [k, obj[k]]) : l.sort((x, y) => y[1] - x[1]);
-    const total = l.reduce((t, [, v]) => t + v, 0);
-    if (o.max && !o.ordre) l = l.slice(0, o.max);
-    if (!l.length){ $(id).innerHTML = vide; return; }
-    const avecEvo = periode > 1 && !o.sansEvo, avecPart = !o.sansPart;
-    const tete = `<tr>${o.ordre ? '' : '<th>#</th>'}<th class="g">${o.col || 'Nom'}</th><th>${o.colVal || 'Nombre'}</th>${avecPart ? '<th>Part</th>' : ''}${o.extra ? `<th>${o.extra[0]}</th>` : ''}${avecEvo ? '<th>Évolution</th>' : ''}</tr>`;
-    const lignes = l.map(([k, v], i) => {
-      const e = avecEvo ? evolution(v, av[k] || 0, o.inverse) : '';
-      const cls = /hausse/.test(e) ? 'hausse' : /baisse/.test(e) ? 'baisse' : '';
-      return `<tr>${o.ordre ? '' : `<td class="rg">${i + 1}</td>`}<td class="g">${esc(nommer(k))}</td><td class="fort">${fmt(v)}</td>${avecPart ? `<td class="pc">${pct(v, total)} %</td>` : ''}${o.extra ? `<td>${o.extra[1](k, v)}</td>` : ''}${avecEvo ? `<td class="evo ${cls}">${e.replace(/<[^>]+>/g, '')}</td>` : ''}</tr>`;
-    }).join('');
-    const pied = o.total === false ? '' : `<tfoot><tr>${o.ordre ? '' : '<td></td>'}<td class="g">Total</td><td>${fmt(total)}</td>${avecPart ? '<td class="pc">100 %</td>' : ''}${o.extra ? '<td></td>' : ''}${avecEvo ? '<td></td>' : ''}</tr></tfoot>`;
-    $(id).innerHTML = `<div class="tb-defil" style="margin-top:0;max-height:${o.haut || 420}px"><table class="tb"><thead>${tete}</thead><tbody>${lignes}</tbody>${pied}</table></div>`;
+    l = o.ordre ? o.ordre.filter(k => (obj[k] || 0) > 0).map(k => [k, obj[k]]) : l.sort((a, b) => b[1] - a[1]);
+    return l.map(([k, v]) => ({cle: k, nom: esc(nommer(k)), val: v, det: [o.sansEvo ? '' : evolution(v, av[k] || 0, ctx.compare, o.inverse), o.det ? o.det(k, v) : ''].filter(Boolean).join(' · ')}));
   }
 
+  // ---------- Tuiles du haut ----------
+  function tuile(ctx, lib, val, avant, action){
+    const ev = evolution(val, avant, ctx.compare);
+    const evTxt = ev ? ev.replace('</span>', /nouveau/.test(ev) ? ' sur la période</span>' : " vs période d'avant</span>") : '<span>&nbsp;</span>';
+    if (action) return `<button type="button" class="tuile tuile-clic" data-action="${action}" title="Voir le détail"><small>${lib} <em>Voir le détail ›</em></small><b>${n(val)}</b>${evTxt}</button>`;
+    return `<div class="tuile"><small>${lib}</small><b>${n(val)}</b>${evTxt}</div>`;
+  }
+  function tuileTexte(ctx, lib, texte, val, avant, inverse, petit){
+    const ev = val !== null && avant ? evolution(val, avant, ctx.compare, inverse) : '';
+    return `<div class="tuile"><small>${lib}</small><b${petit ? ' class="txt"' : ''}>${texte}</b>${ev ? ev.replace('</span>', " vs période d'avant</span>") : '<span>&nbsp;</span>'}</div>`;
+  }
+  const sommeMap = (docs, champ) => Object.values(fusion(docs, champ)).reduce((a, v) => a + Math.max(0, v), 0);
+  function tempsMoyen(docs){ const nb = sommeMap(docs, 'dur'); return nb ? somme(docs, d => d.t) / nb : null; }
+  function pagesParVisite(docs){ const vis = somme(docs, d => d.vis); return vis ? somme(docs, d => d.v) / vis : null; }
+  function rebond(docs){ const nb = sommeMap(docs, 'ppv'); return nb ? Math.round(Math.max(0, fusion(docs, 'ppv').p1 || 0) / nb * 100) : null; }
+  function duree(s){ if (s === null || s === undefined) return '–'; s = Math.round(s); if (s < 60) return s + ' s'; if (s < 3600) return Math.floor(s / 60) + ' min ' + String(s % 60).padStart(2, '0'); return Math.floor(s / 3600) + ' h ' + String(Math.floor(s % 3600 / 60)).padStart(2, '0'); }
+  const taux = (a, b) => b ? (a / b * 100) : null;
+  const txPc = v => v === null ? '–' : (v < 10 ? v.toFixed(1).replace('.', ',') : Math.round(v)) + ' %';
+  const virg = v => v.toFixed(1).replace('.', ',');
+  const evv = (d, k) => (d.ev || {})[k] || 0;
+
+  let ctxHaut = null;
+  function rendreHaut(){
+    const ctx = ctxHaut = contexte(perHaut), {docs, docsAvant: dA} = ctx, S = somme;
+    $('periodes').innerHTML = boutonsPeriode(perHaut, false);
+    $('st-lib').textContent = ctx.lib;
+    const vis = S(docs, d => d.vis), visA = S(dA, d => d.vis), dc = S(docs, docsCrees), dcA = S(dA, docsCrees);
+    const cc = S(docs, d => evv(d, 'compte_cree')), ccA = S(dA, d => evv(d, 'compte_cree'));
+    $('tuiles').innerHTML =
+      `<div class="tuile tuile-large"><small>Comptes au total</small><b>${n(totalComptes())}</b><span>Toutes périodes confondues · ${n(cc)} créé${cc > 1 ? 's' : ''} sur la période choisie</span></div>` +
+      tuile(ctx, 'Visiteurs', vis, visA) + tuile(ctx, 'Pages vues', S(docs, d => d.v), S(dA, d => d.v)) +
+      tuile(ctx, 'Nouveaux visiteurs', S(docs, d => d.nv), S(dA, d => d.nv)) + tuile(ctx, 'Documents créés', dc, dcA, 'docs') +
+      tuile(ctx, 'Nouveaux comptes', cc, ccA) + tuile(ctx, 'Envois depuis Gmail', S(docs, d => evv(d, 'envoi_gmail')), S(dA, d => evv(d, 'envoi_gmail'))) +
+      tuileTexte(ctx, 'Temps moyen par visite', duree(tempsMoyen(docs)), tempsMoyen(docs), tempsMoyen(dA)) +
+      tuileTexte(ctx, 'Pages par visite', pagesParVisite(docs) ? virg(pagesParVisite(docs)) : '–', pagesParVisite(docs), pagesParVisite(dA)) +
+      tuileTexte(ctx, 'Partis après 1 page', rebond(docs) === null ? '–' : rebond(docs) + ' %', rebond(docs), rebond(dA), true) +
+      tuile(ctx, 'Visites de retour', S(docs, d => Math.max(0, (d.vis || 0) - (d.nv || 0))), S(dA, d => Math.max(0, (d.vis || 0) - (d.nv || 0))));
+    const nb = Math.max(1, ctx.jrs.length), nbA = Math.max(1, ctx.avant.length), tel = Math.max(0, ctx.F('app').telephone || 0), appTot = sommeMap(docs, 'app');
+    const deb = sommeMap(docs, 'deb'), fin = sommeMap(docs, 'fin'), fnTot = sommeMap(docs, 'fn');
+    const meilleur = ctx.jrs.map((j, i) => [j, docs[i].vis || 0]).sort((a, b) => b[1] - a[1])[0];
+    $('tuiles-taux').innerHTML =
+      tuileTexte(ctx, 'Visiteurs qui créent un document', txPc(taux(dc, vis)), taux(dc, vis), taux(dcA, visA)) +
+      tuileTexte(ctx, 'Visiteurs qui créent un compte', txPc(taux(cc, vis)), taux(cc, vis), taux(ccA, visA)) +
+      tuileTexte(ctx, 'Documents terminés une fois commencés', txPc(taux(fin, deb)), taux(fin, deb), taux(sommeMap(dA, 'fin'), sommeMap(dA, 'deb'))) +
+      tuileTexte(ctx, 'Visiteurs par jour (moyenne)', virg(vis / nb), vis / nb, visA / nbA) +
+      tuileTexte(ctx, 'Documents par jour (moyenne)', virg(dc / nb), dc / nb, dcA / nbA) +
+      tuileTexte(ctx, 'Visiteurs sur téléphone', txPc(taux(tel, appTot)), null, null) +
+      tuileTexte(ctx, 'Part de nouveaux visiteurs', txPc(taux(S(docs, d => d.nv), vis)), null, null) +
+      tuileTexte(ctx, 'Fonctions utilisées par visiteur', vis ? virg(fnTot / vis) : '–', null, null) +
+      tuileTexte(ctx, 'Meilleur jour de la période', meilleur && meilleur[1] ? `${esc(jourCourt(meilleur[0]))} · ${n(meilleur[1])} vis.` : '–', null, null, false, true);
+    const T = [...tout.entries()].filter(([k]) => /^j-/.test(k)), tv = T.map(([, d]) => d);
+    const rec = T.reduce((b, [k, d]) => (d.vis || 0) > b[1] ? [k, d.vis || 0] : b, ['', 0]), recJour = rec[0] ? new Date(rec[0].slice(2) + 'T12:00') : null;
+    $('tuiles-total').innerHTML =
+      `<div class="tuile"><small>Visiteurs</small><b>${n(S(tv, d => d.vis))}</b><span>depuis le 16 octobre 2026</span></div>` +
+      `<div class="tuile"><small>Pages vues</small><b>${n(S(tv, d => d.v))}</b><span>&nbsp;</span></div>` +
+      `<div class="tuile"><small>Documents créés</small><b>${n(S(tv, docsCrees))}</b><span>&nbsp;</span></div>` +
+      `<div class="tuile"><small>Envois depuis Gmail</small><b>${n(S(tv, d => evv(d, 'envoi_gmail')))}</b><span>&nbsp;</span></div>` +
+      `<div class="tuile"><small>Record de visiteurs en un jour</small><b>${n(rec[1])}</b><span>${recJour ? esc(jourLong(recJour)) : '&nbsp;'}</span></div>` +
+      `<div class="tuile"><small>Âge du site</small><b>${n(joursDepuisLancement())} j</b><span>en ligne depuis le 16/10/2026</span></div>`;
+  }
+
+  // ---------- Catégories : chacune peut avoir sa propre période ----------
+  const NOMS_FN = {apercu_document: 'Aperçu du document', enregistrer_client: 'Enregistrer un client', choisir_un_client: 'Choisir un client enregistré', ajouter_un_client: 'Ajouter un client (Mon compte)',
+    brouillon: 'Enregistrer en brouillon', nouveau_document: 'Nouveau document', ajouter_une_ligne: 'Ajouter une ligne', ajouter_un_logo: 'Ajouter un logo', plusieurs_factures: 'Plusieurs factures à la suite',
+    envoi_par_email: 'Ouvrir l’envoi par e-mail', piece_jointe: 'Ajouter une pièce jointe', joindre_des_documents: 'Joindre d’autres factures/devis', apercu_mon_compte: 'Aperçu dans Mon compte',
+    facture_marquee_payee: 'Facture marquée payée', devis_accepte: 'Devis accepté', devis_transforme_en_facture: 'Devis transformé en facture', modifier_un_document: 'Modifier un document',
+    retelecharger_un_pdf: 'Retélécharger un PDF', supprimer_un_document: 'Supprimer un document', changer_de_modele: 'Changer de modèle', changer_de_couleur: 'Changer de couleur',
+    changer_de_police: 'Changer de police / taille (CV)', photo_cv: 'Photo du CV', recherche_dans_le_compte: 'Recherche dans son compte', menu_mon_compte: 'Menu « Mon compte »', guide_lu: 'Ouvrir un guide'};
+  const LIB_EV = {connexion: 'Connexions à un compte', compte_cree: 'Comptes créés', compte_supprime: 'Comptes supprimés', envoi_gmail: 'Envois depuis Gmail', envoi_autre_appli: 'Envois avec une autre application', appli_installee: 'Applications installées', facture_payee: 'Factures marquées payées'};
+  const PART = {clic_qonto: 'Qonto', clic_indy: 'Indy', clic_sumup: 'SumUp', clic_vistaprint: 'Vistaprint'};
+  const lisible = k => k.replace(/^x/, '').replace(/_/g, ' ');
+  const simple = (champ, nommer, o = {}) => ctx => liste(lignesDe(ctx, ctx.F(champ, o.filtre), nommer, Object.assign({avant: ctx.FA(champ, o.filtre)}, o)), o);
+
+  const SECTIONS = [
+    {id: 'jours', grp: null, titre: 'Visiteurs par jour', sous: "Une personne qui revient le même jour n'est comptée qu'une fois.", rendu: ctx => {
+      const {jrs, docs} = ctx;
+      const lignes = jrs.map((j, i) => ({nom: esc(j.toLocaleDateString('fr-FR', {weekday: 'long', day: 'numeric', month: 'long'})), val: docs[i].vis || 0, txt: `${n(docs[i].vis)} <span class="u">visit.</span>`,
+        det: `${n(docs[i].nv)} nouveaux · ${n(docs[i].v)} pages vues · ${n(docsCrees(docs[i]))} document${docsCrees(docs[i]) > 1 ? 's' : ''} · ${n(evv(docs[i], 'compte_cree'))} compte${evv(docs[i], 'compte_cree') > 1 ? 's' : ''}`})).reverse();
+      setTimeout(() => graphe(jrs, docs.map(d => d.vis || 0), docs.map(d => d.v || 0)));
+      return `<div class="graphe" id="graphe"></div>` + liste(lignes, {rang: false, part: false, max: 7});
+    }},
+    {id: 'docs', grp: 'Documents', titre: 'Documents créés', sous: 'PDF téléchargés, imprimés ou envoyés, par type', rendu: simple('ev', nomDoc, {filtre: k => /^pdf_/.test(k)})},
+    {id: 'fin', grp: 'Documents', titre: 'Documents commencés et terminés', sous: "Combien de personnes vont jusqu'au téléchargement après avoir commencé à remplir", rendu: ctx => {
+      const d0 = ctx.F('deb'), f0 = ctx.F('fin');
+      const l = Object.keys(Object.assign({}, d0, f0)).map(k => [k, Math.max(d0[k] || 0, f0[k] || 0), Math.max(0, f0[k] || 0)]).filter(x => x[1] > 0).sort((a, b) => b[1] - a[1]);
+      return liste(l.map(([k, d, f]) => { const t = pct(f, d); return {nom: esc(nomDoc('pdf_' + k)), val: d, txt: `<span class="${t >= 50 ? 'hausse' : 'baisse'}">${t} %</span>`, det: `${n(d)} commencé${d > 1 ? 's' : ''} · ${n(f)} terminé${f > 1 ? 's' : ''} · ${n(d - f)} abandonné${d - f > 1 ? 's' : ''}`}; }), {part: false, total: false});
+    }},
+    {id: 'pages', grp: 'Documents', titre: 'Pages les plus vues', sous: 'Affichages de chaque page et temps moyen passé dessus', rendu: ctx => {
+      const vues = ctx.F('p'), tp = ctx.F('tp');
+      return liste(lignesDe(ctx, vues, nomPage, {avant: ctx.FA('p'), det: k => tp[k] ? '⏱ ' + duree(tp[k] / Math.max(1, vues[k])) + ' en moyenne' : ''}));
+    }},
+    {id: 'fn', grp: 'Fonctions utilisées', titre: 'Fonctions du site les plus utilisées', sous: 'Aperçu, brouillons, clients, envois, modèles… (comptées depuis le 20 octobre 2026)', rendu: simple('fn', k => NOMS_FN[k] || k.replace(/_/g, ' '))},
+    {id: 'app', grp: 'Fonctions utilisées', titre: 'Comptes et actions', sous: 'Connexions, comptes, envois, factures payées, applications installées', rendu: simple('ev', k => LIB_EV[k] || k.replace(/_/g, ' '), {filtre: k => !/^pdf_|^clic_/.test(k), part: false, total: false})},
+    {id: 'ent', grp: 'Comportement des visiteurs', titre: "Pages d'arrivée", sous: 'Première page vue en arrivant', rendu: simple('ent', nomPage)},
+    {id: 'sort', grp: 'Comportement des visiteurs', titre: 'Pages de sortie', sous: 'Dernière page vue avant de partir', rendu: simple('sort', nomPage)},
+    {id: 'dur', grp: 'Comportement des visiteurs', titre: 'Durée des visites', sous: 'Temps passé sur le site, page à l’écran', rendu: simple('dur', k => DUR[k] || k, {ordre: Object.keys(DUR), rang: false, sansEvo: true})},
+    {id: 'ppv', grp: 'Comportement des visiteurs', titre: 'Pages vues par visite', sous: 'Nombre de pages ouvertes pendant une visite', rendu: simple('ppv', k => PPV[k] || k, {ordre: Object.keys(PPV), rang: false, sansEvo: true})},
+    {id: 'rech', grp: 'Recherches', titre: 'Ce que les gens cherchent', sous: 'Mots tapés dans la recherche de l’accueil', rendu: simple('rech', lisible, {sansEvo: true})},
+    {id: 'rech0', grp: 'Recherches', titre: 'Recherches sans résultat', sous: 'Documents demandés que le site ne propose pas', rendu: simple('rech0', lisible, {sansEvo: true})},
+    {id: 'moments', grp: 'Moments de visite', titre: 'Moments de la journée', sous: 'Heure du visiteur', rendu: ctx => {
+      const h = ctx.F('h'), hv = i => Math.max(0, h['h' + p2(i)] || 0), tr = (a, b) => { let t = 0; for (let i = a; i < b; i++) t += hv(i); return t; };
+      const M = [['🌙 Nuit', '0 h – 6 h', 0, 6], ['🌅 Matin', '6 h – 12 h', 6, 12], ['🍽️ Midi', '12 h – 14 h', 12, 14], ['☀️ Après-midi', '14 h – 18 h', 14, 18], ['🌆 Soir', '18 h – 24 h', 18, 24]];
+      return liste(M.map(([a, b, x, y]) => ({nom: a, val: tr(x, y), det: b})).filter(l => l.val > 0), {rang: false});
+    }},
+    {id: 'heures', grp: 'Moments de visite', titre: 'Heures les plus fréquentées', sous: 'Les heures avec le plus de visites', rendu: ctx => {
+      const h = ctx.F('h'), l = []; for (let i = 0; i < 24; i++){ const v = Math.max(0, h['h' + p2(i)] || 0); if (v) l.push({nom: `${i} h – ${i + 1} h`, val: v}); }
+      return liste(l.sort((a, b) => b.val - a.val), {max: 8, total: false});
+    }},
+    {id: 'semaine', grp: 'Moments de visite', titre: 'Jours de la semaine', sous: 'Visiteurs selon le jour', rendu: ctx => {
+      const js = {}; ctx.jrs.forEach((j, i) => { const k = JOURS[(j.getDay() + 6) % 7]; js[k] = (js[k] || 0) + (ctx.docs[i].vis || 0); });
+      return liste(lignesDe(ctx, js, k => k, {ordre: JOURS, sansEvo: true}), {rang: false});
+    }},
+    {id: 'pays', grp: 'Moments de visite', titre: 'Pays et territoires', sous: 'D’après le fuseau horaire, jamais l’adresse IP', rendu: simple('pays', k => PAYS[k] || k.replace(/_/g, ' '))},
+    {id: 'src', grp: 'Provenance et appareils', titre: "D'où viennent les visiteurs", sous: 'Site ou application d’où ils arrivent', rendu: simple('src', k => SOURCES[k] || k)},
+    {id: 'type', grp: 'Provenance et appareils', titre: 'Téléphone ou ordinateur', sous: 'Type d’appareil', rendu: simple('app', k => ({telephone: '📱 Téléphone', ordinateur: '💻 Ordinateur'})[k] || k, {rang: false})},
+    {id: 'os', grp: 'Provenance et appareils', titre: 'Systèmes', sous: 'iPhone, Android, Windows, Mac…', rendu: simple('os', k => OS[k] || k)},
+    {id: 'nav', grp: 'Provenance et appareils', titre: 'Navigateurs', sous: 'Chrome, Safari, Samsung, appli Facebook…', rendu: simple('nav', k => NAV[k] || k)},
+    {id: 'ecr', grp: 'Provenance et appareils', titre: "Tailles d'écran", sous: 'Pour vérifier que le site s’affiche bien partout', rendu: simple('ecr', k => ECR[k] || k, {ordre: Object.keys(ECR), rang: false, sansEvo: true})},
+    {id: 'part', grp: 'Provenance et appareils', titre: 'Clics vers les partenaires', sous: 'Qonto, Indy, SumUp, Vistaprint', rendu: simple('ev', k => PART[k] || k.replace(/^clic_/, ''), {filtre: k => /^clic_/.test(k)})}
+  ];
+  function construire(){
+    let html = '', grp;
+    SECTIONS.forEach(s => {
+      if (s.grp !== grp && s.grp){ html += `<h2 class="grp-st">${s.grp}</h2>`; }
+      grp = s.grp;
+      html += `<section class="bloc-st" data-sec="${s.id}"><h2>${s.titre}</h2><p class="sous">${s.sous}</p><p class="sec-lib"></p><div class="sec-corps"></div><div class="sec-per" role="group" aria-label="Période de cette catégorie"></div></section>`;
+    });
+    $('sections').innerHTML = html;
+  }
+  function rendreSection(s){
+    const el = document.querySelector(`[data-sec="${s.id}"]`); if (!el) return;
+    const propre = perSec[s.id], ctx = propre ? contexte(propre) : ctxHaut;
+    el.querySelector('.sec-lib').innerHTML = `Période : <b>${esc(ctx.lib)}</b>${propre ? ' <span class="perso">choisie ici</span>' : ''}`;
+    el.querySelector('.sec-corps').innerHTML = s.rendu(ctx);
+    el.querySelector('.sec-per').innerHTML = boutonsPeriode(propre || null, true);
+  }
+  function rendreTout(){
+    if (!tout) return;
+    rendreHaut();
+    SECTIONS.forEach(rendreSection);
+  }
+  $('sections').addEventListener('click', e => {
+    const b = e.target.closest('.sec-per button'); if (!b) return;
+    const id = b.closest('[data-sec]').dataset.sec, p = periodeDepuis(b);
+    if (p === null) delete perSec[id]; else if (p) perSec[id] = p;
+    rendreSection(SECTIONS.find(s => s.id === id));
+  });
+  $('sections').addEventListener('change', e => {
+    if (!e.target.closest('.sec-per')) return;
+    const id = e.target.closest('[data-sec]').dataset.sec, p = periodeDepuis(e.target);
+    if (p){ perSec[id] = p; rendreSection(SECTIONS.find(s => s.id === id)); }
+  });
+
   // ---------- Détail des documents créés (seulement le type : aucune donnée personnelle n'est enregistrée) ----------
-  let dernier = null;
   function detailDocs(){
-    if (!dernier) return;
-    const {jrs, docs} = dernier;
-    const types = fusion(docs, 'ev', k => /^pdf_/.test(k));
-    const total = Object.values(types).reduce((a, v) => a + Math.max(0, v), 0);
-    const periodeTxt = periode === 1 ? "aujourd'hui" : periode ? `sur les ${periode} derniers jours` : 'depuis le lancement';
+    if (!ctxHaut) return;
+    const {jrs, docs, lib} = ctxHaut;
+    const total = Object.values(ctxHaut.F('ev', k => /^pdf_/.test(k))).reduce((a, v) => a + Math.max(0, v), 0);
     const parJour = jrs.map((j, i) => [j, Object.entries(docs[i].ev || {}).filter(([k, v]) => /^pdf_/.test(k) && v > 0).sort((a, b) => b[1] - a[1])]).filter(([, x]) => x.length).reverse();
     const f = document.createElement('div'); f.className = 'dd-fond';
     f.innerHTML = `<div class="dd-boite" role="dialog" aria-modal="true" aria-label="Documents créés">
-      <div class="dd-tete"><div><b>Documents créés</b><small>${n(total)} document${total > 1 ? 's' : ''} ${periodeTxt}</small></div><button type="button" data-fermer aria-label="Fermer">×</button></div>
-      ${parJour.length ? `<table class="tb"><thead><tr><th class="g">Jour</th><th class="g">Documents</th><th>Total</th></tr></thead><tbody>${parJour.map(([j, x]) => `<tr><td class="g">${esc(jourLong(j))}</td><td class="g" style="font-weight:500">${x.map(([k, v]) => `${n(v)} ${esc(nomDoc(k))}`).join('<br>')}</td><td class="fort">${n(x.reduce((a, [, v]) => a + v, 0))}</td></tr>`).join('')}</tbody></table>` : '<p class="vide-st">Aucun document créé sur cette période.</p>'}
+      <div class="dd-tete"><div><b>Documents créés</b><small>${n(total)} document${total > 1 ? 's' : ''} · ${esc(lib)}</small></div><button type="button" data-fermer aria-label="Fermer">×</button></div>
+      ${parJour.length ? liste(parJour.map(([j, x]) => ({nom: esc(jourLong(j)), val: x.reduce((a, [, v]) => a + v, 0), det: x.map(([k, v]) => `${n(v)} ${esc(nomDoc(k))}`).join(' · ')})), {rang: false, part: false, max: 60}) : '<p class="vide-st">Aucun document créé sur cette période.</p>'}
       <p class="dd-note">🔒 Seul le <b>type</b> de document est compté, au moment où il est téléchargé, imprimé ou envoyé. Aucun nom, aucune adresse, aucun montant ni aucun contenu n'est enregistré.</p>
     </div>`;
     const fermer = () => { f.remove(); document.removeEventListener('keydown', echap); };
@@ -624,140 +782,28 @@
   }
   document.addEventListener('click', e => { const t = e.target.closest('[data-action="docs"]'); if (t) detailDocs(); });
 
-  const sommeMap = (docs, champ) => Object.values(fusion(docs, champ)).reduce((a, v) => a + Math.max(0, v), 0);
-  function tempsMoyen(docs){ const nb = sommeMap(docs, 'dur'); return nb ? somme(docs, d => d.t) / nb : null; }
-  function pagesParVisite(docs){ const vis = somme(docs, d => d.vis); return vis ? somme(docs, d => d.v) / vis : null; }
-  function rebond(docs){ const nb = sommeMap(docs, 'ppv'); return nb ? Math.round(Math.max(0, fusion(docs, 'ppv').p1 || 0) / nb * 100) : null; }
-  function duree(s){ if (s === null || s === undefined) return '–'; s = Math.round(s); if (s < 60) return s + ' s'; if (s < 3600) return Math.floor(s / 60) + ' min ' + String(s % 60).padStart(2, '0'); return Math.floor(s / 3600) + ' h ' + String(Math.floor(s % 3600 / 60)).padStart(2, '0'); }
-  const taux = (a, b) => b ? (a / b * 100) : null;
-  const txPc = v => v === null ? '–' : (v < 10 ? v.toFixed(1).replace('.', ',') : Math.round(v)) + ' %';
-
-  function rendre(jrs, docs, docsAvant, comptes, tout){
-    dernier = {jrs, docs, docsAvant};
-    const ev = (d, k) => (d.ev || {})[k] || 0;
-    const S = (l, f) => somme(l, f);
-    const vis = S(docs, d => d.vis), visA = S(docsAvant, d => d.vis);
-    const dc = S(docs, docsCrees), dcA = S(docsAvant, docsCrees);
-    const cc = S(docs, d => ev(d, 'compte_cree')), ccA = S(docsAvant, d => ev(d, 'compte_cree'));
-    $('tuiles').innerHTML =
-      `<div class="tuile tuile-large"><small>Comptes au total</small><b>${n(comptes)}</b><span>Toutes périodes confondues · ${n(cc)} créé${cc > 1 ? 's' : ''} sur la période choisie</span></div>` +
-      tuile('Visiteurs', vis, visA) +
-      tuile('Pages vues', S(docs, d => d.v), S(docsAvant, d => d.v)) +
-      tuile('Nouveaux visiteurs', S(docs, d => d.nv), S(docsAvant, d => d.nv)) +
-      tuile('Documents créés', dc, dcA, 'docs') +
-      tuile('Nouveaux comptes', cc, ccA) +
-      tuile('Envois depuis Gmail', S(docs, d => ev(d, 'envoi_gmail')), S(docsAvant, d => ev(d, 'envoi_gmail'))) +
-      tuileTexte('Temps moyen par visite', duree(tempsMoyen(docs)), tempsMoyen(docs), tempsMoyen(docsAvant)) +
-      tuileTexte('Pages par visite', pagesParVisite(docs) ? pagesParVisite(docs).toFixed(1).replace('.', ',') : '–', pagesParVisite(docs), pagesParVisite(docsAvant)) +
-      tuileTexte('Partis après 1 page', rebond(docs) === null ? '–' : rebond(docs) + ' %', rebond(docs), rebond(docsAvant), true) +
-      tuile('Visites de retour', S(docs, d => Math.max(0, (d.vis || 0) - (d.nv || 0))), S(docsAvant, d => Math.max(0, (d.vis || 0) - (d.nv || 0))));
-
-    // Taux et moyennes
-    const nbJours = jrs.length, tel = sommeMap(docs, 'app') ? Math.max(0, fusion(docs, 'app').telephone || 0) : 0, appTot = sommeMap(docs, 'app');
-    const deb = sommeMap(docs, 'deb'), fin = sommeMap(docs, 'fin'), fnTot = sommeMap(docs, 'fn');
-    const meilleur = jrs.map((j, i) => [j, docs[i].vis || 0]).sort((a, b) => b[1] - a[1])[0];
-    $('tuiles-taux').innerHTML =
-      tuileTexte('Visiteurs qui créent un document', txPc(taux(dc, vis)), taux(dc, vis), taux(dcA, visA)) +
-      tuileTexte('Visiteurs qui créent un compte', txPc(taux(cc, vis)), taux(cc, vis), taux(ccA, visA)) +
-      tuileTexte('Documents terminés une fois commencés', txPc(taux(fin, deb)), taux(fin, deb), taux(sommeMap(docsAvant, 'fin'), sommeMap(docsAvant, 'deb'))) +
-      tuileTexte('Visiteurs par jour (moyenne)', (vis / nbJours).toFixed(1).replace('.', ','), vis / nbJours, visA / Math.max(1, docsAvant.length)) +
-      tuileTexte('Documents par jour (moyenne)', (dc / nbJours).toFixed(1).replace('.', ','), dc / nbJours, dcA / Math.max(1, docsAvant.length)) +
-      tuileTexte('Visiteurs sur téléphone', txPc(taux(tel, appTot)), null, null) +
-      tuileTexte('Nouveaux visiteurs', txPc(taux(S(docs, d => d.nv), vis)), null, null) +
-      tuileTexte('Fonctions utilisées par visiteur', vis ? (fnTot / vis).toFixed(1).replace('.', ',') : '–', vis ? fnTot / vis : null, null) +
-      tuileTexte('Meilleur jour de la période', meilleur && meilleur[1] ? `${esc(jourCourt(meilleur[0]))} · ${n(meilleur[1])} vis.` : '–', null, null, false, true);
-
-    // Depuis le lancement
-    const T = [...tout.entries()].filter(([k]) => /^j-/.test(k)).sort((a, b) => a[0] < b[0] ? -1 : 1);
-    const tv = T.map(([, d]) => d), rec = T.reduce((best, [k, d]) => (d.vis || 0) > best[1] ? [k, d.vis || 0] : best, ['', 0]);
-    const recJour = rec[0] ? new Date(rec[0].slice(2) + 'T12:00') : null;
-    $('tuiles-total').innerHTML =
-      `<div class="tuile"><small>Visiteurs</small><b>${n(S(tv, d => d.vis))}</b><span>depuis le 16 octobre 2026</span></div>` +
-      `<div class="tuile"><small>Pages vues</small><b>${n(S(tv, d => d.v))}</b><span>&nbsp;</span></div>` +
-      `<div class="tuile"><small>Documents créés</small><b>${n(S(tv, docsCrees))}</b><span>&nbsp;</span></div>` +
-      `<div class="tuile"><small>Envois depuis Gmail</small><b>${n(S(tv, d => ev(d, 'envoi_gmail')))}</b><span>&nbsp;</span></div>` +
-      `<div class="tuile"><small>Record de visiteurs en un jour</small><b>${n(rec[1])}</b><span>${recJour ? esc(jourLong(recJour)) : '&nbsp;'}</span></div>` +
-      `<div class="tuile"><small>Âge du site</small><b>${n(joursDepuisLancement())} j</b><span>en ligne depuis le 16/10/2026</span></div>`;
-
-    // Visiteurs par jour
-    graphe(jrs, docs.map(d => d.vis || 0), docs.map(d => d.v || 0));
-    $('tab-jours').innerHTML = '<thead><tr><th class="g">Jour</th><th>Visiteurs</th><th>Nouveaux</th><th>Pages vues</th><th>Documents</th><th>Comptes</th></tr></thead><tbody>' +
-      jrs.map((j, i) => `<tr><td class="g" style="min-width:96px">${esc(j.toLocaleDateString('fr-FR', {weekday: 'short', day: 'numeric', month: 'short'}))}</td><td class="fort">${n(docs[i].vis)}</td><td>${n(docs[i].nv)}</td><td>${n(docs[i].v)}</td><td>${n(docsCrees(docs[i]))}</td><td>${n(ev(docs[i], 'compte_cree'))}</td></tr>`).reverse().join('') +
-      `</tbody><tfoot><tr><td class="g">Total</td><td>${n(vis)}</td><td>${n(S(docs, d => d.nv))}</td><td>${n(S(docs, d => d.v))}</td><td>${n(dc)}</td><td>${n(cc)}</td></tr></tfoot>`;
-
-    const F = (champ, filtre) => fusion(docs, champ, filtre), FA = (champ, filtre) => fusion(docsAvant, champ, filtre);
-    // Documents
-    tableau('l-docs', F('ev', k => /^pdf_/.test(k)), nomDoc, {avant: FA('ev', k => /^pdf_/.test(k)), col: 'Document'});
-    const d0 = F('deb'), f0 = F('fin');
-    const lf = Object.keys(Object.assign({}, d0, f0)).map(k => [k, Math.max(d0[k] || 0, f0[k] || 0), Math.max(0, f0[k] || 0)]).filter(x => x[1] > 0).sort((a, b) => b[1] - a[1]);
-    $('l-fin').innerHTML = lf.length ? `<div class="tb-defil" style="margin-top:0"><table class="tb"><thead><tr><th class="g">Document</th><th>Commencés</th><th>Terminés</th><th>Abandonnés</th><th>Réussite</th></tr></thead><tbody>${lf.map(([k, d, f]) => {
-      const t = pct(f, d);
-      return `<tr><td class="g">${esc(nomDoc('pdf_' + k))}</td><td>${n(d)}</td><td class="fort">${n(f)}</td><td>${n(d - f)}</td><td class="fort ${t >= 50 ? 'hausse' : 'baisse'}">${t} %</td></tr>`;
-    }).join('')}</tbody></table></div>` : vide;
-    const vues = F('p'), tp = F('tp');
-    tableau('l-pages', vues, nomPage, {avant: FA('p'), col: 'Page', colVal: 'Vues', extra: ['Temps moyen', k => tp[k] ? duree(tp[k] / Math.max(1, vues[k])) : '–']});
-    // Fonctions
-    const NOMS_FN = {apercu_document: 'Aperçu du document', enregistrer_client: 'Enregistrer un client', choisir_un_client: 'Choisir un client enregistré', ajouter_un_client: 'Ajouter un client (Mon compte)',
-      brouillon: 'Enregistrer en brouillon', nouveau_document: 'Nouveau document', ajouter_une_ligne: 'Ajouter une ligne', ajouter_un_logo: 'Ajouter un logo', plusieurs_factures: 'Plusieurs factures à la suite',
-      envoi_par_email: 'Ouvrir l’envoi par e-mail', piece_jointe: 'Ajouter une pièce jointe', joindre_des_documents: 'Joindre d’autres factures/devis', apercu_mon_compte: 'Aperçu dans Mon compte',
-      facture_marquee_payee: 'Facture marquée payée', devis_accepte: 'Devis accepté', devis_transforme_en_facture: 'Devis transformé en facture', modifier_un_document: 'Modifier un document',
-      retelecharger_un_pdf: 'Retélécharger un PDF', supprimer_un_document: 'Supprimer un document', changer_de_modele: 'Changer de modèle', changer_de_couleur: 'Changer de couleur',
-      changer_de_police: 'Changer de police / taille (CV)', photo_cv: 'Photo du CV', recherche_dans_le_compte: 'Recherche dans son compte', menu_mon_compte: 'Menu « Mon compte »', guide_lu: 'Ouvrir un guide'};
-    tableau('l-fn', F('fn'), k => NOMS_FN[k] || k.replace(/_/g, ' '), {avant: FA('fn'), col: 'Fonction', colVal: 'Utilisations'});
-    const LIB = {telephone: 'Visites sur téléphone', ordinateur: 'Visites sur ordinateur', connexion: 'Connexions à un compte', compte_cree: 'Comptes créés', compte_supprime: 'Comptes supprimés', envoi_gmail: 'Envois depuis Gmail', envoi_autre_appli: 'Envois avec une autre application', appli_installee: 'Applications installées', facture_payee: 'Factures marquées payées'};
-    tableau('l-app', F('ev', k => !/^pdf_|^clic_/.test(k)), k => LIB[k] || k.replace(/_/g, ' '), {avant: FA('ev', k => !/^pdf_|^clic_/.test(k)), col: 'Action', sansPart: true, total: false});
-    // Comportement
-    tableau('l-ent', F('ent'), nomPage, {avant: FA('ent'), col: 'Page', colVal: 'Visites', max: 15});
-    tableau('l-sort', F('sort'), nomPage, {avant: FA('sort'), col: 'Page', colVal: 'Visites', max: 15});
-    tableau('l-dur', F('dur'), k => DUR[k] || k, {ordre: Object.keys(DUR), col: 'Durée', colVal: 'Visites', sansEvo: true});
-    tableau('l-ppv', F('ppv'), k => PPV[k] || k, {ordre: Object.keys(PPV), col: 'Pages', colVal: 'Visites', sansEvo: true});
-    // Recherches
-    const lisible = k => k.replace(/^x/, '').replace(/_/g, ' ');
-    tableau('l-rech', F('rech'), lisible, {col: 'Recherche', max: 30, sansEvo: true});
-    tableau('l-rech0', F('rech0'), lisible, {col: 'Recherche', max: 30, sansEvo: true});
-    // Moments
-    const h = F('h'), hv = i => Math.max(0, h['h' + String(i).padStart(2, '0')] || 0);
-    const tr = (a, b) => { let t = 0; for (let i = a; i < b; i++) t += hv(i); return t; };
-    tableau('l-moments', {nuit: tr(0, 6), matin: tr(6, 12), midi: tr(12, 14), apres: tr(14, 18), soir: tr(18, 24)}, k => ({nuit: '🌙 Nuit (0 h – 6 h)', matin: '🌅 Matin (6 h – 12 h)', midi: '🍽️ Midi (12 h – 14 h)', apres: '☀️ Après-midi (14 h – 18 h)', soir: '🌆 Soir (18 h – 24 h)'})[k], {ordre: ['nuit', 'matin', 'midi', 'apres', 'soir'], col: 'Moment', colVal: 'Visites', sansEvo: true});
-    const hs = {}; for (let i = 0; i < 24; i++) if (hv(i)) hs[i] = hv(i);
-    tableau('l-heures', hs, k => `${k} h – ${+k + 1} h`, {col: 'Heure', colVal: 'Visites', max: 8, sansEvo: true, total: false});
-    const js = {}, jsA = {}; jrs.forEach((j, i) => { const k = JOURS[(j.getDay() + 6) % 7]; js[k] = (js[k] || 0) + (docs[i].vis || 0); });
-    tableau('l-jours', js, k => k, {ordre: JOURS, col: 'Jour', colVal: 'Visiteurs', sansEvo: true});
-    tableau('l-pays', F('pays'), k => PAYS[k] || k.replace(/_/g, ' '), {avant: FA('pays'), col: 'Pays', colVal: 'Visites', max: 20});
-    // Provenance et appareils
-    tableau('l-src', F('src'), k => SOURCES[k] || k, {avant: FA('src'), col: 'Provenance', colVal: 'Visites'});
-    tableau('l-type', F('app'), k => ({telephone: '📱 Téléphone', ordinateur: '💻 Ordinateur'})[k] || k, {avant: FA('app'), col: 'Appareil', colVal: 'Visites'});
-    tableau('l-os', F('os'), k => OS[k] || k, {avant: FA('os'), col: 'Système', colVal: 'Visites'});
-    tableau('l-nav', F('nav'), k => NAV[k] || k, {avant: FA('nav'), col: 'Navigateur', colVal: 'Visites'});
-    tableau('l-ecr', F('ecr'), k => ECR[k] || k, {ordre: Object.keys(ECR), col: 'Écran', colVal: 'Visites', sansEvo: true});
-    const PART = {clic_qonto: 'Qonto', clic_indy: 'Indy', clic_sumup: 'SumUp', clic_vistaprint: 'Vistaprint'};
-    tableau('l-part', F('ev', k => /^clic_/.test(k)), k => PART[k] || k.replace(/^clic_/, ''), {avant: FA('ev', k => /^clic_/.test(k)), col: 'Partenaire', colVal: 'Clics'});
-  }
-
-  // ---------- Les 3 classements des comptes (20 premiers) ----------
+  // ---------- Les 3 classements des comptes (20 premiers, depuis le début) ----------
   const NOMS_FN_COURTS = {apercu_document: 'aperçu', enregistrer_client: 'client enregistré', choisir_un_client: 'client choisi', brouillon: 'brouillon', nouveau_document: 'nouveau doc.', ajouter_une_ligne: 'ligne ajoutée', plusieurs_factures: 'factures à la suite', envoi_par_email: 'envoi e-mail', piece_jointe: 'pièce jointe', facture_marquee_payee: 'facture payée', devis_accepte: 'devis accepté', devis_transforme_en_facture: 'devis → facture', changer_de_modele: 'modèle', changer_de_couleur: 'couleur', apercu_mon_compte: 'aperçu compte', modifier_un_document: 'modification', retelecharger_un_pdf: 'PDF', guide_lu: 'guide'};
   const dateCourte = t => t && t.toDate ? t.toDate().toLocaleDateString('fr-FR', {day: 'numeric', month: 'short', year: 'numeric'}) : '';
-  async function unClassement(id, champ, valeur, detail, videTxt){
+  async function unClassement(id, champ, format, detail, videTxt){
     const z = $(id);
     try{
       const snap = await db.collection('classement').orderBy(champ, 'desc').limit(20).get();
       const l = snap.docs.map(d => d.data()).filter(x => (x[champ] || 0) > 0);
-      if (!l.length){ z.innerHTML = `<p class="vide-st">${videTxt}</p>`; return; }
-      z.innerHTML = `<div class="tb-defil" style="margin-top:0;max-height:none"><table class="tb"><thead><tr><th>#</th><th class="g">Compte</th><th>${valeur[0]}</th></tr></thead><tbody>` + l.map((x, i) =>
-        `<tr><td class="rg">${i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : i + 1}</td><td class="g">${esc(x.email || 'Compte sans e-mail')}<small>${detail(x)}</small></td><td class="fort med">${valeur[1](x[champ])}</td></tr>`).join('') + '</tbody></table></div>';
+      z.innerHTML = l.length ? liste(l.map(x => ({nom: `<span class="mail">${esc(x.email || 'Compte sans e-mail')}</span>`, val: x[champ], det: detail(x)})), {medailles: true, part: false, total: false, max: 20, format}) : `<p class="vide-st">${videTxt}</p>`;
     }catch(e){
       console.warn(e);
       z.innerHTML = '<p class="vide-st"><b>Ce classement n’est pas encore accessible.</b> Il faut publier les nouvelles règles Firebase.</p>';
     }
   }
   function chargerClassements(){
-    unClassement('l-classement', 'n', ['Documents', n], x => {
+    unClassement('l-classement', 'n', n, x => {
       const types = Object.entries(x.types || {}).sort((a, b) => b[1] - a[1]);
-      return `${types.slice(0, 3).map(([k, v]) => `${n(v)} ${esc(nomDoc('pdf_' + k))}`).join(' · ')}${types.length > 3 ? ' · …' : ''}${x.maj ? ` — dernier le ${esc(dateCourte(x.maj))}` : ''}`;
+      return [types.slice(0, 3).map(([k, v]) => `${n(v)} ${esc(nomDoc('pdf_' + k))}`).join(' · ') + (types.length > 3 ? ' · …' : ''), x.maj ? 'dernier le ' + esc(dateCourte(x.maj)) : ''].filter(Boolean).join(' — ');
     }, 'Aucun téléchargement fait avec un compte pour l’instant.');
-    unClassement('l-cl-temps', 't', ['Temps', duree], x => [x.n ? n(x.n) + ' document' + (x.n > 1 ? 's' : '') : '', x.vu ? 'vu le ' + esc(dateCourte(x.vu)) : ''].filter(Boolean).join(' · '),
+    unClassement('l-cl-temps', 't', duree, x => [x.n ? n(x.n) + ' document' + (x.n > 1 ? 's' : '') : '', x.vu ? 'vu le ' + esc(dateCourte(x.vu)) : ''].filter(Boolean).join(' · '),
       'Pas encore de données : le temps passé par les comptes est compté depuis le 20 octobre 2026.');
-    unClassement('l-cl-fn', 'a', ['Fonctions', n], x => {
+    unClassement('l-cl-fn', 'a', n, x => {
       const f = Object.entries(x.f || {}).sort((a, b) => b[1] - a[1]);
       return `${f.length} fonction${f.length > 1 ? 's' : ''} différente${f.length > 1 ? 's' : ''} · ${f.slice(0, 3).map(([k, v]) => `${n(v)} ${esc(NOMS_FN_COURTS[k] || k.replace(/_/g, ' '))}`).join(' · ')}`;
     }, 'Pas encore de données : les fonctions utilisées par les comptes sont comptées depuis le 20 octobre 2026.');
@@ -798,7 +844,7 @@
     zone.addEventListener('mousemove', montrer); zone.addEventListener('touchstart', montrer, {passive: true}); zone.addEventListener('touchmove', montrer, {passive: true});
     zone.addEventListener('mouseleave', cacher); zone.addEventListener('touchend', () => setTimeout(cacher, 1800));
   }
-  let tempo; window.addEventListener('resize', () => { clearTimeout(tempo); tempo = setTimeout(() => { if (!$('st-contenu').hidden) charger(); }, 250); });
+  let tempo; window.addEventListener('resize', () => { clearTimeout(tempo); tempo = setTimeout(() => { if (!$('st-contenu').hidden) rendreTout(); }, 250); });
 
   C.surChangement(() => { if ($('st-contenu').hidden) demarrer(); });
   demarrer();
