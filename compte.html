@@ -288,6 +288,29 @@
   .compte-lien svg{width:24px;height:24px;color:var(--bleu)}
   .compte-lien:hover{color:var(--bleu)}
   @media (min-width:561px){.compte-lien{flex-direction:row;gap:7px;font-size:.88rem;border:1.5px solid var(--bord);padding:7px 13px 7px 10px;border-radius:50px;background:#fff}.compte-lien svg{width:20px;height:20px}.droite{gap:14px}}
+
+  /* ----- Listes plus contrastées (clients, factures, devis, impayées, brouillons) ----- */
+  .clients{background:#EEF3FA;border-color:#D6E0EE;padding:6px;display:grid;gap:6px!important}
+  .cl-lettre{background:none;border:0;color:var(--bleu-fonce);padding:8px 8px 2px;position:static;letter-spacing:.04em}
+  .cl-ligne{border:1px solid #D9E3F0;border-radius:12px;background:#fff;box-shadow:0 1px 3px rgba(30,42,66,.06)}
+  .cl-ligne:last-child{border-bottom:1px solid #D9E3F0}
+  .cl-ligne:active,.cl-ligne:hover{background:#F5F8FE;border-color:#B9CDEE}
+  .cl-ini.c0{background:#E3ECFB;color:#2F5DAE}.cl-ini.c1{background:#E2F4EA;color:#1F6B3A}.cl-ini.c2{background:#FFF0D9;color:#8A5A00}
+  .cl-ini.c3{background:#EFE7FB;color:#5B3FA0}.cl-ini.c4{background:#DFF3F3;color:#16727A}.cl-ini.c5{background:#FDE8E6;color:#A8322D}
+  .liste-docs{background:#EEF3FA;border:1px solid #D6E0EE;border-radius:12px;padding:8px;margin:0;gap:8px}
+  .liste-docs:has(> .vide:only-child){background:none;border:0;padding:0}
+  .liste-docs .mois-docs{background:#EEF3FA;padding:6px 4px 2px}
+  .doc{border:1px solid #D9E3F0;border-left:4px solid #9AABC4;box-shadow:0 1px 3px rgba(30,42,66,.06)}
+  .doc.s-payee{border-left-color:#2FA36B}
+  .doc.s-impayee{border-left-color:#E8873A}
+  .doc.s-retard{border-left-color:#D9534F;background:#FFFBFA}
+  .doc.s-attente{border-left-color:#E0A526}
+  .doc.s-accepte{border-left-color:#2FA36B}
+  .doc.s-facture{border-left-color:#4A7BD0}
+  .doc.s-avoir{border-left-color:#7B5CC4}
+  .doc.s-recu{border-left-color:#1BA1A1}
+  .doc.doc-brouillon{border-left:4px solid #9AABC4}
+  .doc-paye{border-top-color:#E2E8F2}
 </style>
 <!-- Google AdSense -->
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4241359196877067" crossorigin="anonymous"></script>
@@ -732,7 +755,7 @@
     let prec = '';
     $('liste').innerHTML = l.length ? l.map(c => {
       const L = lettre(c), tete = L !== prec ? `<div class="cl-lettre">${L}</div>` : ''; prec = L;
-      return tete + `<button type="button" class="cl-ligne" data-voir="${esc(c.id)}"><span class="cl-ini">${esc((c.nom || '?')[0].toUpperCase())}</span><span class="cl-txt"><b>${esc(c.nom)}${c.pro ? '<span class="cl-pro">Pro</span>' : ''}</b><span>${esc(c.cpville || c.adresse || c.email || 'Pas d\'adresse')}</span>${c.note ? `<span class="cl-note">📝 ${esc(c.note)}</span>` : ''}</span><span class="cl-fl">›</span></button>`;
+      return tete + `<button type="button" class="cl-ligne" data-voir="${esc(c.id)}"><span class="cl-ini c${(String(c.nom || '?').toUpperCase().charCodeAt(0) || 0) % 6}">${esc((c.nom || '?')[0].toUpperCase())}</span><span class="cl-txt"><b>${esc(c.nom)}${c.pro ? '<span class="cl-pro">Pro</span>' : ''}</b><span>${esc(c.cpville || c.adresse || c.email || 'Pas d\'adresse')}</span>${c.note ? `<span class="cl-note">📝 ${esc(c.note)}</span>` : ''}</span><span class="cl-fl">›</span></button>`;
     }).join('')
       : tous.length ? '<p class="vide">Aucun client ne correspond à votre recherche.</p>'
       : '<p class="vide">Aucun client enregistré pour l\'instant.<br>Créez un <a href="devis.html">devis</a> ou une <a href="facture.html">facture</a> et touchez « Enregistrer ce client », ou ajoutez-en un avec « + Ajouter ».</p>';
@@ -747,7 +770,8 @@
       : d.accepte ? `<div class="doc-accepte-l"><span class="doc-ok">✓ Accepté le ${dFr(d.accepte)}</span>${transformer}<button type="button" class="doc-annuler" data-attente="${esc(d.id)}">Remettre en attente</button></div>`
       : `<div class="doc-accepte-l">${transformer}<button type="button" class="doc-accepte" data-accepte="${esc(d.id)}">✓ Devis accepté</button></div>`;
     const pay = d.type === 'facture' ? blocPaiement(d) : '';
-    return `<div class="doc"><div class="doc-haut">${d.type === 'facture' ? (d.paye ? '<span class="doc-type t-payee">✓ Payée</span>' : '<span class="doc-type t-impayee">Impayée</span>') : `<span class="doc-type t-${esc(d.type)}">${MOT[d.type] || 'Document'}</span>`}<b>${esc(d.numero)}</b><span class="doc-total">${eurs(d.total)}</span></div>
+    const statut = d.type === 'facture' ? (d.paye ? 's-payee' : (etatEcheance(d) || {}).retard ? 's-retard' : 's-impayee') : d.type === 'devis' ? (d.facture ? 's-facture' : d.accepte ? 's-accepte' : 's-attente') : 's-' + d.type;
+    return `<div class="doc ${statut}"><div class="doc-haut">${d.type === 'facture' ? (d.paye ? '<span class="doc-type t-payee">✓ Payée</span>' : '<span class="doc-type t-impayee">Impayée</span>') : `<span class="doc-type t-${esc(d.type)}">${MOT[d.type] || 'Document'}</span>`}<b>${esc(d.numero)}</b><span class="doc-total">${eurs(d.total)}</span></div>
       <div class="doc-bas"><span>${avecClient ? esc(d.clientNom || 'Sans nom de client') + ' · ' : ''}${dFr(d.date)}${d.envoye ? ` · <span class="doc-env">✉ envoyé le ${new Date(d.envoye.date).toLocaleDateString('fr-FR')}</span>` : ''}</span><span class="doc-liens"><a class="doc-pdf" href="facture.html?ouvrir=${encodeURIComponent(d.id)}&pdf=1" title="Télécharger le PDF">⬇ PDF</a><a class="doc-ouvrir" href="facture.html?ouvrir=${encodeURIComponent(d.id)}">Rouvrir</a><button type="button" class="doc-suppr" data-suppr-doc="${esc(d.id)}">Supprimer</button></span></div>${des.length ? `<div class="doc-lignes">${esc(des.join(' · '))}</div>` : ''}${conv ? `<div class="doc-conv-l">${conv}</div>` : ''}${pay}</div>`;
   }
   // ---------- Paiement des factures ----------
