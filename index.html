@@ -92,6 +92,8 @@
   .carte small{color:var(--gris);font-size:.8rem}
   .badge{position:absolute;top:12px;right:12px;background:#FFF4E0;color:#B5761A;font-size:.68rem;font-weight:600;padding:3px 8px;border-radius:50px}
   .res-compte{margin:0 0 18px}
+  .res-guides{margin:18px 0 0}
+  .res-guides h2{font-size:.8rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--gris);margin:0 2px 8px}
   .res-compte h2{font-size:.8rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--gris);margin:0 2px 8px}
   .res-liste{display:grid;gap:8px}
   @media (min-width:700px){.res-liste{grid-template-columns:repeat(2,1fr)}}
@@ -240,7 +242,7 @@
   .guides-tous{margin-top:10px;font-weight:700}
   .guides-tous a{color:var(--bleu)}
 </style>
-<script>(function(){try{var q=new URLSearchParams(location.search).get('type'),l=document.createElement('link');l.rel='canonical';l.href='https://docupret.fr'+location.pathname.replace(/index\.html$/,'')+(q&&/^[a-z]+$/.test(q)?'?type='+q:'');document.head.appendChild(l);}catch(e){}})();</script>
+<link rel="canonical" href="https://docupret.fr/">
 <!-- Google AdSense -->
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4241359196877067" crossorigin="anonymous"></script>
 </head>
@@ -368,6 +370,7 @@
 
     <div class="res-compte" id="res-compte" hidden></div>
     <div class="grille" id="grille"></div>
+    <div class="res-guides" id="res-guides" hidden></div>
     <p class="vide" id="vide">Aucun document trouvé.</p>
   </section>
 
@@ -517,6 +520,8 @@
 
 <script>
   const icones = {
+    logo:'<circle cx="12" cy="12" r="8"/><path d="M8.5 14.5l2.5-5 2 3.5 1.5-2 1.5 3.5"/>',
+    carte:'<rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="8" cy="11" r="1.8"/><path d="M13 10h5M13 13h4M6 15h4"/>',
     facture:'<path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6M9 16h3"/>',
     devis:'<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M9 10h6M9 14h4"/>',
     recu:'<rect x="4" y="6" width="16" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M7 9v.01M17 15v.01"/>',
@@ -571,7 +576,9 @@
     {nom:'Simulateur auto-entrepreneur', cat:'outils', label:'Outils', icone:'graphe', page:'simulateur.html', badge:'Outil', mots:'micro entreprise cotisations urssaf revenu net chiffre affaires'},
     {nom:'Frais kilométriques', cat:'outils', label:'Outils', icone:'route', page:'frais-kilometriques.html', badge:'Barème 2026', mots:'kilometrique km bareme indemnites frais reels voiture deplacement'},
     {nom:"Tampon d'entreprise", cat:'outils', label:'Outils', icone:'tampon', page:'tampon.html', badge:'Outil', mots:'tampon cachet societe signature'},
-    {nom:'Flyer et dépliant', cat:'outils', label:'Outils', icone:'flyer', page:'flyer.html', badge:'Nouveau', mots:'flyer prospectus tract depliant brochure publicite imprimer recto verso artisan'}
+    {nom:'Flyer et dépliant', cat:'outils', label:'Outils', icone:'flyer', page:'flyer.html', badge:'Nouveau', mots:'flyer prospectus tract depliant brochure publicite imprimer recto verso artisan'},
+    {nom:'Logo', cat:'outils', label:'Outils', icone:'logo', page:'logo.html', badge:'Outil', mots:'logo logotype entreprise marque identite visuelle png artisan'},
+    {nom:'Carte de visite', cat:'outils', label:'Outils', icone:'carte', page:'carte.html', badge:'À imprimer', mots:'carte visite imprimer imprimeur qr code contact artisan'},
   ];
 
   const grille = document.getElementById('grille');
@@ -609,6 +616,27 @@
 
   documents.forEach(d => d.index = decouper(d.nom + ' ' + (d.mots || '')));
 
+  // Les guides apparaissent aussi dans la recherche
+  const guidesRech = [
+    ["Les mentions obligatoires d'une facture", 'guide-mentions-obligatoires-facture.html', 'facture mentions obligatoires siret siren tva penalites numero guide regles'],
+    ["Faire une facture d'auto-entrepreneur", 'guide-facture-auto-entrepreneur.html', 'facture auto entrepreneur micro entreprise tva franchise 293 cibs seuil guide'],
+    ['Faire un devis : les règles à connaître', 'guide-devis.html', 'devis mentions validite signature acompte gratuit guide regles'],
+    ["Démissionner d'un CDI", 'guide-lettre-demission.html', 'demission demissionner cdi preavis chomage lettre guide droits'],
+    ['Faire un bon CV et une lettre de motivation', 'guide-cv-lettre-motivation.html', 'cv lettre motivation candidature emploi conseils guide'],
+    ['Préavis du locataire : 1 mois ou 3 mois ?', 'guide-preavis-locataire.html', 'preavis locataire bail logement zone tendue conge guide'],
+    ["L'attestation d'hébergement", 'guide-attestation-hebergement.html', 'attestation hebergement heberger caf justificatif domicile guide'],
+    ['Vendre sa voiture à un particulier', 'guide-vendre-voiture.html', 'vendre voiture vehicule cession controle technique carte grise guide'],
+    ['Résilier un abonnement ou un contrat', 'guide-resilier-abonnement.html', 'resilier resiliation abonnement contrat box assurance salle sport guide'],
+    ['Frais kilométriques : barème et calcul', 'guide-frais-kilometriques.html', 'frais kilometriques bareme km impots frais reels guide']
+  ].map(([t, p, m]) => ({t, p, index: decouper(t + ' ' + m)}));
+  function chercherGuides(mots){
+    const zone = document.getElementById('res-guides');
+    const l = mots.length ? guidesRech.filter(g => mots.every(q => g.index.some(m => m.startsWith(q)))).slice(0, 4) : [];
+    zone.hidden = !l.length;
+    zone.innerHTML = l.length ? '<h2>Guides pratiques</h2><div class="res-liste">' + l.map(g => `<a class="res" href="${g.p}"><span class="res-ico">📘</span><span class="res-t"><b>${g.t}</b><span>Guide · les règles expliquées simplement</span></span></a>`).join('') + '</div>' : '';
+    return l.length;
+  }
+
   const correspond = (d, motsRecherche, test) =>
     motsRecherche.every(q => d.index.some(mot => test(q, mot)));
 
@@ -633,8 +661,9 @@
         <small>${d.label}</small>
       </a>`).join('');
     const nbCompte = chercherCompte(champ.value);
+    const nbGuides = chercherGuides(motsRecherche);
     const ac = document.getElementById('res-a-creer'); if (ac) ac.hidden = !liste.length;
-    vide.style.display = liste.length || nbCompte ? 'none' : 'block';
+    vide.style.display = liste.length || nbCompte || nbGuides ? 'none' : 'block';
   }
 
   // ---------- Recherche dans le compte : clients, factures, devis… (personnes connectées) ----------
