@@ -39,7 +39,9 @@
   const date = x => Date.parse(x || 0) || 0;
 
   function charger(src){
-    return new Promise((ok, ko) => { const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = ko; document.head.appendChild(s); });
+    // async = false : les 3 fichiers se téléchargent en même temps mais s'exécutent dans l'ordre.
+    // Au bout de 20 s sans réponse (réseau mobile capricieux), on abandonne au lieu de bloquer la page.
+    return new Promise((ok, ko) => { const s = document.createElement('script'); s.src = src; s.async = false; s.onload = ok; s.onerror = ko; setTimeout(() => ko(new Error('délai dépassé')), 20000); document.head.appendChild(s); });
   }
   // Dans la fenêtre « Aperçu » de Mon compte (page affichée dans un cadre) : pas de connexion ni de synchronisation,
   // les documents sont déjà sur l'appareil (sinon la page principale se figeait quelques secondes à la fermeture).
@@ -48,7 +50,7 @@
     // (dans l'aperçu, on ne déclare surtout pas « déconnecté » : la page garde le dernier état connu et ne touche à rien)
     if (!actif || dansApercu) return;
     try{
-      for (const l of LIBS) await charger(`https://www.gstatic.com/firebasejs/${V}/${l}.js`);
+      await Promise.all(LIBS.map(l => charger(`https://www.gstatic.com/firebasejs/${V}/${l}.js`)));
     }catch(e){ console.warn('Firebase indisponible', e); return; }
     if (!window.firebase) return;
     const app = firebase.apps.length ? firebase.app() : firebase.initializeApp(CONFIG);
@@ -60,9 +62,13 @@
         const avant = utilisateur && utilisateur.uid;
         utilisateur = u || null;
         try{ if (utilisateur) localStorage.setItem('docupret_compte', JSON.stringify({email: utilisateur.email})); else localStorage.removeItem('docupret_compte'); }catch(e){}
-        if (utilisateur && utilisateur.uid !== avant){ await synchroniser(); await synchroniserParametres(); await synchroniserDocuments(); }
+        // On sait qui est connecté : la page peut s'afficher tout de suite. La synchronisation se fait ensuite, en arrière-plan.
         prevenir();
         if (premier){ premier = false; resolu = true; ok(); }
+        if (utilisateur && utilisateur.uid !== avant){
+          try{ await synchroniser(); await synchroniserParametres(); await synchroniserDocuments(); }catch(e){}
+          prevenir();
+        }
       });
     });
   }

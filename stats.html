@@ -412,7 +412,7 @@
   });
 })();
 </script>
-<script src="compte.js?v=19"></script>
+<script src="compte.js?v=20"></script>
 <script src="compte-menu.js?v=16"></script>
 <script>
 (function(){
@@ -458,9 +458,13 @@
 
   // ---------- Accès ----------
   let periode = 7, cache = new Map(), db = null;
+  const reessayer = '<button type="button" class="btn" onclick="location.reload()">Réessayer</button>';
+  const lent = setTimeout(() => { if ($('st-contenu').hidden && /Chargement/.test($('st-attente').textContent)) etat('<p>Le chargement prend plus de temps que prévu (connexion internet lente ?).</p>' + reessayer); }, 12000);
   async function demarrer(){
     await C.pret;
+    clearTimeout(lent);
     const u = C.utilisateur();
+    if (!u && !window.firebase) return etat('<p>Impossible de joindre le serveur des statistiques. Vérifiez votre connexion internet.</p>' + reessayer);
     if (!u) return etat('<p><b>Connectez-vous</b> avec votre compte DocuPrêt pour voir les statistiques.</p><a class="btn" href="compte.html#compte">Me connecter</a>');
     if (u.id !== ADMIN) return etat('<p>Cette page est réservée au propriétaire du site.</p>');
     try{ localStorage.setItem('docupret_admin', $('moi').checked ? '1' : '0'); }catch(e){}
