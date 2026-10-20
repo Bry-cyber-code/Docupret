@@ -41,8 +41,11 @@
   function charger(src){
     return new Promise((ok, ko) => { const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = ko; document.head.appendChild(s); });
   }
+  // Dans la fenêtre « Aperçu » de Mon compte (page affichée dans un cadre) : pas de connexion ni de synchronisation,
+  // les documents sont déjà sur l'appareil (sinon la page principale se figeait quelques secondes à la fermeture).
+  const dansApercu = (() => { try{ return window.self !== window.top; }catch(e){ return true; } })();
   async function demarrer(){
-    if (!actif) return;
+    if (!actif || dansApercu){ resolu = true; return; }
     try{
       for (const l of LIBS) await charger(`https://www.gstatic.com/firebasejs/${V}/${l}.js`);
     }catch(e){ console.warn('Firebase indisponible', e); return; }

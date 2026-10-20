@@ -9,7 +9,7 @@
   'use strict';
   const PROJET = 'docupret-cd4f0', CLE = 'AIzaSyDSvwqeTZZeOaz92Yz5QIlgTP1VTKK9Jwg', ADMIN = 'QOC6tTqjsKTdO9zR5NfQkhJqkup2';
   const URL_ = `https://firestore.googleapis.com/v1/projects/${PROJET}/databases/(default)/documents:commit?key=${CLE}`;
-  const actif = /(^|\.)docupret\.fr$/.test(location.hostname) && !navigator.webdriver;
+  const actif = /(^|\.)docupret\.fr$/.test(location.hostname) && !navigator.webdriver && (() => { try{ return window.self === window.top; }catch(e){ return false; } })();
   const lireLS = (k, s) => { try{ return (s || localStorage).getItem(k); }catch(e){ return null; } };
   const ecrireLS = (k, v, s) => { try{ (s || localStorage).setItem(k, v); }catch(e){} };
   const SS = (() => { try{ return sessionStorage; }catch(e){ return null; } })();
