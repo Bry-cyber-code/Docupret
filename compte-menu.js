@@ -85,9 +85,8 @@
   .cm-txt b{font-size:1rem;font-weight:700}
   .cm-txt span{font-size:.78rem;color:var(--gris,#667)}
   .cm-raccourcis{border-bottom:1px solid var(--bord,#e2e8f0)}
-  .cm-lien.cm-sous{padding:10px 16px 10px 28px;border-bottom:1px solid var(--bord,#e2e8f0)}
+  .cm-lien.cm-sous{border-bottom:1px solid var(--bord,#e2e8f0)}
   .cm-raccourcis .cm-lien.cm-sous:last-child{border-bottom:0}
-  .cm-sous .cm-txt b{font-size:.92rem}
   .cm-nb.rouge{background:#C23B36}
   .cm-nb{font-size:.74rem;font-weight:700;background:var(--bleu,#4A7BD0);color:#fff;border-radius:50px;padding:2px 8px;flex-shrink:0}
   .cm-note{font-size:.76rem;color:var(--gris,#667);padding:14px 16px;line-height:1.45;margin-top:auto}
