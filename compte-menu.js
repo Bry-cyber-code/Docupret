@@ -228,7 +228,8 @@
   function demarrer(){
     document.documentElement.lang = document.documentElement.lang || 'fr';
     activer(document);
-    try{ new MutationObserver(l => l.forEach(m => m.addedNodes.forEach(n => { if (n.nodeType === 1) activer(n.parentNode || n); }))).observe(document.body, {childList: true, subtree: true}); }catch(e){}
+    // Un seul passage par zone modifiée (les listes se redessinent souvent)
+    try{ new MutationObserver(l => { const z = new Set(); l.forEach(m => { if (m.addedNodes.length && m.target.nodeType === 1) z.add(m.target); }); z.forEach(activer); }).observe(document.body, {childList: true, subtree: true}); }catch(e){}
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', demarrer); else demarrer();
 })();

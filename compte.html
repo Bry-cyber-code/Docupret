@@ -156,6 +156,8 @@
   .resume-docs span{flex:1 1 130px;background:var(--fond);border-radius:12px;padding:9px 12px;font-size:.8rem;color:var(--gris)}
   .resume-docs b{display:block;font-size:1.05rem;color:var(--texte);font-variant-numeric:tabular-nums}
   .liste-docs{display:grid;gap:8px;max-height:min(68vh,720px);overflow-y:auto;overscroll-behavior:contain;padding-right:2px;margin:0 -2px;padding-left:2px}
+  /* Téléphone : une seule zone qui défile (la page), sinon le doigt reste « coincé » dans la liste */
+  @media (max-width:760px){.liste-docs{max-height:none;overflow:visible;overscroll-behavior:auto}.liste-docs .mois-docs{top:60px}}
   .mois-docs{position:sticky;top:0;z-index:1;background:var(--blanc);color:var(--bleu-fonce);font-weight:800;font-size:.8rem;padding:8px 2px 4px;text-transform:capitalize;display:flex;justify-content:space-between}
   .mois-docs span{color:var(--gris);font-weight:600;text-transform:none}
   .doc-pdf{display:inline-flex;align-items:center;gap:4px;color:#fff!important;background:var(--bleu);text-decoration:none!important;border-radius:50px;padding:5px 11px;font-weight:700}
@@ -646,7 +648,7 @@
 <script src="compte.js?v=16"></script>
 <script src="gmail.js?v=7"></script>
 <script src="stats.js?v=4" defer></script>
-<script src="compte-menu.js?v=11"></script>
+<script src="compte-menu.js?v=12"></script>
 <script>
 (function(){
   'use strict';
