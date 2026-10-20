@@ -202,8 +202,15 @@
   .env-ch{display:grid;gap:4px;font-size:.8rem;color:var(--gris);font-weight:600}
   .env-ch input,.env-ch textarea{font:inherit;font-size:16px;padding:10px 12px;border:1.5px solid var(--bord);border-radius:10px;outline:none;width:100%;color:var(--texte);background:#fff;resize:vertical}
   .env-ch input:focus,.env-ch textarea:focus{border-color:var(--bleu)}
-  .env-pj{font-size:.85rem;font-weight:600;color:var(--texte);background:var(--fond);border-radius:10px;padding:8px 10px}
-  .env-pj span{font-weight:400;color:var(--gris)}
+  .env-pjs{display:grid;gap:6px}
+  .env-pj{display:flex;align-items:center;gap:6px;font-size:.85rem;font-weight:600;color:var(--texte);background:var(--fond);border-radius:10px;padding:8px 10px;min-width:0;overflow-wrap:anywhere}
+  .env-pj em{font-style:normal;font-weight:400;color:var(--gris);white-space:nowrap}
+  .env-pj button{margin-left:auto;flex-shrink:0;width:26px;height:26px;border-radius:50%;border:0;background:#fff;color:#C23B36;font-size:1.1rem;line-height:1;cursor:pointer}
+  .env-ajout-pj{display:flex;align-items:center;justify-content:center;gap:8px;border:1.5px dashed #B9CDEE;background:#F5F8FE;color:var(--bleu-fonce);border-radius:12px;padding:11px;font-weight:700;font-size:.92rem;cursor:pointer}
+  .env-ajout-pj svg{width:19px;height:19px}
+  .env-ajout-pj span{font-weight:500;color:var(--gris);font-size:.82rem}
+  .env-ajout-pj input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+  .env-ajout-pj:focus-within{outline:2px solid var(--bleu);outline-offset:2px}
   .env-err{background:#FDECEC;color:#9B2C28;border-radius:10px;padding:9px 11px;font-size:.86rem}
   .env-gmail{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;background:var(--bleu);color:#fff;border:0;border-radius:12px;padding:14px;font-weight:700;font-size:1rem}
   .env-gmail svg{width:19px;height:19px}
@@ -519,9 +526,13 @@ window.DOCU_AFFICHAGE = (function(){
     body.feuille-tel .echelle{position:static;transform:none!important}
     body.feuille-tel .tete{margin-bottom:10px}
     /* barre d'outils */
-    body.feuille-tel .tel-barre{display:grid;grid-template-columns:1fr 1fr;gap:8px;position:sticky;top:62px;z-index:6;background:var(--fond);padding:6px 0 8px}
+    body.feuille-tel .tel-barre{display:grid;grid-template-columns:1fr 1fr;gap:7px;padding:4px 0 8px}
     .tel-barre button{flex:1;display:flex;align-items:center;justify-content:center;gap:7px;border:1.5px solid var(--bord);background:#fff;border-radius:12px;padding:11px 8px;font:inherit;font-size:.9rem;font-weight:650;color:var(--texte);box-shadow:0 1px 4px rgba(30,42,66,.06)}
     .tel-barre button{min-width:0;line-height:1.2;text-align:center;padding:9px 8px;font-size:.86rem}
+    .tel-barre .tel-sec{font-size:.8rem;padding:8px 6px;color:var(--gris);box-shadow:none}
+    .tel-barre .tel-sec.verrouille::before{content:"🔒";font-size:.75rem}
+    .tel-barre .tel-sec.fait{color:#2FA36B;border-color:#BFE6D2}
+    body.feuille-tel #o-enreg,body.feuille-tel #o-brouillon{display:none}
     .tel-barre button[data-grp]{border-color:#C5D6F2;color:var(--bleu-fonce)}
     .tel-barre .tel-nouveau{background:var(--bleu);border-color:var(--bleu);color:#fff}
     /* le panneau ne montre que le groupe choisi */
@@ -646,6 +657,7 @@ window.DOCU_AFFICHAGE = (function(){
   .m-moderne .p-titre .ed-moins,.m-moderne .p-titre .ed-plus{background:rgba(255,255,255,.9)}
   .ed-menu{position:absolute;z-index:60;min-width:200px;background:#fff;border:1px solid var(--bord);border-radius:12px;box-shadow:0 10px 30px rgba(30,42,66,.16);padding:6px;display:flex;flex-direction:column}
   .ed-menu small{font-size:.72rem;color:var(--gris);text-transform:uppercase;letter-spacing:.05em;padding:6px 10px 4px}
+  .ed-menu small.ed-astuce{text-transform:none;letter-spacing:0;font-size:.72rem;padding:6px 10px 2px;border-top:1px solid var(--bord);margin-top:4px}
   .ed-menu button{border:none;background:none;text-align:left;padding:8px 10px;border-radius:8px;font:inherit;font-size:.9rem;cursor:pointer;color:var(--texte)}
   .ed-menu button:hover{background:var(--bleu-clair)}
   .ed-menu [data-libre]{border-top:1px solid var(--bord);border-radius:0 0 8px 8px;color:var(--bleu-fonce);font-weight:600}
@@ -694,6 +706,7 @@ window.DOCU_AFFICHAGE = (function(){
     <div class="cat">
       <button type="button" class="cat-btn" aria-expanded="false"><span>Travail</span><span class="plus">+</span></button>
       <div class="sous" hidden>
+        <a href="cv.html">CV</a>
         <a href="lettre-demission.html">Lettre de démission</a>
         <a href="lettre-motivation.html">Lettre de motivation</a>
         <a href="demande-conges.html">Demande de congés</a>
@@ -957,9 +970,11 @@ window.DOCU_AFFICHAGE = (function(){
     <div class="panneau" id="p-apercu">
       <div class="tel-barre" id="tel-barre">
         <button type="button" id="tel-reglages" data-grp="style"><span>🎨</span>Modèle, couleur</button>
-        <button type="button" id="tel-options" data-grp="reglages"><span>⚙️</span>TVA, colonnes, client</button>
-        <button type="button" id="tel-nouveau" class="tel-nouveau"><span>＋</span>Nouveau document</button>
         <button type="button" id="tel-apercu"><span>👁</span>Aperçu</button>
+        <button type="button" id="tel-enreg" class="tel-sec"><span>👤</span>Enregistrer ce client</button>
+        <button type="button" id="tel-brouillon" class="tel-sec" data-brouillon><span>💾</span>Enregistrer en brouillon</button>
+        <button type="button" id="tel-nouveau" class="tel-nouveau"><span>＋</span>Nouveau document</button>
+        <button type="button" id="tel-options" data-grp="reglages"><span>⚙️</span>TVA, colonnes, client</button>
       </div>
       <p class="tel-aide" id="tel-aide">✍️ Touchez la feuille pour écrire dessus · <b>−</b> retire une ligne · <b>＋</b> en ajoute une</p>
       <div class="style-bar">
@@ -1142,6 +1157,8 @@ window.DOCU_AFFICHAGE = (function(){
   const nb = n => fNum.format(n).replace(/[  ]/g, ' ');
   const taux = t => String(t).replace('.', ',') + ' %';
   const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  // Ligne libre « BIC : XXXX » → « BIC : » en gras (comme Mode de paiement, IBAN…)
+  const libreGras = x => { const t = String(x ?? ''), m = t.match(/^([^:\n]{1,40}?)\s*:\s?([\s\S]*)$/); return m ? `<b>${esc(m[1].trim())} :</b> ${esc(m[2])}` : esc(t); };
   const ph = (val, txt) => val ? esc(val) : `<span class="ph">${txt}</span>`;
   const lire = (o, chemin) => chemin.split('.').reduce((a, k) => a?.[k], o);
   const ecrire = (o, chemin, v) => { const k = chemin.split('.'); const fin = k.pop(); k.reduce((a, x) => a[x], o)[fin] = v; };
@@ -1424,7 +1441,7 @@ window.DOCU_AFFICHAGE = (function(){
     if (t === 'facture') meta += si('doc.echeance', etat.doc.echeance, `<div>Échéance : <b>${dateFr(etat.doc.echeance)}</b></div>`);
     if (t === 'devis') meta += si('doc.validite', etat.doc.validite, `<div>Valable jusqu'au : <b>${dateFr(etat.doc.validite)}</b></div>`);
     if (t === 'avoir') meta += si('doc.factureRef', etat.doc.factureRef, `<div>Facture d'origine : <b>${esc(etat.doc.factureRef)}</b></div>`);
-    const plus = b => ((etat.extra || {})[b] || []).filter(x => String(x || '').trim()).map(x => `<div>${esc(x)}</div>`).join('');
+    const plus = b => ((etat.extra || {})[b] || []).filter(x => String(x || '').trim()).map(x => `<div>${libreGras(x)}</div>`).join('');
     meta += plus('meta');
 
     // Paiement
@@ -1786,13 +1803,26 @@ window.DOCU_AFFICHAGE = (function(){
     // Toujours la version « propre » de la page (sans les zones à remplir de l'écran)
     const copie = document.createElement('div'); remplirPage(copie);
     copie.style.transform = 'none'; copie.style.boxShadow = 'none'; copie.style.margin = '0';
+    // Une page A4 du PDF fait 1122,9 px : avec 1123 px, le dernier pixel débordait et créait une 2e page blanche
+    copie.style.minHeight = '1120px';
     if (avant) avant(copie);
     const hote = document.createElement('div');
     hote.style.cssText = 'position:absolute;left:0;top:0;width:794px;z-index:-1;background:#fff;pointer-events:none';
     hote.appendChild(copie); document.body.appendChild(hote);
     const sx = window.scrollX, sy = window.scrollY; window.scrollTo(0, 0);
     try{
-      const travail = html2pdf().set(Object.assign({}, opts, {html2canvas: Object.assign({scale: 2, backgroundColor: '#ffffff', scrollX: 0, scrollY: 0, x: 0, y: 0, windowWidth: 794, width: 794}, opts.html2canvas || {})})).from(copie);
+      const unePage = copie.scrollHeight <= 1122, texte = (copie.innerText || '').replace(/[ \t]+/g, ' ').replace(/\n{2,}/g, '\n').trim();
+      const travail = html2pdf().set(Object.assign({}, opts, {html2canvas: Object.assign({scale: 2, backgroundColor: '#ffffff', scrollX: 0, scrollY: 0, x: 0, y: 0, windowWidth: 794, width: 794}, opts.html2canvas || {})})).from(copie)
+        .toPdf().get('pdf').then(pdf => {
+          // Sécurité : un document qui tient sur une page ne garde qu'une page
+          try{ if (unePage) while (pdf.internal.getNumberOfPages() > 1) pdf.deletePage(pdf.internal.getNumberOfPages()); }catch(e){}
+          // Texte invisible sous l'image : le PDF devient lisible par les messageries (moins de spams) et on peut y chercher
+          try{
+            pdf.setPage(1); pdf.setFontSize(6);
+            pdf.text(pdf.splitTextToSize(texte.replace(/[^\x20-\x7E\u00A0-\u00FF\n€]/g, ' '), 190), 10, 10, {renderingMode: 'invisible'});
+          }catch(e){}
+          try{ pdf.setProperties({title: nomFichier().replace(/\.pdf$/, ''), subject: TYPES[etat.type].titre + ' ' + etat.doc.numero, author: etat.em.nom || '', creator: 'DocuPrêt'}); }catch(e){}
+        });
       // Sécurité : si la création du PDF ne répond plus, on rend la main au lieu de rester bloqué
       const delai = new Promise((_, ko) => setTimeout(() => ko(new Error('delai')), 45000));
       delai.catch(() => {});
@@ -1878,10 +1908,22 @@ window.DOCU_AFFICHAGE = (function(){
   // Envoi par e-mail : depuis Gmail en un clic (comptes), ou avec une autre application du téléphone
   const MOTS = {devis: ['le devis', 'Devis'], facture: ['la facture', 'Facture'], recu: ['le reçu', 'Reçu'], avoir: ['l\'avoir', 'Avoir']};
   // Message choisi dans Mon compte → Paramètres ; sinon « Cordialement, » et le nom de l'entreprise
+  // Un vrai message (bonjour, numéro, montant…) : un e-mail presque vide avec une pièce jointe ressemble à un spam
   function messageParDefaut(){
     const perso = String(etat.envoiMessage || '').trim();
-    if (perso) return perso;
-    return 'Cordialement,' + (etat.em.nom ? '\n' + etat.em.nom : '');
+    if (perso && /^(bonjour|bonsoir|madame|monsieur|cher|chère|salut|hello)/i.test(perso)) return perso;
+    const k = calculer(), n = etat.doc.numero, total = eur(k.totalTTC), nom = String(etat.cl.nom || '').trim();
+    const salut = nom ? `Bonjour ${nom},` : 'Bonjour,';
+    const ech = etat.type === 'facture' && etat.doc.echeance && !etat.masques['doc.echeance'] ? `, à régler avant le ${dateFr(etat.doc.echeance)}` : '';
+    const val = etat.doc.validite && !etat.masques['doc.validite'] ? `, valable jusqu'au ${dateFr(etat.doc.validite)}` : '';
+    const corps = {
+      facture: `Veuillez trouver ci-joint la facture n° ${n} d'un montant de ${total}${ech}.`,
+      devis: `Veuillez trouver ci-joint le devis n° ${n} d'un montant de ${total}${val}.\nN'hésitez pas à me le retourner signé avec la mention « Bon pour accord » s'il vous convient.`,
+      recu: `Veuillez trouver ci-joint le reçu n° ${n} correspondant à votre paiement de ${total}. Merci !`,
+      avoir: `Veuillez trouver ci-joint l'avoir n° ${n} d'un montant de ${total}.`
+    }[etat.type] || `Veuillez trouver ci-joint le document n° ${n}.`;
+    const fin = perso || ['Je reste à votre disposition pour toute question.', '', 'Cordialement,', etat.em.nom, etat.em.tel].filter(x => x !== undefined && x !== null && (x === '' || String(x).trim())).join('\n').trim();
+    return `${salut}\n\n${corps}\n\n${fin}`;
   }
   const emailOk = v => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(String(v).trim());
 
@@ -1898,7 +1940,8 @@ window.DOCU_AFFICHAGE = (function(){
       <label class="env-ch">À<input type="email" id="env-a" autocomplete="off" inputmode="email" placeholder="e-mail du client"></label>
       <label class="env-ch">Objet<input id="env-sujet"></label>
       <label class="env-ch">Message<textarea id="env-msg" rows="7"></textarea></label>
-      <p class="env-pj">📎 ${nomFichier()} <span>joint automatiquement</span></p>
+      <div class="env-pjs" id="env-pjs"></div>
+      <label class="env-ajout-pj"><input type="file" id="env-fichiers" multiple accept="image/*,application/pdf,.doc,.docx,.xls,.xlsx,.odt,.txt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>Pièce jointe <span>photos, documents…</span></label>
       <div class="env-err" id="env-err" hidden></div>
       <div id="env-gmail"></div>
       <button type="button" class="env-autre" id="env-autre">Envoyer avec une autre application</button>
@@ -1909,6 +1952,34 @@ window.DOCU_AFFICHAGE = (function(){
     $f('#env-sujet').value = `${Mot} ${etat.doc.numero}${etat.em.nom ? ' – ' + etat.em.nom : ''}`;
     $f('#env-msg').value = messageParDefaut();
     const erreur = t => { $f('#env-err').hidden = !t; $f('#env-err').textContent = t || ''; };
+    // Pièces jointes en plus du PDF (photos du chantier, plans…)
+    let pieces = [];
+    const taille = o => o < 1048576 ? Math.max(1, Math.round(o / 1024)) + ' Ko' : (o / 1048576).toFixed(1).replace('.', ',') + ' Mo';
+    function rendrePJ(){
+      $f('#env-pjs').innerHTML = `<span class="env-pj">📄 ${esc(nomFichier())} <em>joint automatiquement</em></span>` +
+        pieces.map((p, i) => `<span class="env-pj">📎 ${esc(p.name)} <em>${taille(p.size)}</em><button type="button" data-retirer-pj="${i}" aria-label="Retirer ${esc(p.name)}">×</button></span>`).join('');
+    }
+    // Les photos sont réduites (2000 px, JPEG) : l'e-mail reste léger et part plus vite
+    async function alleger(f){
+      if (!/^image\/(jpeg|png|webp)$/.test(f.type) || f.size < 800 * 1024) return f;
+      try{
+        const img = await createImageBitmap(f), r = Math.min(1, 2000 / Math.max(img.width, img.height));
+        const c = document.createElement('canvas'); c.width = Math.round(img.width * r); c.height = Math.round(img.height * r);
+        const x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height); x.drawImage(img, 0, 0, c.width, c.height);
+        const b = await new Promise(ok => c.toBlob(ok, 'image/jpeg', 0.85));
+        return b && b.size < f.size ? new File([b], f.name.replace(/\.(png|webp|jpe?g)$/i, '') + '.jpg', {type: 'image/jpeg'}) : f;
+      }catch(e){ return f; }
+    }
+    $f('#env-fichiers').addEventListener('change', async e => {
+      erreur('');
+      const l = [...e.target.files]; e.target.value = '';
+      for (const f of l) pieces.push(await alleger(f));
+      const total = pieces.reduce((a, p) => a + p.size, 0);
+      if (total > 20 * 1048576) erreur('Attention : les pièces jointes dépassent 20 Mo. Gmail risque de refuser l\'envoi : retirez une photo.');
+      rendrePJ();
+    });
+    f.addEventListener('click', e => { const b = e.target.closest('[data-retirer-pj]'); if (b){ pieces.splice(+b.dataset.retirerPj, 1); erreur(''); rendrePJ(); } });
+    rendrePJ();
     const fermer = () => f.remove();
     f.addEventListener('click', e => { if (e.target === f || e.target.closest('[data-fermer]')) fermer(); });
 
@@ -1950,7 +2021,7 @@ window.DOCU_AFFICHAGE = (function(){
       autorisation.then(async jeton => {
         bouton.lastChild.textContent = 'Envoi…';
         const blob = await preparer();
-        await G.envoyer(jeton, {a, sujet: $f('#env-sujet').value.trim() || nomFichier(), texte: $f('#env-msg').value, fichier: nomFichier(), pdf: blob, nom: etat.em.nom});
+        await G.envoyer(jeton, {a, sujet: $f('#env-sujet').value.trim() || nomFichier(), texte: $f('#env-msg').value, fichier: nomFichier(), pdf: blob, nom: etat.em.nom, pieces});
         if (etat.cl.email !== a){ etat.cl.email = a; remplirChamps(); }
         apresSortie(k, {date: new Date().toISOString(), a});
         try{ window.DocuStats && window.DocuStats.evenement('envoi_gmail'); }catch(e){}
@@ -1979,8 +2050,9 @@ window.DOCU_AFFICHAGE = (function(){
       try{ blob = await preparer(); }catch(e){ erreur('Le PDF n\'a pas pu être créé. Réessayez.'); return; }
       const fichier = new File([blob], nomFichier(), {type: 'application/pdf'});
       try{
-        if (navigator.canShare && navigator.canShare({files: [fichier]})){
-          await navigator.share({files: [fichier], title: sujet, text: texte});
+        const tous = [fichier, ...pieces];
+        if (navigator.canShare && navigator.canShare({files: tous})){
+          await navigator.share({files: tous, title: sujet, text: texte});
           try{ window.DocuStats && window.DocuStats.evenement('envoi_autre_appli'); }catch(e){}
           apresSortie(k); fermer(); return;
         }
@@ -1991,7 +2063,7 @@ window.DOCU_AFFICHAGE = (function(){
       setTimeout(() => URL.revokeObjectURL(url), 30000);
       location.href = `mailto:${encodeURIComponent(a)}?subject=${encodeURIComponent(sujet)}&body=${encodeURIComponent(texte + '\n\n(Pièce jointe : ' + nomFichier() + ')')}`;
       apresSortie(k);
-      alerte('Le PDF est téléchargé : joignez-le à votre e-mail.');
+      alerte(pieces.length ? 'Le PDF est téléchargé : joignez-le à votre e-mail, avec vos pièces jointes.' : 'Le PDF est téléchargé : joignez-le à votre e-mail.');
     });
   });
 
@@ -2278,7 +2350,7 @@ window.DOCU_AFFICHAGE = (function(){
 
     const moins = cle => `<button type="button" class="ed-moins" data-act="masquer" data-k="${cle}" title="Retirer cette ligne" aria-label="Retirer cette ligne">−</button>`;
     const ligne = (cle, v, ph, avant, o) => aff(cle) ? `<div class="ed-l">${avant || ''}${E(cle, v, ph, o)}${moins(cle)}</div>` : '';
-    const libres = b => ((etat.extra || {})[b] || []).map((x, i) => `<div class="ed-l">${E(`X:${b}:${i}`, x, 'Écrivez votre ligne (ex : Réf. chantier : 24-118)')}<button type="button" class="ed-moins" data-act="libre-moins" data-b="${b}" data-i="${i}" title="Retirer cette ligne" aria-label="Retirer cette ligne">−</button></div>`).join('');
+    const libres = b => ((etat.extra || {})[b] || []).map((x, i) => `<div class="ed-l">${E(`X:${b}:${i}`, x, b === 'paiement' ? 'Écrivez votre ligne (ex : BIC : AGRIFRPP)' : 'Écrivez votre ligne (ex : Réf. chantier : 24-118)').replace(/>([^<]*)<\/span>$/, () => '>' + libreGras(x) + '</span>')}<button type="button" class="ed-moins" data-act="libre-moins" data-b="${b}" data-i="${i}" title="Retirer cette ligne" aria-label="Retirer cette ligne">−</button></div>`).join('');
     const plusBtn = b => `<div class="ed-l"><button type="button" class="ed-plus" data-act="plus" data-b="${b}" title="Ajouter une ligne" aria-label="Ajouter une ligne">＋</button></div>`;
     meta += libres('meta') + plusBtn('meta');
     paiement = paiement.replace('%%LIBRES_PAIEMENT%%', () => libres('paiement') + plusBtn('paiement'));
@@ -2454,18 +2526,22 @@ window.DOCU_AFFICHAGE = (function(){
     paiement: [['paiement.conditions', 'Conditions de paiement', 'devis,facture'], ['paiement.moyen', 'Mode de paiement', 'devis,facture'], ['paiement.iban', 'IBAN', 'devis,facture'], ['paiement.notes', 'Mot pour le client']]
   };
   function fermerMenuPlus(){ const m = document.querySelector('.ed-menu'); if (m) m.remove(); }
-  function ajouterLibre(bloc){
+  function ajouterLibre(bloc, debut){
     fermerMenuPlus();
-    etat.extra[bloc].push(''); rendreApercu(); sauver();
+    etat.extra[bloc].push(debut || ''); rendreApercu(); sauver();
     const n = $('page').querySelector(`[data-ed="X:${bloc}:${etat.extra[bloc].length - 1}"]`); if (n) placerCurseur(n, null);
   }
   function menuPlus(bouton, bloc){
     const deja = document.querySelector('.ed-menu'); fermerMenuPlus(); if (deja && deja.dataset.b === bloc) return;
     const caches = NOMS_CHAMPS[bloc].filter(([k, , types, pro]) => etat.masques[k] && (!types || types.split(',').includes(etat.type)) && (!pro || etat.cl.pro));
-    if (!caches.length) return ajouterLibre(bloc);
+    // Paiement : lignes toutes prêtes (BIC, titulaire du compte)
+    const dejaL = (etat.extra[bloc] || []).map(x => String(x).toLowerCase());
+    const pretes = bloc === 'paiement' ? [['BIC', 'BIC : '], ['Titulaire du compte', 'Titulaire du compte : ']].filter(([, d]) => !dejaL.some(x => x.startsWith(d.toLowerCase().replace(' : ', '')))) : [];
+    if (!caches.length && !pretes.length) return ajouterLibre(bloc);
     const m = document.createElement('div'); m.className = 'ed-menu'; m.dataset.b = bloc;
-    m.innerHTML = '<small>Remettre une ligne</small>' + caches.map(([k, nom]) => `<button type="button" data-remettre="${k}">＋ ${esc(nom)}</button>`).join('')
-      + '<button type="button" data-libre>＋ Nouvelle ligne libre</button>';
+    m.innerHTML = (caches.length ? '<small>Remettre une ligne</small>' + caches.map(([k, nom]) => `<button type="button" data-remettre="${k}">＋ ${esc(nom)}</button>`).join('') : '')
+      + (pretes.length ? '<small>Ajouter</small>' + pretes.map(([nom, d]) => `<button type="button" data-libre="${esc(d)}">＋ ${esc(nom)}</button>`).join('') : '')
+      + '<button type="button" data-libre="">＋ Nouvelle ligne libre</button><small class="ed-astuce">Astuce : « Mot : texte » met le début en gras</small>';
     document.body.appendChild(m);
     const r = bouton.getBoundingClientRect();
     m.style.left = Math.max(8, Math.min(window.innerWidth - m.offsetWidth - 8, r.left)) + 'px';
@@ -2473,7 +2549,7 @@ window.DOCU_AFFICHAGE = (function(){
     m.addEventListener('click', e => {
       const a = e.target.closest('[data-remettre]');
       if (a){ delete etat.masques[a.dataset.remettre]; fermerMenuPlus(); majVisibilite(); rendreApercu(); sauver(); const n = $('page').querySelector(`[data-ed="${a.dataset.remettre}"]`); if (n) placerCurseur(n, null); }
-      else if (e.target.closest('[data-libre]')) ajouterLibre(bloc);
+      else if (e.target.closest('[data-libre]')) ajouterLibre(bloc, e.target.closest('[data-libre]').dataset.libre);
     });
   }
   document.addEventListener('click', e => { if (!e.target.closest('.ed-menu, [data-act="plus"]')) fermerMenuPlus(); });
@@ -2531,6 +2607,8 @@ window.DOCU_AFFICHAGE = (function(){
       const src = $('enreg-client'), b = $('o-enreg'), mc = $('mes-clients');
       b.textContent = (src.querySelector('span') || src).textContent;
       b.classList.toggle('verrouille', src.classList.contains('verrouille')); b.classList.toggle('fait', src.classList.contains('fait'));
+      const tb = $('tel-enreg');
+      if (tb){ tb.lastChild.textContent = src.classList.contains('fait') ? 'Client enregistré' : 'Enregistrer ce client'; tb.classList.toggle('verrouille', src.classList.contains('verrouille')); tb.classList.toggle('fait', src.classList.contains('fait')); }
       $('o-mes-clients').classList.toggle('verrouille', mc.classList.contains('verrouille'));
     }, 0);
   }
@@ -2567,6 +2645,7 @@ window.DOCU_AFFICHAGE = (function(){
   $('tel-reglages').addEventListener('click', () => ouvrirReglages('style'));
   $('tel-options').addEventListener('click', () => ouvrirReglages('reglages'));
   $('tel-nouveau').addEventListener('click', () => $('nouveau').click());
+  $('tel-enreg').addEventListener('click', () => { $('enreg-client').click(); setTimeout(majOutils, 50); });
   $('o-fermer').addEventListener('click', () => fermerReglages());
   fondR.addEventListener('click', () => fermerReglages());
   $('tel-apercu').addEventListener('click', () => {
@@ -2828,7 +2907,7 @@ window.DOCU_AFFICHAGE = (function(){
 })();
 </script>
 <script src="compte.js?v=16"></script>
-<script src="gmail.js?v=5"></script>
+<script src="gmail.js?v=6"></script>
 <script>
 // ===== Clients enregistrés =====
 (function(){

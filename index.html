@@ -91,6 +91,19 @@
   .carte h3{font-size:.98rem;font-weight:650;line-height:1.3}
   .carte small{color:var(--gris);font-size:.8rem}
   .badge{position:absolute;top:12px;right:12px;background:#FFF4E0;color:#B5761A;font-size:.68rem;font-weight:600;padding:3px 8px;border-radius:50px}
+  .res-compte{margin:0 0 18px}
+  .res-compte h2{font-size:.8rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--gris);margin:0 2px 8px}
+  .res-liste{display:grid;gap:8px}
+  @media (min-width:700px){.res-liste{grid-template-columns:repeat(2,1fr)}}
+  .res{display:flex;align-items:center;gap:12px;background:var(--blanc);border:1px solid var(--bord);border-radius:var(--rayon);padding:12px 14px;color:var(--texte);text-decoration:none;min-width:0}
+  .res:hover{border-color:var(--bleu)}
+  .res-ico{flex-shrink:0;width:38px;height:38px;border-radius:11px;display:grid;place-items:center;font-size:1.1rem;background:var(--fond)}
+  .res-t{min-width:0;flex:1;display:grid;gap:1px}
+  .res-t b{font-size:.95rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .res-t span{font-size:.8rem;color:var(--gris);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .res-m{flex-shrink:0;font-weight:800;font-variant-numeric:tabular-nums;font-size:.92rem}
+  .res-plus{font-size:.82rem;color:var(--gris);margin:6px 2px 0}
+  .res-docs-titre{margin-top:16px!important}
   .vide{display:none;text-align:center;color:var(--gris);padding:30px 0}
 
   /* Exemple de documents */
@@ -244,6 +257,7 @@
     <div class="cat">
       <button type="button" class="cat-btn" aria-expanded="false"><span>Travail</span><span class="plus">+</span></button>
       <div class="sous" hidden>
+        <a href="cv.html">CV</a>
         <a href="lettre-demission.html">Lettre de démission</a>
         <a href="lettre-motivation.html">Lettre de motivation</a>
         <a href="demande-conges.html">Demande de congés</a>
@@ -316,6 +330,7 @@
       <button class="filtre" data-cat="tous">Tous</button>
     </div>
 
+    <div class="res-compte" id="res-compte" hidden></div>
     <div class="grille" id="grille"></div>
     <p class="vide" id="vide">Aucun document trouvé.</p>
   </section>
@@ -441,6 +456,7 @@
     devis:'<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M9 10h6M9 14h4"/>',
     recu:'<rect x="4" y="6" width="16" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M7 9v.01M17 15v.01"/>',
     avoir:'<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 14h6"/>',
+    cv:'<rect x="4" y="3" width="16" height="18" rx="2"/><circle cx="12" cy="9" r="2.6"/><path d="M8 15.5a4 4 0 0 1 8 0M8 18.5h8"/>',
     demission:'<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M3 13h18"/>',
     motivation:'<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>',
     conges:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
@@ -469,6 +485,7 @@
     {nom:'Devis', cat:'pro', label:'Pro', icone:'devis', badge:'10 modèles', page:'devis.html', mots:'estimation chiffrage prix travaux artisan client tva'},
     {nom:'Reçu de paiement', cat:'pro', label:'Pro', icone:'recu', badge:'10 modèles', page:'recu.html', mots:'recu ticket paiement espèces acompte justificatif'},
     {nom:'Avoir', cat:'pro', label:'Pro', icone:'avoir', badge:'10 modèles', page:'avoir.html', mots:'facture annulation remboursement correction'},
+    {nom:'CV', cat:'travail', label:'Travail', icone:'cv', page:'cv.html', badge:'20 modèles', mots:'curriculum vitae cv emploi candidature job recherche photo modele'},
     {nom:'Lettre de démission', cat:'travail', label:'Travail', icone:'demission', page:'lettre-demission.html', badge:'10 modèles', mots:'démissionner quitter emploi travail cdi employeur préavis'},
     {nom:'Lettre de motivation', cat:'travail', label:'Travail', icone:'motivation', page:'lettre-motivation.html', badge:'10 modèles', mots:'candidature emploi job stage alternance cv embauche'},
     {nom:'Demande de congés', cat:'travail', label:'Travail', icone:'conges', badge:'7 modèles', page:'demande-conges.html', mots:'congé vacances absence employeur jours'},
@@ -496,8 +513,8 @@
   const vide = document.getElementById('vide');
   const champ = document.getElementById('recherche');
   let categorie = 'populaires';
-  // Les 4 plus demandés, affichés par défaut (lettre de motivation et démission : les plus recherchées sur Google)
-  const populaires = ['facture.html','devis.html','lettre-motivation.html','lettre-demission.html'];
+  // Les 4 plus demandés, affichés par défaut : facture, devis, CV, puis la lettre la plus recherchée sur Google
+  const populaires = ['facture.html','devis.html','cv.html','lettre-motivation.html'];
 
   // Recherche tolérante : accents, majuscules, ordre des mots, pluriels, petites fautes
   const motsVides = new Set(['de','d','du','des','la','le','les','l','un','une','pour','sur','mon','ma','mes','a','au','aux','en','et']);
@@ -550,7 +567,50 @@
         <h3>${d.nom}</h3>
         <small>${d.label}</small>
       </a>`).join('');
-    vide.style.display = liste.length ? 'none' : 'block';
+    const nbCompte = chercherCompte(champ.value);
+    const ac = document.getElementById('res-a-creer'); if (ac) ac.hidden = !liste.length;
+    vide.style.display = liste.length || nbCompte ? 'none' : 'block';
+  }
+
+  // ---------- Recherche dans le compte : clients, factures, devis… (personnes connectées) ----------
+  // Les données sont déjà sur l'appareil (copie synchronisée du compte) : rien n'est envoyé.
+  const lireLS = k => { try{ const v = JSON.parse(localStorage.getItem(k)); return v; }catch(e){ return null; } };
+  const esc = t => String(t ?? '').replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
+  const euros = n => new Intl.NumberFormat('fr-FR', {style: 'currency', currency: 'EUR'}).format(Number(n) || 0).replace(/[\u202f\u00a0]/g, ' ');
+  const dateFr = d => d ? new Date(d + 'T12:00').toLocaleDateString('fr-FR') : '';
+  const MOTDOC = {facture: ['Facture', '🧾'], devis: ['Devis', '📝'], recu: ['Reçu', '💶'], avoir: ['Avoir', '↩️']};
+  function chercherCompte(q){
+    const zone = document.getElementById('res-compte');
+    const compte = lireLS('docupret_compte');
+    q = String(q || '').trim();
+    if (!compte || !compte.email || q.length < 2){ zone.hidden = true; zone.innerHTML = ''; return 0; }
+    const mots = decouper(q);
+    // Montant : « 450 », « 450,50 », « 1 280 », « 1280.5 € »
+    const qNum = q.replace(/[€\s]/g, '').replace(',', '.');
+    const montant = /^\d+(\.\d{1,2})?$/.test(qNum) ? parseFloat(qNum) : null;
+    const contient = (texte) => { const idx = decouper(texte); return mots.length && mots.every(m => idx.some(x => x.startsWith(m))); };
+    const clients = (lireLS('docupret_clients') || []).filter(c => c && !c.supprime && contient([c.nom, c.adresse, c.cpville, c.email, c.tel, c.note].join(' ')));
+    const docs = (lireLS('docupret_documents') || []).filter(d => d && !d.supprime).filter(d => {
+      const total = Number(d.total) || 0;
+      if (montant !== null && (Math.abs(total - montant) < 0.005 || Math.floor(total) === montant)) return true;
+      const cl = (d.snap && d.snap.cl) || {}, lignes = d.snap && Array.isArray(d.snap.lignes) ? d.snap.lignes.map(l => l.des).join(' ') : '';
+      return contient([d.numero, d.clientNom, cl.adresse, cl.cpville, lignes, MOTDOC[d.type] ? MOTDOC[d.type][0] : ''].join(' '));
+    }).sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')));
+    if (!clients.length && !docs.length){ zone.hidden = true; zone.innerHTML = ''; return 0; }
+    const MAX = 6;
+    const ligneClient = c => `<a class="res" href="compte.html?client=${encodeURIComponent(c.id)}#clients"><span class="res-ico">👤</span><span class="res-t"><b>${esc(c.nom)}</b><span>${esc([c.cpville, c.tel || c.email].filter(Boolean).join(' · ') || 'Client')}</span></span></a>`;
+    const ligneDoc = d => {
+      const [mot, ico] = MOTDOC[d.type] || ['Document', '📄'];
+      const lien = d.brouillon ? `facture.html?brouillon=${encodeURIComponent(d.id)}` : `facture.html?ouvrir=${encodeURIComponent(d.id)}`;
+      const etat = d.brouillon ? 'Brouillon' : d.type === 'facture' ? (d.paye ? 'Payée' : 'Impayée') : d.type === 'devis' ? (d.facture ? 'Facturé' : d.accepte ? 'Accepté' : 'En attente') : '';
+      return `<a class="res" href="${lien}"><span class="res-ico">${ico}</span><span class="res-t"><b>${mot} ${esc(d.numero || '')}</b><span>${esc([d.clientNom, dateFr(d.date), etat].filter(Boolean).join(' · '))}</span></span><span class="res-m">${euros(d.total)}</span></a>`;
+    };
+    zone.innerHTML =
+      (clients.length ? `<h2>Mes clients · ${clients.length}</h2><div class="res-liste">${clients.slice(0, MAX).map(ligneClient).join('')}</div>${clients.length > MAX ? `<p class="res-plus">… et ${clients.length - MAX} autre${clients.length - MAX > 1 ? 's' : ''} dans <a href="compte.html#clients">Mes clients</a></p>` : ''}` : '')
+      + (docs.length ? `<h2 class="${clients.length ? 'res-docs-titre' : ''}">Mes factures et devis · ${docs.length}</h2><div class="res-liste">${docs.slice(0, MAX).map(ligneDoc).join('')}</div>${docs.length > MAX ? `<p class="res-plus">… et ${docs.length - MAX} autre${docs.length - MAX > 1 ? 's' : ''} dans <a href="compte.html#factures">Mon compte</a></p>` : ''}` : '')
+      + '<h2 class="res-docs-titre" id="res-a-creer">Documents à créer</h2>';
+    zone.hidden = false;
+    return clients.length + docs.length;
   }
 
   document.getElementById('filtres').addEventListener('click', e => {
@@ -562,6 +622,7 @@
     afficher();
   });
   champ.addEventListener('input', afficher);
+  try{ const c = JSON.parse(localStorage.getItem('docupret_compte')); if (c && c.email) champ.placeholder = 'Document, client, ville, n° ou montant…'; }catch(e){}
   afficher();
 </script>
 <script>

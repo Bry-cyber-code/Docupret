@@ -81,25 +81,51 @@
   const couper = s => s.replace(/(.{76})/g, '$1\r\n');
   const blobB64 = blob => new Promise((ok, ko) => { const r = new FileReader(); r.onload = () => ok(String(r.result).split(',')[1]); r.onerror = ko; r.readAsDataURL(blob); });
 
+  // E-mail complet et bien formé (texte + version HTML, PDF et pièces jointes en plus) :
+  // un message soigné a beaucoup moins de risques de finir dans les spams du client.
+  const echapper = t => String(t || '').replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
+  const nomPropre = n => String(n || 'piece-jointe').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^\w.\- ]+/g, '_').replace(/\s+/g, '-').slice(0, 80) || 'piece-jointe';
+  function html(texte){
+    const paras = String(texte || '').replace(/\r/g, '').split(/\n{2,}/).map(p => `<p style="margin:0 0 14px">${echapper(p).replace(/\n/g, '<br>')}</p>`).join('');
+    return `<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"></head><body style="margin:0;padding:16px;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.5;color:#222">${paras}</body></html>`;
+  }
   async function mime(o){
-    const limite = 'docupret_' + Math.random().toString(36).slice(2);
+    const limite = 'docupret_' + Math.random().toString(36).slice(2), alt = 'alt_' + Math.random().toString(36).slice(2);
     const ad = adresse(), de = ad ? (o.nom ? `${entete(o.nom.replace(/["<>]/g, ''))} <${ad}>` : ad) : '';
-    const pj = await blobB64(o.pdf);
+    const fichiers = [{nom: o.fichier, type: 'application/pdf', blob: o.pdf}].concat((o.pieces || []).map(f => ({nom: f.name, type: f.type || 'application/octet-stream', blob: f})));
+    const parties = [];
+    for (const f of fichiers){
+      const n = nomPropre(f.nom), b = await blobB64(f.blob);
+      parties.push(`--${limite}`, `Content-Type: ${f.type}; name="${n}"`, `Content-Disposition: attachment; filename="${n}"`, 'Content-Transfer-Encoding: base64', '', couper(b), '');
+    }
     return [
-      ...(de ? [`From: ${de}`] : []), `To: ${o.a}`, `Subject: ${entete(o.sujet)}`, 'MIME-Version: 1.0',
+      ...(de ? [`From: ${de}`] : []), `To: ${o.a}`, `Subject: ${entete(o.sujet)}`, `Date: ${new Date().toUTCString().replace('GMT', '+0000')}`, 'MIME-Version: 1.0',
       `Content-Type: multipart/mixed; boundary="${limite}"`, '',
-      `--${limite}`, 'Content-Type: text/plain; charset="UTF-8"', 'Content-Transfer-Encoding: base64', '', couper(b64(o.texte)), '',
-      `--${limite}`, `Content-Type: application/pdf; name="${o.fichier}"`, `Content-Disposition: attachment; filename="${o.fichier}"`, 'Content-Transfer-Encoding: base64', '', couper(pj), '',
+      `--${limite}`, `Content-Type: multipart/alternative; boundary="${alt}"`, '',
+      `--${alt}`, 'Content-Type: text/plain; charset="UTF-8"', 'Content-Transfer-Encoding: base64', '', couper(b64(o.texte)), '',
+      `--${alt}`, 'Content-Type: text/html; charset="UTF-8"', 'Content-Transfer-Encoding: base64', '', couper(b64(html(o.texte))), '',
+      `--${alt}--`, '',
+      ...parties,
       `--${limite}--`, ''
     ].join('\r\n');
   }
-  const b64url = s => btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 
   async function envoyer(t, o){
-    const raw = b64url(await mime(o));
-    const r = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', {
-      method: 'POST', headers: {Authorization: 'Bearer ' + t, 'Content-Type': 'application/json'}, body: JSON.stringify({raw})
+    const corps = await mime(o);
+    if (corps.length > 34 * 1024 * 1024) throw new Error('Les pièces jointes sont trop lourdes : Gmail accepte 25 Mo au total. Retirez une photo et réessayez.');
+    // Envoi « upload » : accepte les gros messages (photos en pièces jointes)
+    const simple = () => fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', {
+      method: 'POST', headers: {Authorization: 'Bearer ' + t, 'Content-Type': 'application/json'}, body: JSON.stringify({raw: b64url(corps)})
     });
+    let r;
+    try{
+      r = await fetch('https://gmail.googleapis.com/upload/gmail/v1/users/me/messages/send?uploadType=media', {
+        method: 'POST', headers: {Authorization: 'Bearer ' + t, 'Content-Type': 'message/rfc822'}, body: corps
+      });
+      if (r.status === 404 && corps.length < 4.5 * 1024 * 1024) r = await simple();
+    }catch(e){
+      if (corps.length < 4.5 * 1024 * 1024) r = await simple(); else throw new Error('L\'envoi a échoué. Vérifiez votre connexion internet et réessayez.');
+    }
     if (r.status === 401){ try{ sessionStorage.removeItem(CLE_JETON); }catch(e){} const e = new Error('Votre connexion Gmail a expiré. Touchez à nouveau « Envoyer ».'); e.expire = true; throw e; }
     if (r.status === 403 || r.status === 400){
       let detail = '';

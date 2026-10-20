@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Créer un CV gratuit en PDF : 20 modèles avec ou sans photo – DocuPrêt</title>
+<meta name="description" content="Faites votre CV gratuitement en ligne : 20 modèles modernes, avec ou sans photo, couleurs et polices personnalisables. Téléchargez-le en PDF, sans inscription.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:site_name" content="DocuPrêt">
+<meta property="og:title" content="Créer un CV gratuit en PDF : 20 modèles avec ou sans photo – DocuPrêt">
+<meta property="og:description" content="Faites votre CV gratuitement en ligne : 20 modèles modernes, avec ou sans photo, couleurs et polices personnalisables. Téléchargez-le en PDF, sans inscription.">
+<meta property="og:image" content="https://docupret.fr/img/partage.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:site_name" content="DocuPrêt">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#4A7BD0">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#4A7BD0">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Lato:wght@400;700;900&family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=Merriweather:wght@400;700;900&family=Montserrat:wght@400;600;700;800&family=Nunito:wght@400;600;700;800&family=Open+Sans:wght@400;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Poppins:wght@400;600;700;800&family=Raleway:wght@400;600;700;800&family=Roboto:wght@400;500;700;900&display=swap">
+<style>
+  :root{
+    --bleu:#4A7BD0; --bleu-fonce:#2F5DAE; --bleu-clair:#EAF1FB;
+    --fond:#F6F9FD; --blanc:#FFFFFF; --texte:#1E2A42; --gris:#6B778C; --bord:#E2E8F2; --rayon:14px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{color-scheme:light}
+  input,select,textarea{color:var(--texte);-webkit-text-fill-color:var(--texte);caret-color:var(--texte)}
+  input::placeholder,textarea::placeholder{color:#98A2B3;-webkit-text-fill-color:#98A2B3;opacity:1}
+  [hidden]{display:none!important}
+  html,body{overflow-x:clip}
+  body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--fond);color:var(--texte);line-height:1.5;padding-bottom:96px}
+  a{color:inherit;text-decoration:none}
+  button{font-family:inherit;cursor:pointer}
+  .wrap{max-width:1100px;margin:0 auto;padding:0 16px}
+
+  header{background:var(--blanc);border-bottom:1px solid var(--bord);position:sticky;top:0;z-index:15}
+  .nav{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;height:60px}
+  .nav > :last-child{justify-self:end}
+  .logo{display:flex;align-items:center;gap:9px;justify-self:center}
+  .logo-icone{display:block;width:34px;height:34px;flex-shrink:0}
+  .logo-icone svg{display:block;width:100%;height:100%}
+  .logo-mot{font-weight:800;font-size:1.22rem;letter-spacing:-.02em;color:var(--texte)}
+  .logo-mot span{color:var(--bleu)}
+  .retour{font-size:.9rem;color:var(--gris)}
+  .retour:hover{color:var(--bleu)}
+  @media (max-width:560px){.retour{font-size:1.3rem;padding:4px 6px}.retour span{display:none}}
+
+  .pub{margin:14px auto;max-width:728px;min-height:90px;border:1px dashed #C9D4E6;border-radius:10px;background:#FBFCFE;display:grid;place-items:center;color:#A3AEC2;font-size:.75rem;letter-spacing:.05em;text-transform:uppercase}
+  @media (max-width:640px){.pub{min-height:60px;max-width:340px}}
+
+  h1{font-size:clamp(1.25rem,4vw,1.8rem);font-weight:800;margin:4px 0 6px}
+
+  .zone{display:grid;gap:12px;grid-template-columns:minmax(0,1fr)}
+  .zone > *{min-width:0}
+  .colle{position:sticky;top:60px;z-index:8;background:var(--fond);margin:0 -16px;padding:6px 16px 8px}
+  .apercu{background:var(--blanc);border:1px solid var(--bord);border-radius:var(--rayon);padding:8px;max-width:100%;overflow:hidden}
+  .papier{height:150px;width:100%;display:grid;place-items:center;border-radius:10px;background:#FBFAF6;background-image:linear-gradient(#EFEDE6 1px,transparent 1px);background-size:100% 22px;overflow:hidden}
+  #toile{display:block}
+  @media (min-width:900px){
+    .zone{grid-template-columns:minmax(0,1fr) 430px;align-items:start;gap:20px}
+    .colle{top:76px;margin:0;padding:0}
+    .papier{height:300px}
+  }
+
+  .panneau{background:var(--blanc);border:1px solid var(--bord);border-radius:var(--rayon);padding:14px;display:grid;gap:14px}
+  .panneau + .panneau{margin-top:12px}
+  .panneau h2{font-size:.95rem}
+  .groupe{display:grid;gap:6px}
+  .titre{font-size:.8rem;color:var(--gris);font-weight:600;display:flex;justify-content:space-between}
+  .titre output{color:var(--texte);font-variant-numeric:tabular-nums}
+  input[type=text],input[type=tel]{font:inherit;font-size:16px;padding:10px 12px;border:1.5px solid var(--bord);border-radius:10px;background:#fff;color:var(--texte);width:100%;outline:none}
+  input[type=text]:focus,input[type=tel]:focus{border-color:var(--bleu);box-shadow:0 0 0 3px var(--bleu-clair)}
+  input[type=range]{width:100%;accent-color:var(--bleu);height:28px}
+  .deux{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .formes{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+  .forme{border:1.5px solid var(--bord);background:#fff;border-radius:12px;padding:8px 4px;display:grid;justify-items:center;gap:4px;font-size:.75rem;color:var(--gris)}
+  .forme svg{width:36px;height:28px}
+  .forme.on{border-color:var(--bleu);color:var(--bleu);font-weight:600;background:var(--bleu-clair)}
+  .encres{display:flex;flex-wrap:wrap;gap:8px}
+  .encre{width:34px;height:34px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 1.5px var(--bord);padding:0}
+  .encre.on{box-shadow:0 0 0 2.5px var(--texte)}
+  .coche{display:flex;align-items:center;gap:10px;font-size:.92rem;cursor:pointer}
+  .coche input{width:20px;height:20px;accent-color:var(--bleu);flex-shrink:0}
+  .note{font-size:.8rem;color:var(--gris)}
+  .conseil{background:#FFF4E0;border-radius:12px;padding:10px 12px;font-size:.86rem;color:#6B4A12;line-height:1.45}
+
+  .barre{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--blanc);border-top:1px solid var(--bord);padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px))}
+  .barre-in{max-width:1100px;margin:0 auto;display:flex;gap:10px;justify-content:flex-end}
+  .btn{background:var(--bleu);color:#fff;border:0;border-radius:50px;padding:13px 22px;font-weight:650;font-size:.98rem;white-space:nowrap}
+  .btn:hover{background:var(--bleu-fonce)}
+  @media (max-width:480px){.barre-in .btn{flex:1}}
+
+  .faq{margin-top:28px}
+  .faq h2{font-size:1.2rem;margin-bottom:12px}
+  .faq details{background:var(--blanc);border:1px solid var(--bord);border-radius:12px;margin-bottom:8px}
+  .faq summary{padding:12px 16px;font-weight:600;cursor:pointer;font-size:.95rem}
+  .faq p{padding:0 16px 14px;color:var(--gris);font-size:.9rem}
+
+  footer{background:var(--blanc);border-top:1px solid var(--bord);margin-top:28px;padding:22px 0;font-size:.85rem;color:var(--gris)}
+  .pied{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
+  .pied nav{display:flex;flex-wrap:wrap;gap:16px}
+  /* Menu latéral */
+  .gauche{display:flex;align-items:center;gap:2px}
+  .menu-btn{width:40px;height:40px;border:0;background:none;border-radius:10px;display:grid;place-items:center;margin-left:-8px;cursor:pointer;color:var(--texte)}
+  .menu-btn:hover,.menu-btn:focus-visible{background:var(--bleu-clair)}
+  .menu-btn svg{width:24px;height:24px;stroke:currentColor}
+  .tiroir-fond{position:fixed;inset:0;background:rgba(20,28,45,.45);z-index:50}
+  .tiroir{position:fixed;top:0;left:0;bottom:0;width:min(300px,84vw);background:var(--blanc);z-index:51;transform:translateX(-102%);transition:transform .25s ease;overflow-y:auto;padding-bottom:calc(20px + env(safe-area-inset-bottom,0px));box-shadow:4px 0 24px rgba(0,0,0,.12)}
+  .tiroir.ouvert{transform:none}
+  .tiroir-tete{display:flex;align-items:center;justify-content:space-between;height:60px;padding:env(safe-area-inset-top,0px) 10px 0 16px;border-bottom:1px solid var(--bord)}
+  .tiroir-titre{display:flex;align-items:center;gap:9px}
+  .tiroir-fermer{width:36px;height:36px;border:0;background:none;border-radius:50%;font-size:1.6rem;line-height:1;color:var(--gris);cursor:pointer}
+  .tiroir-fermer:hover{background:var(--fond)}
+  .tiroir-lien{display:block;padding:14px 16px;font-weight:700;font-size:1rem;color:var(--texte);border-bottom:1px solid var(--bord)}
+  .tiroir-lien:hover{color:var(--bleu)}
+  .tiroir-lien.bientot{display:flex;justify-content:space-between;align-items:center;gap:8px;color:var(--gris)}
+  .tiroir-lien.sep{border-top:1px solid var(--bord);margin-top:8px}
+  .tiroir-lien.apropos{border-bottom:0}
+  .tiroir-lien small{font-size:.7rem;font-weight:400;background:var(--fond);border:1px solid var(--bord);border-radius:50px;padding:2px 8px;flex-shrink:0}
+  .tiroir-lien.kits{display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .tiroir-lien.kits small{background:var(--bleu);border-color:var(--bleu);color:#fff;font-weight:700}
+  .cat{border-bottom:1px solid var(--bord)}
+  .cat-btn{width:100%;display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border:0;background:none;font:inherit;font-weight:700;font-size:1rem;color:var(--texte);cursor:pointer;text-align:left}
+  .plus{width:26px;height:26px;border-radius:50%;background:var(--bleu-clair);color:var(--bleu);display:grid;place-items:center;font-size:1.15rem;line-height:1;flex-shrink:0}
+  .sous{padding-bottom:8px}
+  .sous a{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 16px 10px 28px;font-size:.95rem;color:var(--texte)}
+  .sous a:hover{background:var(--fond);color:var(--bleu)}
+  .sous a.bientot{color:var(--gris)}
+  .sous small{font-size:.7rem;background:var(--fond);border:1px solid var(--bord);border-radius:50px;padding:2px 8px;flex-shrink:0}
+  @media (prefers-reduced-motion:reduce){.tiroir{transition:none}}
+
+  /* PUB_MASQUEE : emplacements publicitaires cachés tant que Google AdSense n'est pas en place (supprimer cette ligne pour les réafficher) */
+  .pub{display:none!important}
+
+  /* Mon compte (en-tête) */
+  .droite{display:flex;align-items:center;gap:4px;justify-self:end}
+  .compte-lien{display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--texte);font-size:.6rem;font-weight:700;line-height:1;padding:4px 2px;border-radius:10px;white-space:nowrap}
+  .compte-lien svg{width:24px;height:24px;color:var(--bleu)}
+  .compte-lien:hover{color:var(--bleu)}
+  @media (min-width:561px){.compte-lien{flex-direction:row;gap:7px;font-size:.88rem;border:1.5px solid var(--bord);padding:7px 13px 7px 10px;border-radius:50px;background:#fff}.compte-lien svg{width:20px;height:20px}.droite{gap:14px}}
+  /* ===================== Page CV ===================== */
+  .cv-intro{color:var(--gris);font-size:.95rem;margin-bottom:12px}
+  .cv-zone{display:grid;gap:14px;grid-template-columns:minmax(0,1fr)}
+  .cv-zone > *{min-width:0}
+  @media (min-width:1000px){.cv-zone{grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);align-items:start;gap:22px}.cv-droite{position:sticky;top:76px}}
+  .bloc{background:var(--blanc);border:1px solid var(--bord);border-radius:var(--rayon);margin-bottom:12px}
+  .bloc > summary{list-style:none;cursor:pointer;padding:14px 16px;font-weight:800;font-size:1rem;display:flex;align-items:center;gap:10px}
+  .bloc > summary::-webkit-details-marker{display:none}
+  .bloc > summary::after{content:"+";margin-left:auto;width:26px;height:26px;border-radius:50%;background:var(--bleu-clair);color:var(--bleu);display:grid;place-items:center;font-size:1.15rem;line-height:1}
+  .bloc[open] > summary::after{content:"−"}
+  .bloc > summary small{font-weight:600;font-size:.75rem;color:var(--gris)}
+  .bloc-in{padding:0 16px 16px;display:grid;gap:12px}
+  .num{width:26px;height:26px;border-radius:8px;background:var(--bleu);color:#fff;display:grid;place-items:center;font-size:.82rem;flex-shrink:0}
+  .ch{display:grid;gap:5px;font-size:.8rem;color:var(--gris);font-weight:600}
+  .ch input,.ch textarea,.ch select,.cv-select{font:inherit;font-size:16px;font-weight:400;padding:10px 12px;border:1.5px solid var(--bord);border-radius:10px;background:#fff;color:var(--texte);width:100%;outline:none}
+  .ch textarea{resize:vertical;min-height:84px;line-height:1.45}
+  .ch input:focus,.ch textarea:focus,.ch select:focus{border-color:var(--bleu);box-shadow:0 0 0 3px var(--bleu-clair)}
+  .ch em{font-style:normal;font-weight:400;color:#98A2B3}
+  .deux{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  @media (max-width:420px){.deux.casse{grid-template-columns:1fr}}
+  .aide{font-size:.8rem;color:var(--gris);line-height:1.45}
+  /* Modèles */
+  .filtres-mod{display:flex;gap:6px;flex-wrap:wrap}
+  .filtres-mod button{border:1.5px solid var(--bord);background:#fff;border-radius:50px;padding:7px 13px;font-size:.86rem;font-weight:650;color:var(--gris)}
+  .filtres-mod button.on{border-color:var(--bleu);background:var(--bleu-clair);color:var(--bleu-fonce)}
+  .galerie-cv{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:10px;max-height:470px;overflow-y:auto;padding:2px;overscroll-behavior:contain}
+  @media (max-width:640px){.galerie-cv{display:flex;overflow-x:auto;overflow-y:hidden;max-height:none;scroll-snap-type:x proximity;padding-bottom:6px}.galerie-cv .mod{flex:0 0 110px;scroll-snap-align:start}}
+  .mod{border:2px solid var(--bord);background:#fff;border-radius:12px;padding:6px 6px 7px;display:grid;gap:5px;text-align:center;font-size:.74rem;font-weight:700;color:var(--texte);position:relative}
+  .mod.on{border-color:var(--bleu);box-shadow:0 0 0 3px var(--bleu-clair)}
+  .mod .vign{position:relative;width:100%;aspect-ratio:794/1123;overflow:hidden;border-radius:6px;background:#fff;box-shadow:0 0 0 1px #EEF1F6}
+  .mod .vign > .cv{position:absolute;left:0;top:0;transform-origin:top left;pointer-events:none}
+  .mod .tag-photo{position:absolute;top:10px;right:10px;background:rgba(30,42,66,.78);color:#fff;font-size:.6rem;border-radius:50px;padding:2px 6px;font-weight:700}
+  /* Personnalisation */
+  .pastilles{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .pastille-c{width:32px;height:32px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 1.5px var(--bord);padding:0}
+  .pastille-c.on{box-shadow:0 0 0 2.5px var(--texte)}
+  .perso-c{position:relative;width:32px;height:32px;border-radius:50%;overflow:hidden;box-shadow:0 0 0 1.5px var(--bord);background:conic-gradient(red,yellow,lime,cyan,blue,magenta,red)}
+  .perso-c input{position:absolute;inset:-6px;width:44px;height:44px;opacity:0;cursor:pointer}
+  .seg{display:flex;background:var(--fond);border:1px solid var(--bord);border-radius:10px;padding:3px;gap:3px}
+  .seg button{flex:1;border:0;background:none;border-radius:8px;padding:8px 6px;font-size:.85rem;font-weight:650;color:var(--gris)}
+  .seg button.on{background:#fff;color:var(--bleu-fonce);box-shadow:0 1px 3px rgba(30,42,66,.12)}
+  .polices{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:6px}
+  .polices button{border:1.5px solid var(--bord);background:#fff;border-radius:10px;padding:9px 8px;font-size:.95rem;color:var(--texte);text-align:center}
+  .polices button.on{border-color:var(--bleu);background:var(--bleu-clair)}
+  /* Photo */
+  .photo-zone{display:flex;align-items:center;gap:12px}
+  .photo-mini{width:72px;height:72px;border-radius:50%;background:var(--fond) center/cover no-repeat;border:1.5px dashed #C9D4E6;flex-shrink:0;display:grid;place-items:center;color:#A3AEC2;font-size:1.6rem}
+  .photo-mini.pleine{border-style:solid;border-color:var(--bord)}
+  .photo-btns{display:grid;gap:6px}
+  .btn-sec{border:1.5px solid var(--bord);background:#fff;border-radius:10px;padding:9px 12px;font-weight:650;font-size:.88rem;color:var(--texte);display:inline-flex;align-items:center;justify-content:center;gap:6px}
+  .btn-sec:hover{border-color:var(--bleu);color:var(--bleu-fonce)}
+  .btn-sec input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+  .lien-rouge{border:0;background:none;color:#C23B36;font-size:.8rem;text-decoration:underline;padding:0;text-align:left}
+  /* Expériences, formations */
+  .elements{display:grid;gap:10px}
+  .element{border:1px solid var(--bord);border-radius:12px;padding:12px;display:grid;gap:10px;background:#FBFCFE}
+  .element-tete{display:flex;align-items:center;gap:8px;font-weight:700;font-size:.88rem}
+  .element-tete span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .element-tete button{border:1px solid var(--bord);background:#fff;border-radius:8px;width:32px;height:32px;font-size:.95rem;color:var(--gris);flex-shrink:0}
+  .element-tete button.suppr{color:#C23B36}
+  .ajout{border:1.5px dashed #B9CDEE;background:#F5F8FE;color:var(--bleu-fonce);border-radius:12px;padding:11px;font-weight:700;font-size:.92rem}
+  /* Aperçu */
+  .apercu-cv{background:#E9EEF5;border-radius:var(--rayon);padding:12px;overflow:hidden}
+  .apercu-cv .support{position:relative;margin:0 auto;box-shadow:0 6px 24px rgba(30,42,66,.16)}
+  .apercu-cv .support > .cv{position:absolute;left:0;top:0;transform-origin:top left}
+  .exemple-bandeau{font-size:.8rem;background:#FFF4E0;color:#6B4A12;border-radius:10px;padding:8px 10px;margin-bottom:10px;text-align:center}
+  .barre-in .btn-sec{border-radius:50px;padding:12px 18px}
+  @media (min-width:1000px){.voir-apercu{display:none!important}}
+  .loupe-cv{position:fixed;inset:0;z-index:70;background:rgba(20,28,45,.82);overflow:auto;padding:14px 12px 90px}
+  .loupe-cv .support{position:relative;margin:0 auto;background:#fff}
+  .loupe-cv .support > .cv{position:absolute;left:0;top:0;transform-origin:top left}
+  .loupe-cv .fermer{position:fixed;left:0;right:0;bottom:0;padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));background:var(--blanc);display:flex;gap:10px;justify-content:center}
+  .alerte{position:fixed;left:50%;bottom:92px;transform:translateX(-50%);background:#1E2A42;color:#fff;padding:10px 16px;border-radius:12px;font-size:.9rem;z-index:80;max-width:92vw;text-align:center}
+
+  /* ===================== Le CV lui-même (A4 : 794 × 1123 px) ===================== */
+  .cv{--c:#2F5DAE;--c2:#EAF1FB;--cf:#fff;--f:'Lato';--fs:1;width:794px;min-height:1123px;background:#fff;color:#23272F;font-family:var(--f),Arial,sans-serif;font-size:calc(12.5px * var(--fs));line-height:1.45;position:relative;overflow:hidden;text-align:left}
+  .cv *{box-sizing:border-box}
+  .cv p{margin:0}
+  .cv-nom{font-size:2.5em;font-weight:800;line-height:1.08;letter-spacing:-.01em;color:#1B2230}
+  .cv-titre{font-size:1.2em;font-weight:600;color:var(--c);margin-top:4px}
+  .cv-contacts{display:flex;flex-wrap:wrap;gap:4px 16px;margin-top:10px;font-size:.92em;color:#4B5563}
+  .cv-contacts span{display:inline-flex;align-items:center;gap:6px;min-width:0;overflow-wrap:anywhere}
+  .cv-contacts svg{width:1.05em;height:1.05em;flex-shrink:0;color:var(--c)}
+  .cv-photo{width:130px;height:130px;object-fit:cover;flex-shrink:0;display:block;border-radius:50%}
+  .cv.ph-arrondi .cv-photo{border-radius:18px}
+  .cv.ph-carre .cv-photo{border-radius:0}
+  .cv-s{margin-top:18px}
+  .cv-s:first-child{margin-top:0}
+  .cv-t{font-size:1.02em;font-weight:800;text-transform:uppercase;letter-spacing:.09em;color:var(--c);padding-bottom:5px;margin-bottom:10px;border-bottom:2px solid var(--c2)}
+  .cv-it{margin-bottom:11px;break-inside:avoid}
+  .cv-it:last-child{margin-bottom:0}
+  .cv-it-h{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+  .cv-it-h b{font-size:1.06em;color:#1B2230}
+  .cv-dates{font-size:.88em;color:#6B7280;white-space:nowrap;flex-shrink:0}
+  .cv-it-s{color:var(--c);font-weight:600;font-size:.95em}
+  .cv-desc{margin-top:3px;color:#374151}
+  .cv-desc ul{margin:2px 0 0;padding-left:16px}
+  .cv-desc li{margin:1px 0}
+  .cv-texte{color:#374151;white-space:pre-line}
+  .cv-liste{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+  .cv-liste li{display:flex;justify-content:space-between;gap:10px}
+  .cv-liste li span{color:#6B7280}
+  .cv-tags{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+  .cv-tags li{background:var(--c2);color:#1B2230;border-radius:50px;padding:3px 10px;font-size:.92em}
+  .cv-vide{color:#9CA3AF;font-style:italic}
+
+  /* --- Colonnes --- */
+  .cv-corps{display:block}
+  .cv.cols-gauche .cv-corps,.cv.cols-droite .cv-corps{display:grid;min-height:inherit}
+  .cv.cols-gauche .cv-corps{grid-template-columns:262px 1fr}
+  .cv.cols-droite .cv-corps{grid-template-columns:1fr 250px}
+  .cv.cols-gauche .cv-side{order:-1}
+  .l-gauche .cv-side .cv-tags li{background:rgba(255,255,255,.18)}
+  .cols-un .cv-side .cv-s:first-child{margin-top:18px}
+  .l-epure .cv-side .cv-s:first-child{margin-top:20px;border-top:1px solid #E5E7EB;padding-top:16px}
+  .l-cartes .cv-side .cv-s:first-child{margin-top:0}
+
+  /* 1. Classique */
+  .cv.l-classique{padding:50px 58px}
+  .l-classique .cv-tete{text-align:center;margin-bottom:24px;display:grid;justify-items:center}
+  .l-classique .cv-contacts{justify-content:center}
+  .l-classique .cv-photo{margin-bottom:14px;width:120px;height:120px}
+  .l-classique .cv-t{text-align:left}
+
+  /* 2. Barre latérale colorée */
+  .cv.l-gauche{min-height:1123px}
+  .l-gauche .cv-side{background:var(--c);color:var(--cf);padding:44px 26px}
+  .l-gauche .cv-main{padding:46px 42px}
+  .l-gauche .cv-tete{margin-bottom:22px}
+  .l-gauche .cv-side .cv-t{color:var(--cf);border-color:rgba(255,255,255,.35)}
+  .l-gauche .cv-side .cv-texte,.l-gauche .cv-side .cv-liste li span{color:inherit;opacity:.88}
+  .l-gauche .cv-side .cv-contacts{display:grid;gap:8px;margin:0;color:inherit}
+  .l-gauche .cv-side .cv-contacts svg{color:inherit}
+  .l-gauche .cv-side .cv-photo{width:150px;height:150px;margin:0 auto 22px;border:4px solid rgba(255,255,255,.85)}
+  .l-gauche .cv-side .cv-tags li{color:inherit}
+
+  /* 3. Bandeau */
+  .l-bandeau .cv-tete{background:var(--c);color:var(--cf);padding:38px 50px;display:flex;align-items:center;gap:26px}
+  .l-bandeau .cv-nom{color:inherit}
+  .l-bandeau .cv-titre{color:inherit;opacity:.92}
+  .l-bandeau .cv-contacts{color:inherit;opacity:.95}
+  .l-bandeau .cv-contacts svg{color:inherit}
+  .l-bandeau .cv-photo{width:124px;height:124px;border:4px solid rgba(255,255,255,.9)}
+  .l-bandeau .cv-main{padding:30px 34px 40px 50px}
+  .l-bandeau .cv-side{background:var(--c2);padding:30px 26px}
+  .l-bandeau .cv-side .cv-tags li{background:#fff}
+
+  /* 4. Élégant */
+  .cv.l-elegant{padding:62px 74px}
+  .l-elegant .cv-tete{text-align:center;display:grid;justify-items:center;padding-bottom:20px;margin-bottom:22px;border-bottom:1px solid #D8D2C8}
+  .l-elegant .cv-nom{font-weight:400;font-size:2.7em;letter-spacing:.05em;text-transform:uppercase}
+  .l-elegant .cv-titre{font-weight:400;font-style:italic;letter-spacing:.04em}
+  .l-elegant .cv-contacts{justify-content:center}
+  .l-elegant .cv-photo{width:100px;height:100px;margin-bottom:14px}
+  .l-elegant .cv-t{display:flex;align-items:center;gap:12px;border:0;font-weight:600;letter-spacing:.2em;font-size:.95em;text-align:center}
+  .l-elegant .cv-t::before,.l-elegant .cv-t::after{content:"";flex:1;height:1px;background:var(--c);opacity:.45}
+  .l-elegant .cv-tags li{background:none;border:1px solid #D8D2C8}
+
+  /* 5. Épuré (titres à gauche) */
+  .cv.l-epure{padding:56px 60px}
+  .l-epure .cv-tete{display:flex;justify-content:space-between;align-items:flex-start;gap:24px;margin-bottom:26px}
+  .l-epure .cv-nom{font-size:2.8em;font-weight:700}
+  .l-epure .cv-photo{width:118px;height:118px;order:2}
+  .l-epure .cv-s{display:grid;grid-template-columns:150px 1fr;gap:20px;margin-top:20px;padding-top:16px;border-top:1px solid #E5E7EB}
+  .l-epure .cv-s:first-child{border-top:0;padding-top:0}
+  .l-epure .cv-t{border:0;padding:0;margin:0;font-size:.92em;color:#111827}
+  .l-epure .cv-t::after{content:"";display:block;width:26px;height:3px;background:var(--c);margin-top:6px}
+
+  /* 6. Parcours (frise) */
+  .l-parcours .cv-tete{padding:44px 50px 26px;border-bottom:4px solid var(--c);display:flex;align-items:center;gap:24px}
+  .l-parcours .cv-corps{min-height:calc(1123px - 160px)}
+  .l-parcours .cv-main{padding:28px 30px 40px 50px}
+  .l-parcours .cv-side{background:#F6F7F9;padding:28px 24px}
+  .l-parcours .cv-main .cv-it{position:relative;padding-left:20px;border-left:2px solid var(--c2);padding-bottom:4px;margin-bottom:8px}
+  .l-parcours .cv-main .cv-it::before{content:"";position:absolute;left:-7px;top:3px;width:12px;height:12px;border-radius:50%;background:#fff;border:3px solid var(--c)}
+  .l-parcours .cv-side .cv-contacts{display:grid;gap:8px;margin:0}
+  .l-parcours .cv-side .cv-photo{width:140px;height:140px;margin:0 auto 20px}
+  .l-parcours .cv-side .cv-tags li{background:#fff;border:1px solid #E5E7EB}
+
+  /* 7. Compact */
+  .cv.l-compact{--fs-c:.93;font-size:calc(12.5px * var(--fs) * .93);padding:40px 44px}
+  .l-compact .cv-tete{display:flex;align-items:center;gap:20px;padding-bottom:16px;margin-bottom:18px;border-bottom:3px solid var(--c)}
+  .l-compact .cv-photo{width:100px;height:100px}
+  .l-compact .cv-nom{font-size:2.3em}
+  .l-compact .cv-side{padding-right:22px;border-right:1px solid #E5E7EB}
+  .l-compact .cv-main{padding-left:26px}
+  .l-compact.cols-gauche .cv-corps{grid-template-columns:230px 1fr;min-height:0}
+  .l-compact .cv-t{border-bottom-width:1px}
+
+  /* 8. Accent */
+  .cv.l-accent{padding:52px 56px 52px 64px;border-left:16px solid var(--c)}
+  .l-accent .cv-tete{display:flex;align-items:center;gap:24px;margin-bottom:24px}
+  .l-accent .cv-nom{color:var(--c);font-size:2.9em}
+  .l-accent .cv-titre{color:#374151}
+  .l-accent .cv-t{border:0;display:flex;align-items:center;gap:10px;padding:0}
+  .l-accent .cv-t::before{content:"";width:12px;height:12px;background:var(--c);border-radius:3px;flex-shrink:0}
+  .l-accent .cv-photo{width:118px;height:118px}
+
+  /* 9. Cartes */
+  .cv.l-cartes{background:#F3F5F9;padding:36px 38px}
+  .l-cartes .cv-tete{background:#fff;border-radius:14px;padding:24px 26px;display:flex;align-items:center;gap:22px;margin-bottom:14px;border-top:5px solid var(--c)}
+  .l-cartes .cv-photo{width:110px;height:110px}
+  .l-cartes .cv-s{background:#fff;border-radius:14px;padding:18px 22px;margin-top:14px}
+  .l-cartes .cv-main .cv-s:first-child{margin-top:0}
+  .l-cartes .cv-side{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-top:14px}
+  .l-cartes .cv-side .cv-s{margin-top:0}
+  .l-cartes .cv-t{border:0;padding:0}
+
+  /* 10. Moderne */
+  .l-moderne .cv-tete{padding:48px 50px 24px;display:flex;align-items:center;gap:24px}
+  .l-moderne .cv-tete-txt::after{content:"";display:block;width:70px;height:5px;background:var(--c);border-radius:3px;margin-top:14px}
+  .l-moderne .cv-main{padding:10px 30px 40px 50px}
+  .l-moderne .cv-side{padding:10px 40px 40px 24px;border-left:1px solid #E5E7EB}
+  .l-moderne .cv-side .cv-contacts{display:grid;gap:8px;margin:0}
+  .l-moderne .cv-photo{width:126px;height:126px}
+  .l-moderne .cv-corps{min-height:0}
+</style>
+<script>(function(){try{var q=new URLSearchParams(location.search).get('type'),l=document.createElement('link');l.rel='canonical';l.href='https://docupret.fr'+location.pathname.replace(/index\.html$/,'')+(q&&/^[a-z]+$/.test(q)?'?type='+q:'');document.head.appendChild(l);}catch(e){}})();</script>
+<!-- Google AdSense -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4241359196877067" crossorigin="anonymous"></script>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <div class="gauche"><button type="button" class="menu-btn" id="menu-btn" aria-label="Ouvrir le menu" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><a href="./" class="retour" aria-label="Revenir à la page précédente">←<span> Retour</span></a></div>
+    <a href="./" class="logo"><span class="logo-icone"><svg viewBox="0 0 36 36" aria-hidden="true"><defs><linearGradient id="lg-tete" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6A9BF0"/><stop offset="1" stop-color="#3563BF"/></linearGradient></defs><rect width="36" height="36" rx="10" fill="url(#lg-tete)"/><rect x="7.5" y="11" width="13" height="17" rx="2" fill="#fff" opacity=".35"/><path d="M14 7.5h7.5l5.5 5.5v13.5a2 2 0 0 1-2 2H14a2 2 0 0 1-2-2v-17a2 2 0 0 1 2-2z" fill="#fff"/><path d="M21.5 7.5v3.5a2 2 0 0 0 2 2H27z" fill="#C9DAF8"/><path d="M15.3 19.6l2.7 2.7 5-5.6" fill="none" stroke="#3563BF" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="logo-mot">Docu<span>Prêt</span></span></a>
+    <div class="droite"><a href="compte.html" class="compte-lien" aria-label="Mon compte"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="10" r="3.2"/><path d="M6.2 18.4c1.3-2.1 3.3-3.2 5.8-3.2s4.5 1.1 5.8 3.2"/></svg><span>Mon compte</span></a></div>
+  </div>
+</header>
+
+<div class="tiroir-fond" id="tiroir-fond" hidden></div>
+<nav class="tiroir" id="tiroir" aria-label="Menu des documents" aria-hidden="true">
+  <div class="tiroir-tete">
+    <span class="tiroir-titre"><span class="logo-icone"><svg viewBox="0 0 36 36" aria-hidden="true"><defs><linearGradient id="lg-menu" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6A9BF0"/><stop offset="1" stop-color="#3563BF"/></linearGradient></defs><rect width="36" height="36" rx="10" fill="url(#lg-menu)"/><rect x="7.5" y="11" width="13" height="17" rx="2" fill="#fff" opacity=".35"/><path d="M14 7.5h7.5l5.5 5.5v13.5a2 2 0 0 1-2 2H14a2 2 0 0 1-2-2v-17a2 2 0 0 1 2-2z" fill="#fff"/><path d="M21.5 7.5v3.5a2 2 0 0 0 2 2H27z" fill="#C9DAF8"/><path d="M15.3 19.6l2.7 2.7 5-5.6" fill="none" stroke="#3563BF" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="logo-mot">Docu<span>Prêt</span></span></span>
+    <button type="button" class="tiroir-fermer" aria-label="Fermer le menu">×</button>
+  </div>
+  <a href="./" class="tiroir-lien">Accueil</a>
+  <a href="facture.html" class="tiroir-lien">Facture</a>
+  <a href="devis.html" class="tiroir-lien">Devis</a>
+    <div class="cat">
+      <button type="button" class="cat-btn" aria-expanded="false"><span>Outils</span><span class="plus">+</span></button>
+      <div class="sous" hidden>
+        <a href="tva.html">Calculatrice TVA</a>
+        <a href="simulateur.html">Simulateur auto-entrepreneur</a>
+        <a href="tampon.html">Tampon d'entreprise</a>
+        <a href="frais-kilometriques.html">Frais kilométriques</a>
+      </div>
+    </div>
+    <div class="cat">
+      <button type="button" class="cat-btn" aria-expanded="false"><span>Pro</span><span class="plus">+</span></button>
+      <div class="sous" hidden>
+        <a href="facture.html">Facture</a>
+        <a href="devis.html">Devis</a>
+        <a href="recu.html">Reçu de paiement</a>
+        <a href="avoir.html">Avoir</a>
+      </div>
+    </div>
+    <div class="cat">
+      <button type="button" class="cat-btn" aria-expanded="false"><span>Travail</span><span class="plus">+</span></button>
+      <div class="sous" hidden>
+        <a href="cv.html">CV</a>
+        <a href="lettre-demission.html">Lettre de démission</a>
+        <a href="lettre-motivation.html">Lettre de motivation</a>
+        <a href="demande-conges.html">Demande de congés</a>
+        <a href="rupture-conventionnelle.html">Rupture conventionnelle</a>
+      </div>
+    </div>
+    <div class="cat">
+      <button type="button" class="cat-btn" aria-expanded="false"><span>Véhicule</span><span class="plus">+</span></button>
+      <div class="sous" hidden>
+        <a href="cession.html">Certificat de cession</a>
+        <a href="constat.html">Constat amiable</a>
+        <a href="contrat-vente-vehicule.html">Contrat de vente</a>
+        <a href="pret-vehicule.html">Prêt de véhicule</a>
+        <a href="declaration-sinistre.html">Déclaration de sinistre</a>
+      </div>
+    </div>
+    <div class="cat">
+      <button type="button" class="cat-btn" aria-expanded="false"><span>Logement</span><span class="plus">+</span></button>
+      <div class="sous" hidden>
+        <a href="attestation-hebergement.html">Attestation d'hébergement</a>
+        <a href="preavis-locataire.html">Préavis locataire</a>
+        <a href="quittance-loyer.html">Quittance de loyer</a>
+      </div>
+    </div>
+    <div class="cat">
+      <button type="button" class="cat-btn" aria-expanded="false"><span>Vie courante</span><span class="plus">+</span></button>
+      <div class="sous" hidden>
+        <a href="attestation-sur-l-honneur.html">Attestation sur l'honneur</a>
+        <a href="lettre-resiliation.html">Lettre de résiliation</a>
+        <a href="lettre-reclamation.html">Réclamation / mise en demeure</a>
+        <a href="procuration.html">Procuration</a>
+      </div>
+    </div>
+  <a href="logo.html" class="tiroir-lien">Créer votre logo</a>
+  <a href="carte.html" class="tiroir-lien">Créer votre carte de visite</a>
+  <a href="flyer.html" class="tiroir-lien">Créer votre flyer</a>
+  <a href="apropos.html" class="tiroir-lien sep apropos">À propos</a>
+</nav>
+
+
+<main class="wrap">
+  <h1>Créer un CV gratuit</h1>
+  <p class="cv-intro">20 modèles, avec ou sans photo, à personnaliser : couleur, police, taille du texte. Remplissez, puis téléchargez votre CV en PDF.</p>
+
+  <div class="cv-zone">
+    <div class="cv-gauche">
+
+      <details class="bloc" open>
+        <summary><span class="num">1</span>Modèle et style</summary>
+        <div class="bloc-in">
+          <div class="filtres-mod" id="filtres-mod" role="group" aria-label="Filtrer les modèles">
+            <button type="button" data-f="tous" class="on">Tous · 20</button><button type="button" data-f="sans">Sans photo · 10</button><button type="button" data-f="photo">Avec photo · 10</button>
+          </div>
+          <div class="galerie-cv" id="galerie"></div>
+          <div class="ch">Couleur<div class="pastilles" id="couleurs"></div></div>
+          <div class="ch">Police d'écriture<div class="polices" id="polices"></div></div>
+          <div class="ch">Taille du texte<div class="seg" id="tailles"><button type="button" data-t="0.92">Petite</button><button type="button" data-t="1">Normale</button><button type="button" data-t="1.08">Grande</button></div></div>
+          <div class="ch" id="bloc-forme">Forme de la photo<div class="seg" id="formes"><button type="button" data-p="rond">Ronde</button><button type="button" data-p="arrondi">Arrondie</button><button type="button" data-p="carre">Carrée</button></div></div>
+          <button type="button" class="lien-rouge" id="reset-style" style="color:var(--gris)">Remettre la couleur et la police du modèle</button>
+        </div>
+      </details>
+
+      <details class="bloc" open>
+        <summary><span class="num">2</span>Vos informations</summary>
+        <div class="bloc-in">
+          <div class="photo-zone" id="zone-photo">
+            <div class="photo-mini" id="photo-mini" aria-hidden="true">👤</div>
+            <div class="photo-btns">
+              <label class="btn-sec"><input type="file" id="photo" accept="image/*">📷 <span id="photo-lib">Ajouter une photo</span></label>
+              <button type="button" class="lien-rouge" id="photo-suppr" hidden>Retirer la photo</button>
+              <span class="aide" id="photo-aide">La photo s'affiche avec les modèles « avec photo ».</span>
+            </div>
+          </div>
+          <div class="deux"><label class="ch">Prénom<input data-k="prenom" autocomplete="given-name"></label><label class="ch">Nom<input data-k="nom" autocomplete="family-name"></label></div>
+          <label class="ch">Poste recherché ou métier<input data-k="titre" placeholder="Ex : Électricien qualifié, Assistante commerciale…"></label>
+          <div class="deux casse"><label class="ch">Téléphone<input data-k="tel" type="tel" autocomplete="tel"></label><label class="ch">E-mail<input data-k="email" type="email" autocomplete="email"></label></div>
+          <div class="deux casse"><label class="ch">Ville<input data-k="ville" autocomplete="address-level2" placeholder="Ex : Lyon (69)"></label><label class="ch">Permis <em>(facultatif)</em><input data-k="permis" list="liste-permis" placeholder="Ex : Permis B, véhiculé"></label></div>
+          <datalist id="liste-permis"><option value="Permis B"><option value="Permis B, véhiculé"><option value="Permis B et C"><option value="Permis A et B"></datalist>
+          <div class="deux casse"><label class="ch">Âge ou date de naissance <em>(facultatif)</em><input data-k="age" placeholder="Ex : 28 ans"></label><label class="ch">Site ou LinkedIn <em>(facultatif)</em><input data-k="site" placeholder="linkedin.com/in/…"></label></div>
+        </div>
+      </details>
+
+      <details class="bloc" open>
+        <summary><span class="num">3</span>Profil <small>quelques lignes sur vous</small></summary>
+        <div class="bloc-in">
+          <label class="ch">Présentez-vous en 2 ou 3 phrases<textarea data-k="profil" rows="4" placeholder="Ex : Électricien depuis 8 ans, habitué aux chantiers de rénovation. Rigoureux et autonome, je recherche un poste en CDI dans la région lyonnaise."></textarea></label>
+        </div>
+      </details>
+
+      <details class="bloc" open>
+        <summary><span class="num">4</span>Expériences professionnelles</summary>
+        <div class="bloc-in"><div class="elements" id="l-exp"></div><button type="button" class="ajout" data-ajout="exp">＋ Ajouter une expérience</button></div>
+      </details>
+
+      <details class="bloc" open>
+        <summary><span class="num">5</span>Formations et diplômes</summary>
+        <div class="bloc-in"><div class="elements" id="l-form"></div><button type="button" class="ajout" data-ajout="form">＋ Ajouter une formation</button></div>
+      </details>
+
+      <details class="bloc" open>
+        <summary><span class="num">6</span>Compétences, langues, loisirs</summary>
+        <div class="bloc-in">
+          <label class="ch">Compétences <em>(une par ligne)</em><textarea data-k="competences" rows="4" placeholder="Lecture de plans&#10;Habilitations électriques B1V / BR&#10;Pack Office"></textarea></label>
+          <label class="ch">Langues <em>(une par ligne, avec le niveau)</em><textarea data-k="langues" rows="3" placeholder="Anglais : intermédiaire&#10;Espagnol : notions"></textarea></label>
+          <label class="ch">Centres d'intérêt <em>(facultatif)</em><textarea data-k="interets" rows="2" placeholder="Football en club, randonnée, bricolage"></textarea></label>
+        </div>
+      </details>
+
+      <div class="bloc" style="padding:14px 16px;display:flex;flex-wrap:wrap;gap:10px">
+        <button type="button" class="btn-sec" id="exemple">✨ Remplir avec un exemple</button>
+        <button type="button" class="btn-sec" id="effacer" style="color:#C23B36">Tout effacer</button>
+      </div>
+    </div>
+
+    <div class="cv-droite">
+      <div class="apercu-cv" id="apercu">
+        <p class="exemple-bandeau" id="bandeau-exemple" hidden>Exemple : remplissez vos informations, le CV se met à jour tout seul.</p>
+        <div class="support" id="support"></div>
+      </div>
+    </div>
+  </div>
+
+  <section class="faq">
+    <h2>Questions fréquentes</h2>
+    <details><summary>Faut-il mettre une photo sur son CV ?</summary><p>Ce n'est pas obligatoire en France. Une photo est surtout utile pour les métiers en contact avec la clientèle (accueil, vente, restauration…). Si vous en mettez une, choisissez une photo récente, nette, sur fond neutre.</p></details>
+    <details><summary>Mon CV doit-il tenir sur une page ?</summary><p>C'est l'idéal, surtout avec moins de 10 ans d'expérience. Gardez les expériences les plus utiles pour le poste visé, et utilisez la taille de texte « Petite » si besoin.</p></details>
+    <details><summary>Mes informations sont-elles enregistrées ?</summary><p>Votre CV est gardé uniquement sur votre appareil, pour que vous le retrouviez en revenant. Rien n'est envoyé sur internet.</p></details>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap pied">
+    <span>© 2026 DocuPrêt</span>
+    <nav><a href="apropos.html">À propos</a><a href="mentions-legales.html">Mentions légales</a><a href="cgu.html">Conditions d'utilisation</a><a href="mentions-legales.html#confidentialite">Confidentialité</a><a href="mentions-legales.html#cookies">Cookies</a><a href="mentions-legales.html#contact">Contact</a></nav>
+  </div>
+</footer>
+
+<div class="barre">
+  <div class="barre-in">
+    <button type="button" class="btn-sec voir-apercu" id="voir">👁 Aperçu</button>
+    <button type="button" class="btn" id="telecharger">Télécharger le PDF</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const CLE = 'docupret_cv';
+  const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
+
+  // ---------- Les 20 modèles : 10 mises en page, chacune sans et avec photo ----------
+  // cols : une colonne, colonne latérale à gauche ou à droite ; contacts : dans l'en-tête ou dans la colonne
+  const MISES = {
+    classique: {cols: 'un', contacts: 'tete'}, gauche: {cols: 'gauche', contacts: 'cote'}, bandeau: {cols: 'droite', contacts: 'tete'},
+    elegant: {cols: 'un', contacts: 'tete'}, epure: {cols: 'un', contacts: 'tete'}, parcours: {cols: 'droite', contacts: 'cote'},
+    compact: {cols: 'gauche', contacts: 'tete'}, accent: {cols: 'un', contacts: 'tete'}, cartes: {cols: 'un', contacts: 'tete'}, moderne: {cols: 'droite', contacts: 'cote'}
+  };
+  const MODELES = [
+    {id: 'classique', nom: 'Classique', mise: 'classique', c: '#2F5DAE', f: 'Lato'},
+    {id: 'horizon', nom: 'Horizon', mise: 'gauche', c: '#1F3A5F', f: 'Montserrat'},
+    {id: 'bandeau', nom: 'Bandeau', mise: 'bandeau', c: '#0F766E', f: 'Poppins'},
+    {id: 'elegant', nom: 'Élégant', mise: 'elegant', c: '#7A5C3E', f: 'Lora'},
+    {id: 'epure', nom: 'Épuré', mise: 'epure', c: '#111827', f: 'Inter'},
+    {id: 'parcours', nom: 'Parcours', mise: 'parcours', c: '#6D28D9', f: 'Nunito'},
+    {id: 'compact', nom: 'Compact', mise: 'compact', c: '#B91C1C', f: 'Roboto'},
+    {id: 'accent', nom: 'Accent', mise: 'accent', c: '#EA580C', f: 'Raleway'},
+    {id: 'cartes', nom: 'Cartes', mise: 'cartes', c: '#0369A1', f: 'Open Sans'},
+    {id: 'moderne', nom: 'Moderne', mise: 'moderne', c: '#047857', f: 'Montserrat'},
+    {id: 'portrait', nom: 'Portrait', mise: 'gauche', c: '#334155', f: 'Lato', photo: true},
+    {id: 'lumiere', nom: 'Lumière', mise: 'bandeau', c: '#BE185D', f: 'Poppins', photo: true},
+    {id: 'signature', nom: 'Signature', mise: 'classique', c: '#1E40AF', f: 'Merriweather', photo: true},
+    {id: 'atelier', nom: 'Atelier', mise: 'moderne', c: '#B45309', f: 'Raleway', photo: true, forme: 'arrondi'},
+    {id: 'studio', nom: 'Studio', mise: 'epure', c: '#0F172A', f: 'Inter', photo: true, forme: 'carre'},
+    {id: 'ligne', nom: 'Ligne', mise: 'parcours', c: '#0E7490', f: 'Nunito', photo: true},
+    {id: 'prestige', nom: 'Prestige', mise: 'elegant', c: '#4B5563', f: 'Playfair Display', photo: true},
+    {id: 'dynamique', nom: 'Dynamique', mise: 'accent', c: '#15803D', f: 'Montserrat', photo: true, forme: 'arrondi'},
+    {id: 'douceur', nom: 'Douceur', mise: 'cartes', c: '#7E22CE', f: 'Open Sans', photo: true, forme: 'arrondi'},
+    {id: 'executif', nom: 'Exécutif', mise: 'compact', c: '#1F2937', f: 'Roboto', photo: true, forme: 'carre'}
+  ];
+  const POLICES = ['Lato', 'Inter', 'Roboto', 'Open Sans', 'Montserrat', 'Poppins', 'Raleway', 'Nunito', 'Merriweather', 'Lora', 'Playfair Display'];
+  const COULEURS = ['#2F5DAE', '#1F3A5F', '#0369A1', '#0E7490', '#0F766E', '#047857', '#15803D', '#B45309', '#EA580C', '#B91C1C', '#BE185D', '#7E22CE', '#6D28D9', '#4B5563', '#111827'];
+
+  const EXEMPLE = {
+    prenom: 'Julie', nom: 'Martin', titre: 'Assistante commerciale', tel: '06 12 34 56 78', email: 'julie.martin@email.fr', ville: 'Lyon (69)', permis: 'Permis B, véhiculée', age: '29 ans', site: '',
+    profil: "Assistante commerciale depuis 6 ans, à l'aise avec les clients comme avec les chiffres. Organisée et souriante, je recherche un poste en CDI dans une PME de la région lyonnaise.",
+    exp: [
+      {poste: 'Assistante commerciale', lieu: 'Batiplus · Villeurbanne', debut: '2021', fin: "Aujourd'hui", desc: "- Gestion des devis et du suivi des commandes (300 clients)\n- Accueil téléphonique et relances\n- Mise à jour du fichier clients"},
+      {poste: 'Conseillère de vente', lieu: 'Maison & Déco · Lyon', debut: '2018', fin: '2021', desc: "- Conseil client et encaissement\n- Mise en rayon et inventaires"}
+    ],
+    form: [
+      {poste: 'BTS Négociation et relation client', lieu: 'Lycée La Martinière · Lyon', debut: '2016', fin: '2018', desc: ''},
+      {poste: 'Baccalauréat STMG', lieu: 'Lycée Ampère · Lyon', debut: '', fin: '2016', desc: ''}
+    ],
+    competences: 'Pack Office (Excel, Word)\nLogiciel de devis et facturation\nRelation client\nGestion des priorités',
+    langues: 'Anglais : intermédiaire\nEspagnol : notions',
+    interets: 'Course à pied, photographie, cuisine'
+  };
+  const PHOTO_EXEMPLE = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120"><rect width="120" height="120" fill="#D9E2EF"/><circle cx="60" cy="48" r="22" fill="#9AABC4"/><path d="M18 120c4-26 22-38 42-38s38 12 42 38z" fill="#9AABC4"/></svg>');
+
+  const vierge = () => ({modele: 'classique', couleur: '', police: '', taille: 1, forme: '', photo: '',
+    prenom: '', nom: '', titre: '', tel: '', email: '', ville: '', permis: '', age: '', site: '', profil: '', exp: [], form: [], competences: '', langues: '', interets: ''});
+  let etat;
+  try{ etat = Object.assign(vierge(), JSON.parse(localStorage.getItem(CLE)) || {}); }catch(e){ etat = vierge(); }
+  if (!MODELES.some(m => m.id === etat.modele)) etat.modele = 'classique';
+  // Lien depuis l'accueil : cv.html?modele=…
+  try{ const q = new URLSearchParams(location.search).get('modele'); if (q && MODELES.some(m => m.id === q)) etat.modele = q; }catch(e){}
+  let minuterie;
+  const sauver = () => { clearTimeout(minuterie); minuterie = setTimeout(() => { try{ localStorage.setItem(CLE, JSON.stringify(etat)); }catch(e){ alerte('Mémoire du navigateur pleine : la photo est peut-être trop lourde.'); } }, 300); };
+  const modele = () => MODELES.find(m => m.id === etat.modele) || MODELES[0];
+  const vide = d => !['prenom', 'nom', 'titre', 'tel', 'email', 'ville', 'profil', 'competences', 'langues'].some(k => String(d[k] || '').trim()) && !d.exp.length && !d.form.length;
+
+  // ---------- Fabrication du CV ----------
+  const ICO = {
+    tel: '<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/>',
+    email: '<rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 6l-10 7L2 6"/>',
+    ville: '<path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>',
+    permis: '<path d="M5 13l1.6-4.8A2 2 0 0 1 8.5 7h7a2 2 0 0 1 1.9 1.2L19 13"/><rect x="3" y="13" width="18" height="5" rx="1.5"/><path d="M6.5 18v2M17.5 18v2"/>',
+    age: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+    site: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>'
+  };
+  const ico = k => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICO[k]}</svg>`;
+  const lignes = t => String(t || '').split('\n').map(x => x.trim()).filter(Boolean);
+  function description(t){
+    const l = lignes(t); if (!l.length) return '';
+    let html = '', puces = [];
+    const vider = () => { if (puces.length){ html += '<ul>' + puces.map(p => `<li>${esc(p)}</li>`).join('') + '</ul>'; puces = []; } };
+    l.forEach(x => { const m = x.match(/^[-•*–]\s*(.*)$/); if (m) puces.push(m[1]); else { vider(); html += `<p>${esc(x)}</p>`; } });
+    vider();
+    return `<div class="cv-desc">${html}</div>`;
+  }
+  function elements(liste){
+    return liste.filter(e => String(e.poste || e.lieu || '').trim()).map(e => {
+      const dates = [e.debut, e.fin].map(x => String(x || '').trim()).filter(Boolean).join(' – ');
+      return `<div class="cv-it"><div class="cv-it-h"><b>${esc(e.poste || '')}</b>${dates ? `<span class="cv-dates">${esc(dates)}</span>` : ''}</div>${e.lieu ? `<div class="cv-it-s">${esc(e.lieu)}</div>` : ''}${description(e.desc)}</div>`;
+    }).join('');
+  }
+  function rendreCV(d, mod, o){
+    o = o || {};
+    const m = MISES[mod.mise];
+    const couleur = d.couleur || mod.c, police = d.police || mod.f, forme = d.forme || mod.forme || 'rond';
+    // Aperçu : silhouette tant qu'aucune photo n'est ajoutée (jamais dans le PDF)
+    const photo = mod.photo ? (d.photo || (o.pdf ? '' : PHOTO_EXEMPLE)) : '';
+    const nom = [d.prenom, d.nom].map(x => String(x || '').trim()).filter(Boolean).join(' ');
+    const contacts = ['tel', 'email', 'ville', 'permis', 'age', 'site'].filter(k => String(d[k] || '').trim()).map(k => `<span>${ico(k)}${esc(d[k])}</span>`).join('');
+    const blocContacts = contacts ? `<div class="cv-contacts">${contacts}</div>` : '';
+    const s = (titre, contenu) => contenu ? `<section class="cv-s"><h2 class="cv-t">${titre}</h2><div class="cv-c">${contenu}</div></section>` : '';
+    const comp = lignes(d.competences), lang = lignes(d.langues), loisirs = String(d.interets || '').trim();
+    const surCote = m.cols !== 'un';
+    const compHTML = comp.length ? (surCote && mod.mise !== 'bandeau' && mod.mise !== 'parcours' ? `<ul class="cv-liste">${comp.map(c => `<li>${esc(c)}</li>`).join('')}</ul>` : `<ul class="cv-tags">${comp.map(c => `<li>${esc(c)}</li>`).join('')}</ul>`) : '';
+    const langHTML = lang.length ? `<ul class="cv-liste">${lang.map(l => { const x = l.split(/\s*[:–-]\s*/); return `<li>${esc(x[0])}${x[1] ? `<span>${esc(x.slice(1).join(' – '))}</span>` : ''}</li>`; }).join('')}</ul>` : '';
+    const main = s('Profil', d.profil && String(d.profil).trim() ? `<p class="cv-texte">${esc(String(d.profil).trim())}</p>` : '')
+      + s('Expériences professionnelles', elements(d.exp || []))
+      + s('Formation', elements(d.form || []));
+    const contactsCote = m.contacts === 'cote' && contacts;
+    const cote = (contactsCote ? s('Contact', blocContacts) : '') + s('Compétences', compHTML) + s('Langues', langHTML) + s("Centres d'intérêt", loisirs ? `<p class="cv-texte">${esc(loisirs)}</p>` : '');
+    const imgPhoto = photo ? `<img class="cv-photo" src="${photo}" alt="">` : '';
+    // La photo va dans la colonne latérale pour certaines mises en page
+    const photoCote = photo && (mod.mise === 'gauche' || mod.mise === 'parcours');
+    const tete = `<header class="cv-tete">${photoCote ? '' : imgPhoto}<div class="cv-tete-txt"><div class="cv-nom">${esc(nom || 'Prénom Nom')}</div>${d.titre ? `<div class="cv-titre">${esc(d.titre)}</div>` : ''}${m.contacts === 'tete' ? blocContacts : ''}</div></header>`;
+    const cls = `cv l-${mod.mise} cols-${m.cols} ph-${forme}${photo ? ' avec-photo' : ''}`;
+    const clair = teinte(couleur, .88), texteSur = lum(couleur) > .62 ? '#1B2230' : '#fff';
+    const style = `--c:${couleur};--c2:${clair};--cf:${texteSur};--f:'${police}';--fs:${Number(d.taille) || 1}`;
+    if (mod.mise === 'gauche') return `<div class="${cls}" style="${style}"><div class="cv-corps"><aside class="cv-side">${photoCote ? imgPhoto : ''}${cote}</aside><div class="cv-main">${tete}${main}</div></div></div>`;
+    if (mod.mise === 'parcours') return `<div class="${cls}" style="${style}">${tete}<div class="cv-corps"><div class="cv-main">${main}</div><aside class="cv-side">${photoCote ? imgPhoto : ''}${cote}</aside></div></div>`;
+    return `<div class="${cls}" style="${style}">${tete}<div class="cv-corps"><div class="cv-main">${main}</div><aside class="cv-side">${cote}</aside></div></div>`;
+  }
+  function rgb(h){ h = String(h).replace('#', ''); if (h.length === 3) h = h.split('').map(x => x + x).join(''); const n = parseInt(h, 16) || 0; return [n >> 16 & 255, n >> 8 & 255, n & 255]; }
+  function teinte(h, t){ const [r, g, b] = rgb(h); const m = v => Math.round(v + (255 - v) * t); return `rgb(${m(r)},${m(g)},${m(b)})`; }
+  function lum(h){ const [r, g, b] = rgb(h).map(v => { v /= 255; return v <= .03928 ? v / 12.92 : Math.pow((v + .055) / 1.055, 2.4); }); return .2126 * r + .7152 * g + .0722 * b; }
+
+  // ---------- Aperçu ----------
+  function placer(support, html, largeur){
+    support.innerHTML = html;
+    const cv = support.firstElementChild, s = largeur / 794;
+    cv.style.transform = `scale(${s})`;
+    support.style.width = largeur + 'px';
+    support.style.height = Math.max(1123, cv.offsetHeight) * s + 'px';
+  }
+  function apercu(){
+    const ex = vide(etat), mod = modele();
+    $('bandeau-exemple').hidden = !ex;
+    const d = ex ? Object.assign({}, EXEMPLE, {modele: etat.modele, couleur: etat.couleur, police: etat.police, taille: etat.taille, forme: etat.forme, photo: etat.photo}) : etat;
+    const boite = $('apercu'); if (!boite.offsetWidth) return;
+    placer($('support'), rendreCV(d, mod, {exemple: ex}), Math.min(boite.clientWidth - 24, 794));
+  }
+  // Vignettes des modèles (avec l'exemple)
+  let filtre = 'tous';
+  function galerie(){
+    const l = MODELES.filter(m => filtre === 'tous' || (filtre === 'photo' ? m.photo : !m.photo));
+    $('galerie').innerHTML = l.map(m => `<button type="button" class="mod${m.id === etat.modele ? ' on' : ''}" data-mod="${m.id}" aria-label="Modèle ${esc(m.nom)}${m.photo ? ' avec photo' : ''}"><span class="vign">${rendreCV(Object.assign({}, EXEMPLE, {taille: 1}), m, {exemple: true})}</span>${m.photo ? '<span class="tag-photo">📷</span>' : ''}${esc(m.nom)}</button>`).join('');
+    requestAnimationFrame(() => document.querySelectorAll('#galerie .vign').forEach(v => { const cv = v.firstElementChild; if (cv) cv.style.transform = `scale(${v.clientWidth / 794})`; }));
+  }
+  $('filtres-mod').addEventListener('click', e => { const b = e.target.closest('[data-f]'); if (!b) return; filtre = b.dataset.f; document.querySelectorAll('#filtres-mod button').forEach(x => x.classList.toggle('on', x === b)); galerie(); });
+  $('galerie').addEventListener('click', e => {
+    const b = e.target.closest('[data-mod]'); if (!b) return;
+    etat.modele = b.dataset.mod; etat.couleur = ''; etat.police = ''; etat.forme = '';
+    document.querySelectorAll('#galerie .mod').forEach(x => x.classList.toggle('on', x === b));
+    majStyle(); apercu(); sauver();
+    if (window.innerWidth < 1000) alerte(`Modèle « ${modele().nom} » choisi ✓`);
+  });
+
+  // ---------- Style ----------
+  $('couleurs').innerHTML = COULEURS.map(c => `<button type="button" class="pastille-c" data-c="${c}" style="background:${c}" aria-label="Couleur ${c}"></button>`).join('') + '<label class="perso-c" title="Autre couleur"><input type="color" id="couleur-perso" aria-label="Choisir une autre couleur"></label>';
+  $('polices').innerHTML = POLICES.map(p => `<button type="button" data-p="${esc(p)}" style="font-family:'${esc(p)}',sans-serif">${esc(p)}</button>`).join('');
+  function majStyle(){
+    const mod = modele(), c = (etat.couleur || mod.c).toLowerCase(), p = etat.police || mod.f;
+    document.querySelectorAll('#couleurs .pastille-c').forEach(b => b.classList.toggle('on', b.dataset.c.toLowerCase() === c));
+    $('couleur-perso').value = /^#[0-9a-f]{6}$/i.test(c) ? c : '#2f5dae';
+    document.querySelectorAll('#polices button').forEach(b => b.classList.toggle('on', b.dataset.p === p));
+    document.querySelectorAll('#tailles button').forEach(b => b.classList.toggle('on', Number(b.dataset.t) === Number(etat.taille || 1)));
+    document.querySelectorAll('#formes button').forEach(b => b.classList.toggle('on', b.dataset.p === (etat.forme || mod.forme || 'rond')));
+    $('bloc-forme').hidden = !mod.photo;
+    $('photo-aide').textContent = mod.photo ? 'Une photo récente et nette, sur fond neutre.' : 'La photo s\'affiche avec les modèles « avec photo ».';
+  }
+  $('couleurs').addEventListener('click', e => { const b = e.target.closest('[data-c]'); if (!b) return; etat.couleur = b.dataset.c; majStyle(); apercu(); sauver(); });
+  $('couleur-perso').addEventListener('input', e => { etat.couleur = e.target.value; majStyle(); apercu(); sauver(); });
+  $('polices').addEventListener('click', e => { const b = e.target.closest('[data-p]'); if (!b) return; etat.police = b.dataset.p; majStyle(); apercu(); sauver(); });
+  $('tailles').addEventListener('click', e => { const b = e.target.closest('[data-t]'); if (!b) return; etat.taille = Number(b.dataset.t); majStyle(); apercu(); sauver(); });
+  $('formes').addEventListener('click', e => { const b = e.target.closest('[data-p]'); if (!b) return; etat.forme = b.dataset.p; majStyle(); apercu(); sauver(); });
+  $('reset-style').addEventListener('click', () => { etat.couleur = ''; etat.police = ''; etat.forme = ''; etat.taille = 1; majStyle(); apercu(); sauver(); });
+
+  // ---------- Champs simples ----------
+  function remplirChamps(){
+    document.querySelectorAll('[data-k]').forEach(el => { el.value = etat[el.dataset.k] || ''; });
+    majPhoto(); rendreElements('exp'); rendreElements('form');
+  }
+  document.addEventListener('input', e => {
+    const el = e.target;
+    if (el.dataset && el.dataset.k){ etat[el.dataset.k] = el.value; apercu(); sauver(); return; }
+    if (el.dataset && el.dataset.e){ const [liste, i, k] = el.dataset.e.split(':'); etat[liste][+i][k] = el.value; majTitreElement(liste, +i); apercu(); sauver(); }
+  });
+
+  // ---------- Expériences et formations ----------
+  const MOTS = {exp: {titre: 'Poste', ex: 'Ex : Électricien, Vendeuse…', lieu: 'Entreprise et ville', exLieu: 'Ex : Bouygues Énergies · Lyon', desc: 'Missions (une par ligne, commencez par « - » pour une puce)', vide: 'Nouvelle expérience'},
+    form: {titre: 'Diplôme ou formation', ex: 'Ex : CAP Électricien, BTS…', lieu: 'École et ville', exLieu: 'Ex : Lycée Ampère · Lyon', desc: 'Détails (facultatif)', vide: 'Nouvelle formation'}};
+  function rendreElements(liste){
+    const M = MOTS[liste];
+    $('l-' + liste).innerHTML = etat[liste].map((e, i) => `<div class="element">
+      <div class="element-tete"><span data-titre="${liste}:${i}">${esc(e.poste || M.vide)}</span>
+        <button type="button" data-monter="${liste}:${i}" aria-label="Monter" ${i ? '' : 'disabled'}>↑</button>
+        <button type="button" class="suppr" data-suppr="${liste}:${i}" aria-label="Supprimer">✕</button></div>
+      <label class="ch">${M.titre}<input data-e="${liste}:${i}:poste" value="${esc(e.poste)}" placeholder="${esc(M.ex)}"></label>
+      <label class="ch">${M.lieu}<input data-e="${liste}:${i}:lieu" value="${esc(e.lieu)}" placeholder="${esc(M.exLieu)}"></label>
+      <div class="deux"><label class="ch">Début<input data-e="${liste}:${i}:debut" value="${esc(e.debut)}" placeholder="Ex : 2021"></label><label class="ch">Fin<input data-e="${liste}:${i}:fin" value="${esc(e.fin)}" placeholder="Ex : Aujourd'hui"></label></div>
+      <label class="ch">${M.desc}<textarea data-e="${liste}:${i}:desc" rows="3">${esc(e.desc)}</textarea></label>
+    </div>`).join('');
+  }
+  function majTitreElement(liste, i){ const t = document.querySelector(`[data-titre="${liste}:${i}"]`); if (t) t.textContent = etat[liste][i].poste || MOTS[liste].vide; }
+  document.addEventListener('click', e => {
+    const a = e.target.closest('[data-ajout]');
+    if (a){ const l = a.dataset.ajout; etat[l].push({poste: '', lieu: '', debut: '', fin: '', desc: ''}); rendreElements(l); apercu(); sauver(); const ch = document.querySelector(`[data-e="${l}:${etat[l].length - 1}:poste"]`); if (ch) ch.focus(); return; }
+    const s = e.target.closest('[data-suppr]');
+    if (s){ const [l, i] = s.dataset.suppr.split(':'); const el = etat[l][+i]; if ((el.poste || el.lieu || el.desc) && !confirm('Supprimer « ' + (el.poste || MOTS[l].vide) + ' » ?')) return; etat[l].splice(+i, 1); rendreElements(l); apercu(); sauver(); return; }
+    const m = e.target.closest('[data-monter]');
+    if (m){ const [l, i] = m.dataset.monter.split(':'); const n = +i; if (n > 0){ [etat[l][n - 1], etat[l][n]] = [etat[l][n], etat[l][n - 1]]; rendreElements(l); apercu(); sauver(); } }
+  });
+
+  // ---------- Photo (réduite à 500 px pour rester légère) ----------
+  function majPhoto(){
+    const m = $('photo-mini');
+    m.style.backgroundImage = etat.photo ? `url("${etat.photo}")` : ''; m.textContent = etat.photo ? '' : '👤'; m.classList.toggle('pleine', !!etat.photo);
+    $('photo-suppr').hidden = !etat.photo; $('photo-lib').textContent = etat.photo ? 'Changer la photo' : 'Ajouter une photo';
+  }
+  $('photo').addEventListener('change', async e => {
+    const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+    try{
+      const img = await createImageBitmap(f), cote = Math.min(img.width, img.height), t = Math.min(500, cote);
+      const c = document.createElement('canvas'); c.width = c.height = t;
+      // Recadrage carré au centre (un peu vers le haut : le visage)
+      c.getContext('2d').drawImage(img, (img.width - cote) / 2, Math.max(0, (img.height - cote) * .3), cote, cote, 0, 0, t, t);
+      etat.photo = c.toDataURL('image/jpeg', .86);
+      if (!modele().photo){ const avec = MODELES.find(m => m.photo && m.mise === modele().mise); if (avec){ etat.modele = avec.id; galerie(); majStyle(); alerte(`Photo ajoutée : modèle « ${avec.nom} » (avec photo) choisi ✓`); } }
+      majPhoto(); apercu(); sauver();
+    }catch(err){ alerte('Cette image ne peut pas être lue. Essayez une photo en JPEG ou PNG.'); }
+  });
+  $('photo-suppr').addEventListener('click', () => { etat.photo = ''; majPhoto(); apercu(); sauver(); });
+
+  // ---------- Exemple / effacer ----------
+  $('exemple').addEventListener('click', () => {
+    if (!vide(etat) && !confirm('Remplacer vos informations par l\'exemple ?')) return;
+    Object.assign(etat, JSON.parse(JSON.stringify(EXEMPLE))); remplirChamps(); apercu(); sauver();
+  });
+  $('effacer').addEventListener('click', () => {
+    if (!confirm('Effacer tout votre CV ?')) return;
+    const garde = {modele: etat.modele, couleur: etat.couleur, police: etat.police, taille: etat.taille, forme: etat.forme};
+    etat = Object.assign(vierge(), garde); remplirChamps(); apercu(); sauver();
+  });
+
+  // ---------- Aperçu plein écran (téléphone) ----------
+  $('voir').addEventListener('click', () => {
+    const l = document.createElement('div'); l.className = 'loupe-cv';
+    l.innerHTML = '<div class="support"></div><div class="fermer"><button type="button" class="btn-sec" data-fermer>Fermer</button><button type="button" class="btn" data-pdf>Télécharger le PDF</button></div>';
+    document.body.appendChild(l);
+    const ex = vide(etat);
+    placer(l.querySelector('.support'), rendreCV(ex ? Object.assign({}, EXEMPLE, {couleur: etat.couleur, police: etat.police, taille: etat.taille, forme: etat.forme, photo: etat.photo}) : etat, modele(), {exemple: ex}), Math.min(window.innerWidth - 24, 794));
+    l.addEventListener('click', e => { if (e.target.closest('[data-fermer]')) l.remove(); else if (e.target.closest('[data-pdf]')){ l.remove(); $('telecharger').click(); } });
+  });
+
+  // ---------- PDF ----------
+  function alerte(t){ document.querySelectorAll('.alerte').forEach(x => x.remove()); const a = document.createElement('div'); a.className = 'alerte'; a.textContent = t; document.body.appendChild(a); setTimeout(() => a.remove(), 3200); }
+  function chargerPdf(){
+    if (window.html2pdf) return Promise.resolve();
+    return new Promise((ok, ko) => { const s = document.createElement('script'); s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js'; s.onload = ok; s.onerror = ko; document.head.appendChild(s); });
+  }
+  const nomFichier = () => 'CV-' + ([etat.prenom, etat.nom].filter(x => String(x || '').trim()).join('-') || 'DocuPret').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^\w-]+/g, '-') + '.pdf';
+  $('telecharger').addEventListener('click', async () => {
+    if (vide(etat)) return alerte('Remplissez au moins votre nom et une expérience ou une formation (ou touchez « Remplir avec un exemple »).');
+    const b = $('telecharger'), txt = b.textContent; b.disabled = true; b.textContent = 'Création…';
+    const hote = document.createElement('div');
+    hote.style.cssText = 'position:absolute;left:0;top:0;width:794px;z-index:-1;pointer-events:none;background:#fff';
+    try{
+      await chargerPdf();
+      hote.innerHTML = rendreCV(etat, modele(), {pdf: true});
+      document.body.appendChild(hote);
+      const cv = hote.firstElementChild;
+      // Une page A4 du PDF fait 1122,9 px : on reste juste en dessous pour éviter une page blanche
+      cv.style.minHeight = '1120px';
+      try{ await document.fonts.ready; }catch(e){}
+      await Promise.all([...cv.querySelectorAll('img')].map(i => i.complete ? 0 : new Promise(r => { i.onload = i.onerror = r; })));
+      const sx = window.scrollX, sy = window.scrollY; window.scrollTo(0, 0);
+      const unePage = cv.scrollHeight <= 1122, texte = (cv.innerText || '').replace(/[ \t]+/g, ' ').trim();
+      await html2pdf().set({margin: 0, filename: nomFichier(), image: {type: 'jpeg', quality: .97},
+        html2canvas: {scale: 2, useCORS: true, backgroundColor: '#ffffff', scrollX: 0, scrollY: 0, windowWidth: 794, width: 794},
+        jsPDF: {unit: 'mm', format: 'a4', orientation: 'portrait'}, pagebreak: {mode: ['css'], avoid: ['.cv-it', '.cv-t']}})
+        .from(cv).toPdf().get('pdf').then(pdf => {
+          try{ if (unePage) while (pdf.internal.getNumberOfPages() > 1) pdf.deletePage(pdf.internal.getNumberOfPages()); }catch(e){}
+          try{ pdf.setPage(1); pdf.setFontSize(6); pdf.text(pdf.splitTextToSize(texte.replace(/[^\x20-\x7E -ÿ\n]/g, ' '), 190), 10, 10, {renderingMode: 'invisible'}); }catch(e){}
+          try{ pdf.setProperties({title: nomFichier().replace(/\.pdf$/, ''), author: [etat.prenom, etat.nom].join(' ').trim(), creator: 'DocuPrêt'}); }catch(e){}
+        }).save();
+      window.scrollTo(sx, sy);
+      alerte('Votre CV est téléchargé ✓');
+    }catch(e){
+      alerte('Oups, le PDF n\'a pas pu être créé. Vérifiez votre connexion et réessayez.');
+    }finally{ hote.remove(); b.disabled = false; b.textContent = txt; }
+  });
+
+  // ---------- Démarrage ----------
+  remplirChamps(); majStyle(); galerie(); apercu();
+  let tempo; window.addEventListener('resize', () => { clearTimeout(tempo); tempo = setTimeout(() => { apercu(); galerie(); }, 200); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { apercu(); galerie(); });
+})();
+</script>
+<script>
+(function(){
+  // Toujours arriver en haut de la page (sauf avec le bouton retour du navigateur)
+  try{
+    const nav = performance.getEntriesByType('navigation')[0];
+    if (!nav || nav.type !== 'back_forward'){
+      if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+      const enHaut = () => { if (!location.hash){ window.scrollTo(0, 0); try{ document.body.scrollIntoView({block: 'start'}); }catch(e){} } };
+      enHaut();
+      window.addEventListener('load', enHaut);
+    }
+  }catch(e){}
+})();
+(function(){
+  const t = document.getElementById('tiroir'), f = document.getElementById('tiroir-fond'), b = document.getElementById('menu-btn');
+  function ouvrir(){ t.classList.add('ouvert'); f.hidden = false; t.setAttribute('aria-hidden','false'); b.setAttribute('aria-expanded','true'); }
+  function fermer(){ t.classList.remove('ouvert'); f.hidden = true; t.setAttribute('aria-hidden','true'); b.setAttribute('aria-expanded','false'); }
+  b.addEventListener('click', ouvrir);
+  f.addEventListener('click', fermer);
+  t.querySelector('.tiroir-fermer').addEventListener('click', fermer);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') fermer(); });
+  // Flèche de retour : revient à la page précédente du site, sinon à l'accueil
+  document.querySelectorAll('.retour').forEach(a => a.addEventListener('click', e => {
+    let interne = false;
+    try{ interne = !!document.referrer && new URL(document.referrer).origin === location.origin; }catch(err){}
+    if (interne && history.length > 1){ e.preventDefault(); history.back(); }
+  }));
+  t.addEventListener('click', e => {
+    const c = e.target.closest('.cat-btn');
+    if (c){
+      const s = c.nextElementSibling, ouvrirSous = s.hidden;
+      s.hidden = !ouvrirSous;
+      c.setAttribute('aria-expanded', String(ouvrirSous));
+      c.querySelector('.plus').textContent = ouvrirSous ? '−' : '+';
+      return;
+    }
+    const a = e.target.closest('a');
+    if (a && a.classList.contains('bientot')) e.preventDefault();
+    else if (a) fermer();
+  });
+})();
+</script>
+<script src="stats.js?v=4" defer></script>
+<script src="compte-menu.js?v=10"></script>
+</body>
+</html>

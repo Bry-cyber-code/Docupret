@@ -216,6 +216,11 @@
   .fiche-gestion{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}
   .fiche-gestion .btn-sec{padding:10px 6px;font-size:.84rem}
   .doc-conv{display:block;text-align:center;background:var(--bleu);color:#fff;border-radius:10px;padding:10px;font-weight:700;font-size:.9rem}
+  .doc-accepte-l{display:grid;grid-template-columns:1fr auto;gap:6px;align-items:center}
+  .doc-accepte-l .doc-ok{grid-column:1 / -1}
+  .doc-accepte{border:1.5px solid #9FD3B0;background:#F1FAF4;color:#1F6B3A;border-radius:10px;padding:9px 10px;font:inherit;font-weight:700;font-size:.8rem;cursor:pointer;white-space:nowrap}
+  .doc-accepte:hover{border-color:#2B8148}
+  .doc-annuler{border:0;background:none;padding:0 4px;font:inherit;font-size:.76rem;color:var(--gris);text-decoration:underline;cursor:pointer;white-space:nowrap}
   .doc-ok{display:block;text-align:center;background:#E7F6EC;color:#1F6B3A;border-radius:10px;padding:8px;font-weight:700;font-size:.84rem}
   .fiche-docs{display:grid;gap:8px;margin-top:6px;border-top:1px solid var(--bord);padding-top:12px}
   .fiche-docs > b{font-size:.95rem}
@@ -325,6 +330,7 @@
     <div class="cat">
       <button type="button" class="cat-btn" aria-expanded="false"><span>Travail</span><span class="plus">+</span></button>
       <div class="sous" hidden>
+        <a href="cv.html">CV</a>
         <a href="lettre-demission.html">Lettre de démission</a>
         <a href="lettre-motivation.html">Lettre de motivation</a>
         <a href="demande-conges.html">Demande de congés</a>
@@ -365,11 +371,11 @@
 </nav>
 
 <main class="wrap">
-  <h1>Mon compte</h1>
-  <p class="intro">Vos clients, vos factures, vos devis et vos réglages, au même endroit.</p>
+  <h1 id="titre-compte">Mon compte</h1>
+  <p class="intro" id="intro-compte">Vos clients, vos factures, vos devis et vos réglages, au même endroit.</p>
 
   <nav class="rubriques" id="rubriques" aria-label="Rubriques">
-    <button type="button" data-r="clients">Clients</button><button type="button" data-r="factures">Factures</button><button type="button" data-r="impayees">Impayées<span class="pastille" id="pastille-impayees" hidden></span></button><button type="button" data-r="devis">Devis</button><button type="button" data-r="brouillons">Brouillons</button><button type="button" data-r="parametres">Paramètres</button><button type="button" data-r="compte">Compte</button>
+    <button type="button" data-r="clients" data-g="clients">Clients</button><button type="button" data-r="factures" data-g="clients">Factures</button><button type="button" data-r="impayees" data-g="clients">Impayées<span class="pastille" id="pastille-impayees" hidden></span></button><button type="button" data-r="devis" data-g="clients">Devis</button><button type="button" data-r="brouillons" data-g="clients">Brouillons</button><button type="button" data-r="parametres" data-g="compte">Paramètres</button><button type="button" data-r="compte" data-g="compte">Compte</button>
   </nav>
 
   <div class="rubrique" data-r="clients">
@@ -638,7 +644,7 @@
 </footer>
 
 <script src="compte.js?v=16"></script>
-<script src="gmail.js?v=5"></script>
+<script src="gmail.js?v=6"></script>
 <script src="stats.js?v=4" defer></script>
 <script src="compte-menu.js?v=10"></script>
 <script>
@@ -736,7 +742,10 @@
   const MOT = {devis: 'Devis', facture: 'Facture', recu: 'Reçu', avoir: 'Avoir'};
   function ligneDoc(d, avecClient, avecLignes){
     const des = avecLignes && d.snap && Array.isArray(d.snap.lignes) ? d.snap.lignes.map(l => String(l.des || '').split('\n')[0].trim()).filter(Boolean) : [];
-    const conv = d.type === 'devis' ? (d.facture ? `<span class="doc-ok">✓ Facturé ${esc(d.facture)}</span>` : `<a class="doc-conv" href="facture.html?depuis=${encodeURIComponent(d.id)}">Transformer en facture →</a>`) : '';
+    const transformer = `<a class="doc-conv" href="facture.html?depuis=${encodeURIComponent(d.id)}">Transformer en facture →</a>`;
+    const conv = d.type !== 'devis' ? '' : d.facture ? `<span class="doc-ok">✓ Facturé ${esc(d.facture)}</span>`
+      : d.accepte ? `<div class="doc-accepte-l"><span class="doc-ok">✓ Accepté le ${dFr(d.accepte)}</span>${transformer}<button type="button" class="doc-annuler" data-attente="${esc(d.id)}">Remettre en attente</button></div>`
+      : `<div class="doc-accepte-l">${transformer}<button type="button" class="doc-accepte" data-accepte="${esc(d.id)}">✓ Devis accepté</button></div>`;
     const pay = d.type === 'facture' ? blocPaiement(d) : '';
     return `<div class="doc"><div class="doc-haut">${d.type === 'facture' ? (d.paye ? '<span class="doc-type t-payee">✓ Payée</span>' : '<span class="doc-type t-impayee">Impayée</span>') : `<span class="doc-type t-${esc(d.type)}">${MOT[d.type] || 'Document'}</span>`}<b>${esc(d.numero)}</b><span class="doc-total">${eurs(d.total)}</span></div>
       <div class="doc-bas"><span>${avecClient ? esc(d.clientNom || 'Sans nom de client') + ' · ' : ''}${dFr(d.date)}${d.envoye ? ` · <span class="doc-env">✉ envoyé le ${new Date(d.envoye.date).toLocaleDateString('fr-FR')}</span>` : ''}</span><span class="doc-liens"><a class="doc-pdf" href="facture.html?ouvrir=${encodeURIComponent(d.id)}&pdf=1" title="Télécharger le PDF">⬇ PDF</a><a class="doc-ouvrir" href="facture.html?ouvrir=${encodeURIComponent(d.id)}">Rouvrir</a><button type="button" class="doc-suppr" data-suppr-doc="${esc(d.id)}">Supprimer</button></span></div>${des.length ? `<div class="doc-lignes">${esc(des.join(' · '))}</div>` : ''}${conv ? `<div class="doc-conv-l">${conv}</div>` : ''}${pay}</div>`;
@@ -787,6 +796,10 @@
     C.majDocument(id, {paye: null}); rendreTousDocs(); C.toast(`Facture ${d.numero} remise dans les impayées`);
   }
   document.addEventListener('click', e => {
+    const ac = e.target.closest('[data-accepte]');
+    if (ac){ const d = C.document(ac.dataset.accepte); if (d){ const t = new Date(); C.majDocument(d.id, {accepte: `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`}); rendreTousDocs(); C.toast(`Devis ${d.numero} accepté ✓ Il n'est plus « en attente ».`); } return; }
+    const at = e.target.closest('[data-attente]');
+    if (at){ const d = C.document(at.dataset.attente); if (d){ C.majDocument(d.id, {accepte: null}); rendreTousDocs(); C.toast(`Devis ${d.numero} remis en attente`); } return; }
     const a = e.target.closest('[data-payee]'); if (a){ marquerPayee(a.dataset.payee); return; }
     const b = e.target.closest('[data-impayee]'); if (b) remettreImpayee(b.dataset.impayee);
   });
@@ -885,8 +898,9 @@
   const filtreDocs = {factures: 'payee', devis: 'tous'};
   const OPTIONS = {
     factures: [['payee', 'Payées'], ['facture', 'Toutes'], ['avoir', 'Avoirs'], ['recu', 'Reçus']],
-    devis: [['tous', 'Tous'], ['attente', 'En attente'], ['factures', 'Facturés']]
+    devis: [['tous', 'Tous'], ['attente', 'En attente'], ['acceptes', 'Acceptés'], ['factures', 'Facturés']]
   };
+  const filtreDevis = k => d => k === 'tous' || (k === 'attente' ? !d.facture && !d.accepte : k === 'acceptes' ? !d.facture && !!d.accepte : !!d.facture);
   function texteRecherche(d){
     const l = d.snap && Array.isArray(d.snap.lignes) ? d.snap.lignes.map(x => x.des).join(' ') : '';
     return C.norm([d.numero, d.clientNom, dFr(d.date), eurs(d.total), String(d.total || '').replace('.', ','), l, d.facture].join(' '));
@@ -900,11 +914,11 @@
     const opts = OPTIONS[r].filter(([k]) => r === 'devis' || k === 'facture' || k === 'payee' || base.some(d => d.type === k));
     if (!opts.some(([k]) => k === filtreDocs[r])) filtreDocs[r] = opts[0][0];
     $('filtres-' + r).innerHTML = opts.length > 1 ? opts.map(([k, n]) => {
-      const nb = r === 'devis' ? (k === 'tous' ? base.length : k === 'attente' ? base.filter(d => !d.facture).length : base.filter(d => d.facture).length) : k === 'payee' ? base.filter(d => d.type === 'facture' && d.paye).length : base.filter(d => d.type === k).length;
+      const nb = r === 'devis' ? base.filter(filtreDevis(k)).length : k === 'payee' ? base.filter(d => d.type === 'facture' && d.paye).length : base.filter(d => d.type === k).length;
       return `<button type="button" data-filtre="${k}" class="${k === filtreDocs[r] ? 'on' : ''}">${n} · ${nb}</button>`;
     }).join('') : '';
     const f = filtreDocs[r];
-    let l = r === 'devis' ? base.filter(d => f === 'tous' || (f === 'attente' ? !d.facture : !!d.facture)) : f === 'payee' ? base.filter(d => d.type === 'facture' && d.paye) : base.filter(d => d.type === f);
+    let l = r === 'devis' ? base.filter(filtreDevis(f)) : f === 'payee' ? base.filter(d => d.type === 'facture' && d.paye) : base.filter(d => d.type === f);
     const q = C.norm($('cherche-' + r).value).trim();
     if (q) l = l.filter(d => q.split(/\s+/).every(m => texteRecherche(d).includes(m)));
     // Résumé
@@ -917,7 +931,7 @@
       const an = base.filter(d => d.type === 'facture' && String(d.date || '').startsWith(annee));
       $('resume-' + r).innerHTML = base.length ? `<span>Facturé en ${annee}<b>${eurs(somme(an))}</b></span><span>${q ? 'Résultats' : 'Factures'}<b>${l.length}</b></span>` : '';
     } else if (r === 'devis'){
-      const att = base.filter(d => !d.facture);
+      const att = base.filter(filtreDevis('attente'));
       $('resume-' + r).innerHTML = base.length ? `<span>En attente<b>${eurs(somme(att))}</b></span><span>${q ? 'Résultats' : 'Devis'}<b>${l.length}</b></span>` : '';
     } else $('resume-' + r).innerHTML = '';
     // Liste, par mois
@@ -986,6 +1000,11 @@
     document.querySelectorAll('.fond').forEach(x => x.remove());
     document.querySelectorAll('.rubrique').forEach(d => d.hidden = d.dataset.r !== r);
     document.querySelectorAll('#rubriques button').forEach(b => b.classList.toggle('on', b.dataset.r === r));
+    // Clients, factures, devis… d'un côté ; Paramètres et Compte de l'autre (ouverts depuis le menu Mon compte)
+    const g = ['parametres', 'compte'].includes(r) ? 'compte' : 'clients';
+    document.querySelectorAll('#rubriques button').forEach(b => { b.hidden = b.dataset.g !== g; });
+    $('titre-compte').textContent = g === 'compte' ? 'Mon compte' : 'Mes clients';
+    $('intro-compte').textContent = g === 'compte' ? 'Votre entreprise, vos préférences, votre connexion.' : 'Vos clients, vos factures, vos devis et vos brouillons, au même endroit.';
     const actif = document.querySelector('#rubriques button.on'); if (actif && actif.scrollIntoView) try{ actif.scrollIntoView({block: 'nearest', inline: 'center'}); }catch(e){}
     window.scrollTo(0, 0);
   }
@@ -1120,6 +1139,10 @@
   C.surChangement(() => { majInvite(); rendreCompte(); rendreClients(); majAffichage(); rendreAttente(); majEnvoi(); rendreTousDocs(); });
   C.surParametres(() => { remplirParam(); remplirNum(); majLogo(); majAffichage(); majEnvoi(); C.toast('Paramètres récupérés depuis votre compte ✓'); });
   changerMode('creer'); rendreCompte(); rendreClients(); rendreAttente(); rendreTousDocs(); remplirParam(); remplirNum(); majLogo(); majAffichage(); majEnvoi(); rubrique();
+  // Lien depuis la recherche de l'accueil : compte.html?client=ID#clients ouvre la fiche du client
+  (function(){ const id = new URLSearchParams(location.search).get('client'); if (!id) return;
+    const ouvrir = () => { if (C.client(id)){ voir(id); return true; } return false; };
+    C.pret.then(() => { if (!ouvrir()) setTimeout(ouvrir, 1500); }); })();
 })();
 </script>
 <script>
