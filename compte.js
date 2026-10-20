@@ -45,7 +45,8 @@
   // les documents sont déjà sur l'appareil (sinon la page principale se figeait quelques secondes à la fermeture).
   const dansApercu = (() => { try{ return window.self !== window.top; }catch(e){ return true; } })();
   async function demarrer(){
-    if (!actif || dansApercu){ resolu = true; return; }
+    // (dans l'aperçu, on ne déclare surtout pas « déconnecté » : la page garde le dernier état connu et ne touche à rien)
+    if (!actif || dansApercu) return;
     try{
       for (const l of LIBS) await charger(`https://www.gstatic.com/firebasejs/${V}/${l}.js`);
     }catch(e){ console.warn('Firebase indisponible', e); return; }
@@ -147,7 +148,11 @@
       const snap = await db.collection('utilisateurs').doc(utilisateur.uid).get();
       const r = snap.exists ? snap.data() : null;
       const majLocal = localStorage.getItem(CLE_MAJ) || '';
-      if (r && r.parametres && date(r.majParam) > date(majLocal)){
+      // Même date des deux côtés = aucune modification faite sur cet appareil depuis : le compte fait foi pour la
+      // numérotation et le message d'envoi (répare l'effacement par erreur fait par l'aperçu le 20/10/2026).
+      const stable = o => JSON.stringify(o, (k, v) => v && typeof v === 'object' && !Array.isArray(v) ? Object.keys(v).sort().reduce((a, x) => (a[x] = v[x], a), {}) : v);
+      const differents = () => { const l = extraire(); return ['numerotation', 'envoiMessage'].some(k => k in r.parametres && stable(l[k]) !== stable(r.parametres[k])); };
+      if (r && r.parametres && (date(r.majParam) > date(majLocal) || (date(r.majParam) === date(majLocal) && differents()))){
         appliquer(r.parametres);
         try{ localStorage.setItem(CLE_MAJ, r.majParam); }catch(e){}
         ecouteursParam.forEach(f => { try{ f(); }catch(e){} });

@@ -690,7 +690,7 @@
   </div>
 </footer>
 
-<script src="compte.js?v=18"></script>
+<script src="compte.js?v=19"></script>
 <script src="gmail.js?v=7"></script>
 <script src="stats.js?v=5" defer></script>
 <script src="compte-menu.js?v=16"></script>
@@ -878,7 +878,7 @@
     const b = e.target.closest('[data-impayee]'); if (b) remettreImpayee(b.dataset.impayee);
   });
   function rendreImpayees(){
-    const tous = C.utilisateur() ? C.documents().filter(d => d.type === 'facture' && !d.paye) : [];
+    const tous = C.connecte() ? C.documents().filter(d => d.type === 'facture' && !d.paye) : [];
     const pas = $('pastille-impayees'); pas.hidden = !tous.length; pas.textContent = tous.length;
     $('nb-impayees').textContent = tous.length;
     const q = C.norm($('cherche-impayees').value).trim();
@@ -920,7 +920,7 @@
       <label class="note-client"><span>📝 Note personnelle <em>visible seulement par vous</em></span><textarea data-note rows="2" placeholder="Ex. : client très gentil, paie toujours à l'heure, code du portail…">${esc(c.note || '')}</textarea><small data-note-ok></small></label>
       <div class="cl-actions"><a class="p" href="facture.html?type=devis&client=${encodeURIComponent(c.id)}">Nouveau devis</a><a class="p" href="facture.html?type=facture&client=${encodeURIComponent(c.id)}">Nouvelle facture</a></div>
       <div class="fiche-gestion"><button type="button" class="btn-sec" data-modif="${esc(c.id)}">Modifier ses coordonnées</button><button type="button" class="btn-sec danger" data-suppr-client="${esc(c.id)}">Supprimer ce client</button></div>
-      ${(() => { const ds = C.documents(c.id); return C.utilisateur()
+      ${(() => { const ds = C.documents(c.id); return C.connecte()
         ? `<div class="fiche-docs"><b>Devis et factures</b>${ds.length ? ds.map(d => ligneDoc(d, false)).join('') : '<p class="note">Aucun document pour l\'instant. Les devis et factures que vous téléchargez pour ce client apparaîtront ici.</p>'}</div>`
         : '<p class="note fiche-docs">🔒 Avec un compte gratuit, ses devis et factures sont gardés ici, et un devis se transforme en facture en un clic.</p>'; })()}</div>`;
     let mn;
@@ -980,7 +980,7 @@
     return C.norm([d.numero, d.clientNom, dFr(d.date), eurs(d.total), String(d.total || '').replace('.', ','), l, d.facture].join(' '));
   }
   function rendreDocs(r){
-    const conn = !!C.utilisateur();
+    const conn = C.connecte();   // tant que la connexion se vérifie, on montre déjà les documents de l'appareil
     const tous = conn ? C.documents() : [];
     const base = r === 'devis' ? tous.filter(d => d.type === 'devis') : tous.filter(d => d.type !== 'devis');
     $('nb-' + r).textContent = r === 'devis' ? base.length : base.filter(d => d.type === 'facture').length;
@@ -1032,7 +1032,7 @@
   }
   // Brouillons (comptes)
   function rendreBrouillons(){
-    const tous = C.utilisateur() ? C.brouillons() : [];
+    const tous = C.connecte() ? C.brouillons() : [];
     $('nb-brouillons').textContent = tous.length;
     const q = C.norm($('cherche-brouillons').value).trim();
     const l = q ? tous.filter(d => q.split(/\s+/).every(m => texteRecherche(d).includes(m))) : tous;
