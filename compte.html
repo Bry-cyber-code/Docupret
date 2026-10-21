@@ -250,7 +250,12 @@
   .note-client textarea:focus{border-color:#D9A93A}
   .note-client small{font-size:.74rem;color:#1F6B3A;min-height:1em}
   .ch textarea{font:inherit;font-size:16px;padding:10px 12px;border:1.5px solid var(--bord);border-radius:10px;outline:none;width:100%;color:var(--texte);background:#fff;resize:vertical}
-  .fiche-infos{display:grid;gap:3px;font-size:.9rem;color:var(--gris);margin:-2px 0 6px}
+  .fiche-infos{display:grid;gap:6px;font-size:.9rem;color:var(--gris);margin:-2px 0 6px}
+  .fi-lien{color:var(--bleu);font-weight:650;text-decoration:none;display:inline-flex;align-items:center;gap:4px;padding:2px 0}
+  .fi-lien:hover{text-decoration:underline}
+  .fi-adr{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;color:var(--texte)}
+  .fi-cartes{display:inline-flex;gap:6px}
+  .fi-btn{display:inline-flex;align-items:center;gap:4px;border:1.5px solid #C5D6F2;background:var(--bleu-clair);color:var(--bleu-fonce)!important;border-radius:50px;padding:4px 11px;font-size:.8rem;font-weight:700;text-decoration:none;white-space:nowrap}
   .cl-actions a,.cl-actions button{border:1.5px solid var(--bord);background:#fff;border-radius:10px;padding:12px 6px;font-size:.9rem;font-weight:700;color:var(--texte);text-align:center}
   .cl-actions a.p{border-color:var(--bleu);color:var(--bleu-fonce);background:var(--bleu-clair)}
   .vide{text-align:center;color:var(--gris);font-size:.9rem;padding:18px 8px;line-height:1.5}
@@ -914,9 +919,17 @@
   function voir(id){
     const c = C.client(id); if (!c) return;
     const f = document.createElement('div'); f.className = 'fond';
-    const lignes = [[c.adresse, c.cpville].filter(Boolean).join(', '), c.tel, c.email, c.siret && 'SIRET ' + c.siret].filter(Boolean);
+    // Coordonnées cliquables : appeler, ouvrir l'adresse dans Google Maps ou Waze, écrire un e-mail
+    const adr = [c.adresse, c.cpville].filter(Boolean).join(', '), qa = encodeURIComponent(adr);
+    const telNum = String(c.tel || '').replace(/[^\d+]/g, '');
+    const lignes = [
+      adr && `<span class="fi-adr">📍 ${esc(adr)}<span class="fi-cartes"><a class="fi-btn" href="https://www.google.com/maps/search/?api=1&query=${qa}" target="_blank" rel="noopener">🗺️ Maps</a><a class="fi-btn" href="https://waze.com/ul?q=${qa}&navigate=yes" target="_blank" rel="noopener">🚗 Waze</a></span></span>`,
+      c.tel && (telNum ? `<span><a class="fi-lien" href="tel:${esc(telNum)}">📞 ${esc(c.tel)}</a></span>` : `<span>${esc(c.tel)}</span>`),
+      c.email && `<span><a class="fi-lien" href="mailto:${esc(c.email)}">✉️ ${esc(c.email)}</a></span>`,
+      c.siret && `<span>SIRET ${esc(c.siret)}</span>`
+    ].filter(Boolean);
     f.innerHTML = `<div class="boite" role="dialog" aria-modal="true"><div class="boite-tete"><b>${esc(c.nom)}${c.pro ? '<span class="cl-pro">Pro</span>' : ''}</b><button type="button" data-fermer aria-label="Fermer">×</button></div>
-      <div class="fiche-infos">${lignes.length ? lignes.map(x => `<span>${esc(x)}</span>`).join('') : '<span>Pas de coordonnées enregistrées</span>'}</div>
+      <div class="fiche-infos">${lignes.length ? lignes.join('') : '<span>Pas de coordonnées enregistrées</span>'}</div>
       <label class="note-client"><span>📝 Note personnelle <em>visible seulement par vous</em></span><textarea data-note rows="2" placeholder="Ex. : client très gentil, paie toujours à l'heure, code du portail…">${esc(c.note || '')}</textarea><small data-note-ok></small></label>
       <div class="cl-actions"><a class="p" href="facture.html?type=devis&client=${encodeURIComponent(c.id)}">Nouveau devis</a><a class="p" href="facture.html?type=facture&client=${encodeURIComponent(c.id)}">Nouvelle facture</a></div>
       <div class="fiche-gestion"><button type="button" class="btn-sec" data-modif="${esc(c.id)}">Modifier ses coordonnées</button><button type="button" class="btn-sec danger" data-suppr-client="${esc(c.id)}">Supprimer ce client</button></div>
