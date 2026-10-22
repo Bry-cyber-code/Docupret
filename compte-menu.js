@@ -260,3 +260,33 @@
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', demarrer); else demarrer();
 })();
+
+// Mode sombre pour tout le monde (avec ou sans compte) : interrupteur dans le menu ☰, gardé sur l'appareil
+(function(){
+  const CLE = 'docupret_theme', html = document.documentElement;
+  const lire = () => { try{ return localStorage.getItem(CLE) === 'sombre'; }catch(e){ return false; } };
+  const CSS = `.tiroir-theme{display:flex!important;align-items:center;justify-content:space-between;gap:10px;width:100%;border:0;border-bottom:1px solid var(--bord,#E2E8F2);background:none;font:inherit;font-weight:700;font-size:1rem;color:var(--texte,#1E2A42);cursor:pointer;text-align:left;padding:14px 16px}
+  .tiroir-theme .tt-int{position:relative;width:44px;height:26px;border-radius:50px;background:#CBD5E3;flex-shrink:0;transition:background .2s}
+  .tiroir-theme .tt-int::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .2s}
+  .tiroir-theme[aria-checked="true"] .tt-int{background:var(--bleu,#4A7BD0)}
+  .tiroir-theme[aria-checked="true"] .tt-int::after{transform:translateX(18px)}`;
+  function appliquer(on){
+    html.classList.toggle('sombre', on && window.self === window.top);
+    try{ localStorage.setItem(CLE, on ? 'sombre' : 'clair'); }catch(e){}
+    document.querySelectorAll('.tiroir-theme').forEach(b => b.setAttribute('aria-checked', String(on)));
+  }
+  function ajouter(){
+    const t = document.getElementById('tiroir');
+    if (!t || t.querySelector('.tiroir-theme')) return;
+    const st = document.createElement('style'); st.textContent = CSS; document.head.appendChild(st);
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'tiroir-theme'; b.setAttribute('role', 'switch');
+    b.setAttribute('aria-checked', String(lire()));
+    b.innerHTML = '<span>🌙 Mode sombre</span><span class="tt-int" aria-hidden="true"></span>';
+    b.addEventListener('click', () => appliquer(!lire()));
+    const apropos = t.querySelector('.apropos');
+    if (apropos) t.insertBefore(b, apropos); else t.appendChild(b);
+  }
+  // Un autre onglet a changé le mode : on suit
+  window.addEventListener('storage', e => { if (e.key === CLE) appliquer(lire()); });
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', ajouter); else ajouter();
+})();
