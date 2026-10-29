@@ -246,7 +246,7 @@
 <!-- Google AdSense -->
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4241359196877067" crossorigin="anonymous"></script>
 <style id="mode-sombre">@media screen{html.sombre{filter:invert(1) hue-rotate(180deg)}html.sombre :is(img,video,canvas,iframe,picture,.logo-icone,#support,.va-echelle,#mini-doc,.vign,.vignette,.loupe-support,[data-c],.couleurs button,input[type=color]):not(:is(img,video,canvas,iframe,picture,.logo-icone,#support,.va-echelle,#mini-doc,.vign,.vignette,.loupe-support,[data-c],.couleurs button,input[type=color]) *){filter:invert(1) hue-rotate(180deg)}}</style>
-<script>try{if(localStorage.getItem('docupret_theme')==='sombre'&&window.self===window.top)document.documentElement.classList.add('sombre')}catch(e){}</script>
+<script>try{if(/[?&]clair\b/.test(location.search))localStorage.setItem('docupret_theme','clair');if(localStorage.getItem('docupret_theme')==='sombre'&&window.self===window.top)document.documentElement.classList.add('sombre')}catch(e){}</script>
 </head>
 <body>
 
