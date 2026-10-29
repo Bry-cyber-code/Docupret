@@ -158,3 +158,7 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+# Mode sombre : à refaire après chaque génération
+import subprocess as _sp, sys as _sys
+_sp.run([_sys.executable, __import__("os").path.join(__import__("os").path.dirname(__import__("os").path.abspath(__file__)), "sombre.py")])
