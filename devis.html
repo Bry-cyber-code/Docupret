@@ -2138,8 +2138,37 @@ window.DOCU_AFFICHAGE = (function(){
   const MOTS = {devis: ['le devis', 'Devis'], facture: ['la facture', 'Facture'], recu: ['le reçu', 'Reçu'], avoir: ['l\'avoir', 'Avoir']};
   // Message choisi dans Mon compte → Paramètres ; sinon « Cordialement, » et le nom de l'entreprise
   // Un vrai message (bonjour, numéro, montant…) : un e-mail presque vide avec une pièce jointe ressemble à un spam
+  // Le message personnel (Paramètres) est écrit une fois pour tous les documents : s'il parle de « facture »,
+  // « devis » ou « reçu », on met automatiquement le bon mot (avec le bon article) selon le document envoyé.
+  function adapterMot(texte, type){
+    const M = {facture: {mot: 'facture', f: true}, devis: {mot: 'devis'}, recu: {mot: 'reçu'}, avoir: {mot: 'avoir', voy: true}}[type];
+    if (!M || !texte) return texte;
+    const w = M.mot, art = {
+      le: M.f ? 'la ' + w : M.voy ? "l'" + w : 'le ' + w,
+      un: (M.f ? 'une ' : 'un ') + w,
+      ce: (M.f ? 'cette ' : M.voy ? 'cet ' : 'ce ') + w,
+      du: M.f ? 'de la ' + w : M.voy ? "de l'" + w : 'du ' + w,
+      au: M.f ? 'à la ' + w : M.voy ? "à l'" + w : 'au ' + w
+    };
+    const maj = (orig, rempl) => /^[A-ZÀ-Ý]/.test(orig) ? rempl.charAt(0).toUpperCase() + rempl.slice(1) : rempl;
+    const NOM = '(?:facture|devis|reçu)(?![\\wÀ-ÿ])';
+    const R = (re, f) => { texte = texte.replace(new RegExp(re, 'gi'), m => maj(m, f(m))); };
+    R(`\\b(?:de la|du) ${NOM}`, () => art.du);
+    R(`(?:\\bà la|\\bau) ${NOM}`, () => art.au);
+    R(`\\b(?:la|le) ${NOM}|\\bl['’]${NOM}`, () => art.le);
+    R(`\\b(?:une|un) ${NOM}`, () => art.un);
+    R(`\\b(?:cette|ce|cet) ${NOM}`, () => art.ce);
+    R(`\\b(?:votre|notre|vos) ${NOM}`, m => m.split(' ')[0].toLowerCase() + ' ' + w);
+    R(`\\b(?:mon|ma) ${NOM}`, () => (M.f ? 'ma ' : 'mon ') + w);
+    // mot seul : « reçu » est laissé tel quel (ce peut être le verbe : « j'ai bien reçu »)
+    R(`(?<![\\wÀ-ÿ'’])(?:facture|devis)(?![\\wÀ-ÿ])`, () => w);
+    // accord de « ci-joint(e) » placé juste après le mot
+    texte = texte.replace(new RegExp(`(${w}) ci-jointe?\\b`, 'gi'), (m, a) => a + (M.f ? ' ci-jointe' : ' ci-joint'));
+    if (!M.f) texte = texte.replace(new RegExp(`ci-jointe(\\s+(?:le|l['’]|un|ce|cet|votre|notre|mon)\\s*${w})`, 'gi'), (m, a) => m.slice(0, 2) + '-joint' + a);
+    return texte;
+  }
   function messageParDefaut(){
-    const perso = String(etat.envoiMessage || '').trim();
+    const perso = adapterMot(String(etat.envoiMessage || '').trim(), etat.type);
     if (perso && /^(bonjour|bonsoir|madame|monsieur|cher|chère|salut|hello)/i.test(perso)) return perso;
     const k = calculer(), n = etat.doc.numero, total = eur(k.totalTTC), nom = String(etat.cl.nom || '').trim();
     const salut = nom ? `Bonjour ${nom},` : 'Bonjour,';
