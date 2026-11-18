@@ -7,7 +7,7 @@
   const COUCHES = [
     {trouver: () => [...document.querySelectorAll('#tiroir.ouvert')], fermer: () => clic(document.getElementById('tiroir-fond'))},
     {trouver: () => [...document.querySelectorAll('.cm.ouvert')], fermer: () => clic(document.querySelector('.cm-fond'))},
-    {trouver: () => [...document.querySelectorAll('body > .env-fond, body > .loupe, body > .fond, body > .cp-fond, body > .ia-fond')], fermer: el => clic(el)}
+    {trouver: () => [...document.querySelectorAll('body > .env-fond, body > .loupe, body > .fond, body > .cp-fond, body > .ia-fond, body > .tf-fond, body > .ph-fond, body > .ph-zoom, body > .pz-fond')], fermer: el => clic(el)}
   ];
   let pile = [], aIgnorer = 0, navigation = null;
   const ouvertes = () => { const r = []; COUCHES.forEach(c => c.trouver().forEach(el => { if (!el.hidden) r.push({el, fermer: () => c.fermer(el)}); })); return r; };
@@ -64,6 +64,20 @@
 
   const CSS = `
   .cm-fond{position:fixed;inset:0;background:rgba(20,28,45,.45);z-index:52}
+  .compte-lien .compte-nom{max-width:96px;overflow:hidden;white-space:normal;text-align:center;line-height:1.15;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+  @media (min-width:561px){.compte-lien .compte-nom{max-width:210px;display:block;white-space:nowrap;text-overflow:ellipsis}}
+  .pz-fond{position:fixed;inset:0;z-index:80;background:rgba(20,28,45,.55);display:flex;align-items:center;justify-content:center;padding:16px}
+  .pz{background:var(--blanc,#fff);width:100%;max-width:420px;border-radius:20px;padding:20px 18px 16px;display:grid;gap:10px;box-shadow:0 20px 50px rgba(0,0,0,.25);animation:pzv .25s ease}
+  @keyframes pzv{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
+  .pz-ico{width:48px;height:48px;border-radius:50%;background:var(--bleu-clair,#EAF1FD);display:grid;place-items:center;font-size:1.5rem;justify-self:center}
+  .pz h2{font-size:1.12rem;text-align:center;margin:0}
+  .pz p{font-size:.9rem;color:#3B4558;text-align:center;line-height:1.5;margin:0}
+  .pz input{font:inherit;font-size:16px;padding:12px;border:1.5px solid var(--bord,#e2e8f0);border-radius:12px;width:100%;background:#fff;color:var(--texte,#123);outline:none}
+  .pz input:focus{border-color:var(--bleu,#4A7BD0)}
+  .pz small{font-size:.78rem;color:var(--gris,#667);text-align:center}
+  .pz-ok{border:0;border-radius:12px;background:var(--bleu,#4A7BD0);color:#fff;font:inherit;font-weight:750;font-size:.98rem;padding:13px;cursor:pointer}
+  .pz-bas{display:flex;justify-content:space-between;gap:10px}
+  .pz-bas button{border:0;background:none;font:inherit;font-size:.86rem;color:var(--gris,#667);text-decoration:underline;padding:6px 2px;cursor:pointer}
   .cm{position:fixed;top:0;right:0;bottom:0;width:min(300px,84vw);background:var(--blanc,#fff);z-index:53;transform:translateX(102%);transition:transform .25s ease;overflow-y:auto;box-shadow:-4px 0 24px rgba(0,0,0,.12);padding-bottom:calc(20px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column}
   .cm.ouvert{transform:none}
   .cm-tete{display:flex;align-items:center;justify-content:space-between;height:60px;padding:env(safe-area-inset-top,0px) 10px 0 16px;border-bottom:1px solid var(--bord,#e2e8f0);flex-shrink:0}
@@ -122,7 +136,15 @@
     if (l){ const img = document.createElement('img'); img.className = 'compte-logo'; img.alt = ''; img.src = l; if (actuel) actuel.replaceWith(img); else lien.prepend(img); }
     else if (actuel && actuel.tagName === 'IMG'){ const t = document.createElement('span'); t.innerHTML = ICONE; actuel.replaceWith(t.firstChild); }
   }
-  window.majAvatarCompte = majAvatar;
+  // Nom choisi par la personne (Mon compte › Compte) à la place de « Mon compte » en haut à droite
+  const nomAffiche = () => { const p = lire('docupret_profil', {}) || {}; return lire('docupret_compte', null) && p.pseudo ? String(p.pseudo) : ''; };
+  function majNom(){
+    const sp = [...lien.querySelectorAll('span')].find(x => !x.querySelector('svg') && !x.closest('svg')); if (!sp) return;
+    const n = nomAffiche();
+    sp.textContent = n || 'Mon compte'; sp.classList.toggle('compte-nom', !!n);
+    lien.setAttribute('aria-label', n ? `Mon compte (${n})` : 'Mon compte');
+  }
+  window.majAvatarCompte = () => { majAvatar(); majNom(); };
   function construire(){
     fond = document.createElement('div'); fond.className = 'cm-fond'; fond.hidden = true;
     menu = document.createElement('nav'); menu.className = 'cm'; menu.setAttribute('aria-label', 'Mon compte'); menu.setAttribute('aria-hidden', 'true');
@@ -160,7 +182,7 @@
     const nb = (lire('docupret_clients', []) || []).filter(c => c && !c.supprime).length;
     menu.innerHTML = `<div class="cm-tete"><b>Mon compte</b><button type="button" class="cm-fermer" aria-label="Fermer">×</button></div>
       <div class="cm-qui">${email
-        ? (logoAvatar() ? `<span class="cm-avatar logo"><img src="${logoAvatar()}" alt=""></span>` : `<span class="cm-avatar">${esc(email[0].toUpperCase())}</span>`) + `<div><small>Connecté avec</small><b>${esc(email)}</b></div>`
+        ? (logoAvatar() ? `<span class="cm-avatar logo"><img src="${logoAvatar()}" alt=""></span>` : `<span class="cm-avatar">${esc((nomAffiche() || email)[0].toUpperCase())}</span>`) + (nomAffiche() ? `<div><b>${esc(nomAffiche())}</b><small>${esc(email)}</small></div>` : `<div><small>Connecté avec</small><b>${esc(email)}</b></div>`)
         : `<span class="cm-avatar vide">${ICO.compte}</span><div><b>Vous n'êtes pas connecté</b><small>Gratuit, avec une simple adresse e-mail</small></div>`}</div>
       ${email ? '' : '<a class="cm-connexion" href="compte.html#compte">Se connecter ou créer un compte</a>'}
       ${email && tableauVisible() ? `<a class="cm-lien cm-tb" href="tableau-de-bord.html"><span class="cm-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg></span><span class="cm-txt"><b>Tableau de bord</b><span>${TB_PUBLIC ? 'Chiffres, paiements, rendez-vous' : 'Caché aux visiteurs (vous seul)'}</span></span></a>` : ''}
@@ -186,7 +208,35 @@
     fond.hidden = true; document.body.style.overflow = '';
     if (dernierFocus && dernierFocus.focus) dernierFocus.focus();
   }
-  majAvatar();
+  majAvatar(); majNom();
+  window.addEventListener('docupret-profil', () => { majNom(); demanderNom(); });
+  window.addEventListener('storage', e => { if (e.key === 'docupret_profil' || e.key === 'docupret_compte') majNom(); });
+  if (window.Compte && window.Compte.surChangement) window.Compte.surChangement(majNom);
+  // Comptes créés avant l'option : on propose une fois de choisir un nom (facultatif)
+  function demanderNom(){
+    const C = window.Compte;
+    if (!C || !C.profilPret || !C.profilPret() || !C.utilisateur() || window.self !== window.top) return;
+    const p = C.profil();
+    if (p.pseudo || p.refus || document.querySelector('.pz-fond')) return;
+    try{ if (sessionStorage.getItem('docupret_pz_plus_tard')) return; }catch(e){}
+    setTimeout(() => {
+      if (document.querySelector('.pz-fond, .fond, .cp-fond, .env-fond, .tf-fond, .cm.ouvert')) return;
+      const f = document.createElement('div'); f.className = 'pz-fond';
+      f.innerHTML = `<form class="pz" role="dialog" aria-modal="true" aria-labelledby="pz-titre"><span class="pz-ico">👋</span><h2 id="pz-titre">Comment souhaitez-vous apparaître ?</h2>
+        <p>Choisissez le nom affiché en haut du site, à la place de « Mon compte » : votre nom et prénom, un pseudo ou le nom de votre entreprise.</p>
+        <input name="pseudo" maxlength="40" autocomplete="organization" placeholder="ex. : Prestat services élagage" aria-label="Nom, pseudo ou entreprise">
+        <small>Facultatif. Ce nom n'apparaît jamais sur vos factures, devis ou documents. Vous pourrez le changer dans Mon compte.</small>
+        <button type="submit" class="pz-ok">Enregistrer</button>
+        <div class="pz-bas"><button type="button" data-plus-tard>Plus tard</button><button type="button" data-jamais>Ne plus me demander</button></div></form>`;
+      const fermer = () => f.remove();
+      f.addEventListener('submit', e => { e.preventDefault(); const v = f.querySelector('input').value.trim(); if (!v){ f.querySelector('input').focus(); return; } C.definirProfil({pseudo: v, refus: false}); fermer(); if (C.toast) C.toast(`✓ Bienvenue ${v} !`); });
+      f.addEventListener('click', e => {
+        if (e.target.closest('[data-jamais]')){ C.definirProfil({refus: true}); fermer(); }
+        else if (e.target === f || e.target.closest('[data-plus-tard]')){ try{ sessionStorage.setItem('docupret_pz_plus_tard', '1'); }catch(err){} fermer(); }
+      });
+      document.body.appendChild(f);
+    }, 1200);
+  }
   lien.setAttribute('aria-haspopup', 'true');
   lien.addEventListener('click', e => { e.preventDefault(); ouvrir(); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && menu && menu.classList.contains('ouvert')) fermer(); });

@@ -67,6 +67,7 @@
         if (premier){ premier = false; resolu = true; ok(); }
         if (utilisateur && utilisateur.uid !== avant){
           try{ await synchroniser(); await synchroniserParametres(); await synchroniserDocuments(); await synchroniserTableau(); }catch(e){}
+          try{ await synchroniserProfil(); }catch(e){}
           prevenir();
         }
       });
@@ -284,6 +285,95 @@
     ecrireTB(liste); envoyerTB([x]); prevenir();
   }
 
+  // ---------- Nom affiché (nom, prénom, pseudo ou entreprise) ----------
+  // Facultatif, affiché à la place de « Mon compte » en haut des pages. N'apparaît jamais sur les documents.
+  // Local : docupret_profil {pseudo, refus, maj} ; compte : champ « profil » de utilisateurs/{uid}
+  const CLE_PROFIL = 'docupret_profil';
+  let profilPret = false;
+  const profil = () => { try{ return JSON.parse(localStorage.getItem(CLE_PROFIL)) || {}; }catch(e){ return {}; } };
+  function annoncerProfil(){ try{ window.dispatchEvent(new Event('docupret-profil')); }catch(e){} }
+  async function envoyerProfil(){
+    if (!db || !utilisateur) return;
+    try{ await db.collection('utilisateurs').doc(utilisateur.uid).set({profil: propre(profil())}, {merge: true}); }catch(e){ console.warn('Envoi du nom impossible', e); }
+  }
+  async function synchroniserProfil(){
+    if (!db || !utilisateur) return;
+    try{
+      const snap = await db.collection('utilisateurs').doc(utilisateur.uid).get();
+      const r = (snap.exists && snap.data() && snap.data().profil) || null, l = profil();
+      if (r && date(r.maj) > date(l.maj)){ try{ localStorage.setItem(CLE_PROFIL, JSON.stringify(r)); }catch(e){} }
+      else if (l.maj && (!r || date(l.maj) > date(r.maj))) await envoyerProfil();
+    }catch(e){ console.warn('Synchronisation du nom impossible', e); }
+    profilPret = true; annoncerProfil();
+  }
+  function definirProfil(o){
+    const p = Object.assign(profil(), o, {maj: new Date().toISOString()});
+    p.pseudo = String(p.pseudo || '').trim().slice(0, 40);
+    try{ localStorage.setItem(CLE_PROFIL, JSON.stringify(p)); }catch(e){}
+    envoyerProfil(); annoncerProfil(); prevenir();
+    return p;
+  }
+
+  // ---------- Photos de chantier (fiche client) ----------
+  // Compte : utilisateurs/{uid}/photos/{id} → {clientId, data (JPEG réduit), mini (vignette), legende, date, maj}
+  // Les photos ne sont pas gardées dans le stockage du navigateur (trop lourdes) : elles sont lues dans le compte à l'ouverture.
+  const photosCache = new Map();
+  const colPhotos = () => db.collection('utilisateurs').doc(utilisateur.uid).collection('photos');
+  async function pretPhotos(){
+    await pret;
+    if (!db || !utilisateur) throw new Error(connecte() ? 'Connexion impossible. Vérifiez votre connexion internet.' : 'Connectez-vous pour voir et ajouter des photos.');
+  }
+  async function photos(clientId, forcer){
+    if (photosCache.has(clientId) && !forcer) return photosCache.get(clientId);
+    await pretPhotos();
+    const snap = await colPhotos().where('clientId', '==', clientId).get();
+    const l = []; snap.forEach(d => l.push({...d.data(), id: d.id}));
+    l.sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')) || date(b.maj) - date(a.maj));
+    photosCache.set(clientId, l);
+    return l;
+  }
+  const nbPhotosConnu = clientId => photosCache.has(clientId) ? photosCache.get(clientId).length : null;
+  function reduire(fichier, cote, qualite){
+    return new Promise((ok, ko) => {
+      const url = URL.createObjectURL(fichier), img = new Image();
+      img.onload = () => {
+        const k = Math.min(1, cote / Math.max(img.naturalWidth, img.naturalHeight));
+        const w = Math.max(1, Math.round(img.naturalWidth * k)), h = Math.max(1, Math.round(img.naturalHeight * k));
+        const cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+        const cx = cv.getContext('2d'); cx.fillStyle = '#fff'; cx.fillRect(0, 0, w, h); cx.drawImage(img, 0, 0, w, h);
+        URL.revokeObjectURL(url); ok(cv.toDataURL('image/jpeg', qualite));
+      };
+      img.onerror = () => { URL.revokeObjectURL(url); ko(new Error('Cette image ne peut pas être lue.')); };
+      img.src = url;
+    });
+  }
+  async function ajouterPhoto(clientId, fichier, legende){
+    await pretPhotos();
+    // Photo réduite (bonne qualité à l'écran) sous la limite d'un document du compte (≈ 1 Mo)
+    let data = '', essais = [[1600, .78], [1400, .7], [1200, .62], [1000, .55], [800, .5]];
+    for (const [c, q] of essais){ data = await reduire(fichier, c, q); if (data.length < 700000) break; }
+    const mini = await reduire(fichier, 360, .6);
+    const d = fichier.lastModified ? new Date(fichier.lastModified) : new Date();
+    const p = {clientId, data, mini, legende: String(legende || '').trim(), date: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`, maj: new Date().toISOString()};
+    const ref = colPhotos().doc(nouvelId());
+    await ref.set(p);
+    const l = photosCache.get(clientId) || []; l.unshift({...p, id: ref.id}); photosCache.set(clientId, l);
+    return {...p, id: ref.id};
+  }
+  async function majPhoto(clientId, id, champs){
+    await pretPhotos();
+    await colPhotos().doc(id).set(Object.assign({}, champs, {maj: new Date().toISOString()}), {merge: true});
+    const x = (photosCache.get(clientId) || []).find(p => p.id === id); if (x) Object.assign(x, champs);
+  }
+  async function supprimerPhoto(clientId, id){
+    await pretPhotos();
+    await colPhotos().doc(id).delete();
+    photosCache.set(clientId, (photosCache.get(clientId) || []).filter(p => p.id !== id));
+  }
+  async function supprimerPhotosClient(clientId){
+    try{ const l = await photos(clientId, true); for (const p of l) await colPhotos().doc(p.id).delete(); photosCache.delete(clientId); }catch(e){}
+  }
+
   // ---------- Clients ----------
   function clients(){
     return lireLocal().filter(c => !c.supprime).sort((a, b) => norm(a.nom).localeCompare(norm(b.nom), 'fr'));
@@ -331,9 +421,12 @@
     await pret;
     if (!auth) throw new Error('Connexion impossible. Vérifiez votre connexion internet.');
   }
-  async function inscrire(email, mdp){
+  async function inscrire(email, mdp, pseudo){
     await attendre();
-    try{ await auth.createUserWithEmailAndPassword(email, mdp); }catch(e){ throw traduire(e); }
+    // Nom choisi à l'inscription (facultatif) : gardé avant la création, envoyé au compte dès la connexion.
+    // Laissé vide : on ne le redemandera pas (la personne a déjà vu la case).
+    try{ localStorage.setItem(CLE_PROFIL, JSON.stringify({pseudo: String(pseudo || '').trim().slice(0, 40), refus: !String(pseudo || '').trim(), maj: new Date().toISOString()})); }catch(e){}
+    try{ await auth.createUserWithEmailAndPassword(email, mdp); }catch(e){ try{ localStorage.removeItem(CLE_PROFIL); }catch(x){} throw traduire(e); }
     try{ window.DocuStats && window.DocuStats.evenement('compte_cree'); }catch(e){}
     return {aConfirmer: false};
   }
@@ -352,7 +445,8 @@
     try{ if (window.Gmail) window.Gmail.deconnecter(); }catch(e){}
     if (auth) await auth.signOut();
     utilisateur = null;
-    try{ ['docufacile_v1', CLE_CLIENTS, CLE_DOCS, CLE_TB, CLE_MAJ, 'docupret_affichage', 'docupret_avatar', 'docupret_envoi_gmail', 'docupret_brouillon_auto', 'docupret_menu_nombres', 'docupret_menu_alertes'].forEach(k => localStorage.removeItem(k)); }catch(e){}
+    photosCache.clear();
+    try{ ['docufacile_v1', CLE_CLIENTS, CLE_DOCS, CLE_TB, CLE_PROFIL, CLE_MAJ, 'docupret_affichage', 'docupret_avatar', 'docupret_envoi_gmail', 'docupret_brouillon_auto', 'docupret_menu_nombres', 'docupret_menu_alertes'].forEach(k => localStorage.removeItem(k)); }catch(e){}
     prevenir();
   }
   async function motDePasseOublie(email){
@@ -374,6 +468,8 @@
       try{ const sd = await colDocs().get(); const l2 = db.batch(); sd.forEach(d => l2.delete(d.ref)); await l2.commit(); }catch(e){}
       try{ const st = await colTB().get(); const l3 = db.batch(); st.forEach(d => l3.delete(d.ref)); await l3.commit(); }catch(e){}
       try{ localStorage.removeItem(CLE_TB); }catch(e){}
+      try{ const sp = await colPhotos().get(); for (const d of sp.docs || []) await d.ref.delete(); }catch(e){}
+      try{ localStorage.removeItem(CLE_PROFIL); }catch(e){}
       try{ await db.collection('utilisateurs').doc(u.uid).delete(); }catch(e){}
       try{ await db.collection('classement').doc(u.uid).delete(); }catch(e){}
       try{ localStorage.removeItem(CLE_DOCS); }catch(e){}
@@ -479,6 +575,8 @@
     parametresModifies, surParametres: f => ecouteursParam.add(f),
     documents, brouillons, document: documentId, enregistrerDocument, majDocument, supprimerDocument,
     elements, element, enregistrerElement, supprimerElement, synchroniserTableau,
+    profil, definirProfil, profilPret: () => profilPret,
+    photos, nbPhotosConnu, ajouterPhoto, majPhoto, supprimerPhoto, supprimerPhotosClient,
     choisirClient, toast, esc, norm
   };
 })();
