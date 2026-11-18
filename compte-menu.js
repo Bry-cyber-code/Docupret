@@ -73,6 +73,9 @@
   .pz-ico{width:48px;height:48px;border-radius:50%;background:var(--bleu-clair,#EAF1FD);display:grid;place-items:center;font-size:1.5rem;justify-self:center}
   .pz h2{font-size:1.12rem;text-align:center;margin:0}
   .pz p{font-size:.9rem;color:#3B4558;text-align:center;line-height:1.5;margin:0}
+  .cm-verrou .cm-ico{background:var(--fond,#f4f6fa);color:#8A94A6}
+  .cm-verrou .cm-txt b{color:#4B5568}
+  .cm-cadenas{font-size:.85rem}
   .cm-connexion2{background:none!important;color:var(--bleu,#4A7BD0)!important;border:1.5px solid var(--bleu,#4A7BD0);margin-top:8px!important;padding:10px!important}
   .pz input{font:inherit;font-size:16px;padding:12px;border:1.5px solid var(--bord,#e2e8f0);border-radius:12px;width:100%;background:#fff;color:var(--texte,#123);outline:none}
   .pz input:focus{border-color:var(--bleu,#4A7BD0)}
@@ -94,7 +97,7 @@
   .cm-fermer:hover{background:var(--fond,#f4f6fa)}
   .cm-qui{display:flex;align-items:center;gap:12px;padding:16px;border-bottom:1px solid var(--bord,#e2e8f0)}
   .cm-avatar{align-self:center;aspect-ratio:1;width:44px;height:44px;border-radius:50%;background:var(--bleu,#4A7BD0);color:#fff;display:grid;place-items:center;font-weight:800;font-size:1.15rem;flex-shrink:0}
-  .cm-avatar.vide{background:var(--bleu-clair,#EAF1FD);color:var(--bleu,#4A7BD0)}
+  .cm-avatar.vide{background:var(--bleu-clair,#EAF1FD);color:var(--bleu,#4A7BD0);padding:0!important;text-align:initial}
   .cm-avatar svg{width:26px;height:26px}
   .cm-qui small{display:block;font-size:.76rem;color:var(--gris,#667)}
   .cm-qui b{display:block;font-size:.92rem;word-break:break-all;line-height:1.3}
@@ -202,6 +205,14 @@
     const T = {services: 'Services', vente: 'Vente'}, deux = new Set(r.map(x => x.mode)).size > 1;
     return `<div class="cm-epingles"><small>📌 Raccourcis</small>${r.map(x => `<a href="tableau-de-bord.html#${esc(x.mode)}-${esc(x.k)}"><i>${esc(x.ico || '•')}</i><span>${esc(x.titre)}${deux ? ` <span style="color:var(--gris,#667);font-weight:500;font-size:.78rem">· ${T[x.mode] || ''}</span>` : ''}</span></a>`).join('')}</div>`;
   }
+  // Sans compte : on montre tout ce qui existe, avec un cadenas (chaque rubrique explique ce qu'elle apporte)
+  function verrouillees(){
+    const TB = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>';
+    const L = [['tableau-de-bord.html', TB, 'Tableau de bord', "Chiffre d'affaires, bilan, ventes, stock"], ['compte.html#clients', ICO.clients, 'Mes clients', 'Coordonnées enregistrées'],
+      ['compte.html#factures', ICO2.factures, 'Factures', 'Reçus, avoirs, bons de commande'], ['compte.html#devis', ICO2.devis, 'Devis', 'En attente, acceptés, facturés'],
+      ['compte.html#impayees', ICO2.impayees, 'Impayées', 'Factures à encaisser'], ['compte.html#brouillons', ICO2.brouillons, 'Brouillons', 'Documents à finir']];
+    return L.map(([h, ico, t, st]) => `<a class="cm-lien cm-verrou" href="${h}"><span class="cm-ico">${ico}</span><span class="cm-txt"><b>${t} <span class="cm-cadenas" aria-label="réservé aux comptes">🔒</span></b><span>${st}</span></span></a>`).join('');
+  }
   function remplir(){
     const qui = lire('docupret_compte', null), email = (window.Compte && window.Compte.connecte && !window.Compte.connecte()) ? '' : (qui && qui.email);
     const nb = (lire('docupret_clients', []) || []).filter(c => c && !c.supprime).length;
@@ -210,13 +221,14 @@
         ? (logoAvatar() ? `<span class="cm-avatar logo"><img src="${logoAvatar()}" alt=""></span>` : `<span class="cm-avatar">${esc((nomAffiche() || email)[0].toUpperCase())}</span>`) + (nomAffiche() ? `<div><b>${esc(nomAffiche())}</b><small>${esc(email)}</small></div>` : `<div><small>Connecté avec</small><b>${esc(email)}</b></div>`)
         : `<span class="cm-avatar vide">${ICO.compte}</span><div><b>Vous n'êtes pas connecté</b><small>Gratuit, avec une simple adresse e-mail</small></div>`}</div>
       ${email ? '' : '<a class="cm-connexion" href="compte.html#creer">Créer mon compte gratuit</a><a class="cm-connexion cm-connexion2" href="compte.html#connexion">J\'ai déjà un compte</a>'}
+      ${email ? '' : verrouillees()}
       ${email && tableauVisible() ? `<a class="cm-lien cm-tb" href="tableau-de-bord.html"><span class="cm-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg></span><span class="cm-txt"><b>Tableau de bord</b><span>${TB_PUBLIC ? (activite() === 'vente' ? 'Ventes, catalogue, stock' : 'Chiffres, paiements, rendez-vous') : 'Caché aux visiteurs (vous seul)'}</span></span></a>${epingles()}` : ''}
-      <a class="cm-lien" href="compte.html#clients"><span class="cm-ico">${ICO.clients}</span><span class="cm-txt"><b>Mes clients${email ? '' : ' 🔒'}</b><span>${email ? 'Coordonnées enregistrées' : 'Avec un compte gratuit'}</span></span>${email && nb && nombres() ? `<span class="cm-nb">${nb}</span>` : ''}</a>
+      ${email ? `<a class="cm-lien" href="compte.html#clients"><span class="cm-ico">${ICO.clients}</span><span class="cm-txt"><b>Mes clients</b><span>Coordonnées enregistrées</span></span>${nb && nombres() ? `<span class="cm-nb">${nb}</span>` : ''}</a>` : ''}
       ${email ? raccourcis() : ''}
-      <a class="cm-lien" href="compte.html#parametres"><span class="cm-ico">${ICO.param}</span><span class="cm-txt"><b>Paramètres${email ? '' : ' 🔒'}</b><span>${email ? 'Mon entreprise, préférences' : 'Avec un compte gratuit'}</span></span></a>
+      <a class="cm-lien" href="compte.html#parametres"><span class="cm-ico">${ICO.param}</span><span class="cm-txt"><b>Paramètres</b><span>${email ? 'Mon entreprise, préférences' : 'Mon entreprise, logo, documents'}</span></span></a>
       <a class="cm-lien" href="compte.html#compte"><span class="cm-ico">${ICO.compte}</span><span class="cm-txt"><b>Compte</b><span>${email ? 'Mot de passe, déconnexion' : 'Connexion, inscription'}</span></span></a>
       ${email && lire('docupret_admin', null) !== null ? `<a class="cm-lien" href="stats.html"><span class="cm-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></span><span class="cm-txt"><b>Statistiques</b><span>Visites et documents du site</span></span></a>` : ''}
-      <p class="cm-note">${email ? '☁️ Vos clients et paramètres sont synchronisés sur tous vos appareils.' : '🔒 Clients, paramètres et envoi Gmail sont réservés aux comptes gratuits.'}</p>`;
+      <p class="cm-note">${email ? '☁️ Vos clients et paramètres sont synchronisés sur tous vos appareils.' : '🔒 Les rubriques avec un cadenas sont réservées aux comptes gratuits : créez le vôtre en 1 minute pour les débloquer.'}</p>`;
   }
   function ouvrir(){
     if (!menu) construire();
