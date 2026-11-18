@@ -292,6 +292,7 @@
       <div class="sous" hidden>
         <a href="facture.html">Facture</a>
         <a href="devis.html">Devis</a>
+        <a href="bon-de-commande.html">Bon de commande</a>
         <a href="recu.html">Reçu de paiement</a>
         <a href="avoir.html">Avoir</a>
       </div>
@@ -423,7 +424,7 @@
 })();
 </script>
 <script src="compte.js?v=22"></script>
-<script src="compte-menu.js?v=19"></script>
+<script src="compte-menu.js?v=20"></script>
 <script>
 (function(){
   'use strict';
@@ -437,7 +438,7 @@
   const jourCourt = d => d.toLocaleDateString('fr-FR', {day: 'numeric', month: 'short'});
   const jourLong = d => d.toLocaleDateString('fr-FR', {weekday: 'long', day: 'numeric', month: 'long'});
 
-  const PAGES = {accueil: 'Accueil', facture_facture: 'Facture', facture_devis: 'Devis', facture_recu: 'Reçu', facture_avoir: 'Avoir', facture: 'Facture / devis',
+  const PAGES = {accueil: 'Accueil', facture_facture: 'Facture', facture_devis: 'Devis', facture_recu: 'Reçu', facture_avoir: 'Avoir', facture_commande: 'Bon de commande', facture: 'Facture / devis',
     cv: 'CV',
     lettre_demission: 'Lettre de démission', lettre_motivation: 'Lettre de motivation', lettre_conges: 'Demande de congés', lettre_rupture: 'Rupture conventionnelle',
     lettre_preavis: 'Préavis locataire', lettre_hebergement: "Attestation d'hébergement", lettre_quittance: 'Quittance de loyer', lettre_honneur: "Attestation sur l'honneur",

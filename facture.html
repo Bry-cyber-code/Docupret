@@ -509,7 +509,7 @@ window.DOCU_AFFICHAGE = (function(){
 </script>
 <!--PAGE-TYPE-->
 <link rel="canonical" href="https://docupret.fr/facture.html">
-<script>window.DOCU_TYPE_PAGE="facture";window.DOCU_PAGE_STATS="facture_facture";window.DOCU_URL_TYPE={"facture": "facture.html", "devis": "devis.html", "recu": "recu.html", "avoir": "avoir.html"};(function(){try{var q=new URLSearchParams(location.search).get('type');if(q&&window.DOCU_URL_TYPE[q])document.querySelector('link[rel=canonical]').href='https://docupret.fr/'+window.DOCU_URL_TYPE[q];}catch(e){}})();</script>
+<script>window.DOCU_TYPE_PAGE="facture";window.DOCU_PAGE_STATS="facture_facture";window.DOCU_URL_TYPE={"facture": "facture.html", "devis": "devis.html", "commande": "bon-de-commande.html", "recu": "recu.html", "avoir": "avoir.html"};(function(){try{var q=new URLSearchParams(location.search).get('type');if(q&&window.DOCU_URL_TYPE[q])document.querySelector('link[rel=canonical]').href='https://docupret.fr/'+window.DOCU_URL_TYPE[q];}catch(e){}})();</script>
 <!--/PAGE-TYPE-->
 <style>
   /* ===== Ordinateur : on écrit directement sur la feuille ===== */
@@ -753,6 +753,7 @@ window.DOCU_AFFICHAGE = (function(){
       <div class="sous" hidden>
         <a href="facture.html">Facture</a>
         <a href="devis.html">Devis</a>
+        <a href="bon-de-commande.html">Bon de commande</a>
         <a href="recu.html">Reçu de paiement</a>
         <a href="avoir.html">Avoir</a>
       </div>
@@ -810,6 +811,7 @@ window.DOCU_AFFICHAGE = (function(){
     <h1 id="titre">Créer une facture</h1>
     <div class="types" id="types">
       <button data-t="devis">Devis</button>
+      <button data-t="commande">Bon de commande</button>
       <button data-t="facture">Facture</button>
       <button data-t="recu">Reçu</button>
       <button data-t="avoir">Avoir</button>
@@ -895,6 +897,7 @@ window.DOCU_AFFICHAGE = (function(){
             <label class="ch">Échéance<input type="date" data-b="doc.echeance"></label>
           </div>
           <label class="ch" data-si="devis">Valable jusqu'au<input type="date" data-b="doc.validite"></label>
+          <label class="ch" data-si="commande">Livraison ou intervention prévue le (facultatif)<input type="date" data-b="doc.livraison"></label>
           <div class="deux" data-si="avoir">
             <label class="ch">Facture d'origine n°<input data-b="doc.factureRef" placeholder="F-2026-001"></label>
             <label class="ch">Date de la facture<input type="date" data-b="doc.factureDate"></label>
@@ -997,12 +1000,12 @@ window.DOCU_AFFICHAGE = (function(){
       <details class="bloc" data-e="4" data-f="paiement">
         <summary>Paiement et notes</summary>
         <div class="champs">
-          <label class="ch" data-si="devis">Conditions de paiement
+          <label class="ch" data-si="devis,commande">Conditions de paiement
             <select data-b="paiement.conditions">
               <option>À réception</option><option>15 jours</option><option>30 jours</option><option>45 jours</option><option>60 jours</option>
             </select>
           </label>
-          <label class="ch" data-si="devis,facture,recu">Mode de paiement
+          <label class="ch" data-si="devis,commande,facture,recu">Mode de paiement
             <select data-b="paiement.moyen">
               <option>Virement</option><option>Chèque</option><option>Espèces</option><option>Carte bancaire</option><option>Autre</option>
             </select>
@@ -1124,6 +1127,7 @@ window.DOCU_AFFICHAGE = (function(){
   const CLE = 'docufacile_v1';
   const TYPES = {
     devis:   {titre:'DEVIS',   h1:'Créer un devis',   prefixe:'D', client:'Client'},
+    commande:{titre:'BON DE COMMANDE', h1:'Créer un bon de commande', prefixe:'BC', client:'Client'},
     facture: {titre:'FACTURE', h1:'Créer une facture', prefixe:'F', client:'Facturé à'},
     recu:    {titre:'REÇU',    h1:'Créer un reçu',    prefixe:'R', client:'Reçu de'},
     avoir:   {titre:'AVOIR',   h1:'Créer un avoir',   prefixe:'AV', client:'Client'}
@@ -1230,15 +1234,15 @@ window.DOCU_AFFICHAGE = (function(){
       type:'facture', modele:'classique', couleur:'#4A7BD0',
       em:{nom:'', adresse:'', cpville:'', siret:'', tvaintra:'', tel:'', email:'', mentions:'', logo:''},
       cl:{nom:'', adresse:'', cpville:'', tel:'', email:'', pro:false, siret:''},
-      doc:{numero:'', date:d, echeance:plusJours(d, 30), validite:plusJours(d, 30), factureRef:'', factureDate:'', motif:'Remise commerciale', remboursement:'Déduit de la prochaine facture'},
+      doc:{numero:'', date:d, echeance:plusJours(d, 30), validite:plusJours(d, 30), factureRef:'', factureDate:'', motif:'Remise commerciale', remboursement:'Déduit de la prochaine facture', livraison:''},
       cols:{ref:false, date:false, qte:true, unite:false, remise:false, tva:true},
       tvaMode:'HT', franchise:false, tauxDefaut:20,
       lignes:[ligneVide()],
       paiement:{conditions:'30 jours', moyen:'Virement', iban:'', notes:''},
-      compteurs:{devis:0, facture:0, recu:0, avoir:0},
+      compteurs:{devis:0, commande:0, facture:0, recu:0, avoir:0},
       masques:{},
       extra:{em:[], cl:[], meta:[], paiement:[]},
-      textes:{signature:'', franchise:'', validite:'', penalites:''},
+      textes:{signature:'', signatureBC:'', franchise:'', validite:'', penalites:''},
       brouillonId:'', fini:'',
       numerotation:{annee:true}, numMaj:'',
       envoiMessage:'', modifie:''
@@ -1267,13 +1271,15 @@ window.DOCU_AFFICHAGE = (function(){
   // Vide = texte par défaut. {date} est remplacé par la date de validité du devis.
   const TEXTES_DEF = {
     signature: 'Bon pour accord\nDate et signature du client, précédées de la mention « Bon pour accord »',
+    signatureBC: 'Bon pour commande\nDate et signature du client, précédées de la mention « Bon pour commande »',
     franchise: 'TVA non applicable, art. L. 223 et s. du code des impositions sur les biens et services (CIBS).',
     validite: "Devis valable jusqu'au {date}.",
     penalites: "En cas de retard de paiement : pénalités au taux de 3 fois le taux d'intérêt légal et indemnité forfaitaire pour frais de recouvrement de 40\u00a0€. Pas d'escompte pour paiement anticipé."
   };
   const avecDate = t => String(t).split('{date}').join(etat.doc.validite ? dateFr(etat.doc.validite) : '…');
   const texteDoc = k => avecDate(String(((etat.textes || {})[k]) || '').trim() ? etat.textes[k] : TEXTES_DEF[k]);
-  const signatureHtml = () => { const l = texteDoc('signature').split('\n'); return `<b>${esc(l[0])}</b>${l.length > 1 ? '<br>' + l.slice(1).map(esc).join('<br>') : ''}`; };
+  const cleSig = () => etat.type === 'commande' ? 'signatureBC' : 'signature';
+  const signatureHtml = () => { const l = texteDoc(cleSig()).split('\n'); return `<b>${esc(l[0])}</b>${l.length > 1 ? '<br>' + l.slice(1).map(esc).join('<br>') : ''}`; };
 
   // facture.html?ouvrir=ID&pdf=1 : on affiche un document enregistré pour le retélécharger, sans toucher au brouillon en cours
   const MODE_PDF = (() => { const q = new URLSearchParams(location.search); return q.get('pdf') === '1' && !!q.get('ouvrir'); })();
@@ -1506,6 +1512,7 @@ window.DOCU_AFFICHAGE = (function(){
       + si('doc.date', etat.doc.date, `<div>Date : <b>${dateFr(etat.doc.date)}</b></div>`);
     if (t === 'facture') meta += si('doc.echeance', etat.doc.echeance, `<div>Échéance : <b>${dateFr(etat.doc.echeance)}</b></div>`);
     if (t === 'devis') meta += si('doc.validite', etat.doc.validite, `<div>Valable jusqu'au : <b>${dateFr(etat.doc.validite)}</b></div>`);
+    if (t === 'commande' && aff('doc.livraison') && etat.doc.livraison) meta += `<div>Livraison prévue : <b>${dateFr(etat.doc.livraison)}</b></div>`;
     if (t === 'avoir') meta += si('doc.factureRef', etat.doc.factureRef, `<div>Facture d'origine : <b>${esc(etat.doc.factureRef)}</b></div>`);
     const plus = b => ((etat.extra || {})[b] || []).filter(x => String(x || '').trim()).map(x => `<div>${libreGras(x)}</div>`).join('');
     meta += plus('meta');
@@ -1577,7 +1584,7 @@ window.DOCU_AFFICHAGE = (function(){
         <div class="p-paiement">${paiement}</div>
         <table class="p-totaux">${totaux}</table>
       </div>
-      ${t === 'devis' ? `<div class="p-signature">${signatureHtml()}</div>` : ''}
+      ${t === 'devis' || t === 'commande' ? `<div class="p-signature">${signatureHtml()}</div>` : ''}
       ${mentions.length ? `<div class="p-mentions">${mentions.map(m => `<div>${m}</div>`).join('')}</div>` : ''}
       ${t === 'recu' ? '<div class="p-paye">PAYÉ</div>' : ''}
       ${pied ? `<div class="p-pied">${pied}</div>` : ''}
@@ -1639,14 +1646,14 @@ window.DOCU_AFFICHAGE = (function(){
     document.querySelectorAll('#modeles .modele').forEach(b => b.classList.toggle('on', b.dataset.mod === etat.modele));
     document.querySelectorAll('#couleurs .pastille').forEach(b => b.classList.toggle('on', b.dataset.c.toLowerCase() === etat.couleur.toLowerCase()));
     $('modeles').style.setProperty('--v', etat.couleur);
-    const lblNum = {devis:'Numéro de devis', facture:'Numéro de facture', recu:'Numéro de reçu', avoir:"Numéro d'avoir"}[etat.type];
+    const lblNum = {devis:'Numéro de devis', commande:'Numéro du bon de commande', facture:'Numéro de facture', recu:'Numéro de reçu', avoir:"Numéro d'avoir"}[etat.type];
     $('lbl-numero').textContent = lblNum;
     $('lbl-numero').parentElement.dataset.nom = lblNum;
     majRestaurer();
     majGalerie();
     $('info-metier').hidden = !(METIERS[etat.modele]?.btp && !etat.em.mentions);
     $('titre').textContent = TYPES[etat.type].h1;
-    document.title = {devis:'Créer un devis gratuit en PDF', facture:'Créer une facture gratuite en PDF', recu:'Créer un reçu gratuit en PDF', avoir:'Créer un avoir gratuit en PDF'}[etat.type] + ' – DocuPrêt';
+    document.title = {devis:'Créer un devis gratuit en PDF', commande:'Créer un bon de commande gratuit en PDF', facture:'Créer une facture gratuite en PDF', recu:'Créer un reçu gratuit en PDF', avoir:'Créer un avoir gratuit en PDF'}[etat.type] + ' – DocuPrêt';
   }
 
   function remplirChamps(){
@@ -1950,8 +1957,8 @@ window.DOCU_AFFICHAGE = (function(){
   let lot = null, payeLot = null;
   try{ const l = JSON.parse(localStorage.getItem(CLE_LOT)); if (!MODE_PDF && l && Array.isArray(l.docs) && l.docs.length > 1 && l.docs[l.i] && l.docs[l.i].doc && l.docs[l.i].doc.numero === etat.doc.numero) lot = l; }catch(e){}
   const lotActif = () => !!(lot && lot.docs.length > 1);
-  const motType = t => ({facture: 'Facture', devis: 'Devis', recu: 'Reçu', avoir: 'Avoir'})[t] || 'Document';
-  const motsType = t => ({facture: 'factures', devis: 'devis', recu: 'reçus', avoir: 'avoirs'})[t] || 'documents';
+  const motType = t => ({facture: 'Facture', devis: 'Devis', commande: 'Bon de commande', recu: 'Reçu', avoir: 'Avoir'})[t] || 'Document';
+  const motsType = t => ({facture: 'factures', devis: 'devis', commande: 'bons de commande', recu: 'reçus', avoir: 'avoirs'})[t] || 'documents';
   const ordinal = n => n === 1 ? '1re' : n + 'e';
   function sauverLot(){ try{ if (lotActif()) localStorage.setItem(CLE_LOT, JSON.stringify(lot)); else localStorage.removeItem(CLE_LOT); }catch(e){} }
   function capturer(){ const d = instantane(); d._total = calculer().totalTTC; return d; }
@@ -2135,13 +2142,13 @@ window.DOCU_AFFICHAGE = (function(){
   });
 
   // Envoi par e-mail : depuis Gmail en un clic (comptes), ou avec une autre application du téléphone
-  const MOTS = {devis: ['le devis', 'Devis'], facture: ['la facture', 'Facture'], recu: ['le reçu', 'Reçu'], avoir: ['l\'avoir', 'Avoir']};
+  const MOTS = {devis: ['le devis', 'Devis'], commande: ['le bon de commande', 'Bon de commande'], facture: ['la facture', 'Facture'], recu: ['le reçu', 'Reçu'], avoir: ['l\'avoir', 'Avoir']};
   // Message choisi dans Mon compte → Paramètres ; sinon « Cordialement, » et le nom de l'entreprise
   // Un vrai message (bonjour, numéro, montant…) : un e-mail presque vide avec une pièce jointe ressemble à un spam
   // Le message personnel (Paramètres) est écrit une fois pour tous les documents : s'il parle de « facture »,
   // « devis » ou « reçu », on met automatiquement le bon mot (avec le bon article) selon le document envoyé.
   function adapterMot(texte, type){
-    const M = {facture: {mot: 'facture', f: true}, devis: {mot: 'devis'}, recu: {mot: 'reçu'}, avoir: {mot: 'avoir', voy: true}}[type];
+    const M = {facture: {mot: 'facture', f: true}, devis: {mot: 'devis'}, commande: {mot: 'bon de commande'}, recu: {mot: 'reçu'}, avoir: {mot: 'avoir', voy: true}}[type];
     if (!M || !texte) return texte;
     const w = M.mot, art = {
       le: M.f ? 'la ' + w : M.voy ? "l'" + w : 'le ' + w,
@@ -2151,7 +2158,7 @@ window.DOCU_AFFICHAGE = (function(){
       au: M.f ? 'à la ' + w : M.voy ? "à l'" + w : 'au ' + w
     };
     const maj = (orig, rempl) => /^[A-ZÀ-Ý]/.test(orig) ? rempl.charAt(0).toUpperCase() + rempl.slice(1) : rempl;
-    const NOM = '(?:facture|devis|reçu)(?![\\wÀ-ÿ])';
+    const NOM = '(?:bon de commande|facture|devis|reçu)(?![\\wÀ-ÿ])';
     const R = (re, f) => { texte = texte.replace(new RegExp(re, 'gi'), m => maj(m, f(m))); };
     R(`\\b(?:de la|du) ${NOM}`, () => art.du);
     R(`(?:\\bà la|\\bau) ${NOM}`, () => art.au);
@@ -2161,7 +2168,7 @@ window.DOCU_AFFICHAGE = (function(){
     R(`\\b(?:votre|notre|vos) ${NOM}`, m => m.split(' ')[0].toLowerCase() + ' ' + w);
     R(`\\b(?:mon|ma) ${NOM}`, () => (M.f ? 'ma ' : 'mon ') + w);
     // mot seul : « reçu » est laissé tel quel (ce peut être le verbe : « j'ai bien reçu »)
-    R(`(?<![\\wÀ-ÿ'’])(?:facture|devis)(?![\\wÀ-ÿ])`, () => w);
+    R(`(?<![\\wÀ-ÿ'’])(?:bon de commande|facture|devis)(?![\\wÀ-ÿ])`, () => w);
     // accord de « ci-joint(e) » placé juste après le mot
     texte = texte.replace(new RegExp(`(${w}) ci-jointe?\\b`, 'gi'), (m, a) => a + (M.f ? ' ci-jointe' : ' ci-joint'));
     if (!M.f) texte = texte.replace(new RegExp(`ci-jointe(\\s+(?:le|l['’]|un|ce|cet|votre|notre|mon)\\s*${w})`, 'gi'), (m, a) => m.slice(0, 2) + '-joint' + a);
@@ -2177,6 +2184,7 @@ window.DOCU_AFFICHAGE = (function(){
     const corps = {
       facture: `Veuillez trouver ci-joint la facture n° ${n} d'un montant de ${total}${ech}.`,
       devis: `Veuillez trouver ci-joint le devis n° ${n} d'un montant de ${total}${val}.\nN'hésitez pas à me le retourner signé avec la mention « Bon pour accord » s'il vous convient.`,
+      commande: `Veuillez trouver ci-joint le bon de commande n° ${n} d'un montant de ${total}.\nMerci de me le retourner signé avec la mention « Bon pour commande » pour valider votre commande.`,
       recu: `Veuillez trouver ci-joint le reçu n° ${n} correspondant à votre paiement de ${total}. Merci !`,
       avoir: `Veuillez trouver ci-joint l'avoir n° ${n} d'un montant de ${total}.`
     }[etat.type] || `Veuillez trouver ci-joint le document n° ${n}.`;
@@ -2245,7 +2253,7 @@ window.DOCU_AFFICHAGE = (function(){
     // ----- Plusieurs factures ou devis dans le même e-mail (comptes) -----
     let autres = [], chaine = Promise.resolve();
     const motDoc = t => (MOTS[t] ? MOTS[t][1] : 'Document');
-    const leDoc = t => ({facture: 'la facture', devis: 'le devis', recu: 'le reçu', avoir: "l'avoir"})[t] || 'le document';
+    const leDoc = t => ({facture: 'la facture', devis: 'le devis', commande: 'le bon de commande', recu: 'le reçu', avoir: "l'avoir"})[t] || 'le document';
     const listeDocs = () => ((connecte && C.documents ? C.documents() : []) || []).filter(d => d.snap && d.id !== etat.ouvert && !(d.type === etat.type && d.numero === etat.doc.numero));
     $f('#env-docs').hidden = !listeDocs().length;
     const sujetDefaut = `${Mot} ${etat.doc.numero}${etat.em.nom ? ' – ' + etat.em.nom : ''}`;
@@ -2632,6 +2640,7 @@ window.DOCU_AFFICHAGE = (function(){
       + (aff('doc.date') ? `<div class="ed-l">Date : <b>${D('doc.date', etat.doc.date)}</b>${mBtn('doc.date')}</div>` : '');
     if (t === 'facture' && aff('doc.echeance')) meta += `<div class="ed-l">Échéance : <b>${D('doc.echeance', etat.doc.echeance)}</b>${mBtn('doc.echeance')}</div>`;
     if (t === 'devis' && aff('doc.validite')) meta += `<div class="ed-l">Valable jusqu'au : <b>${D('doc.validite', etat.doc.validite)}</b>${mBtn('doc.validite')}</div>`;
+    if (t === 'commande' && aff('doc.livraison')) meta += `<div class="ed-l">Livraison prévue : <b>${D('doc.livraison', etat.doc.livraison)}</b>${mBtn('doc.livraison')}</div>`;
     if (t === 'avoir') meta += `<div>Facture d'origine : <b>${E('doc.factureRef', etat.doc.factureRef, 'n° de facture', {sansCorrection: true})}</b></div>`;
 
     // Paiement
@@ -2651,7 +2660,7 @@ window.DOCU_AFFICHAGE = (function(){
     // Mentions automatiques : modifiables en cliquant dessus (↺ remet le texte d'origine)
     const txt = k2 => { const cle = 'T:' + k2, perso = String(etat.textes[k2] || '').trim();
       const v = enCours === cle ? avecDate(etat.textes[k2] || '') : texteDoc(k2);
-      return `<div class="ed-l">${E(cle, v, avecDate(TEXTES_DEF[k2]), {multi: k2 === 'signature'})}${perso ? `<button type="button" class="ed-moins ed-reinit" data-act="texte-defaut" data-k="${k2}" title="Remettre le texte d'origine" aria-label="Remettre le texte d'origine">↺</button>` : ''}</div>`; };
+      return `<div class="ed-l">${E(cle, v, avecDate(TEXTES_DEF[k2]), {multi: k2 === 'signature' || k2 === 'signatureBC'})}${perso ? `<button type="button" class="ed-moins ed-reinit" data-act="texte-defaut" data-k="${k2}" title="Remettre le texte d'origine" aria-label="Remettre le texte d'origine">↺</button>` : ''}</div>`; };
     const mentions = [];
     // TVA activée mais à 0 % sur tout le document : la mention « TVA non applicable » s'ajoute toute seule
     const tvaZero = !fr && (k.lignes.length ? k.lignes.every(l => l.t === 0) : tauxDef() === 0);
@@ -2714,7 +2723,7 @@ window.DOCU_AFFICHAGE = (function(){
         <div class="p-paiement">${paiement}</div>
         <table class="p-totaux" data-zone="totaux">${totaux}</table>
       </div>
-      ${t === 'devis' ? `<div class="p-signature ed-signature">${txt('signature')}</div>` : ''}
+      ${t === 'devis' || t === 'commande' ? `<div class="p-signature ed-signature">${txt(cleSig())}</div>` : ''}
       ${mentions.length ? `<div class="p-mentions" data-zone="mentions">${mentions.map(m => `<div>${m}</div>`).join('')}</div>` : ''}
       ${t === 'recu' ? '<div class="p-paye">PAYÉ</div>' : ''}
       ${pied ? `<div class="p-pied" data-zone="pied">${pied}</div>` : ''}
@@ -2845,10 +2854,10 @@ window.DOCU_AFFICHAGE = (function(){
   });
   // ＋ : remettre une ligne retirée, ou ajouter une ligne libre
   const NOMS_CHAMPS = {
-    meta: [['doc.numero', 'Numéro'], ['doc.date', 'Date'], ['doc.echeance', 'Échéance', 'facture'], ['doc.validite', "Valable jusqu'au", 'devis']],
+    meta: [['doc.numero', 'Numéro'], ['doc.date', 'Date'], ['doc.echeance', 'Échéance', 'facture'], ['doc.validite', "Valable jusqu'au", 'devis'], ['doc.livraison', 'Livraison prévue', 'commande']],
     em: [['em.nom', 'Nom ou entreprise'], ['em.adresse', 'Adresse'], ['em.cpville', 'Code postal, ville'], ['em.tel', 'Téléphone'], ['em.email', 'E-mail'], ['em.siret', 'SIRET']],
     cl: [['cl.nom', 'Nom du client'], ['cl.adresse', 'Adresse'], ['cl.cpville', 'Code postal, ville'], ['cl.tel', 'Téléphone'], ['cl.email', 'E-mail'], ['cl.siret', 'SIRET', '', true]],
-    paiement: [['paiement.conditions', 'Conditions de paiement', 'devis,facture'], ['paiement.moyen', 'Mode de paiement', 'devis,facture'], ['paiement.iban', 'IBAN', 'devis,facture'], ['paiement.notes', 'Mot pour le client']]
+    paiement: [['paiement.conditions', 'Conditions de paiement', 'devis,commande,facture'], ['paiement.moyen', 'Mode de paiement', 'devis,commande,facture'], ['paiement.iban', 'IBAN', 'devis,commande,facture'], ['paiement.notes', 'Mot pour le client']]
   };
   function fermerMenuPlus(){ const m = document.querySelector('.ed-menu'); if (m) m.remove(); }
   function ajouterLibre(bloc, debut){
@@ -3033,7 +3042,7 @@ window.DOCU_AFFICHAGE = (function(){
   }
   else if (MODE_PDF){
     const b = document.createElement('div'); b.className = 'bandeau-pdf';
-    const mots = {devis: 'Devis', facture: 'Facture', recu: 'Reçu', avoir: 'Avoir'};
+    const mots = {devis: 'Devis', commande: 'Bon de commande', facture: 'Facture', recu: 'Reçu', avoir: 'Avoir'};
     if (docPdf){
       const retour = docPdf.type === 'devis' ? 'devis' : 'factures';
       b.innerHTML = `<span>📄 <b>${esc(mots[docPdf.type] || 'Document')} ${esc(docPdf.numero)}</b> : le PDF se télécharge…</span><span class="bp-liens"><button type="button" id="bp-encore">Télécharger à nouveau</button><a href="facture.html?ouvrir=${encodeURIComponent(docPdf.id)}">Modifier</a><a href="compte.html#${retour}">← Mes ${retour}</a></span>`;
@@ -3045,7 +3054,7 @@ window.DOCU_AFFICHAGE = (function(){
       if (document.fonts && document.fonts.ready) document.fonts.ready.then(lancer); else lancer();
     }
   }
-  if (brouillonRepris) setTimeout(() => alerte(brouillonCompte ? 'Brouillon repris depuis Mon compte : finissez-le quand vous voulez.' : `Votre brouillon de ${({devis: 'devis', facture: 'facture', recu: 'reçu', avoir: 'avoir'})[etat.type]} est repris. « ＋ Nouveau document » pour repartir de zéro.`), 700);
+  if (brouillonRepris) setTimeout(() => alerte(brouillonCompte ? 'Brouillon repris depuis Mon compte : finissez-le quand vous voulez.' : `Votre brouillon de ${({devis: 'devis', commande: 'bon de commande', facture: 'facture', recu: 'reçu', avoir: 'avoir'})[etat.type]} est repris. « ＋ Nouveau document » pour repartir de zéro.`), 700);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(ajuster);
 })();
 </script>
@@ -3310,7 +3319,7 @@ window.DOCU_AFFICHAGE = (function(){
     if (Compte.connecte() || !Compte.verifie()) return;
     try{
       const d = JSON.parse(localStorage.getItem('docufacile_v1')) || {}, n = d.numerotation || {};
-      const perso = d.envoiMessage || n.annee === false || ['devis', 'facture', 'recu', 'avoir'].some(t => n[t]);
+      const perso = d.envoiMessage || n.annee === false || ['devis', 'commande', 'facture', 'recu', 'avoir'].some(t => n[t]);
       if (!perso) return;
       d.numerotation = {annee: true}; d.envoiMessage = '';
       localStorage.setItem('docufacile_v1', JSON.stringify(d));
@@ -3339,7 +3348,7 @@ window.DOCU_AFFICHAGE = (function(){
     if (e.detail && (e.detail.type === 'facture' || e.detail.type === 'devis')) setTimeout(() => { try{ window.dispatchEvent(new CustomEvent('docupret-partenaire', {detail: {cle: 'indy'}})); }catch(err){} }, 800);
   });
   window.addEventListener('docupret-telecharge', e => {
-    const d = e.detail, mot = {devis: 'Devis', facture: 'Facture', recu: 'Reçu', avoir: 'Avoir'}[d.type] || 'Document';
+    const d = e.detail, mot = {devis: 'Devis', commande: 'Bon de commande', facture: 'Facture', recu: 'Reçu', avoir: 'Avoir'}[d.type] || 'Document';
     if (!Compte.utilisateur()){
       if (d.type === 'devis') setTimeout(() => Compte.toast('Astuce : avec un compte gratuit, retrouvez vos devis et transformez-les en facture en un clic.'), 1500);
       return;
@@ -3369,6 +3378,6 @@ window.DOCU_AFFICHAGE = (function(){
 })();
 </script>
 <script src="stats.js?v=7" defer></script>
-<script src="compte-menu.js?v=19"></script>
+<script src="compte-menu.js?v=20"></script>
 </body>
 </html>

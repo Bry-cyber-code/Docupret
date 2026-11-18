@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """DocuPrêt — fabrique une vraie page par document, à partir des deux pages modèles.
 
-  facture.html  → facture.html, devis.html, recu.html, avoir.html
+  facture.html  → facture.html, devis.html, bon-de-commande.html, recu.html, avoir.html
   lettre-demission.html → lettre-demission.html, attestation-hebergement.html, …
   (lettre.html n'est plus qu'une redirection : ne pas la modifier)
 
@@ -27,6 +27,10 @@ FACTURES = {  # type: (fichier, titre, description, grand titre, titre du texte,
    "Faites un devis professionnel gratuit en ligne : prestations, TVA, date de validité, case « Bon pour accord ». PDF prêt à envoyer, transformable en facture en un clic avec un compte.",
    'Créer un devis', 'Un devis clair, prêt à faire signer',
    "Présentez votre prix avant la prestation : détail des travaux, quantités, prix unitaires, TVA et date de validité. La case « Bon pour accord » est ajoutée pour la signature du client. Avec un compte gratuit, le devis accepté se transforme en facture en un clic."),
+ 'commande': ('bon-de-commande.html', 'Créer un bon de commande gratuit en PDF – DocuPrêt',
+   "Faites un bon de commande gratuit en ligne : produits ou prestations, quantités, prix, TVA, date de livraison et case « Bon pour commande » à signer. PDF prêt à envoyer.",
+   'Créer un bon de commande', 'Un bon de commande clair, prêt à signer',
+   "Confirmez par écrit ce que votre client commande : détail des produits ou prestations, quantités, prix unitaires, TVA, total et date de livraison prévue. La case « Bon pour commande » est ajoutée pour la signature du client, et le PDF est prêt à télécharger ou à envoyer par e-mail."),
  'recu': ('recu.html', 'Créer un reçu de paiement gratuit en PDF – DocuPrêt',
    "Rédigez un reçu de paiement gratuit : montant reçu, date, moyen de paiement, détail des éléments payés. Tampon « Payé » inclus, PDF à imprimer ou à envoyer.",
    'Créer un reçu', 'Un reçu de paiement en quelques secondes',

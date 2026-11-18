@@ -171,7 +171,7 @@
     // Pastilles rouges (activées par défaut) : factures impayées et devis en attente
     const rouge = {impayees: n.impayees, devis: fin.filter(x => x.type === 'devis' && !x.facture && !x.accepte).length};
     const pastille = k => alertes() && rouge[k] ? `<span class="cm-nb rouge">${rouge[k]}</span>` : nombres() && n[k] ? `<span class="cm-nb">${n[k]}</span>` : '';
-    const L = [['factures', 'Factures', 'Payées, reçus et avoirs'], ['devis', 'Devis', 'En attente, acceptés, facturés'], ['impayees', 'Impayées', 'Factures à encaisser'], ['brouillons', 'Brouillons', 'Documents à finir']];
+    const L = [['factures', 'Factures', 'Reçus, avoirs, bons de commande'], ['devis', 'Devis', 'En attente, acceptés, facturés'], ['impayees', 'Impayées', 'Factures à encaisser'], ['brouillons', 'Brouillons', 'Documents à finir']];
     return `<div class="cm-raccourcis">${L.map(([k, t, st]) => `<a class="cm-lien cm-sous" href="compte.html#${k}"><span class="cm-ico">${ICO2[k]}</span><span class="cm-txt"><b>${t}</b><span>${st}</span></span>${pastille(k)}</a>`).join('')}</div>`;
   }
   // Tableau de bord : en préparation, visible seulement par le propriétaire du site tant que TB_PUBLIC = false
