@@ -24,9 +24,10 @@
   window.addEventListener('popstate', e => {
     if (navigation){
       e.stopImmediatePropagation();
-      const n = navigation; n.fermer.forEach(f => f());
+      // (navigation remise à zéro avant : un lien vers la même page avec un « # » relance aussitôt cet évènement)
+      const n = navigation; navigation = null; n.fermer.forEach(f => f());
       location.href = n.url;
-      setTimeout(() => { navigation = null; verifier(); }, 0);
+      setTimeout(verifier, 0);
       return;
     }
     if (aIgnorer){ aIgnorer--; e.stopImmediatePropagation(); return; }
@@ -99,6 +100,11 @@
   .cm-txt b{font-size:1rem;font-weight:700}
   .cm-txt span{font-size:.78rem;color:var(--gris,#667)}
   .cm-raccourcis{border-bottom:1px solid var(--bord,#e2e8f0)}
+  .cm-epingles{border-bottom:1px solid var(--bord,#e2e8f0);padding:2px 0 6px}
+  .cm-epingles small{display:block;font-size:.7rem;font-weight:700;color:var(--gris,#667);text-transform:uppercase;letter-spacing:.05em;padding:8px 16px 2px 68px}
+  .cm-epingles a{display:flex;align-items:center;gap:10px;padding:8px 16px 8px 24px;color:var(--texte,#123);font-size:.92rem;font-weight:650}
+  .cm-epingles a:hover{background:var(--fond,#f4f6fa);color:var(--bleu,#4A7BD0)}
+  .cm-epingles i{font-style:normal;width:30px;height:30px;border-radius:9px;background:var(--fond,#f4f6fa);display:grid;place-items:center;font-size:.95rem;flex-shrink:0;margin-left:10px}
   .cm-lien.cm-sous{border-bottom:1px solid var(--bord,#e2e8f0)}
   .cm-raccourcis .cm-lien.cm-sous:last-child{border-bottom:0}
   .cm-nb.rouge{background:#C23B36}
@@ -153,6 +159,9 @@
     menu.addEventListener('click', e => {
       if (e.target.closest('.cm-fermer')) return fermer();
       const a = e.target.closest('a');
+      if (a && /^tableau-de-bord\.html#/.test(a.getAttribute('href')) && /tableau-de-bord\.html$/.test(location.pathname)){
+        e.preventDefault(); fermer(); location.hash = a.getAttribute('href').split('#')[1]; return;
+      }
       if (a && /compte\.html#/.test(a.getAttribute('href')) && /compte\.html$/.test(location.pathname)){
         // déjà sur la page Mon compte : changer de rubrique sans recharger
         e.preventDefault(); fermer(); location.hash = a.getAttribute('href').split('#')[1];
@@ -177,6 +186,13 @@
   // Tableau de bord : en préparation, visible seulement par le propriétaire du site tant que TB_PUBLIC = false
   const TB_PUBLIC = false, ADMIN_UID = 'QOC6tTqjsKTdO9zR5NfQkhJqkup2';
   const tableauVisible = () => { if (TB_PUBLIC) return true; try{ const u = window.Compte && window.Compte.utilisateur(); if (u) return u.id === ADMIN_UID; const l = lire('docupret_compte', null); return !!l && l.uid === ADMIN_UID; }catch(e){ return false; } };
+  // Cases du tableau de bord épinglées (Personnaliser › 📌) : raccourcis juste sous « Tableau de bord »
+  function epingles(){
+    const r = ((lire('docupret_tableau', []) || []).find(x => x && x.id === 'reglages-tableau' && !x.supprime) || {}).raccourcis || [];
+    if (!r.length) return '';
+    const T = {services: 'Services', vente: 'Vente'}, deux = new Set(r.map(x => x.mode)).size > 1;
+    return `<div class="cm-epingles"><small>📌 Raccourcis</small>${r.map(x => `<a href="tableau-de-bord.html#${esc(x.mode)}-${esc(x.k)}"><i>${esc(x.ico || '•')}</i><span>${esc(x.titre)}${deux ? ` <span style="color:var(--gris,#667);font-weight:500;font-size:.78rem">· ${T[x.mode] || ''}</span>` : ''}</span></a>`).join('')}</div>`;
+  }
   function remplir(){
     const qui = lire('docupret_compte', null), email = (window.Compte && window.Compte.connecte && !window.Compte.connecte()) ? '' : (qui && qui.email);
     const nb = (lire('docupret_clients', []) || []).filter(c => c && !c.supprime).length;
@@ -185,7 +201,7 @@
         ? (logoAvatar() ? `<span class="cm-avatar logo"><img src="${logoAvatar()}" alt=""></span>` : `<span class="cm-avatar">${esc((nomAffiche() || email)[0].toUpperCase())}</span>`) + (nomAffiche() ? `<div><b>${esc(nomAffiche())}</b><small>${esc(email)}</small></div>` : `<div><small>Connecté avec</small><b>${esc(email)}</b></div>`)
         : `<span class="cm-avatar vide">${ICO.compte}</span><div><b>Vous n'êtes pas connecté</b><small>Gratuit, avec une simple adresse e-mail</small></div>`}</div>
       ${email ? '' : '<a class="cm-connexion" href="compte.html#compte">Se connecter ou créer un compte</a>'}
-      ${email && tableauVisible() ? `<a class="cm-lien cm-tb" href="tableau-de-bord.html"><span class="cm-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg></span><span class="cm-txt"><b>Tableau de bord</b><span>${TB_PUBLIC ? 'Chiffres, paiements, rendez-vous' : 'Caché aux visiteurs (vous seul)'}</span></span></a>` : ''}
+      ${email && tableauVisible() ? `<a class="cm-lien cm-tb" href="tableau-de-bord.html"><span class="cm-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg></span><span class="cm-txt"><b>Tableau de bord</b><span>${TB_PUBLIC ? 'Chiffres, paiements, rendez-vous' : 'Caché aux visiteurs (vous seul)'}</span></span></a>${epingles()}` : ''}
       <a class="cm-lien" href="compte.html#clients"><span class="cm-ico">${ICO.clients}</span><span class="cm-txt"><b>Mes clients${email ? '' : ' 🔒'}</b><span>${email ? 'Coordonnées enregistrées' : 'Avec un compte gratuit'}</span></span>${email && nb && nombres() ? `<span class="cm-nb">${nb}</span>` : ''}</a>
       ${email ? raccourcis() : ''}
       <a class="cm-lien" href="compte.html#parametres"><span class="cm-ico">${ICO.param}</span><span class="cm-txt"><b>Paramètres${email ? '' : ' 🔒'}</b><span>${email ? 'Mon entreprise, préférences' : 'Avec un compte gratuit'}</span></span></a>
