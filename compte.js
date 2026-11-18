@@ -565,6 +565,36 @@
   .cp-btn{display:block;margin:0 16px;background:var(--bleu,#4A7BD0);color:#fff;text-align:center;border-radius:12px;padding:13px;font-weight:700;font-size:.98rem;text-decoration:none}
   .cp-petit{padding:10px 16px 0;font-size:.8rem;color:var(--gris,#667);text-align:center}
   .cp-petit a{color:var(--bleu,#4A7BD0);font-weight:650}
+  .ph-fond{position:fixed;inset:0;z-index:62;background:rgba(20,28,45,.55);display:flex;align-items:flex-end;justify-content:center}
+  .ph{background:var(--blanc);width:100%;max-width:620px;max-height:calc(100dvh - 20px);border-radius:18px 18px 0 0;display:flex;flex-direction:column;overflow:hidden;padding-bottom:env(safe-area-inset-bottom,0px)}
+  .ph-tete{display:flex;justify-content:space-between;align-items:center;padding:14px 16px 8px;gap:10px}
+  .ph-tete b{font-size:1.06rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .ph-tete button{border:0;background:none;font-size:1.6rem;line-height:1;color:var(--gris);width:36px;height:36px;flex-shrink:0}
+  .ph-ajout{margin:0 16px 10px;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .ph-ajout label{display:flex;align-items:center;justify-content:center;gap:7px;border-radius:12px;padding:12px;font-weight:750;font-size:.92rem;cursor:pointer;background:var(--bleu);color:#fff;text-align:center}
+  .ph-ajout label.sec{background:var(--blanc);color:var(--bleu);border:1.5px solid var(--bleu)}
+  .ph-ajout input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+  .ph-etat{margin:0 16px 8px;font-size:.86rem;color:var(--gris)}
+  .ph-etat.err{color:#B3372F;font-weight:650}
+  .ph-grille{overflow-y:auto;padding:0 16px 16px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+  .ph-v{position:relative;aspect-ratio:1;border:0;padding:0;border-radius:10px;overflow:hidden;background:var(--fond);cursor:pointer}
+  .ph-v img{width:100%;height:100%;object-fit:cover;display:block}
+  .ph-v span{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(transparent,rgba(0,0,0,.6));color:#fff;font-size:.68rem;padding:10px 5px 4px;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .ph-vide{grid-column:1/-1;text-align:center;color:var(--gris);font-size:.9rem;line-height:1.5;padding:22px 10px;background:var(--fond);border-radius:12px}
+  .ph-zoom{position:fixed;inset:0;z-index:64;background:#0B1220;display:flex;flex-direction:column;color:#fff}
+  .ph-zoom-h{display:flex;align-items:center;justify-content:space-between;padding:calc(8px + env(safe-area-inset-top,0px)) 10px 8px 16px;gap:8px}
+  .ph-zoom-h span{font-size:.86rem;opacity:.8}
+  .ph-zoom-h button{border:0;background:rgba(255,255,255,.12);color:#fff;border-radius:50%;width:40px;height:40px;font-size:1.4rem;line-height:1}
+  .ph-zoom-img{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;position:relative;touch-action:pan-y}
+  .ph-zoom-img img{max-width:100%;max-height:100%;object-fit:contain}
+  .ph-nav{position:absolute;top:50%;transform:translateY(-50%);border:0;background:rgba(255,255,255,.14);color:#fff;width:42px;height:42px;border-radius:50%;font-size:1.3rem}
+  .ph-nav.g{left:8px}.ph-nav.d{right:8px}
+  .ph-zoom-b{padding:10px 14px calc(12px + env(safe-area-inset-bottom,0px));display:grid;gap:8px}
+  .ph-zoom-b input{font:inherit;font-size:16px;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:#fff;-webkit-text-fill-color:#fff;width:100%}
+  .ph-zoom-b input::placeholder{color:rgba(255,255,255,.55);-webkit-text-fill-color:rgba(255,255,255,.55)}
+  .ph-zoom-act{display:flex;gap:8px}
+  .ph-zoom-act button,.ph-zoom-act a{flex:1;border:0;border-radius:10px;padding:11px 8px;font:inherit;font-weight:700;font-size:.86rem;background:rgba(255,255,255,.12);color:#fff;text-align:center}
+  .ph-zoom-act .rouge{background:rgba(217,83,79,.25);color:#FFC9C6}
   .cp-toast{position:fixed;left:50%;top:74px;transform:translateX(-50%);background:var(--texte,#123);color:#fff;padding:10px 16px;border-radius:12px;font-size:.9rem;z-index:70;max-width:90vw;text-align:center}`;
   let cssMis = false;
   const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
@@ -594,6 +624,71 @@
     document.addEventListener('keydown', echap);
     document.body.appendChild(fond);
   }
+  // ---------- Galerie de photos (chantiers d'un client, produits du catalogue…) ----------
+  // o = {cle (identifiant des photos), titre, vide (texte quand il n'y a pas encore de photo)}
+  function galeriePhotos(o, quandChange){
+    styler(); const c = {id: o.cle, nom: o.titre};
+    const f = document.createElement('div'); f.className = 'ph-fond';
+    f.innerHTML = `<div class="ph" role="dialog" aria-modal="true" aria-label="Photos de ${esc(c.nom)}"><div class="ph-tete"><b>📷 Photos · ${esc(c.nom)}</b><button type="button" data-fermer aria-label="Fermer">×</button></div>
+      <div class="ph-ajout"><label><input type="file" accept="image/*" multiple data-fichiers>🖼️ Ajouter des photos</label><label class="sec"><input type="file" accept="image/*" capture="environment" data-fichiers>📸 Prendre une photo</label></div>
+      <p class="ph-etat" data-etat>Chargement des photos…</p><div class="ph-grille" data-grille></div></div>`;
+    const grille = f.querySelector('[data-grille]'), etat = f.querySelector('[data-etat]');
+    let liste = [];
+    const dire = (t, err) => { etat.textContent = t || ''; etat.hidden = !t; etat.classList.toggle('err', !!err); };
+    const rendre = () => {
+      grille.innerHTML = liste.length ? liste.map((p, i) => `<button type="button" class="ph-v" data-i="${i}"><img src="${p.mini || p.data}" alt="${esc(p.legende || 'Photo')}" loading="lazy"><span>${esc(p.legende || (p.date ? new Date(p.date + 'T12:00').toLocaleDateString('fr-FR') : ''))}</span></button>`).join('')
+        : `<p class="ph-vide">${o.vide || 'Aucune photo pour le moment.'}</p>`;
+      if (quandChange) quandChange(liste.length, liste);
+    };
+    photos(c.id).then(l => { liste = l; dire(liste.length ? `${liste.length} photo${liste.length > 1 ? 's' : ''}` : ''); rendre(); }).catch(err => { dire(err.message || 'Impossible de charger les photos.', true); });
+    f.addEventListener('change', async e => {
+      const inp = e.target.closest('[data-fichiers]'); if (!inp || !inp.files.length) return;
+      const fichiers = [...inp.files].filter(x => /^image\//.test(x.type) || /\.(jpe?g|png|heic|webp)$/i.test(x.name)); inp.value = '';
+      let ok = 0, ko = 0;
+      for (let i = 0; i < fichiers.length; i++){
+        dire(`Envoi de la photo ${i + 1} sur ${fichiers.length}…`);
+        try{ await ajouterPhoto(c.id, fichiers[i]); ok++; liste = await photos(c.id); rendre(); }catch(err){ ko++; console.warn(err); }
+      }
+      dire(ko ? `${ok} photo(s) ajoutée(s), ${ko} n'ont pas pu être envoyées (format non lu ou connexion coupée).` : `✓ ${ok} photo${ok > 1 ? 's' : ''} ajoutée${ok > 1 ? 's' : ''}`, !!ko);
+      try{ window.DocuStats && window.DocuStats.fonction && window.DocuStats.fonction('photo_client'); }catch(err){}
+    });
+    f.addEventListener('click', e => {
+      if (e.target === f || e.target.closest('[data-fermer]')) return f.remove();
+      const v = e.target.closest('[data-i]'); if (v) zoom(Number(v.dataset.i));
+    });
+    function zoom(i){
+      const z = document.createElement('div'); z.className = 'ph-zoom';
+      const montrer = () => {
+        const p = liste[i]; if (!p){ z.remove(); return; }
+        z.innerHTML = `<div class="ph-zoom-h"><span>${i + 1} / ${liste.length}${p.date ? ' · ' + new Date(p.date + 'T12:00').toLocaleDateString('fr-FR') : ''}</span><button type="button" data-zf aria-label="Fermer">×</button></div>
+          <div class="ph-zoom-img"><img src="${p.data}" alt="${esc(p.legende || 'Photo')}">${liste.length > 1 ? '<button type="button" class="ph-nav g" data-zp aria-label="Photo précédente">‹</button><button type="button" class="ph-nav d" data-zn aria-label="Photo suivante">›</button>' : ''}</div>
+          <div class="ph-zoom-b"><input data-leg maxlength="80" value="${esc(p.legende || '')}" placeholder="Ajouter une légende (ex. : haie avant la taille)">
+          <div class="ph-zoom-act"><a href="${p.data}" download="${esc((c.nom + ' ' + (p.date || '')).trim().replace(/[^\w\- àâäéèêëîïôöùûüç]/gi, '') || 'photo')}.jpg">⬇ Télécharger</a><button type="button" class="rouge" data-zs>🗑 Supprimer</button></div></div>`;
+      };
+      let tl;
+      z.addEventListener('input', e => { if (!e.target.closest('[data-leg]')) return; clearTimeout(tl); const v = e.target.value, p = liste[i]; tl = setTimeout(() => { majPhoto(c.id, p.id, {legende: v.trim()}).then(rendre).catch(() => {}); }, 700); });
+      z.addEventListener('click', async e => {
+        if (e.target.closest('[data-zf]')) return z.remove();
+        if (e.target.closest('[data-zp]')){ i = (i - 1 + liste.length) % liste.length; return montrer(); }
+        if (e.target.closest('[data-zn]')){ i = (i + 1) % liste.length; return montrer(); }
+        const s = e.target.closest('[data-zs]');
+        if (s){
+          if (!s.dataset.sur){ s.dataset.sur = '1'; s.textContent = 'Confirmer la suppression'; return; }
+          try{ await supprimerPhoto(c.id, liste[i].id); liste = await photos(c.id); rendre(); dire(liste.length ? `${liste.length} photo${liste.length > 1 ? 's' : ''}` : ''); if (!liste.length) return z.remove(); i = Math.min(i, liste.length - 1); montrer(); }
+          catch(err){ toast('Suppression impossible : vérifiez votre connexion.'); }
+        }
+      });
+      // Glisser à gauche / à droite pour passer d'une photo à l'autre
+      let x0 = null;
+      z.addEventListener('touchstart', e => { if (e.target.closest('.ph-zoom-img')) x0 = e.touches[0].clientX; }, {passive: true});
+      z.addEventListener('touchend', e => { if (x0 == null || liste.length < 2) return; const dx = e.changedTouches[0].clientX - x0; x0 = null; if (Math.abs(dx) > 50){ i = (i + (dx < 0 ? 1 : -1) + liste.length) % liste.length; montrer(); } });
+      montrer(); document.body.appendChild(z);
+    }
+    document.body.appendChild(f);
+  }
+  document.addEventListener('keydown', e => { if (e.key !== 'Escape') return; const z = document.querySelector('.ph-zoom'), g = document.querySelector('.ph-fond'); if (!z && !g) return; e.stopImmediatePropagation(); (z || g).remove(); }, true);
+  // Échap : ferme d'abord la photo agrandie, puis la galerie (sans fermer la fenêtre en dessous)
+  document.addEventListener('keydown', e => { if (e.key !== 'Escape') return; const z = document.querySelector('.ph-zoom'), g = document.querySelector('.ph-fond'); if (!z && !g) return; e.stopImmediatePropagation(); (z || g).remove(); }, true);
   function choisirClient(quandChoisi){
     if (!connecte()) return demanderCompte('Enregistrez vos clients une fois, puis choisissez-les en un geste dans tous vos devis et factures.');
     styler();
@@ -634,6 +729,6 @@
     elements, element, enregistrerElement, supprimerElement, synchroniserTableau,
     profil, definirProfil, profilPret: () => profilPret,
     photos, nbPhotosConnu, ajouterPhoto, majPhoto, supprimerPhoto, supprimerPhotosClient,
-    choisirClient, choisirProduit, produits: produitsCat, toast, esc, norm
+    choisirClient, choisirProduit, galeriePhotos, produits: produitsCat, toast, esc, norm
   };
 })();
