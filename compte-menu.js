@@ -152,6 +152,9 @@
     const L = [['factures', 'Factures', 'Payées, reçus et avoirs'], ['devis', 'Devis', 'En attente, acceptés, facturés'], ['impayees', 'Impayées', 'Factures à encaisser'], ['brouillons', 'Brouillons', 'Documents à finir']];
     return `<div class="cm-raccourcis">${L.map(([k, t, st]) => `<a class="cm-lien cm-sous" href="compte.html#${k}"><span class="cm-ico">${ICO2[k]}</span><span class="cm-txt"><b>${t}</b><span>${st}</span></span>${pastille(k)}</a>`).join('')}</div>`;
   }
+  // Tableau de bord : en préparation, visible seulement par le propriétaire du site tant que TB_PUBLIC = false
+  const TB_PUBLIC = false, ADMIN_UID = 'QOC6tTqjsKTdO9zR5NfQkhJqkup2';
+  const tableauVisible = () => { if (TB_PUBLIC) return true; try{ const u = window.Compte && window.Compte.utilisateur(); if (u) return u.id === ADMIN_UID; const l = lire('docupret_compte', null); return !!l && l.uid === ADMIN_UID; }catch(e){ return false; } };
   function remplir(){
     const qui = lire('docupret_compte', null), email = (window.Compte && window.Compte.connecte && !window.Compte.connecte()) ? '' : (qui && qui.email);
     const nb = (lire('docupret_clients', []) || []).filter(c => c && !c.supprime).length;
@@ -160,6 +163,7 @@
         ? (logoAvatar() ? `<span class="cm-avatar logo"><img src="${logoAvatar()}" alt=""></span>` : `<span class="cm-avatar">${esc(email[0].toUpperCase())}</span>`) + `<div><small>Connecté avec</small><b>${esc(email)}</b></div>`
         : `<span class="cm-avatar vide">${ICO.compte}</span><div><b>Vous n'êtes pas connecté</b><small>Gratuit, avec une simple adresse e-mail</small></div>`}</div>
       ${email ? '' : '<a class="cm-connexion" href="compte.html#compte">Se connecter ou créer un compte</a>'}
+      ${email && tableauVisible() ? `<a class="cm-lien cm-tb" href="tableau-de-bord.html"><span class="cm-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg></span><span class="cm-txt"><b>Tableau de bord</b><span>${TB_PUBLIC ? 'Chiffres, paiements, rendez-vous' : 'Caché aux visiteurs (vous seul)'}</span></span></a>` : ''}
       <a class="cm-lien" href="compte.html#clients"><span class="cm-ico">${ICO.clients}</span><span class="cm-txt"><b>Mes clients${email ? '' : ' 🔒'}</b><span>${email ? 'Coordonnées enregistrées' : 'Avec un compte gratuit'}</span></span>${email && nb && nombres() ? `<span class="cm-nb">${nb}</span>` : ''}</a>
       ${email ? raccourcis() : ''}
       <a class="cm-lien" href="compte.html#parametres"><span class="cm-ico">${ICO.param}</span><span class="cm-txt"><b>Paramètres${email ? '' : ' 🔒'}</b><span>${email ? 'Mon entreprise, préférences' : 'Avec un compte gratuit'}</span></span></a>

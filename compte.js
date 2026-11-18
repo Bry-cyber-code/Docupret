@@ -61,12 +61,12 @@
       auth.onAuthStateChanged(async u => {
         const avant = utilisateur && utilisateur.uid;
         utilisateur = u || null;
-        try{ if (utilisateur) localStorage.setItem('docupret_compte', JSON.stringify({email: utilisateur.email})); else localStorage.removeItem('docupret_compte'); }catch(e){}
+        try{ if (utilisateur) localStorage.setItem('docupret_compte', JSON.stringify({email: utilisateur.email, uid: utilisateur.uid})); else localStorage.removeItem('docupret_compte'); }catch(e){}
         // On sait qui est connecté : la page peut s'afficher tout de suite. La synchronisation se fait ensuite, en arrière-plan.
         prevenir();
         if (premier){ premier = false; resolu = true; ok(); }
         if (utilisateur && utilisateur.uid !== avant){
-          try{ await synchroniser(); await synchroniserParametres(); await synchroniserDocuments(); }catch(e){}
+          try{ await synchroniser(); await synchroniserParametres(); await synchroniserDocuments(); await synchroniserTableau(); }catch(e){}
           prevenir();
         }
       });
@@ -240,6 +240,50 @@
   }
   const supprimerDocument = id => majDocument(id, {supprime: true});
 
+  // ---------- Tableau de bord : échéanciers, rendez-vous, notes de chantier, réglages ----------
+  // Local : docupret_tableau ; compte : utilisateurs/{uid}/tableau/{id} → {genre, maj, supprime, …}
+  const CLE_TB = 'docupret_tableau';
+  const lireTB = () => { try{ const v = JSON.parse(localStorage.getItem(CLE_TB)); return Array.isArray(v) ? v : []; }catch(e){ return []; } };
+  const ecrireTB = l => { try{ localStorage.setItem(CLE_TB, JSON.stringify(l)); }catch(e){} };
+  const colTB = () => db.collection('utilisateurs').doc(utilisateur.uid).collection('tableau');
+  async function synchroniserTableau(){
+    if (!db || !utilisateur) return;
+    try{
+      const snap = await colTB().get();
+      const distants = new Map(); snap.forEach(d => distants.set(d.id, {...d.data(), id: d.id}));
+      const locaux = new Map(lireTB().map(c => [c.id, c]));
+      const fusion = new Map(), aEnvoyer = [];
+      for (const id of new Set([...distants.keys(), ...locaux.keys()])){
+        const d = distants.get(id), l = locaux.get(id);
+        if (d && (!l || date(d.maj) >= date(l.maj))) fusion.set(id, d); else { fusion.set(id, l); aEnvoyer.push(l); }
+      }
+      ecrireTB([...fusion.values()]);
+      if (aEnvoyer.length) await envoyerTB(aEnvoyer);
+      prevenir();
+    }catch(e){ console.warn('Synchronisation du tableau de bord impossible', e); }
+  }
+  async function envoyerTB(liste){
+    if (!db || !utilisateur || !liste.length) return;
+    try{ const lot = db.batch(); liste.forEach(c => { const {id, ...data} = c; lot.set(colTB().doc(id), propre(data)); }); await lot.commit(); }
+    catch(e){ console.warn('Envoi du tableau de bord impossible', e); }
+  }
+  const elements = genre => lireTB().filter(x => !x.supprime && (!genre || x.genre === genre));
+  const element = id => lireTB().find(x => x.id === id && !x.supprime) || null;
+  function enregistrerElement(o){
+    if (!connecte()) return null;
+    const liste = lireTB();
+    let x = o.id ? liste.find(e => e.id === o.id) : null;
+    if (!x){ x = {id: o.id || nouvelId(), cree: new Date().toISOString()}; liste.push(x); }
+    Object.assign(x, propre(o)); x.supprime = false; x.maj = new Date().toISOString();
+    ecrireTB(liste); envoyerTB([x]); prevenir();
+    return x;
+  }
+  function supprimerElement(id){
+    const liste = lireTB(), x = liste.find(e => e.id === id); if (!x) return;
+    x.supprime = true; x.maj = new Date().toISOString();
+    ecrireTB(liste); envoyerTB([x]); prevenir();
+  }
+
   // ---------- Clients ----------
   function clients(){
     return lireLocal().filter(c => !c.supprime).sort((a, b) => norm(a.nom).localeCompare(norm(b.nom), 'fr'));
@@ -303,12 +347,12 @@
   async function deconnecter(){
     if (utilisateur){
       if (navigator.onLine === false) throw new Error('Pas de connexion internet : reconnectez-vous à internet avant de vous déconnecter, pour ne rien perdre.');
-      try{ await synchroniser(); await synchroniserDocuments(); await synchroniserParametres(); }catch(e){}
+      try{ await synchroniser(); await synchroniserDocuments(); await synchroniserTableau(); await synchroniserParametres(); }catch(e){}
     }
     try{ if (window.Gmail) window.Gmail.deconnecter(); }catch(e){}
     if (auth) await auth.signOut();
     utilisateur = null;
-    try{ ['docufacile_v1', CLE_CLIENTS, CLE_DOCS, CLE_MAJ, 'docupret_affichage', 'docupret_avatar', 'docupret_envoi_gmail', 'docupret_brouillon_auto', 'docupret_menu_nombres', 'docupret_menu_alertes'].forEach(k => localStorage.removeItem(k)); }catch(e){}
+    try{ ['docufacile_v1', CLE_CLIENTS, CLE_DOCS, CLE_TB, CLE_MAJ, 'docupret_affichage', 'docupret_avatar', 'docupret_envoi_gmail', 'docupret_brouillon_auto', 'docupret_menu_nombres', 'docupret_menu_alertes'].forEach(k => localStorage.removeItem(k)); }catch(e){}
     prevenir();
   }
   async function motDePasseOublie(email){
@@ -328,6 +372,8 @@
       const snap = await collection().get();
       const lot = db.batch(); snap.forEach(d => lot.delete(d.ref)); await lot.commit();
       try{ const sd = await colDocs().get(); const l2 = db.batch(); sd.forEach(d => l2.delete(d.ref)); await l2.commit(); }catch(e){}
+      try{ const st = await colTB().get(); const l3 = db.batch(); st.forEach(d => l3.delete(d.ref)); await l3.commit(); }catch(e){}
+      try{ localStorage.removeItem(CLE_TB); }catch(e){}
       try{ await db.collection('utilisateurs').doc(u.uid).delete(); }catch(e){}
       try{ await db.collection('classement').doc(u.uid).delete(); }catch(e){}
       try{ localStorage.removeItem(CLE_DOCS); }catch(e){}
@@ -432,6 +478,7 @@
     surChangement: f => ecouteurs.add(f),
     parametresModifies, surParametres: f => ecouteursParam.add(f),
     documents, brouillons, document: documentId, enregistrerDocument, majDocument, supprimerDocument,
+    elements, element, enregistrerElement, supprimerElement, synchroniserTableau,
     choisirClient, toast, esc, norm
   };
 })();
