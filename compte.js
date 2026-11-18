@@ -230,13 +230,16 @@
     if (!d && !brouillon) d = liste.find(x => !x.supprime && !x.brouillon && x.type === o.type && x.numero === o.numero && x.clientId === o.clientId);
     if (!d){ d = {id: nouvelId()}; liste.push(d); }
     Object.assign(d, propre({type: o.type, numero: o.numero, date: o.date, clientId: o.clientId, clientNom: o.clientNom, total: o.total, snap: o.snap, envoye: o.envoye || d.envoye || null, brouillon}));
+    if (o.sansStock) d.sansStock = true;
     d.supprime = false; d.maj = new Date().toISOString();
+    majStockDoc(d);
     ecrireDocs(liste); envoyerDocs([d]); prevenir();
     return d;
   }
   function majDocument(id, champs){
     const liste = lireDocs(), d = liste.find(x => x.id === id); if (!d) return;
     Object.assign(d, champs); d.maj = new Date().toISOString();
+    if ('supprime' in champs) majStockDoc(d);
     ecrireDocs(liste); envoyerDocs([d]); prevenir();
   }
   const supprimerDocument = id => majDocument(id, {supprime: true});
@@ -372,6 +375,59 @@
   }
   async function supprimerPhotosClient(clientId){
     try{ const l = await photos(clientId, true); for (const p of l) await colPhotos().doc(p.id).delete(); photosCache.delete(clientId); }catch(e){}
+  }
+
+  // ---------- Stock du catalogue (tableau de bord « Vente de produits ») ----------
+  // Une facture enregistrée retire du stock les produits du catalogue qu'elle contient (reconnus par le choix dans le
+  // catalogue ou par le même nom). On garde ce qui a été retiré (stockMap) : modifier la facture n'ajuste que la différence,
+  // la supprimer remet le stock.
+  const normP = x => String(x || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/\s+/g, ' ').trim();
+  const nb = x => { const v = Number(String(x ?? '').replace(/\s/g, '').replace(',', '.')); return isFinite(v) ? v : 0; };
+  const produitsCat = () => lireTB().filter(x => x.genre === 'produit' && !x.supprime);
+  function produitDeLigne(l, P){
+    if (l.produitId){ const p = P.find(x => x.id === l.produitId); if (p) return p; }
+    const des = normP(String(l.des || '').split('\n')[0]), ref = normP(l.ref); if (!des && !ref) return null;
+    return P.find(p => ref && normP(p.ref) === ref) || P.find(p => normP(p.nom) === des) || P.filter(p => normP(p.nom).length >= 3 && des.includes(normP(p.nom))).sort((a, b) => normP(b.nom).length - normP(a.nom).length)[0] || null;
+  }
+  function majStockDoc(d){
+    const P = produitsCat(); if (!P.length && !d.stockMap) return;
+    const cible = {};
+    if (d.type === 'facture' && !d.brouillon && !d.supprime && !d.sansStock)
+      ((d.snap && d.snap.lignes) || []).forEach(l => { const p = produitDeLigne(l, P); if (p && p.stock !== '' && p.stock != null) cible[p.id] = (cible[p.id] || 0) + (nb(l.qte) || 1); });
+    const avant = d.stockMap || {}, a = [];
+    new Set([...Object.keys(cible), ...Object.keys(avant)]).forEach(id => {
+      const diff = (cible[id] || 0) - (avant[id] || 0); if (!diff) return;
+      const p = P.find(x => x.id === id); if (!p || p.stock === '' || p.stock == null) return;
+      p.stock = nb(p.stock) - diff; p.maj = new Date().toISOString(); a.push(p);
+    });
+    d.stockMap = cible;
+    if (a.length){ const l = lireTB(); a.forEach(p => { const i = l.findIndex(x => x.id === p.id); if (i >= 0) l[i] = p; }); ecrireTB(l); envoyerTB(a); }
+  }
+  // Fenêtre de choix d'un produit du catalogue (factures, devis, bons de commande…)
+  function choisirProduit(quandChoisi){
+    styler();
+    const fond = document.createElement('div'); fond.className = 'cp-fond';
+    fond.innerHTML = `<div class="cp-boite" role="dialog" aria-modal="true" aria-label="Mon catalogue"><div class="cp-tete"><b>📦 Mon catalogue</b><button type="button" data-fermer aria-label="Fermer">×</button></div>
+      <input class="cp-cherche" type="search" placeholder="Rechercher un produit" aria-label="Rechercher un produit"><div class="cp-liste"></div>
+      <div class="cp-pied">Touchez un produit pour l'ajouter au document</div></div>`;
+    const liste = fond.querySelector('.cp-liste'), cherche = fond.querySelector('.cp-cherche');
+    const eu = v => (Number(v) || 0).toLocaleString('fr-FR', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' €';
+    const rendre = () => {
+      const q = norm(cherche.value), l = produitsCat().sort((a, b) => String(a.nom).localeCompare(String(b.nom), 'fr')).filter(p => !q || norm([p.nom, p.ref, p.categorie].join(' ')).includes(q));
+      liste.innerHTML = l.length ? l.map(p => `<button type="button" class="cp-item" data-pid="${esc(p.id)}"><b>${esc(p.nom)} · ${eu(p.prix)}</b><span>${esc([p.ref, p.categorie].filter(Boolean).join(' · '))}${p.stock !== '' && p.stock != null ? `${p.ref || p.categorie ? ' · ' : ''}Stock : ${esc(String(p.stock))}` : ''}</span></button>`).join('')
+        : '<p class="cp-vide">Aucun produit ne correspond.</p>';
+    };
+    const fermer = () => { fond.remove(); document.removeEventListener('keydown', echap); };
+    const echap = e => { if (e.key === 'Escape') fermer(); };
+    fond.addEventListener('click', e => {
+      if (e.target === fond || e.target.closest('[data-fermer]')) return fermer();
+      const b = e.target.closest('[data-pid]'); if (!b) return;
+      const p = produitsCat().find(x => x.id === b.dataset.pid); fermer(); if (p) quandChoisi(p);
+    });
+    cherche.addEventListener('input', rendre);
+    document.addEventListener('keydown', echap);
+    rendre(); document.body.appendChild(fond);
+    if (produitsCat().length > 6) cherche.focus();
   }
 
   // ---------- Clients ----------
@@ -577,6 +633,6 @@
     elements, element, enregistrerElement, supprimerElement, synchroniserTableau,
     profil, definirProfil, profilPret: () => profilPret,
     photos, nbPhotosConnu, ajouterPhoto, majPhoto, supprimerPhoto, supprimerPhotosClient,
-    choisirClient, toast, esc, norm
+    choisirClient, choisirProduit, produits: produitsCat, toast, esc, norm
   };
 })();

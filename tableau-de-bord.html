@@ -602,7 +602,7 @@
   });
 })();
 </script>
-<script src="compte.js?v=22"></script>
+<script src="compte.js?v=23"></script>
 <script src="compte-menu.js?v=20"></script>
 <script>
 (function(){
@@ -1210,9 +1210,9 @@
       l.push({src: 'doc', id: d.id, type: d.type, numero: d.numero, date: d.date, client: nomClient(d), cle: d.clientId || 'n:' + nrm(nomClient(d)), total: signe * montant(d), lignes, paye: d.type === 'avoir' || !!d.paye, livre: true});
     });
     ventesDirectes().forEach(v => {
-      if (v.statut === 'annulee' || !entre(v.date, a, b)) return;
+      if (v.statut === 'annulee' || v.factureId && C.document(v.factureId) || !entre(v.date, a, b)) return;   // facturée : comptée avec la facture
       const lignes = (v.lignes || []).map(x => { const p = trouverProduit(x), qte = nombre(x.qte), cout = x.cout !== '' && x.cout != null ? nombre(x.cout) : p && p.cout !== '' && p.cout != null ? nombre(p.cout) : null; return {nom: x.nom || (p && p.nom) || 'Article', qte, montant: qte * nombre(x.pu), produit: p, cout: cout == null ? null : qte * cout}; });
-      l.push({src: 'vente', id: v.id, date: v.date, client: v.client || 'Client de passage', cle: v.client ? 'n:' + nrm(v.client) : 'v:' + v.id, total: lignes.reduce((s, x) => s + x.montant, 0), lignes, paye: !!v.paye, livre: v.statut === 'livree', statut: v.statut});
+      l.push({src: 'vente', id: v.id, date: v.date, client: v.client || 'Client de passage', cle: v.client ? 'n:' + nrm(v.client) : 'v:' + v.id, total: lignes.reduce((s, x) => s + x.montant, 0), lignes, paye: !!v.paye, livre: v.statut === 'livree', statut: v.statut, recu: v.recu || '', facture: v.facture || ''});
     });
     return l.sort((x, y) => String(y.date).localeCompare(String(x.date)));
   }
@@ -1293,7 +1293,7 @@
         <p class="ca-info">${sel ? `<b>${sel.d.toLocaleDateString('fr-FR', {month: 'long', year: 'numeric'})}</b> : ${eur(sel.ca)} de ventes · ${sel.nb} vente${sel.nb > 1 ? 's' : ''} · ${nf0.format(sel.art)} article${sel.art > 1 ? 's' : ''} · marge ${eur(sel.marge)}` : '<span style="color:var(--gris)">Touchez un mois pour voir le détail.</span>'}</p>`;
     },
     vsuivi(){
-      const tous = ventes().slice(0, 400).concat(docs().filter(d => d.type === 'commande').map(d => ({src: 'bc', id: d.id, numero: d.numero, date: d.date, client: nomClient(d), total: montant(d), livre: !!d.livre || !!d.facture, facture: d.facture, paye: false})))
+      const tous = ventes().slice(0, 400).filter(v => v.src !== 'vente' || !v.facture).concat(docs().filter(d => d.type === 'commande').map(d => ({src: 'bc', id: d.id, numero: d.numero, date: d.date, client: nomClient(d), total: montant(d), livre: !!d.livre || !!d.facture, facture: d.facture, paye: false})))
         .filter(v => v.type !== 'avoir').sort((x, y) => String(y.date).localeCompare(String(x.date)));
       const F = {tout: ['Toutes', () => true], livrer: ['À livrer', v => (v.src === 'bc' || v.src === 'vente') && !v.livre], encaisser: ['À encaisser', v => v.src !== 'bc' && !v.paye], payees: ['Payées', v => v.src !== 'bc' && v.paye]};
       let s = `<div class="filtres">${Object.entries(F).map(([k, [t, f]]) => `<button type="button" data-vsuivi="${k}" class="${vsuiviF === k ? 'on' : ''}">${t} · ${tous.filter(f).length}</button>`).join('')}</div>`;
@@ -1305,12 +1305,15 @@
         const art = v.lignes ? v.lignes.map(x => `${nf0.format(x.qte)} × ${esc(x.nom)}`).slice(0, 3).join(', ') + (v.lignes.length > 3 ? '…' : '') : '';
         const puces = (v.src === 'bc' ? (v.facture ? '<span class="puce vert">Facturé</span>' : v.livre ? '<span class="puce vert">Livré</span>' : '<span class="puce orange">À livrer</span>') : '')
           + (v.src === 'vente' ? (v.livre ? '<span class="puce vert">Livrée</span>' : v.statut === 'commande' ? '<span class="puce orange">Commande à livrer</span>' : '') : '')
+          + (v.src === 'vente' && v.recu ? `<span class="puce bleu">Reçu ${esc(v.recu)}</span>` : '')
           + (v.src !== 'bc' ? (v.paye ? '<span class="puce vert">Payée</span>' : '<span class="puce rouge">À encaisser</span>') : '');
         const boutons = (v.src === 'bc' && !v.livre ? `<button type="button" class="mini-btn plein" data-livre-bc="${attr(v.id)}">✓ Livré</button>` : '')
           + (v.src === 'vente' && v.statut === 'commande' ? `<button type="button" class="mini-btn plein" data-livre-v="${attr(v.id)}">✓ Livrée</button>` : '')
           + (v.src === 'vente' && !v.paye ? `<button type="button" class="mini-btn plein" data-paye-v="${attr(v.id)}">✓ Payée</button>` : '')
           + (v.src === 'doc' && !v.paye ? `<button type="button" class="mini-btn plein" data-payee="${attr(v.id)}">✓ Payée</button>` : '')
-          + (v.src === 'vente' ? `<button type="button" class="mini-btn" data-edit-vente="${attr(v.id)}">Modifier</button>` : `<a class="mini-btn" href="compte.html#${v.src === 'bc' ? 'factures' : 'factures'}">Voir</a>`);
+          + (v.src === 'vente' ? `<a class="mini-btn" href="facture.html?vente=${encodeURIComponent(v.id)}">🧾 Facture</a><a class="mini-btn" href="facture.html?vente=${encodeURIComponent(v.id)}&type=recu">Reçu</a><button type="button" class="mini-btn" data-edit-vente="${attr(v.id)}">Modifier</button>` : '')
+          + (v.src === 'bc' && !v.facture ? `<a class="mini-btn" href="facture.html?depuis=${encodeURIComponent(v.id)}">🧾 Facturer</a>` : '')
+          + (v.src !== 'vente' ? `<a class="mini-btn" href="compte.html#factures">Voir</a>` : '');
         return `<div class="ligne ${v.src === 'bc' && !v.livre ? 'l-orange' : v.src !== 'bc' && !v.paye ? 'l-rouge' : 'l-vert'} apparait"><div class="ligne-h"><b>${esc(v.client)}</b><span class="mt">${eur(v.total)}</span></div>
           <span class="ligne-s">${quoi} · ${dFr(v.date)}${art ? ' · ' + art : ''}</span><div class="ligne-b">${puces}</div><div class="ligne-b">${boutons}</div></div>`;
       }).join('')}</div>`;
