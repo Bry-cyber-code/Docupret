@@ -614,6 +614,7 @@
     $('tb-attente').hidden = true; $('tb-contenu').hidden = false;
     reglages = Object.assign({ordre: [], masques: [], objectif: 0, periode: 'mois'}, C.element(ID_REG) || {});
     rendre(true);
+    window.addEventListener('docupret-profil', () => rendreHero(bornes(reglages.periode)));
     C.surChangement(() => { if (!glisse && !$('tb-contenu').hidden){ reglages = Object.assign({}, reglages, C.element(ID_REG) || {}); rendre(false); } });
   }
 
@@ -826,7 +827,7 @@
 
   function rendreHero(per){
     const h = new Date().getHours(), em = emetteur(), u = C.utilisateur();
-    const nom = String(em.nom || '').trim() || (u && u.email ? u.email.split('@')[0] : '');
+    const nom = String((C.profil && C.profil().pseudo) || '').trim() || String(em.nom || '').trim() || (u && u.email ? u.email.split('@')[0] : '');   // le nom choisi (Mon compte › Compte) passe avant le nom de l'entreprise
     $('tb-jour').textContent = new Date().toLocaleDateString('fr-FR', {weekday: 'long', day: 'numeric', month: 'long'});
     $('tb-bonjour').textContent = `${h >= 18 || h < 5 ? 'Bonsoir' : 'Bonjour'}${nom ? ' ' + nom : ''} 👋`;
     const enc = encaisse(per.a, per.b), av = per.pa ? encaisse(per.pa, per.pb) : null;
