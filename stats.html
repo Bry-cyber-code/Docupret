@@ -432,8 +432,8 @@
   });
 })();
 </script>
-<script src="compte.js?v=26"></script>
-<script src="compte-menu.js?v=23"></script>
+<script src="compte.js?v=27"></script>
+<script src="compte-menu.js?v=25"></script>
 <script>
 (function(){
   'use strict';
@@ -485,7 +485,7 @@
     clearTimeout(lent);
     const u = C.utilisateur();
     if (!u && !window.firebase) return etat('<p>Impossible de joindre le serveur des statistiques. Vérifiez votre connexion internet.</p>' + reessayer);
-    if (!u) return etat('<p><b>Connectez-vous</b> avec votre compte DocuPrêt pour voir les statistiques.</p><a class="btn" href="compte.html#compte">Me connecter</a>');
+    if (!u) return etat('<p><b>Connectez-vous</b> avec votre compte DocuPrêt pour voir les statistiques.</p><a class="btn" href="compte.html#connexion">Me connecter</a>');
     if (u.id !== ADMIN) return etat('<p>Cette page est réservée au propriétaire du site.</p>');
     try{ localStorage.setItem('docupret_admin', $('moi').checked ? '1' : '0'); }catch(e){}
     db = firebase.firestore();

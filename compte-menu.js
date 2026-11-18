@@ -73,6 +73,7 @@
   .pz-ico{width:48px;height:48px;border-radius:50%;background:var(--bleu-clair,#EAF1FD);display:grid;place-items:center;font-size:1.5rem;justify-self:center}
   .pz h2{font-size:1.12rem;text-align:center;margin:0}
   .pz p{font-size:.9rem;color:#3B4558;text-align:center;line-height:1.5;margin:0}
+  .cm-connexion2{background:none!important;color:var(--bleu,#4A7BD0)!important;border:1.5px solid var(--bleu,#4A7BD0);margin-top:8px!important;padding:10px!important}
   .pz input{font:inherit;font-size:16px;padding:12px;border:1.5px solid var(--bord,#e2e8f0);border-radius:12px;width:100%;background:#fff;color:var(--texte,#123);outline:none}
   .pz input:focus{border-color:var(--bleu,#4A7BD0)}
   .pz small{font-size:.78rem;color:var(--gris,#667);text-align:center}
@@ -92,7 +93,7 @@
   .cm-fermer{width:36px;height:36px;border:0;background:none;border-radius:50%;font-size:1.6rem;line-height:1;color:var(--gris,#667);cursor:pointer}
   .cm-fermer:hover{background:var(--fond,#f4f6fa)}
   .cm-qui{display:flex;align-items:center;gap:12px;padding:16px;border-bottom:1px solid var(--bord,#e2e8f0)}
-  .cm-avatar{width:44px;height:44px;border-radius:50%;background:var(--bleu,#4A7BD0);color:#fff;display:grid;place-items:center;font-weight:800;font-size:1.15rem;flex-shrink:0}
+  .cm-avatar{align-self:center;aspect-ratio:1;width:44px;height:44px;border-radius:50%;background:var(--bleu,#4A7BD0);color:#fff;display:grid;place-items:center;font-weight:800;font-size:1.15rem;flex-shrink:0}
   .cm-avatar.vide{background:var(--bleu-clair,#EAF1FD);color:var(--bleu,#4A7BD0)}
   .cm-avatar svg{width:26px;height:26px}
   .cm-qui small{display:block;font-size:.76rem;color:var(--gris,#667)}
@@ -208,7 +209,7 @@
       <div class="cm-qui">${email
         ? (logoAvatar() ? `<span class="cm-avatar logo"><img src="${logoAvatar()}" alt=""></span>` : `<span class="cm-avatar">${esc((nomAffiche() || email)[0].toUpperCase())}</span>`) + (nomAffiche() ? `<div><b>${esc(nomAffiche())}</b><small>${esc(email)}</small></div>` : `<div><small>Connecté avec</small><b>${esc(email)}</b></div>`)
         : `<span class="cm-avatar vide">${ICO.compte}</span><div><b>Vous n'êtes pas connecté</b><small>Gratuit, avec une simple adresse e-mail</small></div>`}</div>
-      ${email ? '' : '<a class="cm-connexion" href="compte.html#compte">Se connecter ou créer un compte</a>'}
+      ${email ? '' : '<a class="cm-connexion" href="compte.html#creer">Créer mon compte gratuit</a><a class="cm-connexion cm-connexion2" href="compte.html#connexion">J\'ai déjà un compte</a>'}
       ${email && tableauVisible() ? `<a class="cm-lien cm-tb" href="tableau-de-bord.html"><span class="cm-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg></span><span class="cm-txt"><b>Tableau de bord</b><span>${TB_PUBLIC ? (activite() === 'vente' ? 'Ventes, catalogue, stock' : 'Chiffres, paiements, rendez-vous') : 'Caché aux visiteurs (vous seul)'}</span></span></a>${epingles()}` : ''}
       <a class="cm-lien" href="compte.html#clients"><span class="cm-ico">${ICO.clients}</span><span class="cm-txt"><b>Mes clients${email ? '' : ' 🔒'}</b><span>${email ? 'Coordonnées enregistrées' : 'Avec un compte gratuit'}</span></span>${email && nb && nombres() ? `<span class="cm-nb">${nb}</span>` : ''}</a>
       ${email ? raccourcis() : ''}
@@ -249,7 +250,7 @@
       const f = document.createElement('div'); f.className = 'pz-fond';
       f.innerHTML = `<form class="pz" role="dialog" aria-modal="true" aria-labelledby="pz-titre"><span class="pz-ico">👋</span><h2 id="pz-titre">Comment souhaitez-vous apparaître ?</h2>
         <p>Choisissez le nom affiché en haut du site, à la place de « Mon compte » : votre nom et prénom, un pseudo ou le nom de votre entreprise.</p>
-        <input name="pseudo" maxlength="40" autocomplete="organization" placeholder="ex. : Prestat services élagage" aria-label="Nom, pseudo ou entreprise">
+        <input name="pseudo" maxlength="40" autocomplete="organization" placeholder="ex. : Nom, pseudo ou entreprise" aria-label="Nom, pseudo ou entreprise">
         <small>Facultatif. Ce nom n'apparaît jamais sur vos factures, devis ou documents. Vous pourrez le changer dans Mon compte.</small>
         <button type="submit" class="pz-ok">Enregistrer</button>
         <div class="pz-bas"><button type="button" data-plus-tard>Plus tard</button><button type="button" data-jamais>Ne plus me demander</button></div></form>`;

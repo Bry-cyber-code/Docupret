@@ -631,8 +631,8 @@
     fond.innerHTML = `<div class="cp-boite cp-verrou" role="dialog" aria-modal="true" aria-label="Réservé aux comptes"><div class="cp-tete"><b>🔒 Réservé aux comptes gratuits</b><button type="button" data-fermer aria-label="Fermer">×</button></div>
       <p class="cp-txt">${esc(texte || 'Cette fonction est réservée aux comptes gratuits.')}</p>
       <ul class="cp-av">${AVANTAGES.map(a => `<li>${esc(a)}</li>`).join('')}</ul>
-      <a class="cp-btn" href="compte.html#compte">Créer mon compte gratuit</a>
-      <p class="cp-petit">Une simple adresse e-mail suffit. Déjà un compte ? <a href="compte.html#compte">Me connecter</a></p></div>`;
+      <a class="cp-btn" href="compte.html#creer">Créer mon compte gratuit</a>
+      <p class="cp-petit">Une simple adresse e-mail suffit. Déjà un compte ? <a href="compte.html#connexion">Me connecter</a></p></div>`;
     const fermer = () => { fond.remove(); document.removeEventListener('keydown', echap); };
     const echap = e => { if (e.key === 'Escape') fermer(); };
     fond.addEventListener('click', e => { if (e.target === fond || e.target.closest('[data-fermer]')) fermer(); });

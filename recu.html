@@ -2363,7 +2363,7 @@ window.DOCU_AFFICHAGE = (function(){
     let reautoriser = false;
     function rendreGmail(){
       if (!gmailPossible){ zone.innerHTML = ''; return; }
-      if (!connecte){ zone.innerHTML = `<p class="env-verrou">🔒 <b>Envoi en un clic depuis votre boîte Gmail</b> : réservé aux comptes gratuits. <a href="compte.html#compte">Créer mon compte</a></p>`; return; }
+      if (!connecte){ zone.innerHTML = `<p class="env-verrou">🔒 <b>Envoi en un clic depuis votre boîte Gmail</b> : réservé aux comptes gratuits. <a href="compte.html#creer">Créer mon compte</a></p>`; return; }
       const a = G.adresse();
       zone.innerHTML = `<button type="button" class="env-gmail" id="env-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4z"/></svg>Envoyer depuis Gmail</button>
         <p class="env-de">${a ? `Depuis <b>${esc(a)}</b> · <button type="button" class="env-lien" id="env-changer">changer</button>` : 'La première fois, Google vous demandera d\'autoriser DocuPrêt à envoyer des e-mails en votre nom. DocuPrêt ne peut pas lire vos e-mails.'}</p>
@@ -3316,7 +3316,7 @@ window.DOCU_AFFICHAGE = (function(){
   window.addEventListener('load', () => setTimeout(liste, 300));
 })();
 </script>
-<script src="compte.js?v=26"></script>
+<script src="compte.js?v=27"></script>
 <script src="gmail.js?v=7"></script>
 <script>
 // ===== Clients enregistrés =====
@@ -3432,6 +3432,6 @@ window.DOCU_AFFICHAGE = (function(){
 })();
 </script>
 <script src="stats.js?v=7" defer></script>
-<script src="compte-menu.js?v=23"></script>
+<script src="compte-menu.js?v=25"></script>
 </body>
 </html>
