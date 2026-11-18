@@ -477,11 +477,12 @@
     await pret;
     if (!auth) throw new Error('Connexion impossible. Vérifiez votre connexion internet.');
   }
-  async function inscrire(email, mdp, pseudo){
+  async function inscrire(email, mdp, pseudo, activite){
     await attendre();
     // Nom choisi à l'inscription (facultatif) : gardé avant la création, envoyé au compte dès la connexion.
     // Laissé vide : on ne le redemandera pas (la personne a déjà vu la case).
-    try{ localStorage.setItem(CLE_PROFIL, JSON.stringify({pseudo: String(pseudo || '').trim().slice(0, 40), refus: !String(pseudo || '').trim(), maj: new Date().toISOString()})); }catch(e){}
+    // Activité choisie à l'inscription (services, vente ou les deux) : décide du tableau de bord affiché
+    try{ localStorage.setItem(CLE_PROFIL, JSON.stringify({pseudo: String(pseudo || '').trim().slice(0, 40), refus: !String(pseudo || '').trim(), activite: ['services', 'vente', 'les2'].includes(activite) ? activite : 'les2', annonceTb: true, maj: new Date().toISOString()})); }catch(e){}
     try{ await auth.createUserWithEmailAndPassword(email, mdp); }catch(e){ try{ localStorage.removeItem(CLE_PROFIL); }catch(x){} throw traduire(e); }
     try{ window.DocuStats && window.DocuStats.evenement('compte_cree'); }catch(e){}
     return {aConfirmer: false};

@@ -78,6 +78,12 @@
   .pz small{font-size:.78rem;color:var(--gris,#667);text-align:center}
   .pz-ok{border:0;border-radius:12px;background:var(--bleu,#4A7BD0);color:#fff;font:inherit;font-weight:750;font-size:.98rem;padding:13px;cursor:pointer}
   .pz-bas{display:flex;justify-content:space-between;gap:10px}
+  .pz-choix{display:grid;gap:8px}
+  .pz-choix button{display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;column-gap:10px;align-items:center;text-align:left;border:1.5px solid var(--bord,#e2e8f0);background:var(--blanc,#fff);border-radius:14px;padding:10px 12px;font:inherit;color:var(--texte,#123);cursor:pointer}
+  .pz-choix button:hover{border-color:var(--bleu,#4A7BD0);background:var(--bleu-clair,#EAF1FD)}
+  .pz-choix span{grid-row:1 / 3;font-size:1.4rem}
+  .pz-choix b{font-size:.94rem}
+  .pz-choix small{font-size:.76rem;color:var(--gris,#667);text-align:left}
   .pz-bas button{border:0;background:none;font:inherit;font-size:.86rem;color:var(--gris,#667);text-decoration:underline;padding:6px 2px;cursor:pointer}
   .cm{position:fixed;top:0;right:0;bottom:0;width:min(300px,84vw);background:var(--blanc,#fff);z-index:53;transform:translateX(102%);transition:transform .25s ease;overflow-y:auto;box-shadow:-4px 0 24px rgba(0,0,0,.12);padding-bottom:calc(20px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column}
   .cm.ouvert{transform:none}
@@ -184,11 +190,13 @@
     return `<div class="cm-raccourcis">${L.map(([k, t, st]) => `<a class="cm-lien cm-sous" href="compte.html#${k}"><span class="cm-ico">${ICO2[k]}</span><span class="cm-txt"><b>${t}</b><span>${st}</span></span>${pastille(k)}</a>`).join('')}</div>`;
   }
   // Tableau de bord : en préparation, visible seulement par le propriétaire du site tant que TB_PUBLIC = false
-  const TB_PUBLIC = false, ADMIN_UID = 'QOC6tTqjsKTdO9zR5NfQkhJqkup2';
+  const TB_PUBLIC = true, ADMIN_UID = 'QOC6tTqjsKTdO9zR5NfQkhJqkup2';
   const tableauVisible = () => { if (TB_PUBLIC) return true; try{ const u = window.Compte && window.Compte.utilisateur(); if (u) return u.id === ADMIN_UID; const l = lire('docupret_compte', null); return !!l && l.uid === ADMIN_UID; }catch(e){ return false; } };
+  // Activité choisie (Mon compte › Compte) : services, vente ou les deux
+  const activite = () => { const a = (lire('docupret_profil', {}) || {}).activite; return ['services', 'vente'].includes(a) ? a : 'les2'; };
   // Cases du tableau de bord épinglées (Personnaliser › 📌) : raccourcis juste sous « Tableau de bord »
   function epingles(){
-    const r = ((lire('docupret_tableau', []) || []).find(x => x && x.id === 'reglages-tableau' && !x.supprime) || {}).raccourcis || [];
+    const act = activite(), r = (((lire('docupret_tableau', []) || []).find(x => x && x.id === 'reglages-tableau' && !x.supprime) || {}).raccourcis || []).filter(x => act === 'les2' || x.mode === act);
     if (!r.length) return '';
     const T = {services: 'Services', vente: 'Vente'}, deux = new Set(r.map(x => x.mode)).size > 1;
     return `<div class="cm-epingles"><small>📌 Raccourcis</small>${r.map(x => `<a href="tableau-de-bord.html#${esc(x.mode)}-${esc(x.k)}"><i>${esc(x.ico || '•')}</i><span>${esc(x.titre)}${deux ? ` <span style="color:var(--gris,#667);font-weight:500;font-size:.78rem">· ${T[x.mode] || ''}</span>` : ''}</span></a>`).join('')}</div>`;
@@ -201,7 +209,7 @@
         ? (logoAvatar() ? `<span class="cm-avatar logo"><img src="${logoAvatar()}" alt=""></span>` : `<span class="cm-avatar">${esc((nomAffiche() || email)[0].toUpperCase())}</span>`) + (nomAffiche() ? `<div><b>${esc(nomAffiche())}</b><small>${esc(email)}</small></div>` : `<div><small>Connecté avec</small><b>${esc(email)}</b></div>`)
         : `<span class="cm-avatar vide">${ICO.compte}</span><div><b>Vous n'êtes pas connecté</b><small>Gratuit, avec une simple adresse e-mail</small></div>`}</div>
       ${email ? '' : '<a class="cm-connexion" href="compte.html#compte">Se connecter ou créer un compte</a>'}
-      ${email && tableauVisible() ? `<a class="cm-lien cm-tb" href="tableau-de-bord.html"><span class="cm-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg></span><span class="cm-txt"><b>Tableau de bord</b><span>${TB_PUBLIC ? 'Chiffres, paiements, rendez-vous' : 'Caché aux visiteurs (vous seul)'}</span></span></a>${epingles()}` : ''}
+      ${email && tableauVisible() ? `<a class="cm-lien cm-tb" href="tableau-de-bord.html"><span class="cm-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg></span><span class="cm-txt"><b>Tableau de bord</b><span>${TB_PUBLIC ? (activite() === 'vente' ? 'Ventes, catalogue, stock' : 'Chiffres, paiements, rendez-vous') : 'Caché aux visiteurs (vous seul)'}</span></span></a>${epingles()}` : ''}
       <a class="cm-lien" href="compte.html#clients"><span class="cm-ico">${ICO.clients}</span><span class="cm-txt"><b>Mes clients${email ? '' : ' 🔒'}</b><span>${email ? 'Coordonnées enregistrées' : 'Avec un compte gratuit'}</span></span>${email && nb && nombres() ? `<span class="cm-nb">${nb}</span>` : ''}</a>
       ${email ? raccourcis() : ''}
       <a class="cm-lien" href="compte.html#parametres"><span class="cm-ico">${ICO.param}</span><span class="cm-txt"><b>Paramètres${email ? '' : ' 🔒'}</b><span>${email ? 'Mon entreprise, préférences' : 'Avec un compte gratuit'}</span></span></a>
@@ -233,7 +241,8 @@
     const C = window.Compte;
     if (!C || !C.profilPret || !C.profilPret() || !C.utilisateur() || window.self !== window.top) return;
     const p = C.profil();
-    if (p.pseudo || p.refus || document.querySelector('.pz-fond')) return;
+    if (document.querySelector('.pz-fond')) return;
+    if (p.pseudo || p.refus) return annoncerTableau();
     try{ if (sessionStorage.getItem('docupret_pz_plus_tard')) return; }catch(e){}
     setTimeout(() => {
       if (document.querySelector('.pz-fond, .fond, .cp-fond, .env-fond, .tf-fond, .cm.ouvert')) return;
@@ -244,7 +253,7 @@
         <small>Facultatif. Ce nom n'apparaît jamais sur vos factures, devis ou documents. Vous pourrez le changer dans Mon compte.</small>
         <button type="submit" class="pz-ok">Enregistrer</button>
         <div class="pz-bas"><button type="button" data-plus-tard>Plus tard</button><button type="button" data-jamais>Ne plus me demander</button></div></form>`;
-      const fermer = () => f.remove();
+      const fermer = () => { f.remove(); setTimeout(annoncerTableau, 400); };
       f.addEventListener('submit', e => { e.preventDefault(); const v = f.querySelector('input').value.trim(); if (!v){ f.querySelector('input').focus(); return; } C.definirProfil({pseudo: v, refus: false}); fermer(); if (C.toast) C.toast(`✓ Bienvenue ${v} !`); });
       f.addEventListener('click', e => {
         if (e.target.closest('[data-jamais]')){ C.definirProfil({refus: true}); fermer(); }
@@ -252,6 +261,36 @@
       });
       document.body.appendChild(f);
     }, 1200);
+  }
+  // Comptes déjà créés : une seule fois, on présente le tableau de bord et on demande l'activité
+  function annoncerTableau(){
+    const C = window.Compte;
+    if (!C || !C.profilPret || !C.profilPret() || !C.utilisateur() || window.self !== window.top) return;
+    const p = C.profil();
+    if (p.annonceTb || document.querySelector('.pz-fond')) return;
+    if (document.querySelector('.fond, .cp-fond, .env-fond, .tf-fond, .cm.ouvert')) return;
+    const f = document.createElement('div'); f.className = 'pz-fond';
+    f.innerHTML = `<div class="pz" role="dialog" aria-modal="true" aria-labelledby="tb-an-titre"><span class="pz-ico">🎉</span><h2 id="tb-an-titre">Nouveau sur DocuPrêt.fr</h2>
+      <p>Profitez maintenant d'un <b>tableau de bord avancé</b>, gratuit : chiffre d'affaires, bilan du mois, paiements, rendez-vous, et pour les commerçants catalogue, stock et marges.</p>
+      <p style="font-weight:700;color:var(--texte,#123)">Quelle est votre activité ?</p>
+      <div class="pz-choix">
+        <button type="button" data-act="services"><span>🛠️</span><b>Prestations de services</b><small>Artisan, entrepreneur, entreprise</small></button>
+        <button type="button" data-act="vente"><span>🛍️</span><b>Ventes et commerce</b><small>Vendeur, commerçant</small></button>
+        <button type="button" data-act="les2"><span>✨</span><b>Les deux</b><small>Les 2 tableaux, au choix</small></button>
+      </div>
+      <small>Vous pourrez changer à tout moment dans Mon compte › Compte.</small>
+      <div class="pz-bas" style="justify-content:center"><button type="button" data-fermer-an>Fermer</button></div></div>`;
+    f.addEventListener('click', e => {
+      const b = e.target.closest('[data-act]');
+      if (b){
+        C.definirProfil({activite: b.dataset.act, annonceTb: true}); f.remove();
+        const t = {services: 'Prestations de services', vente: 'Ventes et commerce', les2: 'Les deux tableaux'}[b.dataset.act];
+        if (C.toast) C.toast(`✓ ${t} : retrouvez votre tableau de bord dans Mon compte`);
+        return;
+      }
+      if (e.target === f || e.target.closest('[data-fermer-an]')){ C.definirProfil({activite: C.profil().activite || 'les2', annonceTb: true}); f.remove(); }
+    });
+    document.body.appendChild(f);
   }
   lien.setAttribute('aria-haspopup', 'true');
   lien.addEventListener('click', e => { e.preventDefault(); ouvrir(); });
