@@ -160,6 +160,12 @@
   body.perso .mod{border-style:dashed;border-color:#9DB6E3}
   body.perso .poignee,body.perso .mod-edit{display:inline-flex;align-items:center;justify-content:center}
   body.perso .mod-act{display:none}
+  /* Personnaliser : le nom de la case sur sa propre ligne, les boutons dessous (rien ne se chevauche, même en grand texte) */
+  body.perso .mod-tete{flex-wrap:wrap;row-gap:8px}
+  body.perso .mod-tete h2{flex:1 1 0;min-width:0;overflow-wrap:anywhere}
+  body.perso .mod-tete .plier{display:none}
+  body.perso .mod-edit{order:3;flex:1 0 100%;justify-content:flex-end;flex-wrap:wrap;gap:6px}
+  body.perso .mod.fixe .mod-tete .cadenas{order:3;flex:1 0 100%;text-align:right}
   body.perso .mod-corps{opacity:.55;pointer-events:none;max-height:180px;overflow:hidden}
   .mod-edit button{width:34px;height:34px;border:1.5px solid var(--bord);background:var(--blanc);border-radius:10px;font-size:.95rem;color:var(--texte)}
   .mod-edit button:hover{border-color:var(--bleu)}
