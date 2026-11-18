@@ -191,6 +191,12 @@
   .fin-ligne .det{grid-column:1 / -1;font-size:.78rem;color:var(--gris)}
   .fin-ligne .piste{grid-column:1 / -1;height:8px;background:#F6E3DF;border-radius:4px;overflow:hidden}
   .fin-ligne .piste i{display:block;height:100%;background:#2B8148;border-radius:0 4px 4px 0;min-width:4px}
+  .nl-tete{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px;font-size:.9rem}
+  .btn-nl{border:0;border-radius:10px;background:var(--bleu);color:#fff;font:inherit;font-weight:700;font-size:.86rem;padding:9px 13px;cursor:pointer}
+  .nl-liste{display:grid;gap:0}
+  .nl-l{display:grid;gap:1px;padding:8px 2px;border-bottom:1px solid var(--bord);font-size:.88rem}
+  .nl-l:last-child{border-bottom:0}
+  .nl-l span:last-child{font-size:.78rem;color:var(--gris)}
   .classement{width:100%;border-collapse:collapse;font-size:.86rem;font-variant-numeric:tabular-nums}
   .classement th{font-size:.74rem;color:var(--gris);font-weight:700;text-align:left;padding:0 6px 6px;border-bottom:1px solid var(--bord)}
   .classement td{padding:9px 6px;border-bottom:1px solid var(--bord);vertical-align:top}
@@ -367,6 +373,9 @@
     <section class="bloc-st"><h2>⏱️ Ceux qui passent le plus de temps sur le site</h2><p class="sous">Temps passé connecté, page à l’écran, depuis le 20 octobre 2026</p><div id="l-cl-temps"></div></section>
     <section class="bloc-st"><h2>⚙️ Ceux qui utilisent le plus de fonctions</h2><p class="sous">Toutes fonctions confondues, depuis le 20 octobre 2026</p><div id="l-cl-fn"></div></section>
 
+    <h2 class="grp-st">E-mails des nouveautés</h2>
+    <section class="bloc-st"><h2>📧 Comptes qui acceptent les nouveautés</h2><p class="sous">Accord donné à l'inscription ou dans Mon compte. Envoyez vos e-mails en <b>copie cachée (Cci)</b> pour que les adresses restent privées.</p><div id="l-nl"></div></section>
+
     <div class="st-pied">
       <label><input type="checkbox" id="moi" checked> Ne pas compter mes propres visites sur cet appareil</label>
       <p>Les chiffres des visiteurs sont anonymes : aucune adresse IP, aucun cookie, aucune donnée personnelle n'est enregistrée. Seuls les classements sont rattachés aux comptes : adresse e-mail, nombre de documents téléchargés par type, temps passé et nom des fonctions utilisées, jamais le contenu des documents. Les détails (comportement, recherches, horaires, appareils, lieu) sont comptés depuis le 17 octobre 2026 ; les fonctions utilisées, le temps par page et les classements « temps » et « fonctions » depuis le 20 octobre 2026. Les robots (Google…) ne sont plus comptés depuis le 20 octobre 2026 au soir.</p>
@@ -423,7 +432,7 @@
   });
 })();
 </script>
-<script src="compte.js?v=25"></script>
+<script src="compte.js?v=26"></script>
 <script src="compte-menu.js?v=23"></script>
 <script>
 (function(){
@@ -799,7 +808,29 @@
       z.innerHTML = '<p class="vide-st"><b>Ce classement n’est pas encore accessible.</b> Il faut publier les nouvelles règles Firebase.</p>';
     }
   }
+  // ---------- Comptes qui acceptent les e-mails des nouveautés (collection « nouveautes ») ----------
+  async function chargerNouveautes(){
+    const z = $('l-nl');
+    try{
+      const snap = await db.collection('nouveautes').get();
+      const tous = snap.docs.map(d => d.data()), oui = tous.filter(x => x.accepte === true && x.email).sort((a, b) => String(b.le).localeCompare(String(a.le))), non = tous.filter(x => x.accepte === false).length;
+      const dt = x => x.le ? new Date(x.le).toLocaleDateString('fr-FR') : '';
+      z.innerHTML = `<div class="nl-tete"><span><b>${n(oui.length)}</b> compte${oui.length > 1 ? 's' : ''} d'accord · ${n(non)} refus ou désinscription${non > 1 ? 's' : ''}</span>${oui.length ? '<button type="button" class="btn-nl" id="nl-copier">📋 Copier toutes les adresses</button>' : ''}</div>`
+        + (oui.length ? `<div class="nl-liste">${oui.map(x => `<div class="nl-l"><span class="mail">${esc(x.email)}</span><span>${x.nom ? esc(x.nom) + ' · ' : ''}depuis le ${esc(dt(x))}</span></div>`).join('')}</div>` : '<p class="vide-st">Personne pour l\'instant : la case est proposée à chaque inscription et dans Mon compte.</p>');
+      const b = $('nl-copier');
+      if (b) b.addEventListener('click', async () => {
+        const t = oui.map(x => x.email).join(', ');
+        try{ await navigator.clipboard.writeText(t); b.textContent = `✓ ${oui.length} adresse${oui.length > 1 ? 's' : ''} copiée${oui.length > 1 ? 's' : ''}`; }
+        catch(e){ const ta = document.createElement('textarea'); ta.value = t; document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); b.textContent = '✓ Adresses copiées'; }catch(err){} ta.remove(); }
+        setTimeout(() => { b.textContent = '📋 Copier toutes les adresses'; }, 2500);
+      });
+    }catch(e){
+      console.warn(e);
+      z.innerHTML = '<p class="vide-st"><b>Liste pas encore accessible.</b> Il faut publier les nouvelles règles Firebase (bloc « nouveautes »).</p>';
+    }
+  }
   function chargerClassements(){
+    chargerNouveautes();
     unClassement('l-classement', 'n', n, x => {
       const types = Object.entries(x.types || {}).sort((a, b) => b[1] - a[1]);
       return [types.slice(0, 3).map(([k, v]) => `${n(v)} ${esc(nomDoc('pdf_' + k))}`).join(' · ') + (types.length > 3 ? ' · …' : ''), x.maj ? 'dernier le ' + esc(dateCourte(x.maj)) : ''].filter(Boolean).join(' — ');

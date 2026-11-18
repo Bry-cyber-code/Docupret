@@ -299,6 +299,17 @@
     if (!db || !utilisateur) return;
     try{ await db.collection('utilisateurs').doc(utilisateur.uid).set({profil: propre(profil())}, {merge: true}); }catch(e){ console.warn('Envoi du nom impossible', e); }
   }
+  // Accord pour recevoir les nouveautés par e-mail : copié dans nouveautes/{uid} (lisible seulement par le propriétaire du site)
+  async function envoyerNouveautes(){
+    if (!db || !utilisateur) return;
+    const p = profil(); if (typeof p.newsletter !== 'boolean') return;
+    const cle = [utilisateur.uid, p.newsletter, p.newsletterLe || '', p.pseudo || ''].join('|');
+    try{ if (localStorage.getItem('docupret_nl_envoye') === cle) return; }catch(e){}
+    try{
+      await db.collection('nouveautes').doc(utilisateur.uid).set({email: utilisateur.email || '', accepte: p.newsletter, le: p.newsletterLe || new Date().toISOString(), nom: String(p.pseudo || '').slice(0, 40)});
+      try{ localStorage.setItem('docupret_nl_envoye', cle); }catch(e){}
+    }catch(e){ console.warn('Envoi du choix « nouveautés » impossible', e); }
+  }
   async function synchroniserProfil(){
     if (!db || !utilisateur) return;
     try{
@@ -308,12 +319,15 @@
       else if (l.maj && (!r || date(l.maj) > date(r.maj))) await envoyerProfil();
     }catch(e){ console.warn('Synchronisation du nom impossible', e); }
     profilPret = true; annoncerProfil();
+    envoyerNouveautes();
   }
   function definirProfil(o){
     const p = Object.assign(profil(), o, {maj: new Date().toISOString()});
     p.pseudo = String(p.pseudo || '').trim().slice(0, 40);
     try{ localStorage.setItem(CLE_PROFIL, JSON.stringify(p)); }catch(e){}
-    envoyerProfil(); annoncerProfil(); prevenir();
+    if ('newsletter' in o) p.newsletterLe = new Date().toISOString();
+    try{ localStorage.setItem(CLE_PROFIL, JSON.stringify(p)); }catch(e){}
+    envoyerProfil(); envoyerNouveautes(); annoncerProfil(); prevenir();
     return p;
   }
 
@@ -477,12 +491,12 @@
     await pret;
     if (!auth) throw new Error('Connexion impossible. Vérifiez votre connexion internet.');
   }
-  async function inscrire(email, mdp, pseudo, activite){
+  async function inscrire(email, mdp, pseudo, activite, nouveautes){
     await attendre();
     // Nom choisi à l'inscription (facultatif) : gardé avant la création, envoyé au compte dès la connexion.
     // Laissé vide : on ne le redemandera pas (la personne a déjà vu la case).
     // Activité choisie à l'inscription (services, vente ou les deux) : décide du tableau de bord affiché
-    try{ localStorage.setItem(CLE_PROFIL, JSON.stringify({pseudo: String(pseudo || '').trim().slice(0, 40), refus: !String(pseudo || '').trim(), activite: ['services', 'vente', 'les2'].includes(activite) ? activite : 'les2', annonceTb: true, maj: new Date().toISOString()})); }catch(e){}
+    try{ localStorage.setItem(CLE_PROFIL, JSON.stringify({pseudo: String(pseudo || '').trim().slice(0, 40), refus: !String(pseudo || '').trim(), activite: ['services', 'vente', 'les2'].includes(activite) ? activite : 'les2', annonceTb: true, newsletter: !!nouveautes, newsletterLe: new Date().toISOString(), maj: new Date().toISOString()})); }catch(e){}
     try{ await auth.createUserWithEmailAndPassword(email, mdp); }catch(e){ try{ localStorage.removeItem(CLE_PROFIL); }catch(x){} throw traduire(e); }
     try{ window.DocuStats && window.DocuStats.evenement('compte_cree'); }catch(e){}
     return {aConfirmer: false};
@@ -529,6 +543,7 @@
       try{ localStorage.removeItem(CLE_PROFIL); }catch(e){}
       try{ await db.collection('utilisateurs').doc(u.uid).delete(); }catch(e){}
       try{ await db.collection('classement').doc(u.uid).delete(); }catch(e){}
+      try{ await db.collection('nouveautes').doc(u.uid).delete(); }catch(e){}
       try{ localStorage.removeItem(CLE_DOCS); }catch(e){}
       await u.delete();
       try{ window.DocuStats && window.DocuStats.evenement('compte_supprime'); }catch(e){}

@@ -133,6 +133,9 @@
   .act-choix button b{font-size:.8rem;line-height:1.2}
   .act-choix button small{font-size:.68rem;color:var(--gris);font-weight:400;line-height:1.2}
   .act-choix button[aria-checked="true"]{border-color:var(--bleu);background:var(--bleu-clair);box-shadow:0 0 0 2px rgba(74,123,208,.2)}
+  .nl-case{display:flex;gap:9px;align-items:flex-start;font-size:.86rem;color:var(--texte);font-weight:500;line-height:1.45;cursor:pointer}
+  .nl-case input{width:20px;height:20px;flex-shrink:0;margin-top:1px;accent-color:var(--bleu)}
+  .nl-case em{font-style:normal;color:var(--gris);font-size:.8rem;display:block}
   .lien-tb{color:var(--bleu);font-weight:700;font-size:.86rem;margin-top:4px}
   .aide-ch{font-size:.78rem;color:var(--gris);font-weight:400}
   .pseudo-l{display:flex;gap:8px}
@@ -690,6 +693,7 @@
           <button type="button" role="radio" aria-checked="false" data-act="vente"><span>🛍️</span><b>Ventes et commerce</b><small>Vendeur, commerçant</small></button>
           <button type="button" role="radio" aria-checked="false" data-act="les2"><span>✨</span><b>Les deux</b><small>Les 2 tableaux</small></button>
         </div></div>
+      <label class="case nl-case" id="ch-nl"><input type="checkbox" id="nl-ins"> <span>J'accepte de recevoir par e-mail les nouveautés de DocuPrêt.fr (1 à 2 fois par mois maximum). <em>Facultatif, je peux me désabonner à tout moment.</em></span></label>
       <label class="ch">Adresse e-mail<input type="email" id="email" autocomplete="email" inputmode="email" placeholder="vous@exemple.fr" required></label>
       <label class="ch"><span id="lib-mdp">Choisissez un mot de passe (8 caractères minimum)</span><span class="mdp"><input type="password" id="mdp" autocomplete="new-password" minlength="8" required><button type="button" id="voir-mdp">Afficher</button></span></label>
       <div class="msg" id="msg" hidden></div>
@@ -719,6 +723,7 @@
         <button type="button" role="radio" aria-checked="false" data-act="les2"><span>✨</span><b>Les deux</b><small>Les 2 tableaux</small></button>
       </div><small class="aide-ch" id="act-msg"></small>
       <a class="lien-tb" href="tableau-de-bord.html">Ouvrir mon tableau de bord →</a></div>
+    <label class="case nl-case" style="margin-top:12px"><input type="checkbox" id="nl-compte"> <span>Recevoir par e-mail les nouveautés de DocuPrêt.fr (1 à 2 fois par mois maximum) <em id="nl-msg"></em></span></label>
     <div class="actions">
       <button type="button" class="btn-sec" id="deco">Me déconnecter</button>
       <button type="button" class="btn-sec" id="changer-mdp">Changer de mot de passe</button>
@@ -747,7 +752,7 @@
   </div>
 </footer>
 
-<script src="compte.js?v=25"></script>
+<script src="compte.js?v=26"></script>
 <script src="gmail.js?v=7"></script>
 <script src="stats.js?v=7" defer></script>
 <script src="compte-menu.js?v=23"></script>
@@ -764,7 +769,7 @@
     $('bloc-invite').hidden = !!u;
     $('bloc-connecte').hidden = !u || nouveau;
     $('bloc-nouveau').hidden = !nouveau;
-    if (u){ const ps = (C.profil().pseudo || ''); $('mon-email').textContent = ps ? `${ps} · ${u.email}` : u.email; $('avatar').textContent = (ps || u.email || '@')[0].toUpperCase(); if (document.activeElement !== $('pseudo2')) $('pseudo2').value = ps; cocher('act-compte', ['services', 'vente'].includes(C.profil().activite) ? C.profil().activite : 'les2'); }
+    if (u){ const ps = (C.profil().pseudo || ''); $('mon-email').textContent = ps ? `${ps} · ${u.email}` : u.email; $('avatar').textContent = (ps || u.email || '@')[0].toUpperCase(); if (document.activeElement !== $('pseudo2')) $('pseudo2').value = ps; cocher('act-compte', ['services', 'vente'].includes(C.profil().activite) ? C.profil().activite : 'les2'); majNl(); }
     $('note-stockage').textContent = u ? '☁️ Vos clients sont synchronisés avec votre compte.' : '🔒 Sans compte, vos clients sont enregistrés uniquement sur cet appareil.';
     $('valider').disabled = !C.actif;
   }
@@ -777,6 +782,7 @@
     $('oubli').hidden = m !== 'connecter';
     $('ch-pseudo').hidden = m !== 'creer';
     $('ch-activite').hidden = m !== 'creer';
+    $('ch-nl').hidden = m !== 'creer';
     $('note-cgu').hidden = m !== 'creer';
     message('msg', '');
   }
@@ -796,7 +802,7 @@
     const b = $('valider'), t = b.textContent; b.disabled = true; b.textContent = 'Un instant…';
     try{
       if (mode === 'creer'){
-        const r = await C.inscrire(email, mdp, $('pseudo').value, activiteIns);
+        const r = await C.inscrire(email, mdp, $('pseudo').value, activiteIns, $('nl-ins').checked);
         if (r.aConfirmer) message('msg', `✉️ Presque fini ! Ouvrez l'e-mail envoyé à ${email} et cliquez sur le lien pour activer votre compte (pensez à regarder dans les spams).`, true);
       } else await C.connecter(email, mdp);
       $('mdp').value = '';
@@ -830,6 +836,13 @@
     viser(); window.addEventListener('hashchange', viser);
     window.ouvrirCarteParametres = id => { const c = document.getElementById(id); if (c) basculer(c, true); };
   })();
+  // Nouveautés par e-mail : modifiable à tout moment
+  function majNl(){
+    const p = C.profil(), oui = p.newsletter === true;
+    $('nl-compte').checked = oui;
+    $('nl-msg').textContent = p.newsletterLe ? (oui ? `Accepté le ${new Date(p.newsletterLe).toLocaleDateString('fr-FR')}` : `Refusé le ${new Date(p.newsletterLe).toLocaleDateString('fr-FR')}`) : 'Vous pouvez changer d\'avis à tout moment.';
+  }
+  $('nl-compte').addEventListener('change', e => { C.definirProfil({newsletter: e.target.checked}); majNl(); C.toast(e.target.checked ? '✓ Vous recevrez les nouveautés de DocuPrêt.fr' : 'Vous ne recevrez plus les nouveautés'); });
   $('pseudo-ok').addEventListener('click', () => {
     const v = $('pseudo2').value.trim();
     C.definirProfil({pseudo: v, refus: true});
