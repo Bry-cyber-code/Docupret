@@ -735,12 +735,12 @@
     kpi: {titre: 'Chiffres clés des ventes', ico: '📊', large: true},
     vevol: {titre: 'Évolution des ventes mensuelles', ico: '📈', large: true},
     vsuivi: {titre: 'Suivi des ventes et commandes', ico: '🧾', large: true, act: '<button type="button" class="mini-btn plein" data-ajout="vente">＋ Vente</button>'},
-    vabos: {titre: 'Mes abonnés', ico: '🔁', large: true, act: '<button type="button" class="mini-btn plein" data-ajout="abonne">＋ Abonné</button>'},
     vcata: {titre: 'Catalogue produits', ico: '📦', large: true, act: '<button type="button" class="mini-btn plein" data-ajout="produit">＋ Produit</button>'},
     vtop: {titre: 'Meilleurs produits', ico: '🏆'},
     vrent: {titre: 'Produits les plus rentables', ico: '💎'},
     vstats: {titre: 'Statistiques commerciales', ico: '🔎', large: true},
     vclients: {titre: 'Clients acquis et récurrents', ico: '🤝'},
+    vabos: {titre: 'Mes abonnés', ico: '🔁', large: true, act: '<button type="button" class="mini-btn plein" data-ajout="abonne">＋ Abonné</button>'},
     attente: {titre: 'Paiements à encaisser', ico: '⏳'},
     rdv: {titre: 'Rendez-vous', ico: '📅', act: '<button type="button" class="mini-btn plein" data-ajout="rdv">＋ Ajouter</button>'}
   };
@@ -748,7 +748,10 @@
   // Une nouvelle case se place à sa position normale (juste après la case qui la précède dans la liste par défaut)
   // « Chiffres clés » reste toujours en premier, ouvert, et ne se déplace pas
   const FIXE = 'kpi';
+  // (une fois) « Mes abonnés » passe entre « Clients acquis et récurrents » et « Paiements à encaisser »
+  function placerAbonnes(){ const v = reglages.v; if (!v || v.abosPlaces || !Array.isArray(v.ordre)) return; v.ordre = v.ordre.filter(k => k !== 'vabos'); v.abosPlaces = true; }
   const ordre = () => {
+    if (vente()) placerAbonnes();
     const o = (L().ordre || []).filter(k => MODS[k] && k !== FIXE), def = Object.keys(MODS).filter(k => k !== FIXE);
     def.forEach((k, i) => { if (o.includes(k)) return; let j = -1; for (let p = i - 1; p >= 0 && j < 0; p--) j = o.indexOf(def[p]); o.splice(j + 1, 0, k); });
     return [FIXE, ...o];
