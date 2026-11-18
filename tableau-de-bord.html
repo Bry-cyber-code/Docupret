@@ -137,7 +137,8 @@
   .tb-periodes{display:inline-flex;background:var(--blanc);border:1.5px solid var(--bord);border-radius:50px;padding:3px}
   .tb-periodes button{border:0;background:none;border-radius:50px;padding:6px 12px;font:inherit;font-size:.85rem;font-weight:700;color:var(--gris)}
   .tb-periodes button.on{background:var(--bleu);color:#fff}
-  .tb-perso{margin-left:auto;border:1.5px solid var(--bord);background:var(--blanc);border-radius:50px;padding:7px 14px;font:inherit;font-size:.86rem;font-weight:700;color:var(--texte)}
+  .tb-bas{display:grid;justify-items:center;gap:10px;margin:18px 0 6px}
+  .tb-perso{border:1.5px solid var(--bord);background:var(--blanc);border-radius:50px;padding:7px 14px;font:inherit;font-size:.86rem;font-weight:700;color:var(--texte)}
   .tb-perso.on{background:#1E2A42;border-color:#1E2A42;color:#fff}
   .tb-aide-perso{width:100%;font-size:.84rem;color:var(--gris);background:var(--bleu-clair);border-radius:12px;padding:9px 12px}
 
@@ -562,12 +563,14 @@
       <div class="tb-periodes" id="tb-periodes" role="group" aria-label="Période des chiffres">
         <button type="button" data-p="mois">Ce mois</button><button type="button" data-p="trimestre">Trimestre</button><button type="button" data-p="annee">Année</button><button type="button" data-p="tout">Tout</button>
       </div>
-      <button type="button" class="tb-perso" id="tb-perso">✏️ Personnaliser</button>
-      <p class="tb-aide-perso" id="tb-aide-perso" hidden>Faites glisser une case avec <b>⠿</b> ou utilisez les flèches <b>↑ ↓</b> pour changer l'ordre. <b>👁</b> masque une case. <b>📌</b> l'ajoute au menu « Mon compte » pour y aller en un geste. Touchez <b>« Terminé »</b> quand c'est bon.</p>
     </div>
 
     <div class="tb-grille" id="tb-grille"></div>
     <div class="tb-masques" id="tb-masques" hidden></div>
+    <div class="tb-bas">
+      <p class="tb-aide-perso" id="tb-aide-perso" hidden>Faites glisser une case avec <b>⠿</b> ou utilisez les flèches <b>↑ ↓</b> pour changer l'ordre. <b>👁</b> masque une case. <b>📌</b> l'ajoute au menu « Mon compte » pour y aller en un geste. Touchez <b>« Terminé »</b> quand c'est bon.</p>
+      <button type="button" class="tb-perso" id="tb-perso">✏️ Personnaliser</button>
+    </div>
   </div>
 </main>
 
@@ -1952,6 +1955,7 @@
     perso = !perso; document.body.classList.toggle('perso', perso);
     $('tb-perso').classList.toggle('on', perso); $('tb-perso').textContent = perso ? '✓ Terminé' : '✏️ Personnaliser';
     $('tb-aide-perso').hidden = !perso; rendre();
+    setTimeout(() => $('tb-perso').scrollIntoView({block: 'center'}), 60);   // le bouton reste sous le doigt
     if (!perso) toast('Disposition enregistrée ✓');
   });
   function deplacer(k, sens){
