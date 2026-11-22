@@ -377,6 +377,10 @@
   function demarrer(){
     document.documentElement.lang = document.documentElement.lang || 'fr';
     activer(document);
+    // Correcteur intégré de DocuPrêt (même résultat sur tous les appareils), chargé seulement là où l'on écrit
+    if (document.querySelector('textarea, #page, input:not([type]), input[type="text"]') && !document.querySelector('script[src^="correcteur.js"]')){
+      const sc = document.createElement('script'); sc.src = 'correcteur.js?v=1'; sc.defer = true; document.head.appendChild(sc);
+    }
     // Un seul passage par zone modifiée (les listes se redessinent souvent)
     try{ new MutationObserver(l => { const z = new Set(); l.forEach(m => { if (m.addedNodes.length && m.target.nodeType === 1) z.add(m.target); }); z.forEach(activer); }).observe(document.body, {childList: true, subtree: true}); }catch(e){}
   }
