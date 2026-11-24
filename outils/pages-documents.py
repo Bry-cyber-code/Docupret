@@ -41,12 +41,12 @@ FACTURES = {  # type: (fichier, titre, description, grand titre, titre du texte,
    "Une facture déjà émise ne se modifie pas : on fait un avoir. Indiquez le numéro de la facture d'origine, le motif (remise, retour, erreur de facturation…) et la façon dont vous remboursez votre client. Le montant et la mention sont calculés automatiquement."),
 }
 LETTRES = {
- 'demission': ('lettre-demission.html', 'Lettre de démission gratuite : 10 modèles à remplir – DocuPrêt',
-   "Lettre de démission gratuite : 10 modèles (CDI, préavis, dispense, abandon de poste…) à remplir en ligne, puis à télécharger en PDF ou imprimer. Sans inscription.",
+ 'demission': ('lettre-demission.html', 'Lettre de démission gratuite : 10 modèles (CDI, positive…) à remplir – DocuPrêt',
+   "Lettre de démission gratuite : 10 modèles (CDI, démission positive avec remerciements, dispense de préavis, reconversion…) à remplir en ligne, puis à télécharger en PDF ou imprimer. Sans inscription.",
    'Lettre de démission', 'Votre lettre de démission, simple et correcte',
    "Choisissez le modèle qui correspond à votre situation, remplissez vos informations et celles de votre employeur : la lettre se rédige toute seule, avec les bonnes formules et la date de fin de préavis. Il ne reste qu'à la télécharger, l'imprimer et la signer."),
- 'motivation': ('lettre-motivation.html', 'Lettre de motivation gratuite : 10 modèles à remplir – DocuPrêt',
-   "Lettre de motivation gratuite : 10 modèles (candidature spontanée, alternance, premier emploi, reconversion…) à personnaliser en ligne et télécharger en PDF.",
+ 'motivation': ('lettre-motivation.html', 'Lettre de motivation gratuite : 10 modèles à remplir en ligne – DocuPrêt',
+   "Lettre de motivation gratuite : 10 exemples de lettres (candidature spontanée, alternance, premier emploi, reconversion, job saisonnier…) à personnaliser en ligne et télécharger en PDF, sans inscription.",
    'Lettre de motivation', 'Une lettre de motivation qui donne envie',
    "Partez d'un modèle adapté à votre candidature (spontanée, réponse à une annonce, stage, alternance, reconversion) puis personnalisez-le : poste visé, entreprise, vos atouts. La mise en page est faite pour vous, prête à être envoyée en PDF."),
  'conges': ('demande-conges.html', 'Demande de congés : modèles de lettre gratuits – DocuPrêt',
@@ -61,11 +61,11 @@ LETTRES = {
    "Lettre de préavis de départ du locataire : préavis d'un mois ou de trois mois, zone tendue, mutation, perte d'emploi… 10 modèles gratuits à remplir et télécharger.",
    'Préavis du locataire', 'Quitter votre logement dans les règles',
    "Pour quitter un logement loué, le locataire envoie un préavis à son propriétaire. Selon votre situation (zone tendue, mutation, perte d'emploi, logement meublé…), le préavis peut être réduit à un mois : choisissez le bon modèle, il indique la date de fin de bail."),
- 'hebergement': ('attestation-hebergement.html', "Attestation d'hébergement gratuite : 6 modèles à remplir – DocuPrêt",
-   "Attestation d'hébergement gratuite pour la CAF, une préfecture, un dossier administratif ou bancaire : 6 modèles à remplir en ligne, à imprimer et signer.",
+ 'hebergement': ('attestation-hebergement.html', "Modèle d'attestation d'hébergement gratuit (CAF, préfecture) – DocuPrêt",
+   "Modèle d'attestation d'hébergement gratuit pour la CAF, la préfecture, la banque ou un dossier administratif : 6 modèles à remplir en ligne, à imprimer et signer, avec la liste des pièces à joindre.",
    "Attestation d'hébergement", "Attester que vous hébergez quelqu'un",
    "L'attestation d'hébergement permet à la personne que vous logez de justifier son adresse (CAF, carte d'identité, banque, inscription…). Indiquez qui héberge qui, à quelle adresse et depuis quand : le document est prêt à signer, avec la liste des pièces à joindre."),
- 'honneur': ('attestation-sur-l-honneur.html', "Attestation sur l'honneur gratuite : 6 modèles – DocuPrêt",
+ 'honneur': ('attestation-sur-l-honneur.html', "Attestation sur l'honneur : modèle gratuit à remplir (6 modèles) – DocuPrêt",
    "Attestation sur l'honneur gratuite : modèles pour certifier une situation, un domicile, une absence de revenus, de condamnation… À remplir en ligne et télécharger en PDF.",
    "Attestation sur l'honneur", 'Une attestation sur l’honneur en quelques minutes',
    "L'attestation sur l'honneur sert à certifier par écrit une situation : domicile, ressources, célibat, absence de dettes… Choisissez le modèle, complétez vos informations et ce que vous attestez : la formule officielle et la mention des sanctions en cas de fausse déclaration sont incluses."),
@@ -85,8 +85,8 @@ LETTRES = {
    "Contrat de vente de voiture ou de moto entre particuliers gratuit : identité des parties, véhicule, prix, kilométrage, état. À remplir en ligne et signer en deux exemplaires.",
    'Contrat de vente de véhicule', 'Vendre votre véhicule en toute sérénité',
    "Entre particuliers, un contrat de vente écrit protège le vendeur comme l'acheteur : identité des deux parties, description du véhicule (immatriculation, kilométrage, état), prix et date de la vente. Complétez-le, imprimez-le en deux exemplaires et signez-le ensemble."),
- 'pret': ('pret-vehicule.html', 'Autorisation de prêt de véhicule gratuite – DocuPrêt',
-   "Autorisation de prêt de véhicule gratuite : pour prêter votre voiture à un proche, avec les dates, le véhicule et les conditions. À remplir en ligne et signer.",
+ 'pret': ('pret-vehicule.html', 'Autorisation de prêt de véhicule : modèle gratuit pour prêter sa voiture – DocuPrêt',
+   "Autorisation de prêt de véhicule gratuite : attestation pour prêter votre voiture à un proche, un ami ou un salarié (emprunt du véhicule), avec les dates, le véhicule et les conditions. À remplir en ligne et signer.",
    'Autorisation de prêt de véhicule', 'Prêter votre voiture avec une autorisation écrite',
    "Quand vous prêtez votre voiture, une autorisation écrite évite bien des soucis en cas de contrôle ou d'accident. Indiquez le véhicule, la personne autorisée à le conduire et la période du prêt : le document est prêt à signer par vous deux."),
  'sinistre': ('declaration-sinistre.html', "Déclaration de sinistre à l'assurance : 6 modèles de lettre – DocuPrêt",
@@ -101,12 +101,12 @@ LETTRES = {
 # Les lettres partent de lettre-demission.html (lettre.html n'est plus qu'une redirection vers les vraies pages)
 FAMILLES = [('facture.html', FACTURES, 'facture', 'facture'), ('lettre-demission.html', LETTRES, 'lettre', 'demission')]
 
-def bloc(type_, fichier, carte, prefixe_stats):
+def bloc(type_, fichier, carte, prefixe_stats, titre=''):
     u = {t: v[0] for t, v in carte.items()}
     return ('<!--PAGE-TYPE-->\n'
             f'<link rel="canonical" href="{URL}{fichier}">\n'
             f'<script>window.DOCU_TYPE_PAGE={json.dumps(type_)};window.DOCU_PAGE_STATS={json.dumps(prefixe_stats + "_" + type_)};'
-            f'window.DOCU_URL_TYPE={json.dumps(u)};'
+            f'window.DOCU_URL_TYPE={json.dumps(u)};window.DOCU_TITRE_PAGE={json.dumps(titre, ensure_ascii=False)};'
             "(function(){try{var q=new URLSearchParams(location.search).get('type');if(q&&window.DOCU_URL_TYPE[q])document.querySelector('link[rel=canonical]').href='" + URL + "'+window.DOCU_URL_TYPE[q];}catch(e){}})();</script>\n"
             '<!--/PAGE-TYPE-->')
 
@@ -127,7 +127,7 @@ def faq_statique(modele_txt):
 def fabriquer(modele_txt, type_, infos, carte, prefixe):
     fichier, titre, desc, h1, h2, texte = infos
     s = modele_txt
-    s = re.sub(r'<!--PAGE-TYPE-->.*?<!--/PAGE-TYPE-->', lambda m: bloc(type_, fichier, carte, prefixe), s, count=1, flags=re.S)
+    s = re.sub(r'<!--PAGE-TYPE-->.*?<!--/PAGE-TYPE-->', lambda m: bloc(type_, fichier, carte, prefixe, titre), s, count=1, flags=re.S)
     s = re.sub(r'<title>.*?</title>', '<title>' + titre.replace('&', '&amp;') + '</title>', s, count=1)
     s = remplacer_attr(s, r'(<meta name="description" content=")[^"]*(">)', desc)
     s = remplacer_attr(s, r'(<meta property="og:title" content=")[^"]*(">)', titre)
@@ -163,6 +163,8 @@ def main():
 if __name__ == '__main__':
     main()
 
-# Mode sombre : à refaire après chaque génération
+# Données structurées pour Google, puis mode sombre : à refaire après chaque génération
+import subprocess as _sp0, sys as _sys0, os as _os0
+_sp0.run([_sys0.executable, _os0.path.join(_os0.path.dirname(_os0.path.abspath(__file__)), "seo.py")])
 import subprocess as _sp, sys as _sys
 _sp.run([_sys.executable, __import__("os").path.join(__import__("os").path.dirname(__import__("os").path.abspath(__file__)), "sombre.py")])
