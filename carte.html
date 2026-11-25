@@ -365,6 +365,7 @@
         <div class="groupe"><span class="titre">Taille des coordonnées <output id="v-tailleCoord"></output></span><input type="range" id="tailleCoord" min="0.8" max="1.25" step="0.05" aria-label="Taille des coordonnées"></div>
         <div class="groupe"><span class="titre">Taille du métier <output id="v-tailleFonction"></output></span><input type="range" id="tailleFonction" min="0.7" max="1.4" step="0.05" aria-label="Taille du métier"></div>
         <label class="coche"><input type="checkbox" id="icones"> Petites icônes devant les coordonnées</label>
+        <div class="groupe"><span class="titre">Taille des icônes <output id="v-tailleIcones"></output></span><input type="range" id="tailleIcones" min="0.6" max="1.6" step="0.05" aria-label="Taille des icônes"></div>
         <label class="coche"><input type="checkbox" id="majuscules"> Nom en majuscules</label>
       </section>
 
@@ -415,6 +416,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="edition-directe.js?v=1"></script>
 <script>
 (function(){
   const $ = id => document.getElementById(id);
@@ -469,7 +471,7 @@
     nom:'Jean Dupont', fonction:'Plombier chauffagiste', entreprise:'Dupont Plomberie',
     tel:'06 12 34 56 78', email:'contact@dupont-plomberie.fr', site:'dupont-plomberie.fr', adresse:'12 rue des Lilas, 69003 Lyon',
     slogan:'Dépannage 7 jours sur 7', qr:'', modele:'classique', couleur:'#1F6FB2', police:'Montserrat',
-    tailleNom:1, tailleCoord:1, tailleFonction:1, logoTaille:1, icones:true, majuscules:false, versoStyle:'couleur', logo:'', face:'recto', onglet:'modeles', exemple:true, fond:'#FFFFFF'
+    tailleNom:1, tailleCoord:1, tailleFonction:1, tailleIcones:1, logoTaille:1, icones:true, majuscules:false, versoStyle:'couleur', logo:'', face:'recto', onglet:'modeles', exemple:true, fond:'#FFFFFF'
   });
   let etat = defaut();
   let facture = null;
@@ -526,13 +528,13 @@
 
   // Liste de coordonnées, alignées à gauche, au centre ou à droite
   function contacts(ctx, s, x, y, pas, opt){
-    const liste = coordonnees(s), t = Math.round((opt.taille || 27) * (s.tailleCoord || 1)), ic = s.icones ? t + 12 : 0;
+    const liste = coordonnees(s), t = Math.round((opt.taille || 27) * (s.tailleCoord || 1)), ti = Math.round(t * (s.tailleIcones || 1)), ic = s.icones ? ti + 12 : 0;
     liste.forEach((c, i) => {
       const yy = y + i * pas;
       ctx.font = `500 ${t}px ${SANS}`;
       let largeur = Math.min(ctx.measureText(c.txt).width, opt.max - ic);
       let x0 = opt.align === 'center' ? x - (largeur + ic) / 2 : opt.align === 'right' ? x - largeur - ic : x;
-      if (s.icones) icone(ctx, c.k, x0, yy - t * 0.85, t, opt.icone);
+      if (s.icones) icone(ctx, c.k, x0, yy - t * 0.85 - (ti - t) / 2, ti, opt.icone);
       ecrire(ctx, c.txt, x0 + ic, yy, {taille: t, poids: 500, couleur: opt.couleur, max: opt.max - ic});
     });
     return liste.length;
@@ -724,6 +726,7 @@
       ctx.fillStyle = s.fond || '#FFFFFF'; ctx.fillRect(0, 0, W, H);
       ctx.fillStyle = c; ctx.fillRect(0, 0, 26, H);
       const T = 380; dessinerQR(ctx, texteQR(s), 86, (H - T) / 2, T);
+      if (ctx.zoneEdition) ctx.zoneEdition('qr', 86, (H - T) / 2, T, T);
       const x = 520, max = W - x - 50;
       ecrire(ctx, 'SCANNEZ-MOI', x, 220, {taille: 22, poids: 700, couleur: T3, max});
       if (img) placerImage(ctx, img, x, 250, max, 110 * lg, 'left');
@@ -758,7 +761,7 @@
   $('modeles').innerHTML = MODELES.map(m => `<button type="button" class="modele" data-v="${m.k}"><canvas></canvas>${m.nom}</button>`).join('');
 
   const CHAMPS = ['nom', 'fonction', 'entreprise', 'tel', 'email', 'site', 'adresse', 'slogan', 'qr'];
-  const CURSEURS = {tailleNom: v => Math.round(v * 100) + ' %', tailleCoord: v => Math.round(v * 100) + ' %', tailleFonction: v => Math.round(v * 100) + ' %', logoTaille: v => Math.round(v * 100) + ' %'};
+  const CURSEURS = {tailleNom: v => Math.round(v * 100) + ' %', tailleCoord: v => Math.round(v * 100) + ' %', tailleFonction: v => Math.round(v * 100) + ' %', tailleIcones: v => Math.round(v * 100) + ' %', logoTaille: v => Math.round(v * 100) + ' %'};
 
   // Annuler
   const historique = []; let dernierMemo = 0;
@@ -801,7 +804,9 @@
     const largeur = Math.floor(Math.min(maxL, maxH * W / H));
     const dpr = Math.min(window.devicePixelRatio || 1, 3);
     const toile = $('toile');
+    if (window.EditionDirecte) EditionDirecte.debut();
     dessinerFace(toile, etat, etat.face, largeur * dpr / W);
+    if (window.EditionDirecte) EditionDirecte.fin();
     toile.style.width = largeur + 'px'; toile.style.height = Math.round(largeur * H / W) + 'px';
   }
 
@@ -868,6 +873,31 @@
     e.target.value = '';
   });
 
+  // ---------- Édition directe sur l'aperçu ----------
+  if (window.EditionDirecte){
+    const coord = t => ({titre: t, reglages: [{curseur: 'tailleCoord', titre: 'Taille des coordonnées'}, {coche: 'icones', titre: 'Petites icônes devant les coordonnées'}, {curseur: 'tailleIcones', titre: 'Taille des icônes'}, {couleurs: 'pal-couleur', titre: 'Couleur des icônes et des traits'}]});
+    const logoAction = {texte: '🖼️ Mettre mon logo à la place', cls: 'imp', faire: () => $('logo-fichier').click()};
+    EditionDirecte.init({
+      toile: $('toile'), aideDans: $('scene'), boutonApercuDans: document.querySelector('.outils'),
+      valeur: k => etat[k],
+      imageCle: img => img && img === imageLogo ? 'logo' : null,
+      champs: {
+        nom: {titre: 'Prénom et nom', reglages: [{curseur: 'tailleNom', titre: 'Taille du nom'}, {polices: 'polices'}, {coche: 'majuscules', titre: 'Nom en majuscules'}]},
+        fonction: {titre: 'Métier ou fonction', reglages: [{curseur: 'tailleFonction', titre: 'Taille du métier'}, {couleurs: 'pal-couleur', titre: 'Couleur'}]},
+        entreprise: {titre: 'Entreprise', reglages: [{polices: 'polices'}, {couleurs: 'pal-couleur', titre: 'Couleur'}], actions: [logoAction]},
+        tel: coord('Téléphone'), email: coord('E-mail'), site: coord('Site web'), adresse: coord('Adresse'),
+        slogan: {titre: 'Phrase au verso', reglages: [{segments: 'versoStyle', titre: 'Style du verso'}, {couleurs: 'pal-couleur', titre: 'Couleur'}]},
+        qr: {titre: 'Lien du QR code', reperer: false, note: 'Votre site, votre page d’avis Google ou vos réseaux sociaux. Vide : votre site web.'}
+      },
+      images: {logo: {titre: 'Logo', fichier: 'logo-fichier', retirer: 'logo-retirer', present: () => !!etat.logo, changer: '🖼️ Changer le logo', ajouter: '🖼️ Importer mon logo', reglages: [{curseur: 'logoTaille', titre: 'Taille du logo'}]}},
+      fond: {titre: 'Fond et couleurs', reglages: [{couleurs: 'pal-couleur', titre: 'Couleur principale'}, {couleurs: 'pal-fond', titre: 'Couleur du fond'}, {polices: 'polices'}], actions: [{texte: '🖼️ Ajouter ou changer le logo', cls: 'imp', faire: () => $('logo-fichier').click()}]},
+      faceActive: () => etat.face === 'verso' ? 1 : 0,
+      imagesApercu: () => ['recto', 'verso'].map(f => ({nom: f === 'recto' ? 'Recto' : 'Verso', src: imageFace(f)}))
+    });
+    // changement de face : la fenêtre ouverte ne correspond plus
+    $('faces').addEventListener('click', () => EditionDirecte.fermer());
+  }
+
   // Outils
   $('annuler').addEventListener('click', () => {
     if (!historique.length) return;
@@ -880,7 +910,7 @@
   $('hasard').addEventListener('click', () => {
     avant();
     Object.assign(etat, {modele: auHasard(MODELES).k, couleur: auHasard(COULEURS), police: auHasard(Object.keys(POLICES)), fond: Math.random() < 0.3 ? auHasard(FONDS) : '#FFFFFF',
-      versoStyle: auHasard(['couleur', 'couleur', 'qr', 'blanc']), icones: Math.random() < 0.7, majuscules: Math.random() < 0.2, tailleNom: 1, tailleCoord: 1, tailleFonction: 1});
+      versoStyle: auHasard(['couleur', 'couleur', 'qr', 'blanc']), icones: Math.random() < 0.7, majuscules: Math.random() < 0.2, tailleNom: 1, tailleCoord: 1, tailleFonction: 1, tailleIcones: 1});
     synchroniser(); rendre();
   });
 

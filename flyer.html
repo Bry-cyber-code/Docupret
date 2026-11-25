@@ -507,6 +507,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="edition-directe.js?v=1"></script>
 <script>
 (function(){
   'use strict';
@@ -700,6 +701,7 @@
     return '';
   }
   function dessinerQR(ctx, txt, x, y, t){
+    if (ctx.zoneEdition) ctx.zoneEdition('qr', x, y, t, t);
     ctx.fillStyle = '#FFFFFF'; ctx.fillRect(x, y, t, t);
     if (!txt || !window.qrcode){ ctx.strokeStyle = '#C9D2E0'; ctx.lineWidth = t / 60; ctx.strokeRect(x + t * .05, y + t * .05, t * .9, t * .9); return; }
     try{
@@ -755,13 +757,13 @@
     B.photo = (ratio) => images.photo ? {
       souple: {min: w => w * (ratio || .62) * .5, max: w => w * (ratio || .62) * 1.1},
       h: (w, k, hh) => hh || w * (ratio || .62) * .5,
-      d: (x, y, w, k, al, hh) => { const h = hh || w * (ratio || .62) * .5; ctx.save(); rectArrondi(ctx, x, y, w, h, 24 * b); ctx.clip(); imageCouvrante(ctx, images.photo, x, y, w, h, s.photoY); ctx.restore(); }
+      d: (x, y, w, k, al, hh) => { const h = hh || w * (ratio || .62) * .5; if (ctx.zoneEdition) ctx.zoneEdition('photo', x, y, w, h); ctx.save(); rectArrondi(ctx, x, y, w, h, 24 * b); ctx.clip(); imageCouvrante(ctx, images.photo, x, y, w, h, s.photoY); ctx.restore(); }
     } : null;
     // Photo de l'utilisateur, sinon une illustration du métier aux couleurs du flyer
     B.visuel = (ratio) => B.photo(ratio) || {
       souple: {min: w => w * (ratio || .62) * .38, max: w => w * (ratio || .62) * .85},
       h: (w, k, hh) => hh || w * (ratio || .62) * .38,
-      d: (x, y, w, k, al, hh) => { const h = hh || w * (ratio || .62) * .38, c = s.couleur;
+      d: (x, y, w, k, al, hh) => { const h = hh || w * (ratio || .62) * .38, c = s.couleur; if (ctx.zoneEdition) ctx.zoneEdition('photo', x, y, w, h, {vide: true});
         ctx.save(); rectArrondi(ctx, x, y, w, h, 24 * b); ctx.clip();
         const g = ctx.createLinearGradient(x, y, x + w, y + h); g.addColorStop(0, melange(c, th.fond, th.fonce ? .55 : .82)); g.addColorStop(1, melange(c, th.fond, th.fonce ? .7 : .9)); ctx.fillStyle = g; ctx.fillRect(x, y, w, h);
         ctx.fillStyle = melange(c, th.fond, th.fonce ? .45 : .72);
@@ -885,7 +887,7 @@
       ctx.fillStyle = c; ctx.fillRect(0, h - 22 * b, w, 22 * b); bas = m + 10 * b;
     } else if (md === 'photo'){
       bande = role === 'flyer' ? h * .38 : couverture ? h * .46 : h * .13;
-      if (couverture && images.photo){ imageCouvrante(ctx, images.photo, 0, 0, w, bande, s.photoY);
+      if (couverture && images.photo){ imageCouvrante(ctx, images.photo, 0, 0, w, bande, s.photoY); if (ctx.zoneEdition) ctx.zoneEdition('photo', 0, 0, w, bande);
         const g = ctx.createLinearGradient(0, bande * .35, 0, bande); g.addColorStop(0, 'rgba(10,16,28,0)'); g.addColorStop(1, 'rgba(10,16,28,.78)'); ctx.fillStyle = g; ctx.fillRect(0, 0, w, bande); }
       else { const g = ctx.createLinearGradient(0, 0, w, bande); g.addColorStop(0, c); g.addColorStop(1, fonce); ctx.fillStyle = g; ctx.fillRect(0, 0, w, bande); }
     } else if (md === 'diagonale'){
@@ -1057,7 +1059,9 @@
     const largeur = Math.floor(Math.min(maxL, maxH * P.L / P.H));
     const dpr = Math.min(window.devicePixelRatio || 1, 2.5);
     const toile = $('toile');
+    if (window.EditionDirecte) EditionDirecte.debut();
     dessinerFace(toile, etat, etat.face, largeur * dpr / P.L, false, true);
+    if (window.EditionDirecte) EditionDirecte.fin();
     toile.style.width = largeur + 'px'; toile.style.height = Math.round(largeur * P.H / P.L) + 'px';
   }
   let minuterieModeles;
@@ -1151,6 +1155,44 @@
     Object.assign(etat, {modele: auHasard(MODELES).k, couleur: auHasard(COULEURS), police: auHasard(Object.keys(POLICES)), fond: Math.random() < .25 ? auHasard(FONDS) : '#FFFFFF', majuscules: Math.random() < .2, tailleTitre: 1, tailleTexte: 1});
     synchroniser(); rendre();
   });
+
+  // ---------- Édition directe sur l'aperçu ----------
+  if (window.EditionDirecte){
+    const taille = {curseur: 'tailleTexte', titre: 'Taille des textes'};
+    const info = t => ({titre: t, reglages: [taille, {couleurs: 'pal-couleur', titre: 'Couleur principale'}]});
+    EditionDirecte.init({
+      toile: $('toile'), aideDans: $('scene'), boutonApercuDans: document.querySelector('.outils'),
+      valeur: k => etat[k],
+      imageCle: img => img && img === images.logo ? 'logo' : null,
+      champs: {
+        titre: {titre: 'Titre', reglages: [{curseur: 'tailleTitre', titre: 'Taille du titre'}, {polices: 'polices'}, {coche: 'majuscules', titre: 'Titre en majuscules'}, {couleurs: 'pal-couleur', titre: 'Couleur principale'}]},
+        sousTitre: {titre: 'Sous-titre', reglages: [taille, {couleurs: 'pal-couleur', titre: 'Couleur principale'}]},
+        texte: {titre: 'Présentation', multi: true, reglages: [taille]},
+        offre: {titre: 'Offre mise en avant', reglages: [taille, {couleurs: 'pal-couleur', titre: 'Couleur de l’offre'}]},
+        services: {titre: 'Vos services', multi: true, note: 'Un service par ligne.', reglages: [taille, {couleurs: 'pal-couleur', titre: 'Couleur des puces'}]},
+        atouts: {titre: 'Vos points forts', multi: true, note: 'Un point fort par ligne.', reglages: [taille]},
+        tarifs: {titre: 'Vos tarifs', multi: true, note: 'Une ligne par tarif : prestation | prix', reglages: [taille]},
+        entreprise: info('Entreprise'), nom: info('Votre nom'), tel: info('Téléphone'), email: info('E-mail'),
+        site: info('Site web ou page Facebook'), adresse: info('Adresse'), horaires: info('Horaires'), zone: info("Zone d'intervention"),
+        qr: {titre: 'Lien du QR code', reperer: false, note: 'Votre site, votre page d’avis Google ou vos réseaux sociaux. Vide : le QR code appelle votre téléphone.', reglages: [{coche: 'qrActif', titre: 'Afficher un QR code'}]}
+      },
+      images: {
+        logo: {titre: 'Logo', fichier: 'logo-fichier', retirer: 'logo-retirer', present: () => !!etat.logo, changer: '🖼️ Changer le logo', ajouter: '🖼️ Importer mon logo', reglages: [{curseur: 'logoTaille', titre: 'Taille du logo'}]},
+        photo: {titre: 'Photo', fichier: 'photo-fichier', retirer: 'photo-retirer', present: () => !!etat.photo, changer: '📷 Changer la photo', ajouter: '📷 Importer une photo',
+          note: 'Une photo de vos réalisations ou de votre équipe : c’est l’élément le plus regardé d’un flyer.', reglages: [{curseur: 'photoY', titre: 'Cadrage de la photo'}]}
+      },
+      fond: {titre: 'Fond et couleurs', reglages: [{couleurs: 'pal-couleur', titre: 'Couleur principale'}, {couleurs: 'pal-fond', titre: 'Couleur du fond'}, {polices: 'polices'}],
+        actions: [{texte: '🖼️ Logo', cls: 'imp', faire: () => $('logo-fichier').click()}, {texte: '📷 Photo', cls: 'imp', faire: () => $('photo-fichier').click()}]},
+      faceActive: () => etat.face,
+      imagesApercu: () => plan(etat).faces.map((f, i) => {
+        const cv = document.createElement('canvas'), P = plan(etat);
+        dessinerFace(cv, etat, i, Math.min(6, 2200 / Math.max(P.L, P.H)), false, true);
+        return {nom: f.nom, src: cv.toDataURL('image/jpeg', .9)};
+      })
+    });
+    $('faces').addEventListener('click', () => EditionDirecte.fermer());
+    $('agrandir').hidden = true;   // remplacé par le bouton « Aperçu » (toutes les faces)
+  }
 
   // Voir en grand
   $('agrandir').addEventListener('click', () => {

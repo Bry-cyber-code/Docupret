@@ -417,6 +417,7 @@
   </div>
 </div>
 
+<script src="edition-directe.js?v=1"></script>
 <script>
 (function(){
   const $ = id => document.getElementById(id);
@@ -766,7 +767,7 @@
         }
       }
     }catch(err){ minX = 0; minY = 0; maxX = W - 1; maxY = Ht - 1; }
-    if (maxX < 0){ toile.width = toile.height = 1; return {w: 1, h: 1}; }
+    if (maxX < 0){ toile.width = toile.height = 1; return {w: 1, h: 1, zones: []}; }
     const bw = maxX - minX + 1, bh = maxY - minY + 1;
     const pad = fondC ? Math.round(Math.max(bw, bh) * 0.1 + 26 * e) : Math.round(14 * e);
     toile.width = bw + pad * 2; toile.height = bh + pad * 2;
@@ -778,7 +779,13 @@
       fin.fillStyle = fondC; fin.fill();
     }
     fin.drawImage(travail, minX, minY, bw, bh, pad, pad, bw, bh);
-    return {w: toile.width, h: toile.height};
+    // Emplacements touchables pour l'édition directe (en pixels de la toile finale)
+    const dx = pad - minX, dy = pad - minY, z = (cle, x, y, w, h) => ({cle, x: (x + M) * e + dx, y: (y + M) * e + dy, w: w * e, h: h * e});
+    const zones = [];
+    if (avecIcone) zones.push(z('icone', xI, yI, IC, IC));
+    if (nom) zones.push(z('nom', align === 'center' ? xT - lNom / 2 : xT, yT, lNom, hNom));
+    if (slogan) zones.push(z('slogan', align === 'center' ? xT - lSlogan / 2 : xT, yT + hNom + ecartTexte, lSlogan, hSlogan));
+    return {w: toile.width, h: toile.height, zones};
   }
 
   // Afficher une toile dans une boîte sans jamais déborder
@@ -866,7 +873,8 @@
   }
 
   function rendre(){
-    dessiner($('toile'), etat, 2);
+    const res = dessiner($('toile'), etat, 2);
+    if (window.EditionDirecte) EditionDirecte.poser(res.zones);
     const boite = $('toile-fond');
     ajuster($('toile'), largeurDispo(), Math.max(60, boite.clientHeight - 16));
     majInterface(); sauver();
@@ -958,6 +966,26 @@
       alerte("Le logo n'a pas pu être enregistré. Téléchargez-le puis ajoutez-le dans la facture.");
     }
   });
+
+  // ---------- Édition directe sur l'aperçu ----------
+  if (window.EditionDirecte){
+    const versOnglet = o => () => { etat.onglet = o; majInterface(); sauver(); document.querySelector(`.panneau[data-p="${o}"]`).scrollIntoView({behavior: 'smooth', block: 'center'}); };
+    EditionDirecte.init({
+      toile: $('toile'), manuel: true, damier: true, aideDans: $('toile-fond'), boutonApercuDans: document.querySelector('.outils'),
+      aide: '✏️ <b>Touchez le nom, le slogan ou l’icône</b> pour les modifier',
+      valeur: k => etat[k],
+      champs: {
+        nom: {titre: "Nom de l'entreprise", reglages: [{curseur: 'tailleNom', titre: 'Taille du nom'}, {curseur: 'espacement', titre: 'Espacement des lettres'}, {polices: 'polices'}, {coche: 'majuscules', titre: 'Nom en majuscules'}, {segments: 'couleurTexte', titre: 'Couleur du texte'}]},
+        slogan: {titre: 'Slogan ou métier', reglages: [{curseur: 'tailleSlogan', titre: 'Taille du slogan'}, {coche: 'sloganCouleur', titre: 'Slogan en couleur'}, {coche: 'trait-slogan', titre: 'Petits traits autour du slogan'}]}
+      },
+      speciaux: {
+        icone: {titre: 'Icône', reglages: [{polices: 'icones', titre: 'Icône'}, {polices: 'formes', titre: 'Forme autour'}, {curseur: 'tailleIcone', titre: "Taille de l'icône"}, {curseur: 'tailleSymbole', titre: 'Taille du dessin dans la forme'}, {curseur: 'trait', titre: 'Épaisseur du trait'}, {couleurs: 'pal-couleur', titre: 'Couleur'}],
+          actions: [{texte: '🔎 Toutes les icônes par catégorie', faire: versOnglet('icone')}]}
+      },
+      fond: {titre: 'Couleurs et disposition', reglages: [{couleurs: 'pal-couleur', titre: 'Couleur principale'}, {couleurs: 'pal-couleur2', titre: 'Deuxième couleur'}, {coche: 'degrade', titre: 'Dégradé entre les deux couleurs'}, {segments: 'dispo', titre: 'Disposition'}, {segments: 'fondType', titre: 'Fond du logo'}, {curseur: 'ecart', titre: 'Écart icône et texte'}]},
+      imagesApercu: () => [{nom: 'Logo', src: imageLogo(4)}]
+    });
+  }
 
   synchroniser(); rendreModeles(); rendre(); pret = true;
   if (document.fonts){
