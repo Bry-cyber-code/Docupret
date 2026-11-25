@@ -175,6 +175,13 @@
   .ligne-st .val{font-weight:700;font-variant-numeric:tabular-nums;color:var(--texte)}
   .ligne-st .piste{grid-column:1 / -1;height:8px;background:#EEF2F8;border-radius:4px;overflow:hidden}
   .ligne-st .piste i{display:block;height:100%;background:var(--bleu);border-radius:0 4px 4px 0;min-width:4px}
+  /* Sections pliables (fermées à l'ouverture de la page) */
+  .bloc-st > h2.pli{display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;margin:-16px;padding:16px}
+  .bloc-st > h2.pli::after{content:'';flex-shrink:0;width:9px;height:9px;border-right:2.5px solid var(--gris);border-bottom:2.5px solid var(--gris);transform:rotate(45deg);margin:-4px 4px 0 0;transition:transform .2s}
+  .bloc-st.ouvert > h2.pli{margin-bottom:2px;padding-bottom:0}
+  .bloc-st.ouvert > h2.pli::after{transform:rotate(-135deg);margin-top:4px}
+  .bloc-st.pliable:not(.ouvert) > :not(h2){display:none!important}
+  .bloc-tuiles .tuiles{margin-bottom:0}
   .grp-st{font-size:.74rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--gris);margin:22px 2px 8px}
   .large-st{grid-column:1 / -1}
   .heures{display:grid;grid-template-columns:repeat(24,1fr);align-items:end;gap:3px;height:130px;padding-top:6px}
@@ -365,11 +372,9 @@
 
     <div class="tuiles" id="tuiles"></div>
 
-    <h2 class="grp-st">Taux et moyennes</h2>
-    <div class="tuiles" id="tuiles-taux"></div>
+    <section class="bloc-st bloc-tuiles"><h2>Taux et moyennes</h2><div class="tuiles" id="tuiles-taux"></div></section>
 
-    <h2 class="grp-st">Depuis le lancement du site</h2>
-    <div class="tuiles" id="tuiles-total"></div>
+    <section class="bloc-st bloc-tuiles"><h2>Depuis le lancement du site</h2><div class="tuiles" id="tuiles-total"></div></section>
 
     <div id="sections"></div>
 
@@ -759,6 +764,22 @@
     {id: 'ecr', grp: 'Provenance et appareils', titre: "Tailles d'écran", sous: 'Pour vérifier que le site s’affiche bien partout', rendu: simple('ecr', k => ECR[k] || k, {ordre: Object.keys(ECR), rang: false, sansEvo: true})},
     {id: 'part', grp: 'Provenance et appareils', titre: 'Clics vers les partenaires', sous: 'Qonto, Indy, SumUp, Vistaprint', rendu: simple('ev', k => PART[k] || k.replace(/^clic_/, ''), {filtre: k => /^clic_/.test(k)})}
   ];
+  // Toutes les sections à partir de « Taux et moyennes » se plient avec une flèche (fermées par défaut)
+  function preparerPlis(){
+    document.querySelectorAll('#st-contenu .bloc-st:not(.pliable)').forEach(b => {
+      const h = b.querySelector(':scope > h2'); if (!h) return;
+      b.classList.add('pliable'); h.classList.add('pli');
+      h.setAttribute('role', 'button'); h.tabIndex = 0; h.setAttribute('aria-expanded', 'false');
+    });
+  }
+  function basculerPli(h){
+    const b = h.closest('.bloc-st'), o = b.classList.toggle('ouvert');
+    h.setAttribute('aria-expanded', o ? 'true' : 'false');
+    // la courbe se dessine à la bonne largeur une fois la section ouverte
+    if (o && b.dataset.sec && b.querySelector('#graphe') && tout) rendreSection(SECTIONS.find(x => x.id === b.dataset.sec));
+  }
+  $('st-contenu').addEventListener('click', e => { const h = e.target.closest('.bloc-st > h2.pli'); if (h) basculerPli(h); });
+  $('st-contenu').addEventListener('keydown', e => { const h = e.target.closest('.bloc-st > h2.pli'); if (h && (e.key === 'Enter' || e.key === ' ')){ e.preventDefault(); basculerPli(h); } });
   function construire(){
     let html = '', grp;
     SECTIONS.forEach(s => {
@@ -767,6 +788,7 @@
       html += `<section class="bloc-st" data-sec="${s.id}"><h2>${s.titre}</h2><p class="sous">${s.sous}</p><p class="sec-lib"></p><div class="sec-corps"></div><div class="sec-per" role="group" aria-label="Période de cette catégorie"></div></section>`;
     });
     $('sections').innerHTML = html;
+    preparerPlis();
   }
   function rendreSection(s){
     const el = document.querySelector(`[data-sec="${s.id}"]`); if (!el) return;
